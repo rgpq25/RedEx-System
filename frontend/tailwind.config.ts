@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        "mainRed": "rgb(var(--mainRed) / <alpha-value>)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

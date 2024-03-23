@@ -4,6 +4,11 @@
 
 @layer base {
   :root {
+    /* Our custom colors for light mode */
+    --mainRed: 242 44 0;
+
+
+
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
 
@@ -36,6 +41,12 @@
   }
 
   .dark {
+    /* Our custom colors for dark mode  */
+    --mainRed: 242 44 0;
+
+
+
+
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
 
