@@ -5,8 +5,8 @@
 @layer base {
   :root {
     /* Our custom colors for light mode */
-    --mainRed: 242 44 0;
-
+    /* --mainRed: 242 44 0; */
+    --mainRed: 144 0 0;
 
 
     --background: 0 0% 100%;
