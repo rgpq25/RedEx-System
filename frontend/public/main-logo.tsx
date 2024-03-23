@@ -18,7 +18,7 @@ function MainLogo({className}: MainLogoProps) {
                 y="0px"
                 width="100%"
                 viewBox="0 0 591 591"
-                enable-background="new 0 0 591 591"
+                enableBackground="new 0 0 591 591"
             >
                 <path
                     fill="#FFFFFF"
