@@ -18,8 +18,15 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
       colors: {
         "mainRed": "rgb(var(--mainRed) / <alpha-value>)",
+        "resultsPieceBackground": "rgb(var(--resultsPieceBackground) / <alpha-value>)",
+        "resultsPieceBorder": "rgb(var(--resultsPieceBorder) / <alpha-value>)",
+
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
