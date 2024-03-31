@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 def extraer_datos(linea, continente_actual):
     partes = linea.split()
@@ -22,7 +23,7 @@ with open('./datos_raw/Aeropuerto.husos.v1.incompleto.txt', 'r') as archivo:
         if linea.strip() and linea[0].isdigit():
             datos = extraer_datos(linea, continente_actual)
             sql_command = f"CALL InsertarUbicacionYAlmacen('{datos[0]}', '{datos[1]}', '{datos[2]}', '{datos[3]}', '{datos[4]}', '{datos[5]}', {datos[6]});"
-            sql_commands.append(sql_command)
+            #sql_commands.append(sql_command)
 
 
 def extraer_datos_vuelo(linea):
@@ -51,6 +52,31 @@ with open('./datos_raw/Planes.vuelo.v1.incompleto.txt', 'r') as archivo:
             command = f"CALL InsertarVueloYRuta('{datos[0]}', '{datos[1]}', '{fecha_salida_str}', '{fecha_llegada_str}', {datos[4]});"
             #sql_commands.append(command)
 
+
+def extraer_datos_envio(linea):
+    partes = linea.split('-')
+    origen_identificador = partes[0]
+    fecha_recepcion_str = f"{partes[1][:4]}-{partes[1][4:6]}-{partes[1][6:]} {partes[2]}"
+    fecha_recepcion = datetime.strptime(fecha_recepcion_str, "%Y-%m-%d %H:%M")
+    identificador = origen_identificador[5:]
+    id_ubicacion_origen = origen_identificador[:4]  
+    id_ubicacion_destino = partes[3].split(':')[0]
+    cantidad_unidades = int(partes[3].split(':')[1])
+    # El tiempo estimado y la fecha límite no se proporcionan en el archivo, se insertan valores genéricos o NULL
+    return identificador, id_ubicacion_origen, id_ubicacion_destino, fecha_recepcion, cantidad_unidades
+
+
+carpeta = './datos_raw/pack_enviado/'
+archivos = os.listdir(carpeta)
+
+for archivo in archivos:
+    if archivo.endswith('.txt'):
+        with open(f'{carpeta}{archivo}', 'r') as archivo:
+            for linea in archivo:
+                if linea.strip():
+                    datos = extraer_datos_envio(linea.strip())
+                    comando_sql = f"CALL InsertarPaqueteYEnvio('{datos[0]}', '{datos[1]}', '{datos[2]}', {datos[4]}, '{datos[3].strftime('%Y-%m-%d %H:%M')}');"
+                    sql_commands.append(comando_sql)
 
 
 # Mostrar los comandos SQL generados
