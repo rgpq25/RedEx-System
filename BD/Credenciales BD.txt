@@ -1,0 +1,4 @@
+host: redex-bd.c5mwymm8e7fq.us-east-2.rds.amazonaws.com
+Usuario: admin
+Contrasenha: j3MHc3IBXwfA8Nn3WtO3
+esquema: redex_bd
