@@ -1,5 +1,8 @@
 from datetime import datetime
 import os
+import mysql.connector
+
+#IMPORTANTE: Ejecutar el comando pip install mysql-connector-python para que se pueda subir automaticamente a la base
 
 def extraer_datos(linea, continente_actual):
     partes = linea.split()
@@ -79,6 +82,31 @@ for archivo in archivos:
                     sql_commands.append(comando_sql)
 
 
-# Mostrar los comandos SQL generados
+import mysql.connector
+
+# Credenciales
+host = "redex-bd.c5mwymm8e7fq.us-east-2.rds.amazonaws.com"
+database = "redex_bd"
+user = "admin"
+password = "j3MHc3IBXwfA8Nn3WtO3"
+
+# Establece la conexión
+conn = mysql.connector.connect(host=host, database=database, user=user, password=password)
+cursor = conn.cursor()
+
+# Ejecuta cada comando en la lista
 for command in sql_commands:
-    print(command)
+    try:
+        cursor.execute(command)
+        conn.commit()  # Confirma la transacción
+        print(f"Comando ejecutado con éxito: {command}")
+    except mysql.connector.Error as err:
+        print(f"Error al ejecutar el comando {command}: {err}")
+    except Exception as e:
+        print(f"Error al ejecutar el comando {command}: {e}")
+
+# Cierra el cursor y la conexión
+cursor.close()
+conn.close()
+
+

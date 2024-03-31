@@ -34,8 +34,7 @@ CREATE TABLE PersonalAutorizado (
 );
 
 CREATE TABLE Ubicacion (
-    ID_Ubicacion INT AUTO_INCREMENT PRIMARY KEY,
-	Codigo VARCHAR(5),
+	ID_Ubicacion VARCHAR(5) PRIMARY KEY,
     Continente VARCHAR(50),
     Pais VARCHAR(50),
     Ciudad VARCHAR(50),
@@ -45,48 +44,47 @@ CREATE TABLE Ubicacion (
 
 CREATE TABLE Aeropuertos (
     ID_Aeropuerto INT AUTO_INCREMENT PRIMARY KEY,
-    ID_Ubicacion INT,
-    Coordenadas POINT,
-    Ubicacion TEXT,
+    ID_Ubicacion VARCHAR(5),
+    Coordenadas POINT NULL,
     Capacidad_Utilizada INT,
     Capacidad_Maxima INT,
-    Fecha_Actual DATETIME,
+    Fecha_Actual DATETIME NULL,
     FOREIGN KEY (ID_Ubicacion) REFERENCES Ubicacion(ID_Ubicacion)
 );
 
 
 CREATE TABLE Vuelos (
     ID_Vuelo INT AUTO_INCREMENT PRIMARY KEY,
-    Numero_Vuelo VARCHAR(50),
-    Tipo ENUM('Continental', 'Intercontinental'),
-    Hora_Salida DATETIME,
-    Hora_Llegada DATETIME,
-    Distancia FLOAT,
-    Tiempo_Estimado FLOAT,
-    Capacidad_Paquetes INT
+    ID_Ubicacion_Origen INT,
+    ID_Ubicacion_Destino INT,
+    Fecha_Origen DATETIME,
+    Fecha_Destino DATETIME,
+    Tiempo_Estimado FLOAT NULL,
+    Capacidad_Paquetes INT,
+    FOREIGN KEY (ID_Ubicacion_Origen) REFERENCES Rutas(ID_Ubicacion_Origen),
+    FOREIGN KEY (ID_Ubicacion_Destino) REFERENCES Rutas(ID_Ubicacion_Destino)
 );
 
 CREATE TABLE Rutas (
-    ID_Ruta INT AUTO_INCREMENT PRIMARY KEY,
     ID_Ubicacion_Origen INT,
     ID_Ubicacion_Destino INT,
-    ID_Vuelo INT,
+	Tipo ENUM('Continental', 'Intercontinental'),
+    Distancia FLOAT,
     FOREIGN KEY (ID_Ubicacion_Origen) REFERENCES Ubicacion(ID_Ubicacion),
     FOREIGN KEY (ID_Ubicacion_Destino) REFERENCES Ubicacion(ID_Ubicacion),
-    FOREIGN KEY (ID_Vuelo) REFERENCES Vuelos(ID_Vuelo)
+    PRIMARY KEY (ID_Ubicacion_Origen, ID_Ubicacion_Destino)
 );
 
 CREATE TABLE Paquetes (
-    ID_Paquete INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Paquete INT PRIMARY KEY,
     ID_Ubicacion_Origen INT,
     ID_Ubicacion_Destino INT,
     Codigo_Seguridad VARCHAR(255),
-    Estado VARCHAR(255),
     Cantidad_unidades INT,
-    ID_Emisor INT,
-    ID_Receptor INT,
-    Coordenada_Actual VARCHAR(255),
-    ID_Almacen INT,
+    ID_Emisor INT NULL,
+    ID_Receptor INT NULL,
+    Coordenada_Actual VARCHAR(255) NULL,
+    ID_Almacen INT NULL,
 	FOREIGN KEY (ID_Ubicacion_Origen) REFERENCES Ubicacion(ID_Ubicacion),
     FOREIGN KEY (ID_Ubicacion_Destino) REFERENCES Ubicacion(ID_Ubicacion),
     FOREIGN KEY (ID_Emisor) REFERENCES Clientes(ID_Cliente),
@@ -94,12 +92,22 @@ CREATE TABLE Paquetes (
     FOREIGN KEY (ID_Almacen) REFERENCES Almacenes(ID_Almacen) ON DELETE SET NULL
 );
 
+CREATE TABLE Trazabilidad_Paquete (
+    ID_Trazabilidad INT AUTO_INCREMENT PRIMARY KEY,
+    Activo TINYINT,
+    ID_Paquete INT,
+    Estado VARCHAR(255),
+    Fecha_Hora_Cambio DATETIME,
+    Detalles TEXT,
+    FOREIGN KEY (ID_Paquete) REFERENCES Paquetes(ID_Paquete)
+);
+
 CREATE TABLE Envios (
     ID_Envio INT AUTO_INCREMENT PRIMARY KEY,
     ID_Paquete INT,
     ID_Ruta INT,
     Fecha_Recepcion DATETIME,
-    Tiempo_Entrega_Estimada TIME,
+    Tiempo_Entrega_Estimada TIME NULL,
 	Fecha_Limite_Entrega DATETIME,
     Estado VARCHAR(255),
     FOREIGN KEY (ID_Paquete) REFERENCES Paquetes(ID_Paquete),
