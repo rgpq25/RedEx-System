@@ -6,8 +6,10 @@ import Navbar from "@/app/_components/navbar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 function SecurityCodeLoginPage() {
+    const router = useRouter();
     const [code, setCode] = useState("");
 
     return (
@@ -36,8 +38,25 @@ function SecurityCodeLoginPage() {
                             Codigo
                         </Label>
                         {/* <div className="flex flex-row w-full items-center gap-2"> */}
-                        <Input className="mt-1" placeholder="1A324019" />
-                        <Button className=" mt-2 w-[120px]">Ingresar</Button>
+                        <Input
+                            className="mt-1"
+                            placeholder="1A324019"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                        />
+                        <Button
+                            className=" mt-2 w-[120px]"
+                            disabled={code.length === 0}
+                            onClick={() => {
+                                if (code === "admin")
+                                    router.push("/simulation");
+                                else if (code === "operator")
+                                    router.push("/operator");
+                                else router.push("/tracking");
+                            }}
+                        >
+                            Ingresar
+                        </Button>
                         {/* </div> */}
                     </div>
                 </section>

@@ -24,7 +24,7 @@ function Navbar({
                 href="/"
             >
                 <MainLogo className="w-12 h-12" />
-                <p className="font-semibold text-lg">
+                <p className="font-semibold text-lg font-poppins">
                     Red<span className="text-mainRed">Ex</span>
                 </p>
             </Link>
