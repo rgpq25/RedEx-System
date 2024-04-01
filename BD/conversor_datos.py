@@ -6,7 +6,7 @@ import mysql.connector
 
 def extraer_datos(linea, continente_actual):
     partes = linea.split()
-    codigo = partes[1]  # ID_Ubicacion
+    codigo = partes[1]  
     pais = partes[-4]
     ciudad = " ".join(partes[2:-4])  
     abreviacion_ciudad = partes[-3]
@@ -75,14 +75,17 @@ archivos = os.listdir(carpeta)
 for archivo in archivos:
     if archivo.endswith('.txt'):
         with open(f'{carpeta}{archivo}', 'r') as archivo:
+            contador = 0     
             for linea in archivo:
                 if linea.strip():
+                    if contador >= 100:
+                        continue
                     datos = extraer_datos_envio(linea.strip())
                     comando_sql = f"CALL InsertarPaqueteYEnvio('{datos[0]}', '{datos[1]}', '{datos[2]}', {datos[4]}, '{datos[3].strftime('%Y-%m-%d %H:%M')}');"
-                    sql_commands.append(comando_sql)
+                    sql_commands.append(comando_sql) 
+                    contador += 1
 
 
-import mysql.connector
 
 # Credenciales
 host = "redex-bd.c5mwymm8e7fq.us-east-2.rds.amazonaws.com"
