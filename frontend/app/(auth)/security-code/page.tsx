@@ -37,7 +37,6 @@ function SecurityCodeLoginPage() {
                         >
                             Codigo
                         </Label>
-                        {/* <div className="flex flex-row w-full items-center gap-2"> */}
                         <Input
                             className="mt-1"
                             placeholder="1A324019"
@@ -48,11 +47,16 @@ function SecurityCodeLoginPage() {
                             className=" mt-2 w-[120px]"
                             disabled={code.length === 0}
                             onClick={() => {
-                                if (code === "admin")
+                                if (code === "admin") {
+                                    localStorage.setItem("role", "admin");
                                     router.push("/simulation");
-                                else if (code === "operator")
-                                    router.push("/operator");
-                                else router.push("/tracking");
+                                } else if (code === "operator") {
+                                    localStorage.setItem("role", "operator");
+                                    router.push("/manage-packages");
+                                } else {
+                                    localStorage.setItem("role", "user");
+                                    router.push("/tracking");
+                                }
                             }}
                         >
                             Ingresar

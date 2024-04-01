@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info, Settings } from "lucide-react";
 import { useState } from "react";
 import { PackageTable } from "./_components/package-table";
+import Visualizator from "./_components/visualizator";
+import InfoNotation1 from "./_components/info-notation1";
 
 type TabType = "weekly" | "colapse";
 
@@ -15,8 +17,8 @@ function SimulationPage() {
     return (
         <main className="px-10 py-5">
             <h1>Visualizador de simulación</h1>
-            <div className="border border-red-500 w-full" />
-            <section className="flex flex-col 2xl:flex-row 2xl:gap-10 gap-4  w-full">
+            <Visualizator className="border rounded-xl flex justify-center items-center mt-2" />
+            <section className="flex flex-col 2xl:flex-row 2xl:gap-10 gap-4  w-full mt-3">
                 <div className="flex flex-col 2xl:w-[600px]">
                     <div className="flex items-center ">
                         <Settings className="stroke-[1.9px]" />
@@ -37,13 +39,8 @@ function SimulationPage() {
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-start mt-1">
-                        <Info className="shrink-0 stroke-[1px] w-5 h-5 mr-1" />
-                        <p className="font-light text-sm">
-                            La simulacion tomara los datos de entrada para
-                            simular un pronostico de el trafico en el sistema
-                        </p>
-                    </div>
+
+                    <InfoNotation1 />
 
                     <div className="flex  items-end gap-1 mt-3">
                         <div className="flex-1">
@@ -58,9 +55,7 @@ function SimulationPage() {
                     </Button>
                 </div>
 
-                <div className="flex-1">
-                    <PackageTable />
-                </div>
+                <PackageTable />
             </section>
         </main>
     );

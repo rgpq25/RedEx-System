@@ -15,3 +15,6 @@ export type RowPackageType = {
     statusName: PackageStatusName;
     statusVariant: PackageStatusVariant;
 };
+
+
+export type RoleType = "admin" | "operator" | "user" | null;

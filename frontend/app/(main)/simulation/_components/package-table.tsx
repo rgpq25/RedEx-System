@@ -200,9 +200,9 @@ export function PackageTable() {
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center ">
                 <Input
-                    placeholder="Filter emails..."
+                    placeholder="Filtrar paquetes..."
                     value={
                         (table
                             .getColumn("email")
@@ -218,7 +218,7 @@ export function PackageTable() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            Columnas <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -242,7 +242,7 @@ export function PackageTable() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-md border mt-3">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -307,7 +307,7 @@ export function PackageTable() {
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                     >
-                        Previous
+                        Previo
                     </Button>
                     <Button
                         variant="outline"
@@ -315,7 +315,7 @@ export function PackageTable() {
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
                     >
-                        Next
+                        Siguiente
                     </Button>
                 </div>
             </div>
