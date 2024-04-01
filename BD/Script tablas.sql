@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS Notificaciones;
 DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Usuarios;
 DROP TABLE IF EXISTS Simulaciones;
+DROP TABLE IF EXISTS Estado_Paquete;
+DROP TABLE IF EXISTS Trazabilidad_Paquete;
 
 
 CREATE TABLE Usuarios (
@@ -96,10 +98,17 @@ CREATE TABLE Trazabilidad_Paquete (
     ID_Trazabilidad INT AUTO_INCREMENT PRIMARY KEY,
     Activo TINYINT,
     ID_Paquete INT,
-    Estado VARCHAR(255),
+    ID_Estado VARCHAR(255),
     Fecha_Hora_Cambio DATETIME,
     Detalles TEXT,
-    FOREIGN KEY (ID_Paquete) REFERENCES Paquetes(ID_Paquete)
+    FOREIGN KEY (ID_Paquete) REFERENCES Paquetes(ID_Paquete),
+    FOREIGN KEY (ID_Estado) REFERENCES Estado_Paquete(ID_Estado)
+);
+
+CREATE TABLE Estado_Paquete (
+    ID_Estado INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre TINYINT,
+    Variante INT
 );
 
 CREATE TABLE Envios (

@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info, Settings } from "lucide-react";
 import { useState } from "react";
+import { DataTableDemo } from "./_components/package-table";
+// import PackageTable from "./_components/package-table";
 
 type TabType = "weekly" | "colapse";
 
@@ -14,9 +16,9 @@ function SimulationPage() {
     return (
         <main className="px-10 py-5">
             <h1>Visualizador de simulación</h1>
-            <div className="border border-red-500 w-full" /> {/* MAP COMPONENT */}
-            <section className="flex w-full">
-                <div className="flex-1 flex flex-col">
+            <div className="border border-red-500 w-full" />
+            <section className="flex flex-col 2xl:flex-row 2xl:gap-10 gap-4  w-full">
+                <div className="flex flex-col 2xl:w-[600px]">
                     <div className="flex items-center ">
                         <Settings className="stroke-[1.9px]" />
                         <h2 className="ml-1 mr-4">Configuracion</h2>
@@ -44,20 +46,22 @@ function SimulationPage() {
                         </p>
                     </div>
 
-					<div className="flex  items-end gap-1 mt-3">
-						<div className="flex-1">
-							<Label>Entrada de datos Excel</Label>
-							<Input type="text"/>
-						</div>
-						<Button>Subir archivo</Button>
-					</div>
+                    <div className="flex  items-end gap-1 mt-3">
+                        <div className="flex-1">
+                            <Label>Entrada de datos Excel</Label>
+                            <Input type="text" />
+                        </div>
+                        <Button>Subir archivo</Button>
+                    </div>
 
-					<Button className="mx-auto mt-6" size="lg">
-						Empezar simulación
-					</Button>
+                    <Button className="mx-auto mt-6" size="lg">
+                        Empezar simulación
+                    </Button>
                 </div>
 
-                <div className="flex-1"></div>
+                <div className="flex-1">
+                    <DataTableDemo />
+                </div>
             </section>
         </main>
     );
