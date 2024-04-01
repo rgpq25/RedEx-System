@@ -16,5 +16,14 @@ export type RowPackageType = {
     statusVariant: PackageStatusVariant;
 };
 
+export type RowPackageRouteType = {
+    id: string;
+    origin: string;
+    timeOrigin: string | null;
+    destination: string;
+    timeDestination: string | null;
+    isCurrent: boolean;
+}
+
 
 export type RoleType = "admin" | "operator" | "user" | null;

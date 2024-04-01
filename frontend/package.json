@@ -25,6 +25,7 @@
     "react-dom": "^18",
     "react-simple-maps": "^3.0.0",
     "react-tooltip": "^5.26.3",
+    "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7"
   },

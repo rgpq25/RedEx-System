@@ -7,10 +7,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function SecurityCodeLoginPage() {
     const router = useRouter();
     const [code, setCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+
+    const verifiyCode = async () => {
+        setIsLoading(true);
+        setTimeout(()=>{
+            if(code === "error") {
+                toast.error("Codigo incorrecto, intente de nuevo", {
+                    position: "top-center",
+                    duration: 4000
+                })
+                setIsLoading(false);
+                return;
+            }
+            if (code === "admin") {
+                localStorage.setItem("role", "admin");
+                router.push("/simulation");
+            } else if (code === "operator") {
+                localStorage.setItem("role", "operator");
+                router.push("/manage-packages");
+            } else {
+                localStorage.setItem("role", "user");
+                router.push(`/${code}`);
+            }
+        }, 1000)
+    }
 
     return (
         <main className="overflow-x-hidden">
@@ -45,23 +72,12 @@ function SecurityCodeLoginPage() {
                         />
                         <Button
                             className=" mt-2 w-[120px]"
-                            disabled={code.length === 0}
-                            onClick={() => {
-                                if (code === "admin") {
-                                    localStorage.setItem("role", "admin");
-                                    router.push("/simulation");
-                                } else if (code === "operator") {
-                                    localStorage.setItem("role", "operator");
-                                    router.push("/manage-packages");
-                                } else {
-                                    localStorage.setItem("role", "user");
-                                    router.push("/tracking");
-                                }
-                            }}
+                            disabled={code.length === 0 || isLoading}
+                            onClick={verifiyCode}
+                            isLoading={isLoading}
                         >
                             Ingresar
                         </Button>
-                        {/* </div> */}
                     </div>
                 </section>
             </div>

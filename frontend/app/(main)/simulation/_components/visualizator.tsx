@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import {
     ComposableMap,
@@ -25,11 +26,6 @@ const markers = [
 
 function Visualizator({ className }: { className: string }) {
     const [content, setContent] = useState<string>("");
-
-    useEffect(() => {
-        console.log(content);
-    }, [content]);
-
     return (
         <>
             <Tooltip
@@ -39,7 +35,7 @@ function Visualizator({ className }: { className: string }) {
             >
                 {content}
             </Tooltip>
-            <div className={className}>
+            <div className={cn("border rounded-xl flex justify-center items-center flex-1", className)}>
                 <ComposableMap data-tip="">
                     <ZoomableGroup>
                         <Geographies geography={geoUrl}>
