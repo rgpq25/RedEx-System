@@ -5,8 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info, Settings } from "lucide-react";
 import { useState } from "react";
-import { DataTableDemo } from "./_components/package-table";
-// import PackageTable from "./_components/package-table";
+import { PackageTable } from "./_components/package-table";
 
 type TabType = "weekly" | "colapse";
 
@@ -60,7 +59,7 @@ function SimulationPage() {
                 </div>
 
                 <div className="flex-1">
-                    <DataTableDemo />
+                    <PackageTable />
                 </div>
             </section>
         </main>

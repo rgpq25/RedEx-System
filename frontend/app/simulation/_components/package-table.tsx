@@ -85,7 +85,7 @@ const data: RowPackageType[] = [
         destination: "Canada",
         statusName: "Volando",
         statusVariant: "green",
-    },
+    }
 ];
 
 export const columns: ColumnDef<RowPackageType>[] = [
@@ -171,7 +171,7 @@ export const columns: ColumnDef<RowPackageType>[] = [
     },
 ];
 
-export function DataTableDemo() {
+export function PackageTable() {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);
@@ -296,10 +296,10 @@ export function DataTableDemo() {
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
+                {/* <div className="flex-1 text-sm text-muted-foreground">
+                    {table.getFilteredSelectedRowModel().rows.length} de{" "}
+                    {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+                </div> */}
                 <div className="space-x-2">
                     <Button
                         variant="outline"
