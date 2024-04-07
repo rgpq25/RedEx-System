@@ -5,7 +5,7 @@ import java.util.Date;
 public class Paquete {
     private int id;
     private boolean en_almacen;
-    private String id_ciudad_almacen;
+    private String id_ciudad_almacen; //ciudad donde se encuentra actualmente el paquete
     private boolean entregado;
     private PlanRuta plan_rutas;
     private String id_ciudad_destino;

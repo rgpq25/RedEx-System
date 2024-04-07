@@ -215,8 +215,15 @@ public class PSOEngine {
                 return Double.MAX_VALUE; //PEOR FITNESS
             }
 
+            //2. Revisa si el primer vuelo sale despues de la fecha de recepcion del paquete
+            Date fecha_salida = vuelos[indicesVuelos.get(0)].getFecha_salida();
+            if(fecha_salida.before(paquetes[i].getFecha_recepcion())){
+                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                return Double.MAX_VALUE; //PEOR FITNESS
+            }
+
             for(int j=0; j<indicesVuelos.size()-1; j++){
-                // 2. Revisan las horas de llegada y salida del siguiente vuelo
+                // 3. Revisan las horas de llegada y salida del siguiente vuelo
                 Date fecha_llegada = vuelos[indicesVuelos.get(j)].getFecha_llegada();
                 Date fecha_salida_sig = vuelos[indicesVuelos.get(j+1)].getFecha_salida();
                 if(fecha_llegada.after(fecha_salida_sig)){
@@ -224,7 +231,7 @@ public class PSOEngine {
                     return Double.MAX_VALUE; //PEOR FITNESS
                 }
 
-                // 3. Se revisan las ciudades de origen y destino
+                // 4. Se revisan las ciudades de origen y destino
                 String ciudad_destino = vuelos[indicesVuelos.get(j)].getPlan_vuelo().getId_ubicacion_destino();
                 String ciudad_origen_sig = vuelos[indicesVuelos.get(j+1)].getPlan_vuelo().getId_ubicacion_origen();
                 if(!ciudad_destino.equals(ciudad_origen_sig)){
@@ -233,7 +240,7 @@ public class PSOEngine {
                 }
             }
 
-            // 4. Se verifica que la ciudad destino del ultimo vuelo sea la ciudad destino del paquete
+            // 5. Se verifica que la ciudad destino del ultimo vuelo sea la ciudad destino del paquete
             String ciudad_destino = vuelos[indicesVuelos.get(indicesVuelos.size()-1)].getPlan_vuelo().getId_ubicacion_destino();
             String ciudad_destino_paquete = paquetes[i].getId_ciudad_destino();
             if(!ciudad_destino.equals(ciudad_destino_paquete)){
@@ -268,6 +275,7 @@ public class PSOEngine {
         for(int i=0; i<numAeropuertos; i++){
             int capacidad = aeropuertos[i].getCapacidad_utilizada();
             for(int j=0; j<numFlujos; j++){
+                //se asume que el Id aeropuerto es el codigo de la ciudad
                 if(aeropuertos[i].getId().equals(flujo_capacidades.get(j).getId_ciudad())){
                     capacidad += flujo_capacidades.get(j).getCapacidad();
                 }
