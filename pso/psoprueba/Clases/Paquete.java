@@ -24,6 +24,10 @@ public class Paquete {
         this.fecha_recepcion = fecha_recepcion;
     }
 
+    public Paquete(){
+        
+    }
+
     public int getId() {
         return id;
     }

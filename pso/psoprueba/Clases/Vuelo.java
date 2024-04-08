@@ -17,6 +17,8 @@ public class Vuelo {
         this.fecha_llegada = fecha_llegada;
     }
 
+    public Vuelo(){}
+
     public int getId() {
         return id;
     }

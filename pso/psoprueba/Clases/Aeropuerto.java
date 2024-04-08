@@ -12,6 +12,10 @@ public class Aeropuerto {
         this.capacidad_utilizada = capacidad_utilizada;
         this.capacidad_maxima = capacidad_maxima;
     }
+
+    public Aeropuerto(){
+
+    }
     
     public String getId() {
         return id;
@@ -39,5 +43,9 @@ public class Aeropuerto {
 
     public void setCapacidad_utilizada(int capacidad_utilizada) {
         this.capacidad_utilizada = capacidad_utilizada;
+    }
+
+    public void setCapacidad_maxima(int capacidad_maxima) {
+        this.capacidad_maxima = capacidad_maxima;
     }
 }

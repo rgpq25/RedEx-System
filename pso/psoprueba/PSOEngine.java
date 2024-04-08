@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import Clases.Aeropuerto;
 import Clases.FlujoCapacidad;
@@ -33,6 +34,9 @@ public class PSOEngine {
         this.c1 = c1;
         this.c2 = c2;
         this.w = w;
+    }
+
+    public PSOEngine() {
     }
 
 
@@ -173,6 +177,17 @@ public class PSOEngine {
         return fitness;
     }
 
+    public void generarRutasAleatorias(int [][] rutas, int numPaquetes, int numVuelos){
+        Random rand = new Random();
+        for(int i=0; i<numPaquetes; i++){
+            for(int j=0; j<numVuelos; j++){
+                //int valorRand = rand.nextInt(2);
+                rutas[i][j] = rand.nextInt(2);
+                //System.out.println(valorRand);
+            }
+        }
+    }
+
     public void asignar_capacidad_utlizada_inicial(Vuelo[] vuelos, int[] capacidad_vuelos_original){
         for(int i=0; i<vuelos.length; i++){
             vuelos[i].setCapacidad_utilizada(capacidad_vuelos_original[i]);
@@ -204,6 +219,7 @@ public class PSOEngine {
                 }
             }
             if(indicesVuelos.size() == 0){
+                System.out.println("Fallo 0");
                 asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                 return Double.MAX_VALUE; //PEOR FITNESS
             }
@@ -211,13 +227,16 @@ public class PSOEngine {
             String ciudad_origen = paquetes[i].getId_ciudad_almacen();
             String ciudad_origen_primer_vuelo = vuelos[indicesVuelos.get(0)].getPlan_vuelo().getId_ubicacion_origen();
             if(!ciudad_origen.equals(ciudad_origen_primer_vuelo)){
+                System.out.println("Fallo 1");
                 asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                 return Double.MAX_VALUE; //PEOR FITNESS
             }
 
             //2. Revisa si el primer vuelo sale despues de la fecha de recepcion del paquete
+            //NOTA: SE TENDRIA QUE VERIFICAR QUE LA FECHA DE SALIDA DEL PRIMER VUELO SEA DESPUES DE AHORA
             Date fecha_salida = vuelos[indicesVuelos.get(0)].getFecha_salida();
             if(fecha_salida.before(paquetes[i].getFecha_recepcion())){
+                System.out.println("Fallo 2");
                 asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                 return Double.MAX_VALUE; //PEOR FITNESS
             }
@@ -227,6 +246,7 @@ public class PSOEngine {
                 Date fecha_llegada = vuelos[indicesVuelos.get(j)].getFecha_llegada();
                 Date fecha_salida_sig = vuelos[indicesVuelos.get(j+1)].getFecha_salida();
                 if(fecha_llegada.after(fecha_salida_sig)){
+                    System.out.println("Fallo 3");
                     asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                     return Double.MAX_VALUE; //PEOR FITNESS
                 }
@@ -235,6 +255,7 @@ public class PSOEngine {
                 String ciudad_destino = vuelos[indicesVuelos.get(j)].getPlan_vuelo().getId_ubicacion_destino();
                 String ciudad_origen_sig = vuelos[indicesVuelos.get(j+1)].getPlan_vuelo().getId_ubicacion_origen();
                 if(!ciudad_destino.equals(ciudad_origen_sig)){
+                    System.out.println("Fallo 4");
                     asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                     return Double.MAX_VALUE; //PEOR FITNESS
                 }
@@ -244,6 +265,7 @@ public class PSOEngine {
             String ciudad_destino = vuelos[indicesVuelos.get(indicesVuelos.size()-1)].getPlan_vuelo().getId_ubicacion_destino();
             String ciudad_destino_paquete = paquetes[i].getId_ciudad_destino();
             if(!ciudad_destino.equals(ciudad_destino_paquete)){
+                System.out.println("Fallo 5");
                 asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                 return Double.MAX_VALUE; //PEOR FITNESS
             }
@@ -280,6 +302,7 @@ public class PSOEngine {
                     capacidad += flujo_capacidades.get(j).getCapacidad();
                 }
                 if(capacidad < 0 || capacidad > aeropuertos[i].getCapacidad_maxima()){
+                    System.out.println("Fallo 6");
                     asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                     return Double.MAX_VALUE; //PEOR FITNESS
                 }

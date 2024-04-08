@@ -17,6 +17,9 @@ public class PlanVuelo {
         this.capacidad_maxima = capacidad_maxima;
     }
 
+    public PlanVuelo() {
+    }
+
     public int getId() {
         return id;
     }
