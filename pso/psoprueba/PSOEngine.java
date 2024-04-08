@@ -20,12 +20,12 @@ import Clases.Vuelo;
 
 public class PSOEngine {
 
-    int numDimensions = 30; //Number of dimensions for problem
-    int numParticles = 30; //Number of particles in swarm
-    int maxIterations = 10000; //Max number of iterations
-    double c1 = 1.496180; //Cognitive coefficient
-    double c2 = 1.496180; //Social coefficient
-    double w = 0.729844; //Inertia coefficient
+    int numDimensions; //Number of dimensions for problem
+    int numParticles; //Number of particles in swarm
+    int maxIterations; //Max number of iterations
+    double c1; //Cognitive coefficient
+    double c2; //Social coefficient
+    double w; //Inertia coefficient
 
     public PSOEngine (int numDimensions, int numParticles, int maxIterations, double c1, double c2, double w ) {
         this.numDimensions = numDimensions;
@@ -45,15 +45,15 @@ public class PSOEngine {
      * @param particles The set of particles to initialize
      */
     public void initParticles(Particle[] particles) {
+        Random rand = new Random();
         //For each particle
         for (int i=0; i<particles.length;i++) {
-            double[] positions = new double[numDimensions];
+            int[] positions = new int[numDimensions];
             double[] velocities = new double [numDimensions];
-            //For each dimension of the particle assign a random x value [-5.12,5.12] and velocity=0
-            //NOTA: pregunta - el rango de valores dependera del espacio de busqueda de la funcion objetivo
-            //NOTA: esto cambiaria porque se mencion que dependia de la funcion fitness
+            
             for (int j=0; j<numDimensions; j++) {
-                positions[j] = ((Math.random()* ((5.12-(-5.12)))) - 5.12);
+                positions[j] = rand.nextInt(2);
+                //positions[j] = ((Math.random()* ((5.12-(-5.12)))) - 5.12);
                 velocities[j] = 0;
             }
             //Create the particle
@@ -67,12 +67,12 @@ public class PSOEngine {
      * Method to update the velocities vector of a particle
      * @param particle The particle to update the velocity for
      */
-    public void updateVelocity(Particle particle, double[] best, double[] r1, double[] r2) {
+    public void updateVelocity(Particle particle, int[] best, double[] r1, double[] r2) {
         //First we clone the velocities, positions, personal and neighbourhood best
         double[] velocities = particle.velocity.clone();
-        double[] personalBest = particle.personalBest.clone();
-        double[] positions = particle.position.clone();
-        double[] bestNeigh = best.clone();
+        int[] personalBest = particle.personalBest.clone();
+        int[] positions = particle.position.clone();
+        int[] bestNeigh = best.clone();
 
         double[] inertiaTerm = new double[numDimensions];
         double[] difference1 = new double[numDimensions];
@@ -136,7 +136,9 @@ public class PSOEngine {
     public void updatePosition(Particle particle) {
         //Since new position is ALWAYS calculated after calculating new velocity, it is okay to just add old position to the current velocity (as velocity would have already been updated).
         for (int i=0; i<numDimensions; i++) {
-            particle.position[i] = particle.position[i]+particle.velocity[i];
+            double newPosition = particle.position[i]+particle.velocity[i];
+            newPosition = Math.max(0,Math.min(1,newPosition));
+            particle.position[i] = (int) newPosition;
         }
 
     }
@@ -147,13 +149,13 @@ public class PSOEngine {
      * @return The best (fittest) particle from the collection of particles
      */
 
-    //NOTA: esto cambiaria, en este caso se esta buscando el menor fitness
-    public double[] findBest(Particle[] particles) {
-        double[] best = null;
+    
+    public int[] findBest(Particle[] particles, Paquete[] paquetes, Vuelo[] vuelos, Aeropuerto[] aeropuertos) {
+        int[] best = null;
         double bestFitness = Double.MAX_VALUE;
         for(int i=0; i<numParticles; i++) {
-            if (evaluateFitness(particles[i].personalBest)<= bestFitness) {
-                bestFitness = evaluateFitness(particles[i].personalBest);
+            if (evaluateFitness2(particles[i].personalBest,paquetes,vuelos,aeropuertos)<= bestFitness) {
+                bestFitness = evaluateFitness2(particles[i].personalBest,paquetes,vuelos,aeropuertos);
                 best = particles[i].personalBest;
             }
         }
@@ -166,14 +168,14 @@ public class PSOEngine {
      * @return The fitness of the particle
      */
 
-    //NOTA: esto cambiaria
-    public double evaluateFitness(double[] positions) {
+    public double evaluateFitness(int[] positions) {
         double fitness = 0;
         for (int i=0; i<numDimensions; i++) {
-            fitness = fitness + (Math.pow(positions[i],2)-(10*Math.cos(2*Math.PI*positions[i])));
+            fitness  = fitness + positions[i];
+            //fitness = fitness + (Math.pow(positions[i],2)-(10*Math.cos(2*Math.PI*positions[i])));
         }
 
-        fitness = fitness + (10*numDimensions);
+        //fitness = fitness + (10*numDimensions);
         return fitness;
     }
 
@@ -194,10 +196,24 @@ public class PSOEngine {
         }
     }
 
-    public double evaluateFitness2(int[][] rutas,Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos){
+    public int[][] generarMatrizRutasApartirDePosiciones(int [] positions,int numPaquetes ,int numVuelos){
+        int [][] rutas = new int[numPaquetes][numVuelos];
+        int contador = 0;
+        for(int i=0; i<numPaquetes; i++){
+            for(int j=0; j<numVuelos; j++){
+                rutas[i][j] = positions[contador];
+                contador++;
+            }
+        }
+        return rutas;
+    }
+
+    public double evaluateFitness2(int[] positions,Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos){
+        double fitness = 0;
         int numPaquetes = paquetes.length;
         int numVuelos = vuelos.length;
         int numAeropuertos = aeropuertos.length;
+        int [][] rutas = generarMatrizRutasApartirDePosiciones(positions, numPaquetes, numVuelos);
         // rutas[i][j] = 1 si el paquete i va en el vuelo j;  0 en otro caso
 
         //VALIDAR LA SECUENCIA DE VUELOS; SI NO ES VALIDO, DEVUELVE EL "PEOR" FITNESS
@@ -219,26 +235,29 @@ public class PSOEngine {
                 }
             }
             if(indicesVuelos.size() == 0){
-                System.out.println("Fallo 0");
+                //System.out.println("Fallo 0");
                 asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                 return Double.MAX_VALUE; //PEOR FITNESS
+                //fitness = fitness + 1000000;
             }
             //1. Revisa si el primer vuelo viene de la ciudad del paquete
             String ciudad_origen = paquetes[i].getId_ciudad_almacen();
             String ciudad_origen_primer_vuelo = vuelos[indicesVuelos.get(0)].getPlan_vuelo().getId_ubicacion_origen();
             if(!ciudad_origen.equals(ciudad_origen_primer_vuelo)){
-                System.out.println("Fallo 1");
-                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                return Double.MAX_VALUE; //PEOR FITNESS
+                //System.out.println("Fallo 1");
+                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                fitness = fitness + 1000000;
+                //return Double.MAX_VALUE; //PEOR FITNESS
             }
 
             //2. Revisa si el primer vuelo sale despues de la fecha de recepcion del paquete
             //NOTA: SE TENDRIA QUE VERIFICAR QUE LA FECHA DE SALIDA DEL PRIMER VUELO SEA DESPUES DE AHORA
             Date fecha_salida = vuelos[indicesVuelos.get(0)].getFecha_salida();
             if(fecha_salida.before(paquetes[i].getFecha_recepcion())){
-                System.out.println("Fallo 2");
-                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                return Double.MAX_VALUE; //PEOR FITNESS
+                //System.out.println("Fallo 2");
+                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                fitness = fitness + 1000000;
+                //return Double.MAX_VALUE; //PEOR FITNESS
             }
 
             for(int j=0; j<indicesVuelos.size()-1; j++){
@@ -246,18 +265,20 @@ public class PSOEngine {
                 Date fecha_llegada = vuelos[indicesVuelos.get(j)].getFecha_llegada();
                 Date fecha_salida_sig = vuelos[indicesVuelos.get(j+1)].getFecha_salida();
                 if(fecha_llegada.after(fecha_salida_sig)){
-                    System.out.println("Fallo 3");
-                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                    return Double.MAX_VALUE; //PEOR FITNESS
+                    //System.out.println("Fallo 3");
+                    fitness = fitness + 1000000;
+                    //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                    //return Double.MAX_VALUE; //PEOR FITNESS
                 }
 
                 // 4. Se revisan las ciudades de origen y destino
                 String ciudad_destino = vuelos[indicesVuelos.get(j)].getPlan_vuelo().getId_ubicacion_destino();
                 String ciudad_origen_sig = vuelos[indicesVuelos.get(j+1)].getPlan_vuelo().getId_ubicacion_origen();
                 if(!ciudad_destino.equals(ciudad_origen_sig)){
-                    System.out.println("Fallo 4");
-                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                    return Double.MAX_VALUE; //PEOR FITNESS
+                    //System.out.println("Fallo 4");
+                    fitness = fitness + 1000000;
+                    //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                    //return Double.MAX_VALUE; //PEOR FITNESS
                 }
             }
 
@@ -265,9 +286,10 @@ public class PSOEngine {
             String ciudad_destino = vuelos[indicesVuelos.get(indicesVuelos.size()-1)].getPlan_vuelo().getId_ubicacion_destino();
             String ciudad_destino_paquete = paquetes[i].getId_ciudad_destino();
             if(!ciudad_destino.equals(ciudad_destino_paquete)){
-                System.out.println("Fallo 5");
-                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                return Double.MAX_VALUE; //PEOR FITNESS
+                //System.out.println("Fallo 5");
+                fitness = fitness + 1000000;
+                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                //return Double.MAX_VALUE; //PEOR FITNESS
             }
 
             //Todo OK, entonces se calcula la diferencia entre la fecha de llegada del ultimo vuelo y la fecha de entrega del paquete
@@ -302,9 +324,10 @@ public class PSOEngine {
                     capacidad += flujo_capacidades.get(j).getCapacidad();
                 }
                 if(capacidad < 0 || capacidad > aeropuertos[i].getCapacidad_maxima()){
-                    System.out.println("Fallo 6");
-                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-                    return Double.MAX_VALUE; //PEOR FITNESS
+                    //System.out.println("Fallo 6");
+                    fitness = fitness + 1000000;
+                    //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                    //return Double.MAX_VALUE; //PEOR FITNESS
                 }
             }
         }
@@ -315,7 +338,8 @@ public class PSOEngine {
             promedio_tiempo += porcentaje_tiempo[i];
         }
         promedio_tiempo = promedio_tiempo/numPaquetes;
-
-        return promedio_tiempo;
+        asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+        fitness = fitness + promedio_tiempo;
+        return fitness;
     }
 }

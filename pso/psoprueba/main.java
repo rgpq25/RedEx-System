@@ -1,6 +1,8 @@
 import Clases.Aeropuerto;
 import Clases.Paquete;
 import Clases.Vuelo;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class main {
     public static void main(String[] args) {
@@ -13,25 +15,23 @@ public class main {
         int numAeropuertos = aeropuertos.length;
         int numPaquetes = paquetes.length;
         int numVuelos = vuelos.length;
-        //System.out.println(numAeropuertos + " " + numPaquetes + " " + numVuelos);
-        
-        int [][] rutas = new int[numPaquetes][numVuelos];
 
-        PSOEngine pso = new PSOEngine();
-        System.out.print("Rutas: ");
+        //podria ordenar los paquetes y vuelos de acuerdo a las fechas
+        //ver el tema de reposicionamiento con las velocidades de nuevo
         
-        pso.generarRutasAleatorias(rutas, numPaquetes, numVuelos);
-        
-        /*
-        for (int i = 0; i < numPaquetes; i++) {
-            for (int j = 0; j < numVuelos; j++) {
-                System.out.print(rutas[i][j] + " ");
-            }
-            System.out.println();
-        }
-         */
-        double resultadoFitness = pso.evaluateFitness2(rutas, paquetes, vuelos, aeropuertos);
-        System.out.println(resultadoFitness);
-        System.out.println("Fin :D");
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        // Define a date and time format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Format the current date and time and print it
+        String formattedDateTime = currentDateTime.format(formatter);
+        System.out.println("Current Date and Time: " + formattedDateTime);
+
+        PSOimplementation p = new PSOimplementation(paquetes,vuelos,aeropuertos);
+
+        currentDateTime = LocalDateTime.now();
+        formattedDateTime = currentDateTime.format(formatter);
+        System.out.println("Current Date and Time: " + formattedDateTime);
     }
 }

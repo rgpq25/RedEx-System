@@ -1,21 +1,30 @@
+import Clases.Aeropuerto;
+import Clases.Paquete;
+import Clases.Vuelo;
+
 /**
  * Class implementing the PSO algorithm.
  */
 public class PSOimplementation {
 
-	public final int numDimensions = 30; //Number of dimensions for problem
-	public final int numParticles = 30; //Number of particles in swarm
-	public final int maxIterations = 10000; //Max number of iterations
-	public final double c1 = 1.496180; //Cognitive coefficient
-	public final double c2 = 1.496180; //Social coefficient
-	public final double w = 0.729844; //Inertia coefficient
+	public final int numDimensions; //Number of dimensions for problem
+	public final int numParticles = 1000; //Number of particles in swarm
+	public final int maxIterations = 10; //Max number of iterations
+	public final double c1 = 1.4; //Cognitive coefficient
+	public final double c2 = 1.4; //Social coefficient
+	public final double w = 0.7; //Inertia coefficient
 	public  double[] r1; //Random vector 1
 	public  double[] r2;  //Random vector 2
-	public double[] best;
+	public int[] best;
 	Particle[] particles; //Array to hold all particles
 	
-	public PSOimplementation() {
+	public PSOimplementation(Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos) {
 		//PSO algorithm
+		int numPaquetes = paquetes.length;
+        int numVuelos = vuelos.length;
+        int numAeropuertos = aeropuertos.length;
+
+		this.numDimensions = numPaquetes*numVuelos;
 
 		particles = new Particle[numParticles];
 		PSOEngine PSO = new PSOEngine(numDimensions, numParticles, maxIterations, c1, c2, w);
@@ -28,15 +37,17 @@ public class PSOimplementation {
 		while (numIter<maxIterations) {
 			// Evaluate fitness of each particle
 			for (int i=0; i<numParticles; i++) {
-				particles[i].fitness = PSO.evaluateFitness(particles[i].position);
+				//particles[i].fitness = PSO.evaluateFitness(particles[i].position);
+				particles[i].fitness = PSO.evaluateFitness2(particles[i].position, paquetes, vuelos, aeropuertos);
 
 				//update personal best position 
-				if (particles[i].fitness <= PSO.evaluateFitness(particles[i].personalBest)) {
+				//if (particles[i].fitness <= PSO.evaluateFitness(particles[i].personalBest)) {
+				if (particles[i].fitness <= PSO.evaluateFitness2(particles[i].personalBest, paquetes, vuelos, aeropuertos)) {
 					particles[i].personalBest = particles[i].position.clone();
 				}
 			}
 			//Find best particle in set
-			best = PSO.findBest(particles);
+			best = PSO.findBest(particles,paquetes, vuelos, aeropuertos);
 
 			//Initialize the random vectors for updates
 			r1 = new double[numDimensions];
@@ -54,8 +65,10 @@ public class PSOimplementation {
 			numIter++;
 		}
 		//Print the best solution
-		print((best));
-		System.out.println(PSO.evaluateFitness(best));
+		//print((best));
+		//System.out.println(PSO.evaluateFitness(best));
+		
+		System.out.println(PSO.evaluateFitness2(best, paquetes, vuelos, aeropuertos));
 	}
 
 
@@ -63,7 +76,7 @@ public class PSOimplementation {
 	 * Helped method to print an array as a vector
 	 * @param a The given 1-D array
 	 */
-	public void print (double[] a) {
+	public void print (int[] a) {
 		System.out.print("< ");
 		for (int i=0; i<a.length; i++) {
 			System.out.print(a[i]  + " ");
@@ -71,9 +84,9 @@ public class PSOimplementation {
 		System.out.println(" > ");
 
 	}
-	
+	/* 
 	public static void main(String[] args) {
 		PSOimplementation p = new PSOimplementation(); 
 	}
-
+	*/
 }
