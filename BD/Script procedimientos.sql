@@ -8,8 +8,8 @@ DELIMITER #
 CREATE PROCEDURE InsertarVueloYRuta(
     IN _origen VARCHAR(5),
     IN _destino VARCHAR(5),
-    IN _fecha_origen DATETIME,
-    IN _fecha_destino DATETIME,
+    IN _hora_origen VARCHAR(255),
+    IN _hora_destino VARCHAR(255),
     IN _capacidad_paquetes INT
 )
 BEGIN
@@ -34,20 +34,10 @@ BEGIN
     ELSE
         SET _tipo = 'Intercontinental';
     END IF;
-
-    -- Verifica si la ruta existe, si no, la inserta
-    IF NOT EXISTS (SELECT * FROM Rutas WHERE ID_Ubicacion_Origen = _origen AND ID_Ubicacion_Destino = _destino) THEN
-        INSERT INTO Rutas (ID_Ubicacion_Origen, ID_Ubicacion_Destino, Tipo, Distancia)
-        VALUES (_origen, _destino, _tipo, 0);  -- Considera actualizar la distancia con un valor real en lugar de 0
-    END IF;
-
-    -- Obtener el ID de la ruta
-    SELECT ID_Ruta INTO _id_ruta FROM Rutas
-    WHERE ID_Ubicacion_Origen = _origen AND ID_Ubicacion_Destino = _destino;
-
+    
     -- Inserta en la tabla Vuelos con el ID de la ruta
-    INSERT INTO Vuelos (ID_Ruta, Fecha_Origen, Fecha_Destino, Capacidad_Paquetes)
-    VALUES (_id_ruta, _fecha_origen, _fecha_destino, _capacidad_paquetes);
+    INSERT INTO Plan_Vuelo (ID_Ubicacion_Destino, ID_Ubicacion_Destino, Hora_Ciudad_Origen, Hora_Ciudad_Destino, Capacidad_Maxima)
+    VALUES (_origen, _destino, _hora_origen, _hora_destino, _capacidad_paquetes);
     
 END#
 
@@ -83,21 +73,23 @@ CREATE PROCEDURE InsertarPaqueteYEnvio(
 )
 BEGIN
 	DECLARE _ID_Ruta INT;
-
-    -- Intenta encontrar una ruta existente que coincida con las ubicaciones de origen y destino
-    SELECT ID_Ruta INTO _ID_Ruta
-    FROM Rutas
-    WHERE ID_Ubicacion_Origen = _ID_Ubicacion_Origen AND ID_Ubicacion_Destino = _ID_Ubicacion_Destino
-    LIMIT 1;
+    DECLARE _Coordenadas POINT;
+    DECLARE _ID_Aeropuerto INT;
+    DECLARE _ID_Envio INT;
+    DECLARE i INT DEFAULT 0;
     
-    -- Inserta en la tabla Paquetes
-    INSERT INTO Paquetes (Identificador_Envio, ID_Ubicacion_Origen, ID_Ubicacion_Destino, Codigo_Seguridad, Cantidad_unidades)
-    VALUES (_ID_Paquete, _ID_Ubicacion_Origen, _ID_Ubicacion_Destino, "-", _Cantidad_unidades);
+    SELECT Coordenadas INTO _Coordenadas FROM Ubicacion WHERE ID_Ubicacion = _ID_Ubicacion_Origen;
+    SELECT ID_Aeropuerto INTO _ID_Aeropuerto FROM Aeropuerto WHERE ID_Ubicacion = _ID_Ubicacion_Origen;
+    
+    
+    INSERT INTO Envio (Codigo_paquete,ID_Ubicacion_Origen, ID_Ubicacion_Destino, Fecha_Recepcion, Estado, Cantidad_Paquetes)
+    VALUES (_ID_Paquete, _ID_Ubicacion_Origen, _ID_Ubicacion_Destino, NOW(), 'En almacen origen', _Cantidad_unidades);
+    
 
-    -- Inserta en la tabla Envios
-    -- Asumimos que el ID_Ruta se obtiene o se calcula de alguna manera. Aquí se inserta como NULL.
-    INSERT INTO Envios (ID_Paquete, ID_Ubicacion_Origen, ID_Ubicacion_Destino, Fecha_Recepcion, Fecha_Limite_Entrega, Estado)
-    VALUES (_ID_Paquete, _ID_Ubicacion_Origen, _ID_Ubicacion_Destino, Fecha_Recepcion, NOW(), 'En tránsito');
+    WHILE i < _Cantidad_unidades DO
+        INSERT INTO Paquete (Coordenada_Actual,ID_Almacen,En_Almacen,Entregado,ID_Envio) VALUES (_Coordenadas,_ID_Aeropuerto , 1, 0, @@last_insert_id);
+        SET i = i + 1;
+    END WHILE;
 END#
 
 DELIMITER ;
