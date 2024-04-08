@@ -6,15 +6,16 @@ import mysql.connector
 
 def extraer_datos(linea, continente_actual):
     partes = linea.split()
-    codigo = partes[1]  
+    codigo = partes[1]
     pais = partes[-4]
-    ciudad = " ".join(partes[2:-4])  
+    ciudad = " ".join(partes[2:-4])
     abreviacion_ciudad = partes[-3]
     zona_horaria = partes[-2]
     capacidad_maxima = int(partes[-1])
     return codigo, continente_actual, pais, ciudad, abreviacion_ciudad, zona_horaria, capacidad_maxima
 
 sql_commands = []
+codigos_ciudades = set()  
 
 with open('./datos_raw/Aeropuerto.husos.v1.incompleto.txt', 'r') as archivo:
     for linea in archivo:
@@ -25,8 +26,9 @@ with open('./datos_raw/Aeropuerto.husos.v1.incompleto.txt', 'r') as archivo:
             continue
         if linea.strip() and linea[0].isdigit():
             datos = extraer_datos(linea, continente_actual)
+            codigos_ciudades.add(datos[0])  # Añade el código de la ciudad al conjunto
             sql_command = f"CALL InsertarUbicacionYAlmacen('{datos[0]}', '{datos[1]}', '{datos[2]}', '{datos[3]}', '{datos[4]}', '{datos[5]}', {datos[6]});"
-            #sql_commands.append(sql_command)
+            sql_commands.append(sql_command)
 
 
 def extraer_datos_vuelo(linea):
@@ -38,9 +40,9 @@ def extraer_datos_vuelo(linea):
     capacidad_paquetes = partes[4]
 
     # Obtener la fecha actual y combinarla con las horas
-    fecha_actual = datetime.now().date()
-    fecha_hora_salida = datetime.strptime(f"{fecha_actual} {hora_salida_str}", "%Y-%m-%d %H:%M")
-    fecha_hora_llegada = datetime.strptime(f"{fecha_actual} {hora_llegada_str}", "%Y-%m-%d %H:%M")
+    
+    fecha_hora_salida = datetime.strptime(hora_salida_str, '%H:%M').time()
+    fecha_hora_llegada = datetime.strptime(hora_llegada_str, "%H:%M")
 
     return origen, destino, fecha_hora_salida, fecha_hora_llegada, capacidad_paquetes
 
@@ -53,7 +55,7 @@ with open('./datos_raw/Planes.vuelo.v1.incompleto.txt', 'r') as archivo:
             fecha_llegada_str = datos[3].strftime('%Y-%m-%d %H:%M:%S')
             # Crear el comando SQL
             command = f"CALL InsertarVueloYRuta('{datos[0]}', '{datos[1]}', '{fecha_salida_str}', '{fecha_llegada_str}', {datos[4]});"
-            #sql_commands.append(command)
+            sql_commands.append(command)
 
 
 def extraer_datos_envio(linea):
@@ -77,13 +79,13 @@ for archivo in archivos:
         with open(f'{carpeta}{archivo}', 'r') as archivo:
             contador = 0     
             for linea in archivo:
-                if linea.strip():
-                    if contador >= 100:
-                        continue
+                if linea.strip() and contador < 50:
                     datos = extraer_datos_envio(linea.strip())
-                    comando_sql = f"CALL InsertarPaqueteYEnvio('{datos[0]}', '{datos[1]}', '{datos[2]}', {datos[4]}, '{datos[3].strftime('%Y-%m-%d %H:%M')}');"
-                    sql_commands.append(comando_sql) 
-                    contador += 1
+                    # Verifica si ambos códigos (origen y destino) están en el conjunto de códigos de ciudades
+                    if datos[1] in codigos_ciudades and datos[2] in codigos_ciudades:
+                        comando_sql = f"CALL InsertarPaqueteYEnvio('{datos[0]}', '{datos[1]}', '{datos[2]}', {datos[4]}, '{datos[3].strftime('%Y-%m-%d %H:%M')}');"
+                        sql_commands.append(comando_sql)
+                        contador += 1
 
 
 
