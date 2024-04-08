@@ -14,8 +14,6 @@ DROP TABLE IF EXISTS Usuarios;
 DROP TABLE IF EXISTS Ubicacion;
 DROP TABLE IF EXISTS Simulaciones;
 
-
-
 CREATE TABLE Usuarios (
     ID_Usuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(255),
@@ -42,7 +40,7 @@ CREATE TABLE Ubicacion (
     ID_Ubicacion VARCHAR(5) PRIMARY KEY,
     Continente VARCHAR(255),
     Pais VARCHAR(255),
-	Coordenadas POINT,
+	Coordenadas POINT NULL,
     Ciudad VARCHAR(255),
     Ciudad_abreviada VARCHAR(255),
     Zona_Horaria VARCHAR(255)
@@ -56,13 +54,12 @@ CREATE TABLE Aeropuerto (
     FOREIGN KEY (ID_Ubicacion) REFERENCES Ubicacion(ID_Ubicacion)
 );
 
-
 CREATE TABLE Plan_Vuelo (
     ID_Plan_Vuelo INT AUTO_INCREMENT PRIMARY KEY,
     ID_Ubicacion_Origen VARCHAR(5),
     ID_Ubicacion_Destino VARCHAR(5),
-    Hora_Ciudad_Origen VARCHAR(255),
-    Hora_Ciudad_Destino VARCHAR(255),
+    Hora_Ciudad_Origen TIME,
+    Hora_Ciudad_Destino TIME,
     Capacidad_Maxima INT,
     FOREIGN KEY (ID_Ubicacion_Origen) REFERENCES Ubicacion(ID_Ubicacion),
     FOREIGN KEY (ID_Ubicacion_Destino) REFERENCES Ubicacion(ID_Ubicacion)
@@ -106,7 +103,7 @@ CREATE TABLE Envio (
     Fecha_Limite_Entrega DATETIME NULL,
     Estado VARCHAR(255),
     Cantidad_Paquetes INT,
-    Codigo_Seguridad VARCHAR(255) NULL,
+    Codigo_Seguridad VARCHAR(255) NULL UNIQUE,
     ID_Emisor INT NULL,
     ID_Receptor INT NULL,
     FOREIGN KEY (ID_Ubicacion_Origen) REFERENCES Ubicacion(ID_Ubicacion),
