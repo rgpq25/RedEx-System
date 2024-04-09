@@ -166,4 +166,31 @@ public class Funciones {
 		}
 		return vuelos;
 	}
+
+    public void ordernarPaquetes(Paquete []paquetes){
+        //ordenar array de paquetes por fecha de recepcion
+        for (int i = 0; i < paquetes.length; i++) {
+            for (int j = 0; j < paquetes.length - 1; j++) {
+                if (paquetes[j].getFecha_recepcion().compareTo(paquetes[j + 1].getFecha_recepcion()) > 0) {
+                    Paquete temp = paquetes[j];
+                    paquetes[j] = paquetes[j + 1];
+                    paquetes[j + 1] = temp;
+                }
+            }
+        }
+
+    }
+
+    public void ordernarVuelos(Vuelo []vuelos){
+        //ordenar array de vuelos por fecha de salida
+        for (int i = 0; i < vuelos.length; i++) {
+            for (int j = 0; j < vuelos.length - 1; j++) {
+                if (vuelos[j].getFecha_salida().compareTo(vuelos[j + 1].getFecha_salida()) > 0) {
+                    Vuelo temp = vuelos[j];
+                    vuelos[j] = vuelos[j + 1];
+                    vuelos[j + 1] = temp;
+                }
+            }
+        }
+    }
 }

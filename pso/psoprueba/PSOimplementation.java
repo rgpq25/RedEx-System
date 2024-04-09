@@ -1,15 +1,15 @@
 import Clases.Aeropuerto;
 import Clases.Paquete;
 import Clases.Vuelo;
-
 /**
  * Class implementing the PSO algorithm.
  */
+
 public class PSOimplementation {
 
 	public final int numDimensions; //Number of dimensions for problem
-	public final int numParticles = 1000; //Number of particles in swarm
-	public final int maxIterations = 10; //Max number of iterations
+	public final int numParticles = 100; //Number of particles in swarm
+	public final int maxIterations = 100; //Max number of iterations
 	public final double c1 = 1.4; //Cognitive coefficient
 	public final double c2 = 1.4; //Social coefficient
 	public final double w = 0.7; //Inertia coefficient
@@ -30,18 +30,16 @@ public class PSOimplementation {
 		PSOEngine PSO = new PSOEngine(numDimensions, numParticles, maxIterations, c1, c2, w);
 
 		//Initialize particles
-		PSO.initParticles(particles);
+		PSO.initParticles(particles,paquetes.length, vuelos.length);
 
 		//PSO loop
 		int numIter = 0;
 		while (numIter<maxIterations) {
 			// Evaluate fitness of each particle
 			for (int i=0; i<numParticles; i++) {
-				//particles[i].fitness = PSO.evaluateFitness(particles[i].position);
 				particles[i].fitness = PSO.evaluateFitness2(particles[i].position, paquetes, vuelos, aeropuertos);
 
 				//update personal best position 
-				//if (particles[i].fitness <= PSO.evaluateFitness(particles[i].personalBest)) {
 				if (particles[i].fitness <= PSO.evaluateFitness2(particles[i].personalBest, paquetes, vuelos, aeropuertos)) {
 					particles[i].personalBest = particles[i].position.clone();
 				}
@@ -63,19 +61,12 @@ public class PSOimplementation {
 				PSO.updatePosition(particles[i]);
 			}
 			numIter++;
-		}
-		//Print the best solution
-		//print((best));
-		//System.out.println(PSO.evaluateFitness(best));
-		
+		}	
 		System.out.println(PSO.evaluateFitness2(best, paquetes, vuelos, aeropuertos));
 	}
 
 
-	/**
-	 * Helped method to print an array as a vector
-	 * @param a The given 1-D array
-	 */
+
 	public void print (int[] a) {
 		System.out.print("< ");
 		for (int i=0; i<a.length; i++) {
