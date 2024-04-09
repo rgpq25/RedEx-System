@@ -146,7 +146,18 @@ public class PSOEngine {
     public void updatePosition(Particle particle) {
         //The new position is ALWAYS calculated after calculating new velocity
         for (int i=0; i<numDimensions; i++) {
-            particle.position[i] += particle.velocity[i] >= 0.5 ? 1 : 0;
+            double newPosition = particle.position[i]+particle.velocity[i];
+            newPosition = Math.max(0,Math.min(1,newPosition));
+            particle.position[i] = (int) newPosition;
+            /* 
+            double newPos = particle.position[i] + particle.velocity[i];
+            if(newPos >= 0.5){
+                particle.position[i] = 1;
+            }
+            else{
+                particle.position[i] = 0;
+            }*/
+            //particle.position[i] = particle.velocity[i] >= 0.5 ? 1 : 0;
         }
 
     }
@@ -217,6 +228,19 @@ public class PSOEngine {
         return rutas;
     }
 
+    public void printPosiciones(int[] positions,int numPaquetes ,int numVuelos){
+        int contador = 0;
+        for(int i=0; i<numPaquetes; i++){
+            System.out.print("Paquete " + i + ": ");
+            for(int j=0; j<numVuelos; j++){
+                System.out.print(positions[contador] + " ");
+                contador++;
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
     public double evaluateFitness2(int[] positions,Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos){
         double fitness = 0;
         int numPaquetes = paquetes.length;
@@ -251,10 +275,11 @@ public class PSOEngine {
             String ciudad_origen_primer_vuelo = vuelos[indicesVuelos.get(0)].getPlan_vuelo().getId_ubicacion_origen();
             if(!ciudad_origen.equals(ciudad_origen_primer_vuelo)){
                 //System.out.println("Fallo 1");
-                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                fitness = fitness + 1000;
+                //fitness = fitness + 1000;
+                return 1000000;
                 
             }
 
@@ -263,10 +288,11 @@ public class PSOEngine {
             Date fecha_salida = vuelos[indicesVuelos.get(0)].getFecha_salida();
             if(fecha_salida.before(paquetes[i].getFecha_recepcion())){
                 //System.out.println("Fallo 2");
-                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                fitness = fitness + 1000;
+                //fitness = fitness + 1000;
+                return 900000;
                 
             }
 
@@ -276,10 +302,11 @@ public class PSOEngine {
                 Date fecha_salida_sig = vuelos[indicesVuelos.get(j+1)].getFecha_salida();
                 if(fecha_llegada.after(fecha_salida_sig)){
                     //System.out.println("Fallo 3");
-                    //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
 
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                    fitness = fitness + 1000;
+                    //fitness = fitness + 1000;
+                    return 800000;
                 }
 
                 // 4. Se revisan las ciudades de origen y destino
@@ -287,9 +314,10 @@ public class PSOEngine {
                 String ciudad_origen_sig = vuelos[indicesVuelos.get(j+1)].getPlan_vuelo().getId_ubicacion_origen();
                 if(!ciudad_destino.equals(ciudad_origen_sig)){
                     //System.out.println("Fallo 4");
-
+                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                    fitness = fitness + 1000;
+                    //fitness = fitness + 1000;
+                    return 700000;
                 }
             }
 
@@ -298,10 +326,11 @@ public class PSOEngine {
             String ciudad_destino_paquete = paquetes[i].getId_ciudad_destino();
             if(!ciudad_destino.equals(ciudad_destino_paquete)){
                 //System.out.println("Fallo 5");
-                //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                fitness = fitness + 1000;
+                //fitness = fitness + 1000;
+                return 600000;
             }
 
             //Todo OK, entonces se calcula la diferencia entre la fecha de llegada del ultimo vuelo y la fecha de entrega del paquete
@@ -337,10 +366,11 @@ public class PSOEngine {
                 }
                 if(capacidad < 0 || capacidad > aeropuertos[i].getCapacidad_maxima()){
                     //System.out.println("Fallo 6");
-                    //asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
+                    asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
 
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
-                    fitness = fitness + 1000;
+                    //fitness = fitness + 1000;
+                    return 500000;
                 }
             }
         }
@@ -352,7 +382,7 @@ public class PSOEngine {
         }
         promedio_tiempo = promedio_tiempo/numPaquetes;
         asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
-        fitness = fitness + promedio_tiempo;
+        fitness = promedio_tiempo;
         return fitness;
     }
 }

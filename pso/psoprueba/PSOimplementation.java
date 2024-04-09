@@ -8,11 +8,11 @@ import Clases.Vuelo;
 public class PSOimplementation {
 
 	public final int numDimensions; //Number of dimensions for problem
-	public final int numParticles = 100; //Number of particles in swarm
+	public final int numParticles = 100000; //Number of particles in swarm
 	public final int maxIterations = 100; //Max number of iterations
-	public final double c1 = 1.4; //Cognitive coefficient
-	public final double c2 = 1.4; //Social coefficient
-	public final double w = 0.7; //Inertia coefficient
+	public final double c1 = 1.4; //Cognitive coefficient 1.4
+	public final double c2 = 1.4; //Social coefficient 1.4
+	public final double w = 0.7; //Inertia coefficient 0.7
 	public  double[] r1; //Random vector 1
 	public  double[] r2;  //Random vector 2
 	public int[] best;
@@ -63,6 +63,7 @@ public class PSOimplementation {
 			numIter++;
 		}	
 		System.out.println(PSO.evaluateFitness2(best, paquetes, vuelos, aeropuertos));
+		PSO.printPosiciones(best, numPaquetes, numVuelos);
 	}
 
 
