@@ -242,7 +242,7 @@ public class PSOEngine {
     }
 
     public double evaluateFitness2(int[] positions,Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos){
-        double fitness = 0;
+        double fitness = Double.MAX_VALUE;;
         int numPaquetes = paquetes.length;
         int numVuelos = vuelos.length;
         int numAeropuertos = aeropuertos.length;
@@ -279,8 +279,11 @@ public class PSOEngine {
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
-                return 1000000;
+                return fitness;
                 
+            }
+            else{
+                fitness = fitness - 1000000;
             }
 
             //2. Revisa si el primer vuelo sale despues de la fecha de recepcion del paquete
@@ -292,8 +295,12 @@ public class PSOEngine {
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
-                return 900000;
+                //return 900000;
+                return fitness;
                 
+            }
+            else{
+                fitness = fitness - 1000000;
             }
 
             for(int j=0; j<indicesVuelos.size()-1; j++){
@@ -306,7 +313,11 @@ public class PSOEngine {
 
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
-                    return 800000;
+                    //return 800000;
+                    return fitness;
+                }
+                else{
+                    fitness = fitness - 1000000;
                 }
 
                 // 4. Se revisan las ciudades de origen y destino
@@ -317,7 +328,11 @@ public class PSOEngine {
                     asignar_capacidad_utlizada_inicial(vuelos, capacidad_vuelos_original);
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
-                    return 700000;
+                    //return 700000;
+                    return fitness;
+                }
+                else{
+                    fitness = fitness - 1000000;
                 }
             }
 
@@ -330,7 +345,11 @@ public class PSOEngine {
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
-                return 600000;
+                //return 600000;
+                return fitness;
+            }
+            else{
+                fitness = fitness - 1000000;
             }
 
             //Todo OK, entonces se calcula la diferencia entre la fecha de llegada del ultimo vuelo y la fecha de entrega del paquete
@@ -370,7 +389,11 @@ public class PSOEngine {
 
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
-                    return 500000;
+                    //return 500000;
+                    return fitness;
+                }
+                else{
+                    fitness = fitness - 1000000;
                 }
             }
         }

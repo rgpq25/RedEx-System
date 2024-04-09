@@ -8,7 +8,7 @@ import Clases.Vuelo;
 public class PSOimplementation {
 
 	public final int numDimensions; //Number of dimensions for problem
-	public final int numParticles = 100000; //Number of particles in swarm
+	public final int numParticles = 10000; //Number of particles in swarm
 	public final int maxIterations = 100; //Max number of iterations
 	public final double c1 = 1.4; //Cognitive coefficient 1.4
 	public final double c2 = 1.4; //Social coefficient 1.4
