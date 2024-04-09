@@ -1,9 +1,9 @@
-Paquete 0 - SPIM-SBBR   
+Paquete 0 - SPIM-SBBR  |  Mon Jan 02 19:01:00 COT 2023
          SPIM-SBBR Mon Jan 02 23:29:00 COT 2023-Tue Jan 03 04:22:00 COT 2023
 
-Paquete 1 - SPIM-SKBO   
+Paquete 1 - SPIM-SKBO  |  Mon Jan 02 19:01:00 COT 2023
          SPIM-SKBO Mon Jan 02 22:34:00 COT 2023-Tue Jan 03 01:18:00 COT 2023
 
-Paquete 2 - SPIM-LOWW   
+Paquete 2 - SPIM-LOWW  |  Mon Jan 02 19:01:00 COT 2023
          SPIM-LOWW Tue Jan 03 06:34:00 COT 2023-Tue Jan 03 10:01:00 COT 2023
 

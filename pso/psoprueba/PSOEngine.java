@@ -293,7 +293,8 @@ public class PSOEngine {
             for(int i=0; i<numPaquetes; i++){
                 String origen_paquete = paquetes[i].getId_ciudad_almacen();
                 String destino_paquete = paquetes[i].getId_ciudad_destino();
-                out.println("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "   ");
+                Date fecha_recepcion = paquetes[i].getFecha_recepcion();
+                out.println("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + fecha_recepcion);
                 for(int j=0; j<numVuelos; j++){
                     if(positions[contador] == 1){
                         String id_origen = vuelos[j].getPlan_vuelo().getId_ubicacion_origen();
@@ -352,7 +353,7 @@ public class PSOEngine {
 
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
-                return fitness;
+                return Double.MAX_VALUE;
                 
             }
             else{
@@ -369,7 +370,7 @@ public class PSOEngine {
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
                 //return 900000;
-                return fitness;
+                return Double.MAX_VALUE;
                 
             }
             else{
@@ -387,7 +388,7 @@ public class PSOEngine {
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
                     //return 800000;
-                    return fitness;
+                    return Double.MAX_VALUE;
                 }
                 else{
                     fitness = fitness - 1000000;
@@ -402,7 +403,7 @@ public class PSOEngine {
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
                     //return 700000;
-                    return fitness;
+                    return Double.MAX_VALUE;
                 }
                 else{
                     fitness = fitness - 1000000;
@@ -419,7 +420,7 @@ public class PSOEngine {
                 //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                 //fitness = fitness + 1000;
                 //return 600000;
-                return fitness;
+                return Double.MAX_VALUE;
             }
             else{
                 fitness = fitness - 1000000;
@@ -463,7 +464,7 @@ public class PSOEngine {
                     //Penalizacion de Fitness, no es el peor porque afectaria la exploracion del PSO
                     //fitness = fitness + 1000;
                     //return 500000;
-                    return fitness;
+                    return Double.MAX_VALUE;
                 }
                 else{
                     fitness = fitness - 1000000;

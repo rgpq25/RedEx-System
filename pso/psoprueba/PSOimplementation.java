@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import Clases.Aeropuerto;
 import Clases.Paquete;
 import Clases.Vuelo;
@@ -37,15 +39,20 @@ public class PSOimplementation {
 		while (numIter<maxIterations) {
 			// Evaluate fitness of each particle
 			for (int i=0; i<numParticles; i++) {
-				particles[i].fitness = PSO.evaluateFitness2(particles[i].position, paquetes, vuelos, aeropuertos);
+				//TODO: Pasar arrays a funciones modifican el array original, posiblemente sea mejor enviar una copia en todo momento
+				particles[i].fitness = PSO.evaluateFitness2(particles[i].position, paquetes, vuelos,aeropuertos);
+
+				// if(particles[i].fitness != Double.MAX_VALUE){
+				// 	System.out.println("Fitness: " + particles[i].fitness);
+				// }
 
 				//update personal best position 
-				if (particles[i].fitness <= PSO.evaluateFitness2(particles[i].personalBest, paquetes, vuelos, aeropuertos)) {
+				if (particles[i].fitness <= PSO.evaluateFitness2(particles[i].personalBest, paquetes, vuelos,aeropuertos)) {
 					particles[i].personalBest = particles[i].position.clone();
 				}
 			}
 			//Find best particle in set
-			best = PSO.findBest(particles,paquetes, vuelos, aeropuertos);
+			best = PSO.findBest(particles,paquetes, vuelos,aeropuertos);
 
 			//Initialize the random vectors for updates
 			r1 = new double[numDimensions];
