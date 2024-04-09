@@ -64,6 +64,7 @@ public class PSOimplementation {
 		}	
 		System.out.println(PSO.evaluateFitness2(best, paquetes, vuelos, aeropuertos));
 		PSO.printPosiciones(best, numPaquetes, numVuelos);
+		PSO.printRutasTXT(best, numPaquetes, numVuelos, paquetes, vuelos);
 	}
 
 

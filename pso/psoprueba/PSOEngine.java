@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -239,6 +242,76 @@ public class PSOEngine {
             System.out.println();
         }
         System.out.println();
+    }
+
+    public void printRutasCSV(int [] positions, int numPaquetes, int numVuelos,Paquete[] paquetes, Vuelo [] vuelos){
+        File csvFile = new File("rutas.csv");
+        PrintWriter out;
+        try {
+            out = new PrintWriter(csvFile);
+            //primero imprimimos cuadro inicial, y linea de vuelos
+            //luego por paqute imprimimos todos sus vuelos
+            out.print("Paquetes / Vuelos");
+            for(int i=0; i<numVuelos; i++){
+                int id_vuelo = vuelos[i].getId();
+                String id_origen = vuelos[i].getPlan_vuelo().getId_ubicacion_origen();
+                String id_destino = vuelos[i].getPlan_vuelo().getId_ubicacion_destino();
+                Date fecha_salida = vuelos[i].getFecha_salida();
+                Date fecha_llegada = vuelos[i].getFecha_llegada();
+                
+                out.print(", " + id_vuelo + " " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
+            }
+            out.println();
+
+            int contador = 0;
+            for(int i=0; i<numPaquetes; i++){
+                String origen_paquete = paquetes[i].getId_ciudad_almacen();
+                String destino_paquete = paquetes[i].getId_ciudad_destino();
+                out.print("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete);
+                for(int j=0; j<numVuelos; j++){
+                    out.print(", " + positions[contador]);
+                    contador++;
+                }
+                out.println();
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    public void printRutasTXT(int [] positions, int numPaquetes, int numVuelos,Paquete[] paquetes, Vuelo [] vuelos){
+        File csvFile = new File("rutas.txt");
+        PrintWriter out;
+
+        try {
+            out = new PrintWriter(csvFile);
+
+            int contador = 0;
+            for(int i=0; i<numPaquetes; i++){
+                String origen_paquete = paquetes[i].getId_ciudad_almacen();
+                String destino_paquete = paquetes[i].getId_ciudad_destino();
+                out.println("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "   ");
+                for(int j=0; j<numVuelos; j++){
+                    if(positions[contador] == 1){
+                        String id_origen = vuelos[j].getPlan_vuelo().getId_ubicacion_origen();
+                        String id_destino = vuelos[j].getPlan_vuelo().getId_ubicacion_destino();
+                        Date fecha_salida = vuelos[j].getFecha_salida();
+                        Date fecha_llegada = vuelos[j].getFecha_llegada();
+                    
+                        out.println("         " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
+                    }
+                    contador++;
+                }
+                out.println();
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public double evaluateFitness2(int[] positions,Paquete[] paquetes, Vuelo [] vuelos, Aeropuerto[] aeropuertos){

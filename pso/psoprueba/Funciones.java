@@ -31,7 +31,7 @@ public class Funciones {
 		Aeropuerto[] aeropuertos = null;
 		try {
             // Define the file path
-            File file = new File("entrada/aeropuertos.csv");
+            File file = new File("entradaOld/aeropuertos.csv");
 
             // Create a Scanner object to read the file
             Scanner scanner = new Scanner(file);
@@ -76,7 +76,7 @@ public class Funciones {
 
 		try {
             // Define the file path
-            File file = new File("entrada/paquetes.csv");
+            File file = new File("entradaOld/paquetes.csv");
 
             // Create a Scanner object to read the file
             Scanner scanner = new Scanner(file);
@@ -125,7 +125,7 @@ public class Funciones {
 
 		try {
             // Define the file path
-            File file = new File("entrada/vuelos.csv");
+            File file = new File("entradaOld/vuelos.csv");
 
             // Create a Scanner object to read the file
             Scanner scanner = new Scanner(file);
