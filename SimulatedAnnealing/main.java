@@ -23,9 +23,8 @@ public class main {
         System.out.println("Inicio: " + formattedDateTime);
 
         
-        double temp = 100000;
-        double coolingRate = 0.003;
-        SAImplementation sa = new SAImplementation(temp, coolingRate, paquetes,vuelos,aeropuertos);
+        
+        SAImplementation sa = new SAImplementation(paquetes,vuelos,aeropuertos);
 
 
         currentDateTime = LocalDateTime.now();

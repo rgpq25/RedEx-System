@@ -7,7 +7,7 @@ public class Paquete {
     private boolean en_almacen;
     private String id_ciudad_almacen; //ciudad donde se encuentra actualmente el paquete
     private boolean entregado;
-    private PlanRuta plan_rutas;
+    private Vuelo[] lista_vuelos;
     private String id_ciudad_origen;
     private String id_ciudad_destino;
     private Date fecha_maxima_entrega;
@@ -19,7 +19,6 @@ public class Paquete {
         this.en_almacen = en_almacen;
         this.id_ciudad_almacen = codigo_ciudad_almacen;
         this.entregado = entregado;
-        this.plan_rutas = plan_rutas;
         this.id_ciudad_origen = id_ciudad_origen;
         this.id_ciudad_destino = id_ciudad_destino;
         this.fecha_maxima_entrega = fecha_maxima_entrega;
@@ -46,8 +45,8 @@ public class Paquete {
         return entregado;
     }
 
-    public PlanRuta getPlan_rutas() {
-        return plan_rutas;
+    public Vuelo[] getListaVuelos() {
+        return lista_vuelos;
     }
 
     public String getId_ciudad_origen() {
@@ -82,8 +81,8 @@ public class Paquete {
         this.entregado = entregado;
     }
 
-    public void setPlan_rutas(PlanRuta plan_rutas) {
-        this.plan_rutas = plan_rutas;
+    public void setLista_Vuelos(Vuelo[] lista_vuelos) {
+        this.lista_vuelos = lista_vuelos;
     }
 
     public void setId_ciudad_destino(String id_ciudad_destino) {

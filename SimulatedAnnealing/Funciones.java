@@ -59,17 +59,21 @@ public class Funciones {
             Scanner scanner = new Scanner(file);
             scanner.useDelimiter(",");
 
+            int id = 1;
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(",");
 
 				Paquete paquete = new Paquete();
+                paquete.setId(id);
 				paquete.setFecha_recepcion(dateFormat.parse(parts[0].trim()));
 				paquete.setId_ciudad_almacen(parts[1].trim());
                 paquete.setId_ciudad_origen(parts[1].trim());
 				paquete.setId_ciudad_destino(parts[2].trim());
 				paquete.setFecha_maxima_entrega(dateFormat.parse(parts[3].trim()));
 				paquetes_list.add(paquete);
+
+                id++;
 			}
 
             scanner.close();
