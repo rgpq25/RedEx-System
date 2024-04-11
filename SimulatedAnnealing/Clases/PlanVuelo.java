@@ -17,6 +17,15 @@ public class PlanVuelo {
         this.capacidad_maxima = capacidad_maxima;
     }
 
+    public PlanVuelo(PlanVuelo _plan_vuelo){
+        this.id = _plan_vuelo.id;
+        this.id_ubicacion_origen = _plan_vuelo.id_ubicacion_origen;
+        this.id_ubicacion_destino = _plan_vuelo.id_ubicacion_destino;
+        this.hora_ciudad_origen = _plan_vuelo.hora_ciudad_origen;
+        this.hora_ciudad_destino = _plan_vuelo.hora_ciudad_destino;
+        this.capacidad_maxima = _plan_vuelo.capacidad_maxima;
+    }
+
     public PlanVuelo() {
     }
 

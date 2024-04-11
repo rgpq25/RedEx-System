@@ -17,6 +17,14 @@ public class Vuelo {
         this.fecha_llegada = fecha_llegada;
     }
 
+    public Vuelo(Vuelo _vuelo){
+        this.id = _vuelo.id;
+        this.plan_vuelo = new PlanVuelo(_vuelo.plan_vuelo);
+        this.capacidad_utilizada = _vuelo.capacidad_utilizada;
+        this.fecha_salida = _vuelo.fecha_salida;
+        this.fecha_llegada = _vuelo.fecha_llegada;
+    }
+
     public Vuelo(){}
 
     public int getId() {

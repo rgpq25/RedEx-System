@@ -25,6 +25,23 @@ public class Paquete {
         this.fecha_recepcion = fecha_recepcion;
     }
 
+    public Paquete(Paquete _paquete){
+        this.id = _paquete.id;
+        this.en_almacen = _paquete.en_almacen;
+        this.id_ciudad_almacen = _paquete.id_ciudad_almacen;
+        this.entregado = _paquete.entregado;
+        this.lista_vuelos = new Vuelo[_paquete.lista_vuelos.length];
+        for(int i = 0; i < _paquete.lista_vuelos.length; i++){
+            this.lista_vuelos[i] = new Vuelo(_paquete.lista_vuelos[i]);
+        }
+        this.id_ciudad_origen = _paquete.id_ciudad_origen;
+        this.id_ciudad_destino = _paquete.id_ciudad_destino;
+        this.fecha_maxima_entrega = _paquete.fecha_maxima_entrega;
+        this.fecha_recepcion = _paquete.fecha_recepcion;
+    }
+
+    
+
     public Paquete(){
         
     }
@@ -82,7 +99,10 @@ public class Paquete {
     }
 
     public void setLista_Vuelos(Vuelo[] lista_vuelos) {
-        this.lista_vuelos = lista_vuelos;
+        this.lista_vuelos = new Vuelo[lista_vuelos.length];
+        for(int i = 0; i < lista_vuelos.length; i++){
+            this.lista_vuelos[i] = new Vuelo(lista_vuelos[i]);
+        }
     }
 
     public void setId_ciudad_destino(String id_ciudad_destino) {
