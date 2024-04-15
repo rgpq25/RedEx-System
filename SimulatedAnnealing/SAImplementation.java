@@ -15,9 +15,9 @@ public class SAImplementation {
     public SAImplementation(Paquete[] paquetes, Vuelo[] vuelos, Aeropuerto[] aeropuertos) {
 		int numPaquetes = paquetes.length;
 
-        double temp = 1000000000;
+        double temp = 100000;
         double coolingRate = 0.001;
-        int neighbourCount = 1000;
+        int neighbourCount = 100;
 
         //conseguir solucion randomizada inicial
         State current = new State(paquetes.clone());
@@ -36,7 +36,6 @@ public class SAImplementation {
             }
             int randomNeighbourIndex = (int) (Math.random() * neighbourCount);
             State nuevoEstado = neighbours[randomNeighbourIndex];
-
 
             double deltaCosto = nuevoEstado.evaluate()- current.evaluate();
             if(acceptNewState(deltaCosto, temp) > Math.random()){
