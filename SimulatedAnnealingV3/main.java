@@ -3,6 +3,10 @@ import Clases.GrafoVuelos;
 import Clases.Paquete;
 import Clases.PlanRuta;
 import Clases.Vuelo;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -47,7 +51,9 @@ public class main {
             
             for (PlanRuta ruta : todasLasRutas) {
                 if (ruta.getVuelos().get(0).getPlan_vuelo().getId_ubicacion_origen().equals(randomPackage.getId_ciudad_origen()) &&
-                    ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo().getId_ubicacion_destino().equals(randomPackage.getId_ciudad_destino())) {
+                    ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo().getId_ubicacion_destino().equals(randomPackage.getId_ciudad_destino()) &&
+                    ruta.getVuelos().get(0).getFecha_salida().after(randomPackage.getFecha_recepcion()) &&
+                    ruta.getVuelos().get(ruta.getVuelos().size() -1).getFecha_llegada().before(randomPackage.getFecha_maxima_entrega())) {
                         availableRoutes.add(ruta);
                 }
             }
@@ -77,6 +83,37 @@ public class main {
         }
     }
 
+
+    public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas){
+        File csvFile = new File("rutasFinal.txt");
+        PrintWriter out;
+
+        try {
+            out = new PrintWriter(csvFile);
+
+            for(int i=0; i<paquetes.size(); i++){
+
+                String origen_paquete = paquetes.get(i).getId_ciudad_almacen();
+                String destino_paquete = paquetes.get(i).getId_ciudad_destino();
+                Date fecha_recepcion = paquetes.get(i).getFecha_recepcion();
+                out.println("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + fecha_recepcion);
+                for(int j=0; j<rutas.get(i).length(); j++){
+                        String id_origen = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_origen();
+                        String id_destino = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_destino();
+                        Date fecha_salida = rutas.get(i).getVuelos().get(j).getFecha_salida();
+                        Date fecha_llegada = rutas.get(i).getVuelos().get(j).getFecha_llegada();
+                    
+                        out.println("         " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
+                }
+                out.println();
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         Funciones funciones = new Funciones();
 
@@ -94,9 +131,9 @@ public class main {
         Date date = Date.from(LocalDateTime.of(2023, 1, 2, 0, 0).toInstant(ZoneOffset.UTC));
 
         List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
-        for (PlanRuta ruta : todasLasRutas) {
-            System.out.println(ruta.toString());
-        }
+        // for (PlanRuta ruta : todasLasRutas) {
+        //     System.out.println(ruta.toString());
+        // }
 
         
 
@@ -143,6 +180,6 @@ public class main {
         }
         
         System.out.println("Final cost: " + current.costo);
-        current.printTxt();
+        printRutasTXT( current.paquetes, current.rutas);  
     }
 }
