@@ -113,6 +113,7 @@ public class Funciones {
                 Date fecha_recepcion = parseDateString(firstDateString, "yyyy-MM-dd HH:mm:ss", paquete.getCiudadOrigen().getZonaHoraria());
                 Date fecha_maxima_entrega = addDays(fecha_recepcion, 2);
 
+                
 				paquete.setFecha_recepcion(fecha_recepcion);
 				paquete.setFecha_maxima_entrega(fecha_maxima_entrega);
 				paquetes_list.add(paquete);

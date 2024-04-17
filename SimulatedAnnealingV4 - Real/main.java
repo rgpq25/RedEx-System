@@ -130,72 +130,64 @@ public class main {
         Paquete[] paquetes = funciones.leerPaquetes(inputPath, ubicacionMap);
         Vuelo[] vuelos = funciones.leerVuelos(inputPath, ubicacionMap);
 
-        // for(Aeropuerto aeropuerto: aeropuertos){
-        //     aeropuerto.print();
-        // }
-        for(Paquete paquete: paquetes){
-            paquete.print();
+        
+
+        funciones.ordenarPaquetes(paquetes);
+        funciones.ordenarVuelos(vuelos);
+        GrafoVuelos grafoVuelos = new GrafoVuelos();
+        for (Vuelo vuelo : vuelos) {
+            grafoVuelos.agregarVuelo(vuelo);
         }
-        // for(Vuelo vuelo: vuelos){
-        //     vuelo.print();
-        // }
+        Date date = Date.from(LocalDateTime.of(2023, 1, 2, 0, 0).toInstant(ZoneOffset.UTC));
 
-        // funciones.ordenarPaquetes(paquetes);
-        // funciones.ordenarVuelos(vuelos);
-        // GrafoVuelos grafoVuelos = new GrafoVuelos();
-        // for (Vuelo vuelo : vuelos) {
-        //     grafoVuelos.agregarVuelo(vuelo);
-        // }
-        // Date date = Date.from(LocalDateTime.of(2023, 1, 2, 0, 0).toInstant(ZoneOffset.UTC));
-
-        // List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
+        List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
 
         
-        // String fechaActual = "2023-01-02 00:00:00";
+        String fechaActual = "2023-01-02 00:00:00";
 
-        // double temperature = 10000;
-        // double coolingRate = 0.003;
-        // int neighbourCount = 10;  
+        double temperature = 10000;
+        double coolingRate = 0.003;
+        int neighbourCount = 10;  
 
 
-        // Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), 0);
-        // current.initialize(todasLasRutas);
-        // printRutasTXT( current.paquetes, current.rutas, "initial.txt");  
+        Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), 0);
+        current.initialize(todasLasRutas);
+        printRutasTXT( current.paquetes, current.rutas, "initial.txt");  
         
-        // while (temperature > 1) {
-        //     // Pick a random neighboring solution
-        //     ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-        //     for(int i = 0; i < neighbourCount; i++){
-        //         neighbours.add(current.generateNeighbour(todasLasRutas));
-        //     }
+        while (temperature > 1) {
+            // Pick a random neighboring solution
+            ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+            for(int i = 0; i < neighbourCount; i++){
+                neighbours.add(current.generateNeighbour(todasLasRutas));
+            }
 
-        //     int bestNeighbourIndex = 0;
-        //     double bestNeighbourCost = Double.MAX_VALUE;
-        //     for (int i = 0; i < neighbours.size(); i++) {
-        //         Solucion neighbour = neighbours.get(i);
-        //         double neighbourCost = neighbour.costo;
-        //         if (neighbourCost < bestNeighbourCost) {
-        //             bestNeighbourCost = neighbourCost;
-        //             bestNeighbourIndex = i;
-        //         }
-        //     }
+            int bestNeighbourIndex = 0;
+            double bestNeighbourCost = Double.MAX_VALUE;
+            for (int i = 0; i < neighbours.size(); i++) {
+                Solucion neighbour = neighbours.get(i);
+                double neighbourCost = neighbour.costo;
+                if (neighbourCost < bestNeighbourCost) {
+                    bestNeighbourCost = neighbourCost;
+                    bestNeighbourIndex = i;
+                }
+            }
 
-        //     // Calculate the cost difference between the new and current routes
-        //     double currentCost = current.costo;
-        //     double newCost = neighbours.get(bestNeighbourIndex).costo;
-        //     double costDifference = newCost - currentCost;
+            // Calculate the cost difference between the new and current routes
+            double currentCost = current.costo;
+            double newCost = neighbours.get(bestNeighbourIndex).costo;
+            double costDifference = newCost - currentCost;
 
 
-        //     // Decide if we should accept the new solution
-        //     if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
-        //         current = neighbours.get(bestNeighbourIndex);
-        //     }
+            // Decide if we should accept the new solution
+            if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
+                current = neighbours.get(bestNeighbourIndex);
+            }
 
-        //     // Cool down the system
-        //     temperature *= 1 - coolingRate;
-        // }
+            // Cool down the system
+            temperature *= 1 - coolingRate;
+        }
         
-        // System.out.println("Final cost: " + current.costo);
-        // printRutasTXT( current.paquetes, current.rutas, "rutasFinal.txt");  
+        System.out.println("Final cost: " + current.costo);
+        printRutasTXT( current.paquetes, current.rutas, "rutasFinal.txt");  
     }
 }
