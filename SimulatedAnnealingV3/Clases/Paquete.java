@@ -10,8 +10,8 @@ public class Paquete {
     private Vuelo[] lista_vuelos;
     private String id_ciudad_origen;
     private String id_ciudad_destino;
-    private Date fecha_maxima_entrega;
-    private Date fecha_recepcion;
+    private Date fecha_maxima_entrega;  //deberia ser en destino
+    private Date fecha_recepcion;       //en origen 2023-01-03 09:23:41
 
     public Paquete(int id, boolean en_almacen, String codigo_ciudad_almacen, boolean entregado, PlanRuta plan_rutas, String id_ciudad_origen, String id_ciudad_destino, Date fecha_maxima_entrega,
             Date fecha_recepcion) {
