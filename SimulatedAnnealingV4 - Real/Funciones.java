@@ -155,8 +155,13 @@ public class Funciones {
 				vuelo.getPlan_vuelo().setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
 				vuelo.getPlan_vuelo().setCiudadDestino(ubicacionMap.get(parts[1].trim()));
                 vuelo.getPlan_vuelo().setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
-				vuelo.setFecha_salida(dateFormat.parse(parts[2].trim()));
-				vuelo.setFecha_llegada(dateFormat.parse(parts[3].trim()));
+
+                String dateSalida = parts[2].trim();
+                String dateLlegada = parts[3].trim();
+                Date fecha_salida = parseDateString(dateSalida, "yyyy-MM-dd HH:mm:ss", vuelo.getPlan_vuelo().getCiudadOrigen().getZonaHoraria());
+                Date fecha_llegada = parseDateString(dateLlegada, "yyyy-MM-dd HH:mm:ss", vuelo.getPlan_vuelo().getCiudadDestino().getZonaHoraria());
+				vuelo.setFecha_salida(fecha_salida);
+				vuelo.setFecha_llegada(fecha_llegada);
 				
 
                 vuelos_list.add(vuelo);
@@ -168,9 +173,7 @@ public class Funciones {
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
-        } catch (ParseException e) {
-			e.printStackTrace();
-		}
+        }
 		return vuelos;
 	}
 

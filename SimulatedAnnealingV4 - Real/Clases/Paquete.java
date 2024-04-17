@@ -9,7 +9,6 @@ public class Paquete {
     private Ubicacion ciudad_destino;
     private Date fecha_maxima_entrega;  //deberia ser en destino
     private Date fecha_recepcion;       //en origen 2023-01-03 09:23:41
-    private Date fecha_recepcion_GMT;   //en GMT 0
 
     public Paquete(int id,Ubicacion ciudad_almacen, PlanRuta plan_rutas, Ubicacion ciudad_origen, Ubicacion ciudad_destino, Date fecha_maxima_entrega,
             Date fecha_recepcion) {

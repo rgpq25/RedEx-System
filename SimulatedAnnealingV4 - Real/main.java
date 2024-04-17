@@ -147,7 +147,7 @@ public class main {
 
         double temperature = 10000;
         double coolingRate = 0.003;
-        int neighbourCount = 10;  
+        int neighbourCount = 100;  
 
 
         Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), 0);
