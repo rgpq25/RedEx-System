@@ -84,8 +84,8 @@ public class main {
     }
 
 
-    public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas){
-        File csvFile = new File("rutasFinal.txt");
+    public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, String filename){
+        File csvFile = new File(filename);
         PrintWriter out;
 
         try {
@@ -131,20 +131,18 @@ public class main {
         Date date = Date.from(LocalDateTime.of(2023, 1, 2, 0, 0).toInstant(ZoneOffset.UTC));
 
         List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
-        // for (PlanRuta ruta : todasLasRutas) {
-        //     System.out.println(ruta.toString());
-        // }
 
         
 
 
         double temperature = 10000;
         double coolingRate = 0.003;
-        int neighbourCount = 10;    //TODO: Verificar que creacion de neighboors sea correcta en la memoria, que cada posicion del arreglo sea diferente con DEBUG
+        int neighbourCount = 10;  
 
-        //current.printRutasTXT("initial.txt");
+
         Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), 0);
         current.initialize(todasLasRutas);
+        printRutasTXT( current.paquetes, current.rutas, "initial.txt");  
         
         while (temperature > 1) {
             // Pick a random neighboring solution
@@ -180,6 +178,6 @@ public class main {
         }
         
         System.out.println("Final cost: " + current.costo);
-        printRutasTXT( current.paquetes, current.rutas);  
+        printRutasTXT( current.paquetes, current.rutas, "rutasFinal.txt");  
     }
 }
