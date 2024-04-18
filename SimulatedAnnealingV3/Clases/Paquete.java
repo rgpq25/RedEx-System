@@ -5,15 +5,16 @@ import java.util.Date;
 public class Paquete {
     private int id;
     private boolean en_almacen;
-    private String id_ciudad_almacen; //ciudad donde se encuentra actualmente el paquete
+    private String id_ciudad_almacen; // ciudad donde se encuentra actualmente el paquete
     private boolean entregado;
     private Vuelo[] lista_vuelos;
     private String id_ciudad_origen;
     private String id_ciudad_destino;
-    private Date fecha_maxima_entrega;  //deberia ser en destino
-    private Date fecha_recepcion;       //en origen 2023-01-03 09:23:41
+    private Date fecha_maxima_entrega; // deberia ser en destino
+    private Date fecha_recepcion; // en origen 2023-01-03 09:23:41
 
-    public Paquete(int id, boolean en_almacen, String codigo_ciudad_almacen, boolean entregado, PlanRuta plan_rutas, String id_ciudad_origen, String id_ciudad_destino, Date fecha_maxima_entrega,
+    public Paquete(int id, boolean en_almacen, String codigo_ciudad_almacen, boolean entregado, PlanRuta plan_rutas,
+            String id_ciudad_origen, String id_ciudad_destino, Date fecha_maxima_entrega,
             Date fecha_recepcion) {
         this.id = id;
         this.en_almacen = en_almacen;
@@ -25,13 +26,26 @@ public class Paquete {
         this.fecha_recepcion = fecha_recepcion;
     }
 
-    public Paquete(Paquete _paquete){
+    public Paquete(String codigo_ciudad_almacen,
+            String id_ciudad_origen, String id_ciudad_destino,
+            Date fecha_recepcion) {
+        this.id = ContadorID.obtenerSiguienteID();
+        this.en_almacen = false;
+        this.id_ciudad_almacen = codigo_ciudad_almacen;
+        this.entregado = false;
+        this.id_ciudad_origen = id_ciudad_origen;
+        this.id_ciudad_destino = id_ciudad_destino;
+        this.fecha_maxima_entrega = new Date();
+        this.fecha_recepcion = fecha_recepcion;
+    }
+
+    public Paquete(Paquete _paquete) {
         this.id = _paquete.id;
         this.en_almacen = _paquete.en_almacen;
         this.id_ciudad_almacen = _paquete.id_ciudad_almacen;
         this.entregado = _paquete.entregado;
         this.lista_vuelos = new Vuelo[_paquete.lista_vuelos.length];
-        for(int i = 0; i < _paquete.lista_vuelos.length; i++){
+        for (int i = 0; i < _paquete.lista_vuelos.length; i++) {
             this.lista_vuelos[i] = _paquete.lista_vuelos[i];
         }
         this.id_ciudad_origen = _paquete.id_ciudad_origen;
@@ -40,10 +54,8 @@ public class Paquete {
         this.fecha_recepcion = _paquete.fecha_recepcion;
     }
 
-    
+    public Paquete() {
 
-    public Paquete(){
-        
     }
 
     public int getId() {
@@ -98,9 +110,23 @@ public class Paquete {
         this.entregado = entregado;
     }
 
+    public void agregar_vuelo(Vuelo vuelo) {
+        if (lista_vuelos == null) {
+            lista_vuelos = new Vuelo[1];
+            lista_vuelos[0] = vuelo;
+        } else {
+            Vuelo[] nueva_lista = new Vuelo[lista_vuelos.length + 1];
+            for (int i = 0; i < lista_vuelos.length; i++) {
+                nueva_lista[i] = lista_vuelos[i];
+            }
+            nueva_lista[lista_vuelos.length] = vuelo;
+            lista_vuelos = nueva_lista;
+        }
+    }
+
     public void setLista_Vuelos(Vuelo[] lista_vuelos) {
         this.lista_vuelos = new Vuelo[lista_vuelos.length];
-        for(int i = 0; i < lista_vuelos.length; i++){
+        for (int i = 0; i < lista_vuelos.length; i++) {
             this.lista_vuelos[i] = lista_vuelos[i];
         }
     }

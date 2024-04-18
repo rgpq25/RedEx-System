@@ -1,4 +1,3 @@
-import Clases.Aeropuerto;
 import Clases.GrafoVuelos;
 import Clases.Paquete;
 import Clases.PlanRuta;
@@ -9,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,7 +19,8 @@ public class main {
         public ArrayList<Paquete> paquetes;
         public ArrayList<PlanRuta> rutas;
         public double costo;
-        //TODO: El costo real deberia considerar cuantos almacenes esta ocupando. Si ocupa un aeropuerto / vuelo concurrido el costo deberia ser mayor.
+        // TODO: El costo real deberia considerar cuantos almacenes esta ocupando. Si
+        // ocupa un aeropuerto / vuelo concurrido el costo deberia ser mayor.
 
         public Solucion(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, double costo) {
             this.paquetes = paquetes;
@@ -29,7 +28,7 @@ public class main {
             this.costo = costo;
         }
 
-        public void initialize(List<PlanRuta> todasLasRutas){
+        public void initialize(List<PlanRuta> todasLasRutas) {
             double costo = 0;
 
             for (int i = 0; i < paquetes.size(); i++) {
@@ -42,19 +41,23 @@ public class main {
             this.costo = costo;
         }
 
-        public Solucion generateNeighbour(List<PlanRuta> todasLasRutas){
+        public Solucion generateNeighbour(List<PlanRuta> todasLasRutas) {
 
             Solucion neighbour = new Solucion(new ArrayList<>(this.paquetes), new ArrayList<>(this.rutas), costo);
             int randomPackageIndex = (int) (Math.random() * this.paquetes.size());
             Paquete randomPackage = neighbour.paquetes.get(randomPackageIndex);
             ArrayList<PlanRuta> availableRoutes = new ArrayList<>();
-            
+
             for (PlanRuta ruta : todasLasRutas) {
-                if (ruta.getVuelos().get(0).getPlan_vuelo().getId_ubicacion_origen().equals(randomPackage.getId_ciudad_origen()) &&
-                    ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo().getId_ubicacion_destino().equals(randomPackage.getId_ciudad_destino()) &&
-                    ruta.getVuelos().get(0).getFecha_salida().after(randomPackage.getFecha_recepcion()) &&
-                    ruta.getVuelos().get(ruta.getVuelos().size() -1).getFecha_llegada().before(randomPackage.getFecha_maxima_entrega())) {
-                        availableRoutes.add(ruta);
+                if (ruta.getVuelos().get(0).getPlan_vuelo().getId_ubicacion_origen()
+                        .equals(randomPackage.getId_ciudad_origen()) &&
+                        ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo().getId_ubicacion_destino()
+                                .equals(randomPackage.getId_ciudad_destino())
+                        &&
+                        ruta.getVuelos().get(0).getFecha_salida().after(randomPackage.getFecha_recepcion()) &&
+                        ruta.getVuelos().get(ruta.getVuelos().size() - 1).getFecha_llegada()
+                                .before(randomPackage.getFecha_maxima_entrega())) {
+                    availableRoutes.add(ruta);
                 }
             }
 
@@ -66,9 +69,9 @@ public class main {
             int randomRouteIndex = (int) (Math.random() * availableRoutes.size());
             PlanRuta randomRoute = availableRoutes.get(randomRouteIndex);
             neighbour.rutas.set(randomPackageIndex, randomRoute);
-        
+
             double newCost = 0;
-            for(int i = 0; i < neighbour.paquetes.size(); i++){
+            for (int i = 0; i < neighbour.paquetes.size(); i++) {
                 newCost += neighbour.rutas.get(i).getVuelos().size();
             }
             neighbour.costo = newCost;
@@ -76,34 +79,34 @@ public class main {
             return neighbour;
         }
 
-        public void printTxt(){
+        public void printTxt() {
             for (int i = 0; i < paquetes.size(); i++) {
                 System.out.println("Paquete " + paquetes.get(i).getId() + " -> " + rutas.get(i).toString());
             }
         }
     }
 
-
-    public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, String filename){
+    public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, String filename) {
         File csvFile = new File(filename);
         PrintWriter out;
 
         try {
             out = new PrintWriter(csvFile);
 
-            for(int i=0; i<paquetes.size(); i++){
+            for (int i = 0; i < paquetes.size(); i++) {
 
                 String origen_paquete = paquetes.get(i).getId_ciudad_almacen();
                 String destino_paquete = paquetes.get(i).getId_ciudad_destino();
                 Date fecha_recepcion = paquetes.get(i).getFecha_recepcion();
-                out.println("Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + fecha_recepcion);
-                for(int j=0; j<rutas.get(i).length(); j++){
-                        String id_origen = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_origen();
-                        String id_destino = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_destino();
-                        Date fecha_salida = rutas.get(i).getVuelos().get(j).getFecha_salida();
-                        Date fecha_llegada = rutas.get(i).getVuelos().get(j).getFecha_llegada();
-                    
-                        out.println("         " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
+                out.println(
+                        "Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + fecha_recepcion);
+                for (int j = 0; j < rutas.get(i).length(); j++) {
+                    String id_origen = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_origen();
+                    String id_destino = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getId_ubicacion_destino();
+                    Date fecha_salida = rutas.get(i).getVuelos().get(j).getFecha_salida();
+                    Date fecha_llegada = rutas.get(i).getVuelos().get(j).getFecha_llegada();
+
+                    out.println("         " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
                 }
                 out.println();
             }
@@ -118,7 +121,7 @@ public class main {
         Funciones funciones = new Funciones();
 
         String inputPath = "input";
-        //Aeropuerto[] aeropuertos = funciones.leerAeropuertos(inputPath);
+        // Aeropuerto[] aeropuertos = funciones.leerAeropuertos(inputPath);
         Paquete[] paquetes = funciones.leerPaquetes(inputPath);
         Vuelo[] vuelos = funciones.leerVuelos(inputPath);
 
@@ -132,22 +135,18 @@ public class main {
 
         List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
 
-        
-
-
         double temperature = 10000;
         double coolingRate = 0.003;
-        int neighbourCount = 10;  
-
+        int neighbourCount = 10;
 
         Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), 0);
         current.initialize(todasLasRutas);
-        printRutasTXT( current.paquetes, current.rutas, "initial.txt");  
-        
+        printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+
         while (temperature > 1) {
             // Pick a random neighboring solution
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-            for(int i = 0; i < neighbourCount; i++){
+            for (int i = 0; i < neighbourCount; i++) {
                 neighbours.add(current.generateNeighbour(todasLasRutas));
             }
 
@@ -167,7 +166,6 @@ public class main {
             double newCost = neighbours.get(bestNeighbourIndex).costo;
             double costDifference = newCost - currentCost;
 
-
             // Decide if we should accept the new solution
             if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
                 current = neighbours.get(bestNeighbourIndex);
@@ -176,8 +174,8 @@ public class main {
             // Cool down the system
             temperature *= 1 - coolingRate;
         }
-        
+
         System.out.println("Final cost: " + current.costo);
-        printRutasTXT( current.paquetes, current.rutas, "rutasFinal.txt");  
+        printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
     }
 }
