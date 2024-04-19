@@ -27,7 +27,7 @@ public class Paquete {
             Date fecha_recepcion) {
         this.id = ContadorID.obtenerSiguienteID();
         this.ciudad_almacen = ciudad_almacen;
-        this.ciudad_origen = ciudad_destino;
+        this.ciudad_origen = ciudad_origen;
         this.ciudad_destino = ciudad_destino;
         try {
             String gmd = ciudad_destino.getZonaHoraria();
@@ -129,4 +129,5 @@ public class Paquete {
     public void setListaVuelos(Vuelo[] lista_vuelos) {
         this.lista_vuelos = lista_vuelos;
     }
+
 }

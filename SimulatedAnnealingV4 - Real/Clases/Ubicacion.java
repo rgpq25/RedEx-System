@@ -24,14 +24,7 @@ public class Ubicacion {
     }
 
     public String toString() {
-        return "Ubicacion{" +
-                "id='" + id + '\'' +
-                ", continente='" + continente + '\'' +
-                ", pais='" + pais + '\'' +
-                ", ciudad='" + ciudad + '\'' +
-                ", ciudadAbreviada='" + ciudad_abreviada + '\'' +
-                ", zonaHoraria='" + zona_horaria + '\'' +
-                '}';
+        return id + " zona " + zona_horaria;
     }
 
     public String getId() {

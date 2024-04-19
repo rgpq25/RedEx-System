@@ -82,7 +82,7 @@ public class Vuelo {
 
     public void print() {
         System.out.println("Vuelo " + id + " -> " + plan_vuelo.getCiudadOrigen().getId() + " - "
-                + plan_vuelo.getCiudadDestino().getId());
+                + plan_vuelo.getCiudadDestino().getId() + " - " + fecha_salida + " " + fecha_llegada);
     }
 
 }

@@ -45,7 +45,7 @@ public class GrafoVuelos {
     // específicas
     public List<PlanRuta> buscarRutas(String origen, String destino, Date fechaHoraInicio) {
         List<PlanRuta> rutas = new ArrayList<>();
-        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(rutaId++), new HashSet<>(), rutas);
+        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas);
         return rutas;
     }
 
@@ -55,7 +55,7 @@ public class GrafoVuelos {
         if (actual.equals(destino)) {
             // Clonar la lista de vuelos para la nueva ruta
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
-            PlanRuta nuevaRuta = new PlanRuta(rutaId++);
+            PlanRuta nuevaRuta = new PlanRuta();
             nuevaRuta.setVuelos(vuelosClonados);
             rutas.add(nuevaRuta);
             return;

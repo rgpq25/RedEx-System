@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -12,7 +13,9 @@ import java.util.Scanner;
 import java.util.Set;
 
 import Clases.Aeropuerto;
+import Clases.Evento;
 import Clases.Paquete;
+import Clases.PlanRuta;
 import Clases.PlanVuelo;
 import Clases.RegistroAlmacenamiento;
 import Clases.Ubicacion;
@@ -22,9 +25,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class Funciones {
@@ -255,8 +255,8 @@ public class Funciones {
         return aeropuertos;
     }
 
-    public List<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, int maximo_dias) {
-        List<Paquete> paquetes = new ArrayList<>();
+    public ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, int maximo_dias) {
+        ArrayList<Paquete> paquetes = new ArrayList<>();
         Random rand = new Random();
         for (int i = 0; i < n; i++) {
             Collections.shuffle(aeropuertos);
@@ -271,9 +271,9 @@ public class Funciones {
         return paquetes;
     }
 
-    public static PlanVuelo[] generarPlanesDeVuelo(Aeropuerto[] aeropuertos, int repeticionesPorConexion) {
+    public ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion) {
         Random random = new Random();
-        List<PlanVuelo> planes = new ArrayList<>();
+        ArrayList<PlanVuelo> planes = new ArrayList<>();
 
         int idPlan = 0;
         // Generar planes para cada par de aeropuertos
@@ -281,46 +281,87 @@ public class Funciones {
             for (Aeropuerto destino : aeropuertos) {
                 if (!origen.equals(destino)) {
                     for (int i = 0; i < repeticionesPorConexion; i++) {
-                        String horaSalida = String.format("%02d:%02d", random.nextInt(24), random.nextInt(60));
-                        String horaLlegada = String.format("%02d:%02d", random.nextInt(24), random.nextInt(60));
+                        int horaSalidaHora = random.nextInt(24);
+                        int horaSalidaMinuto = random.nextInt(60);
+                        String horaSalida = String.format("%02d:%02d", horaSalidaHora, horaSalidaMinuto);
+
+                        // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
+                        // basada en distancia u otros factores)
+                        int duracionHoras = 1 + random.nextInt(8); // Duración de vuelo de 1 a 8 horas
+                        int duracionMinutos = random.nextInt(60);
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
+                        cal.set(Calendar.MINUTE, horaSalidaMinuto);
+                        cal.add(Calendar.HOUR_OF_DAY, duracionHoras);
+                        cal.add(Calendar.MINUTE, duracionMinutos);
+
+                        String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
+                                cal.get(Calendar.MINUTE));
+
                         int capacidad = 100 + random.nextInt(401); // Capacidades entre 100 y 500
 
                         PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
-                                horaSalida,
-                                horaLlegada, capacidad);
+                                horaSalida, horaLlegada, capacidad);
                         planes.add(plan);
                     }
                 }
             }
         }
 
-        return planes.toArray(new PlanVuelo[0]);
+        return planes;
     }
 
-    public static Vuelo[] generarVuelos(Aeropuerto[] aeropuertos, PlanVuelo[] planesVuelo, int maxDias) {
+    public ArrayList<Vuelo> generarVuelos(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planesVuelo,
+            int maxDias) {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
+
+        // Mueve la instancia de Calendar aquí para inicializarla una vez por día.
         Calendar cal = Calendar.getInstance();
 
         for (int day = 0; day < maxDias; day++) {
+            // Utiliza la fecha actual como base y añade la cantidad de días correspondiente
+            // a la iteración.
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_MONTH, day);
+
             for (PlanVuelo plan : planesVuelo) {
-                cal.setTime(new Date(System.currentTimeMillis()));
-                cal.add(Calendar.DAY_OF_MONTH, day);
+                // Configura la hora de partida según el plan.
                 cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
                 cal.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
-                Date fechaPartida = (Date) cal.getTime();
+                Date fechaPartida = cal.getTime();
 
-                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
-                cal.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
-                Date fechaLlegada = (Date) cal.getTime();
+                // Clona 'cal' para configurar la hora de llegada.
+                Calendar calLlegada = (Calendar) cal.clone();
+                calLlegada.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
+                calLlegada.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
+                Date fechaLlegada = calLlegada.getTime();
 
+                // Comprobar si la fecha de llegada es anterior a la de partida y ajustarla si
+                // es necesario.
+                if (!fechaLlegada.after(fechaPartida)) {
+                    calLlegada.add(Calendar.DAY_OF_MONTH, 1); // Añadir un día a la fecha de llegada.
+                    fechaLlegada = calLlegada.getTime();
+                }
+
+                // Agrega el vuelo a la lista.
                 vuelos.add(new Vuelo(plan, fechaPartida, fechaLlegada));
             }
         }
 
-        return vuelos.toArray(new Vuelo[0]);
+        return vuelos;
     }
 
-    public void asignarVuelosAPaquetes(List<Paquete> paquetes, List<Vuelo> vuelos) {
+    public ArrayList<PlanRuta> asignarVuelosAPaquetes(ArrayList<Paquete> paquetes, ArrayList<Vuelo> vuelos) {
+        // Inicializa la lista de PlanRuta con la misma cantidad de elementos que
+        // paquetes
+        ArrayList<PlanRuta> planRutas = new ArrayList<>();
+        for (int i = 0; i < paquetes.size(); i++) {
+            planRutas.add(new PlanRuta(new ArrayList<Vuelo>()));
+        }
+
+        // Índice para asociar cada paquete con su PlanRuta correspondiente
+        int index = 0;
         for (Paquete paquete : paquetes) {
             String currentLocation = paquete.getCiudadOrigen().getId();
             Set<String> visitados = new HashSet<>();
@@ -340,7 +381,7 @@ public class Funciones {
                 }
 
                 Vuelo posibleVuelo = vuelosPosibles.get(new Random().nextInt(vuelosPosibles.size()));
-                paquete.agregar_vuelo(posibleVuelo);
+                planRutas.get(index).agregarVuelo(posibleVuelo);
                 currentLocation = posibleVuelo.getPlan_vuelo().getCiudadDestino().getId();
                 visitados.add(currentLocation);
 
@@ -348,17 +389,21 @@ public class Funciones {
                     break;
                 }
             }
+            index++; // Incrementa el índice para el siguiente paquete y su PlanRuta correspondiente
         }
+
+        return planRutas;
     }
 
-    public ArrayList<RegistroAlmacenamiento> crearRegistrosAlmacenamiento(ArrayList<Paquete> paquetes) {
+    public ArrayList<RegistroAlmacenamiento> crearRegistrosAlmacenamiento(ArrayList<Paquete> paquetes,
+            ArrayList<PlanRuta> planRutas) {
         ArrayList<RegistroAlmacenamiento> almacenamiento = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        for (Paquete paquete : paquetes) {
-            Date currentTime = paquete.getFecha_recepcion();
-            for (Vuelo vuelo : paquete.getListaVuelos()) {
+        for (int i = 0; i < paquetes.size(); i++) {
+            Date currentTime = paquetes.get(i).getFecha_recepcion();
+            for (Vuelo vuelo : planRutas.get(i).getVuelos()) {
                 if (currentTime.before(vuelo.getFecha_salida())) {
-                    almacenamiento.add(new RegistroAlmacenamiento(paquete.getId(),
+                    almacenamiento.add(new RegistroAlmacenamiento(paquetes.get(i).getId(),
                             currentTime,
                             vuelo.getFecha_salida(),
                             vuelo.getPlan_vuelo().getCiudadOrigen().getId()));
@@ -370,12 +415,52 @@ public class Funciones {
             calendar.add(Calendar.MINUTE, 1); // Añadir un minuto a la última hora de llegada
             Date finalTime = calendar.getTime(); // Obtener la fecha actualizada
 
-            almacenamiento.add(new RegistroAlmacenamiento(paquete.getId(),
+            almacenamiento.add(new RegistroAlmacenamiento(paquetes.get(i).getId(),
                     currentTime,
                     finalTime,
-                    paquete.getCiudadDestino().getId()));
+                    paquetes.get(i).getCiudadDestino().getId()));
         }
         return almacenamiento;
     }
 
+    public boolean verificar_capacidad(ArrayList<RegistroAlmacenamiento> registros, ArrayList<Aeropuerto> aeropuertos) {
+        ArrayList<Evento> eventos = new ArrayList<>();
+
+        // Crea eventos de inicio y fin
+        for (RegistroAlmacenamiento registro : registros) {
+            eventos.add(new Evento(registro.getFechaInicio(), registro.getAeropuerto(), 1)); // Evento de inicio
+            eventos.add(new Evento(registro.getFechaFin(), registro.getAeropuerto(), -1)); // Evento de fin
+        }
+
+        // Ordena los eventos por fecha y hora
+        Collections.sort(eventos, Comparator.comparing(Evento::getFechaHora));
+
+        HashMap<String, Integer> acumuladosPorAeropuerto = new HashMap<>();
+        HashMap<String, Integer> capacidadMaximaPorAeropuerto = new HashMap<>();
+
+        // Inicializar capacidades máximas
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            capacidadMaximaPorAeropuerto.put(aeropuerto.getUbicacion().getId(), aeropuerto.getCapacidad_maxima());
+        }
+
+        // Verificar la capacidad en cada cambio de evento
+        for (Evento evento : eventos) {
+            int acumuladoActual = acumuladosPorAeropuerto.getOrDefault(evento.getAeropuerto(), 0) + evento.getCambio();
+            acumuladosPorAeropuerto.put(evento.getAeropuerto(), acumuladoActual);
+
+            // Comprueba si la capacidad se ha excedido
+            if (acumuladoActual > capacidadMaximaPorAeropuerto.get(evento.getAeropuerto())) {
+                return false; // Retorna falso si se excede la capacidad en algún momento
+            }
+        }
+
+        return true; // Retorna verdadero si nunca se excede la capacidad
+    }
+
+    public boolean verificar_capacidad_aeropuertos(ArrayList<Paquete> paquetes,
+            ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
+        Funciones funciones = new Funciones();
+        ArrayList<RegistroAlmacenamiento> registros = funciones.crearRegistrosAlmacenamiento(paquetes, planRutas);
+        return funciones.verificar_capacidad(registros, aeropuertos);
+    }
 }

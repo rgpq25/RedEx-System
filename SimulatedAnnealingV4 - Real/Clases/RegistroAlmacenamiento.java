@@ -1,5 +1,6 @@
 package Clases;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class RegistroAlmacenamiento {
@@ -16,6 +17,10 @@ public class RegistroAlmacenamiento {
         this.aeropuerto = aeropuerto;
     }
 
+    public RegistroAlmacenamiento() {
+
+    }
+
     public int getPaqueteId() {
         return paqueteId;
     }
@@ -30,5 +35,15 @@ public class RegistroAlmacenamiento {
 
     public String getAeropuerto() {
         return aeropuerto;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return String.format("RegistroAlmacenamiento[paqueteId=%d, fechaInicio='%s', fechaFin='%s', aeropuerto='%s']",
+                paqueteId,
+                sdf.format(fechaInicio),
+                sdf.format(fechaFin),
+                aeropuerto);
     }
 }

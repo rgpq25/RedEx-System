@@ -4,11 +4,12 @@ public class PlanVuelo {
     private int id;
     private Ubicacion ciudad_origen;
     private Ubicacion ciudad_destino;
-    private String hora_ciudad_origen;  //en gmt de origen
-    private String hora_ciudad_destino; //en gmt de destino
+    private String hora_ciudad_origen;
+    private String hora_ciudad_destino;
     private int capacidad_maxima;
 
-    public PlanVuelo(int id, Ubicacion ciudad_origen, Ubicacion ciudad_destino, String hora_ciudad_origen, String hora_ciudad_destino, int capacidad_maxima) {
+    public PlanVuelo(int id, Ubicacion ciudad_origen, Ubicacion ciudad_destino, String hora_ciudad_origen,
+            String hora_ciudad_destino, int capacidad_maxima) {
         this.id = id;
         this.ciudad_origen = ciudad_origen;
         this.ciudad_destino = ciudad_destino;
@@ -17,7 +18,7 @@ public class PlanVuelo {
         this.capacidad_maxima = capacidad_maxima;
     }
 
-    public PlanVuelo(PlanVuelo _plan_vuelo){
+    public PlanVuelo(PlanVuelo _plan_vuelo) {
         this.id = _plan_vuelo.id;
         this.ciudad_origen = _plan_vuelo.ciudad_origen;
         this.ciudad_destino = _plan_vuelo.ciudad_destino;

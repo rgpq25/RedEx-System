@@ -6,8 +6,8 @@ public class PlanRuta {
     Integer id;
     ArrayList<Vuelo> vuelos;
 
-    public PlanRuta(int id) {
-        this.id = id;
+    public PlanRuta() {
+        this.id = ContadorID.obtenerSiguienteID();
         this.vuelos = new ArrayList<Vuelo>();
     }
 
@@ -17,6 +17,10 @@ public class PlanRuta {
 
     public ArrayList<Vuelo> getVuelos() {
         return vuelos;
+    }
+
+    public void agregarVuelo(Vuelo vuelo) {
+        vuelos.add(vuelo);
     }
 
     public void setVuelos(ArrayList<Vuelo> vuelos) {
