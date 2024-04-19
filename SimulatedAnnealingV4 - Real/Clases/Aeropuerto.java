@@ -11,10 +11,10 @@ public class Aeropuerto {
         this.capacidad_maxima = capacidad_maxima;
     }
 
-    public Aeropuerto(){
+    public Aeropuerto() {
 
     }
-    
+
     public String getId() {
         return ubicacion.getId();
     }
@@ -43,7 +43,8 @@ public class Aeropuerto {
         this.capacidad_maxima = capacidad_maxima;
     }
 
-    public void print(){
-        System.out.println("Aeropuerto: " + this.ubicacion.getId() + " | GMT: " + this.ubicacion.getZonaHoraria() + " | " + this.capacidad_utilizada + " " + this.capacidad_maxima);
+    public void print() {
+        System.out.println("Aeropuerto: " + this.ubicacion.getId() + " | GMT: " + this.ubicacion.getZonaHoraria()
+                + " | " + this.capacidad_utilizada + " " + this.capacidad_maxima);
     }
 }
