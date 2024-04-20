@@ -13,6 +13,10 @@ public class Ubicacion {
         this.zona_horaria = zona_horaria;
     }
 
+    public int diferenciaHoraria() {
+        return Integer.parseInt(zona_horaria.replaceAll("GMD", ""));
+    }
+
     public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
             String zonaHoraria) {
         this.id = id;

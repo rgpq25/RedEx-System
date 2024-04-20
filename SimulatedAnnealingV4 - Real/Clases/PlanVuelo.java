@@ -27,6 +27,10 @@ public class PlanVuelo {
         this.capacidad_maxima = _plan_vuelo.capacidad_maxima;
     }
 
+    public boolean es_continental() {
+        return ciudad_origen.getContinente().equals(ciudad_destino.getContinente());
+    }
+
     public PlanVuelo() {
     }
 

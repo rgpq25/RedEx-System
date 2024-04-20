@@ -16,6 +16,14 @@ public class EstadoAlmacen {
         this.uso_historico = uso_historico;
     }
 
+    public EstadoAlmacen() {
+        uso_historico = new HashMap<Aeropuerto, HashMap<Date, Integer>>();
+    }
+
+    public HashMap<Aeropuerto, HashMap<Date, Integer>> getUso_historico() {
+        return uso_historico;
+    }
+
     public void consulta_historica() {
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             System.out.println("Aeropuerto: " + aeropuerto.getId());
@@ -68,7 +76,19 @@ public class EstadoAlmacen {
 
     }
 
-    public long calcular_minutos_entre(Date ini, Date fin) {
+    public boolean verificar_capacidad_maxima() {
+
+        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+            for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
+                if (uso_historico.get(aeropuerto).get(fecha) > aeropuerto.getCapacidad_maxima()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private long calcular_minutos_entre(Date ini, Date fin) {
         long inicio = ini.getTime();
         long final_ = fin.getTime();
         return ((final_ - inicio) / (1000 * 60));
