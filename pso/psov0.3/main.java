@@ -12,32 +12,41 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import Clases.Aeropuerto;
 import Clases.PlanVuelo;
 import Clases.Ubicacion;
 import Clases.Vuelo;
+import Clases.Paquete;
 //import org.apache.commons.lang3.ArrayUtils;
 
 public class main {
 
     public static void main(String[] args) {
-        /* 
-        Aeropuerto lima = new Aeropuerto("LIM");
-        Aeropuerto miami = new Aeropuerto("MIA");
-        Aeropuerto roma = new Aeropuerto("ROM");
-        Aeropuerto madrid = new Aeropuerto("MAD");
-        */
+
         Funciones funciones = new Funciones();
+        String inputPath = "input";
+        Aeropuerto[] aeropuertos = funciones.leerAeropuertos(inputPath);
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<>();
+        for (Aeropuerto aeropuerto : aeropuertos) {
+        ubicacionMap.put(aeropuerto.getUbicacion().getId(),
+        aeropuerto.getUbicacion());
+        }
+        //Paquete[] paquetes = funciones.leerPaquetes(inputPath, ubicacionMap);
+        Vuelo[] vuelos = funciones.leerVuelos(inputPath, ubicacionMap);
+
+        /* 
         ArrayList<Ubicacion> ubicaciones = funciones.generarUbicaciones(10);
         ArrayList<Aeropuerto> aeropuertos = funciones.generarAeropuertos(ubicaciones, 4);
         ArrayList<PlanVuelo> planVuelos = funciones.generarPlanesDeVuelo(aeropuertos, 1);
-        ArrayList<Vuelo> vuelos = funciones.generarVuelos(aeropuertos, planVuelos, 4);
+        ArrayList<Vuelo> vuelos = funciones.generarVuelos(aeropuertos, planVuelos, 4);*/
         GrafoVuelos grafo_vuelos = new GrafoVuelos();
-        //Itera el array de vuelos
-        
+        //Itera el array de vuelos y los agrega al grafo
         for (Vuelo vuelo : vuelos) {
-            //vuelo.print();
+            vuelo.print();
             grafo_vuelos.agregarVuelo(vuelo);
         }
 
@@ -47,35 +56,30 @@ public class main {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = null;
         try {
-            date = sdf.parse("2024-04-20 07:00");
+            date = sdf.parse("2023-01-03 10:00");
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         List<Ruta> rutas = grafo_vuelos.buscarTodasLasRutas(date);
-        /*for (Ruta r : rutas) {
-            System.out.println(r);
-        }*/
 
         //print rutas size
         System.out.println(rutas.size());
 
-        /*Paquete paquete1 = new Paquete(lima, roma, "2024-04-15 08:00");
-        Paquete paquete2 = new Paquete(miami, lima, "2024-04-16 04:30");
-        Paquete paquete3 = new Paquete(madrid, miami, "2024-04-17 05:00");
-        Paquete paquete4 = new Paquete(madrid, miami, "2024-04-17 07:00");
+        Paquete[] paquetesLeidos = funciones.leerPaquetes(inputPath, ubicacionMap);
 
-        List<Paquete> paquetes = new ArrayList<>();
-        paquetes.add(paquete1);
-        paquetes.add(paquete2);
-        paquetes.add(paquete3);
-        paquetes.add(paquete4);
+        //print paquetes
+        for (Paquete paquete : paquetesLeidos) {
+            paquete.print();
+        }
 
-        EspacioBusquedaPSO espacioBusqueda = new EspacioBusquedaPSO(paquetes, grafo_vuelos.buscarTodasLasRutas("2024-04-15 07:00"));
+        List<Paquete> paquetes = Arrays.asList(paquetesLeidos);
+
+        EspacioBusquedaPSO espacioBusqueda = new EspacioBusquedaPSO(paquetes, grafo_vuelos.buscarTodasLasRutas(date));
         System.out.println(espacioBusqueda);
 
 
-        PSO pso = new PSO();
+        //PSO pso = new PSO();
         int[] bestComb = PSO.pso(paquetes, rutas, 100, 1000, 0.7, 1.4, 1.4);
         List<Integer> bestCombList = new ArrayList<>();
         for (int i = 0; i < bestComb.length; i++) {
@@ -97,7 +101,7 @@ public class main {
                     }
                 }
             }
-        } */
+        } /**/
 
     }
 }

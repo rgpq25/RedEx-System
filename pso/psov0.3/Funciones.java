@@ -22,6 +22,7 @@ import Clases.Ubicacion;
 import Clases.Vuelo;
 import Clases.Aeropuerto;
 import Clases.PlanVuelo;
+import Clases.Paquete;
 
 
 
@@ -29,6 +30,156 @@ public class Funciones {
     
     public Funciones() {
     }
+
+    public Date parseDateString(String dateString, String format, String timeZone) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        try {
+            return sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Date addDays(Date date, int days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+        return calendar.getTime();
+    }
+
+    public Paquete[] leerPaquetes(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        List<Paquete> paquetes_list = new ArrayList<Paquete>();
+        Paquete[] paquetes = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        try {
+            File file = new File(inputPath + "/paquetes.csv");
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter(",");
+
+            int id = 1;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+
+                Paquete paquete = new Paquete();
+                paquete.setId(id);
+                paquete.setCiudadAlmacen(ubicacionMap.get(parts[1].trim()));
+                paquete.setCiudadOrigen(ubicacionMap.get(parts[1].trim()));
+                paquete.setCiudadDestino(ubicacionMap.get(parts[2].trim()));
+
+                String firstDateString = parts[0].trim();
+                Date fecha_recepcion = parseDateString(firstDateString, "yyyy-MM-dd HH:mm:ss",
+                        paquete.getCiudadOrigen().getZonaHoraria());
+                Date fecha_maxima_entrega = addDays(fecha_recepcion, 2);
+
+                paquete.setFecha_recepcion(fecha_recepcion);
+                paquete.setFecha_maxima_entrega(fecha_maxima_entrega);
+                paquetes_list.add(paquete);
+
+                id++;
+            }
+
+            scanner.close();
+            paquetes = paquetes_list.toArray(new Paquete[paquetes_list.size()]);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return paquetes;
+    }
+
+
+    public Vuelo[] leerVuelos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        List<Vuelo> vuelos_list = new ArrayList<Vuelo>();
+        Vuelo[] vuelos = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        try {
+            File file = new File(inputPath + "/vuelos.csv");
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter(",");
+
+            int id = 1;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+
+                // TODO: Horas de vuelo segun registro de datos ya estan en sus horas
+                // correspondientes
+                Vuelo vuelo = new Vuelo();
+                vuelo.setPlan_vuelo(new PlanVuelo());
+                vuelo.setId(id);
+                vuelo.getPlan_vuelo().setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+                vuelo.getPlan_vuelo().setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+                vuelo.getPlan_vuelo().setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
+                vuelo.getPlan_vuelo().setHora_ciudad_origen(parts[2].trim().split(" ")[1]);
+                vuelo.getPlan_vuelo().setHora_ciudad_destino(parts[3].trim().split(" ")[1]);
+
+                String dateSalida = parts[2].trim();
+                String dateLlegada = parts[3].trim();
+                Date fecha_salida = parseDateString(dateSalida, "yyyy-MM-dd HH:mm:ss",
+                        vuelo.getPlan_vuelo().getCiudadOrigen().getZonaHoraria());
+                Date fecha_llegada = parseDateString(dateLlegada, "yyyy-MM-dd HH:mm:ss",
+                        vuelo.getPlan_vuelo().getCiudadDestino().getZonaHoraria());
+                vuelo.setFecha_salida(fecha_salida);
+                vuelo.setFecha_llegada(fecha_llegada);
+
+                vuelos_list.add(vuelo);
+                id++;
+            }
+            scanner.close();
+            vuelos = vuelos_list.toArray(new Vuelo[vuelos_list.size()]);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return vuelos;
+    }
+
+
+    public Aeropuerto[] leerAeropuertos(String inputPath) {
+        List<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
+        Aeropuerto[] aeropuertos = null;
+        try {
+            File file = new File(inputPath + "/aeropuertos.csv");
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter(",");
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+
+                Aeropuerto aeropuerto = new Aeropuerto();
+
+                Ubicacion ubicacion = new Ubicacion(parts[0].trim(), "GMT" + parts[2].trim());
+
+                aeropuerto.setUbicacion(ubicacion);
+                aeropuerto.setCapacidad_maxima(Integer.parseInt(parts[1].trim()));
+                aeropuerto.setCapacidad_utilizada(0);
+                aeropuertos_list.add(aeropuerto);
+            }
+
+            scanner.close();
+            aeropuertos = aeropuertos_list.toArray(new Aeropuerto[aeropuertos_list.size()]);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return aeropuertos;
+    }
+
+
+
 
     public ArrayList<Vuelo> generarVuelos(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planesVuelo,
             int maxDias) {
