@@ -29,7 +29,7 @@ public class EstadoAlmacen {
 
     public HashMap<Aeropuerto, Integer> verificar_capacidad_en(Date fecha) {
         HashMap<Aeropuerto, Integer> capacidad_hasta = new HashMap<Aeropuerto, Integer>();
-
+        System.out.println(fecha);
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             HashMap<Date, Integer> registros = uso_historico.get(aeropuerto);
             Date fecha_cercana = null;
