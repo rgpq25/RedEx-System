@@ -19,7 +19,9 @@ public class EstadoAlmacen {
     public void consulta_historica() {
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             System.out.println("Aeropuerto: " + aeropuerto.getId());
-            for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
+            ArrayList<Date> fechasOrdenadas = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
+            Collections.sort(fechasOrdenadas);
+            for (Date fecha : fechasOrdenadas) {
                 System.out.println("Fecha: " + fecha + " | Uso: " + uso_historico.get(aeropuerto).get(fecha));
             }
         }

@@ -481,7 +481,7 @@ public class Funciones {
         ArrayList<RegistroAlmacenamiento> registros = funciones.crearRegistrosAlmacenamiento(paquetes, planRutas,
                 aeropuertos);
         if (funciones.verificar_capacidad(registros, aeropuertos)) {
-            ArrayList<Evento> eventos = new ArrayList<>();
+
             HashMap<Aeropuerto, HashMap<Date, Integer>> eventos_acumulados = new HashMap<Aeropuerto, HashMap<Date, Integer>>();
             HashMap<Aeropuerto, HashMap<Date, Integer>> acumulado_aeropuerto = new HashMap<Aeropuerto, HashMap<Date, Integer>>();
             // Crea eventos de inicio y fin
