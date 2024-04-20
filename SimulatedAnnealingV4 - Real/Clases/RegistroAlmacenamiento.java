@@ -7,10 +7,10 @@ public class RegistroAlmacenamiento {
     int paqueteId;
     Date fechaInicio;
     Date fechaFin;
-    String aeropuerto;
+    Aeropuerto aeropuerto;
 
     public RegistroAlmacenamiento(int paqueteId, Date fechaInicio, Date fechaFin,
-            String aeropuerto) {
+            Aeropuerto aeropuerto) {
         this.paqueteId = paqueteId;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -33,7 +33,7 @@ public class RegistroAlmacenamiento {
         return fechaFin;
     }
 
-    public String getAeropuerto() {
+    public Aeropuerto getAeropuerto() {
         return aeropuerto;
     }
 

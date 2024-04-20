@@ -1,18 +1,19 @@
 package Clases;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public class Evento {
     private Date fechaHora;
-    private String aeropuerto;
-    private int cambio; // +1 para inicio, -1 para fin
-    private int cantidadAcumulada; // Agregar este campo
+    private Aeropuerto aeropuerto;
+    private int cambio;
+    private int cantidadAcumulada;
 
-    public Evento(Date fechaHora, String aeropuerto, int cambio) {
+    public Evento(Date fechaHora, Aeropuerto aeropuerto, int cambio) {
         this.fechaHora = fechaHora;
         this.aeropuerto = aeropuerto;
         this.cambio = cambio;
-        this.cantidadAcumulada = 0; // Inicializar en el constructor
+        this.cantidadAcumulada = 0;
     }
 
     // Getters y Setters
@@ -20,7 +21,7 @@ public class Evento {
         return fechaHora;
     }
 
-    public String getAeropuerto() {
+    public Aeropuerto getAeropuerto() {
         return aeropuerto;
     }
 
