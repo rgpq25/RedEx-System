@@ -27,18 +27,24 @@ public class EstadoAlmacen {
         }
     }
 
-    public HashMap<Aeropuerto, Integer> verificar_capacidad_hasta(Date fecha) {
+    public HashMap<Aeropuerto, Integer> verificar_capacidad_en(Date fecha) {
         HashMap<Aeropuerto, Integer> capacidad_hasta = new HashMap<Aeropuerto, Integer>();
 
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
-            int capacidad = 0;
-            for (Date fecha_historica : uso_historico.get(aeropuerto).keySet()) {
-                if (fecha_historica.before(fecha)) {
-                    capacidad = uso_historico.get(aeropuerto).get(fecha_historica);
-                    break;
+            HashMap<Date, Integer> registros = uso_historico.get(aeropuerto);
+            Date fecha_cercana = null;
+            for (Date fecha_historica : registros.keySet()) {
+                if (fecha_historica.before(fecha) || fecha_historica.equals(fecha)) {
+                    if (fecha_cercana == null || fecha_historica.after(fecha_cercana)) {
+                        fecha_cercana = fecha_historica;
+                    }
                 }
             }
-            capacidad_hasta.put(aeropuerto, capacidad);
+            if (fecha_cercana != null) {
+                capacidad_hasta.put(aeropuerto, registros.get(fecha_cercana));
+            } else {
+                capacidad_hasta.put(aeropuerto, 0);
+            }
         }
 
         return capacidad_hasta;
