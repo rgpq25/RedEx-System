@@ -13,6 +13,24 @@ public class GrafoVuelos {
         }
     }
 
+    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
+        // Encuentra el paquete con la fecha de recepción más temprana
+        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+                .min(Comparator.comparing(p -> p.getFecha_recepcion()));
+
+        // Encuentra el paquete con la fecha de entrega máxima más tardía
+        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+                .max(Comparator.comparing(p -> p.getFecha_maxima_entrega()));
+
+        Date inicio = minRecepcionPaquete.map(p -> p.getFecha_recepcion()).orElse(new Date());
+        Date fin = maxEntregaPaquete.map(p -> p.getFecha_maxima_entrega()).orElse(new Date());
+
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        for (Vuelo vuelo : vuelos) {
+            agregarVuelo(vuelo);
+        }
+    }
+
     public GrafoVuelos() {
     }
 

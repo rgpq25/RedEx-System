@@ -7,8 +7,8 @@ public class Paquete {
     private Ubicacion ciudad_almacen; // ciudad donde se encuentra actualmente el paquete
     private Ubicacion ciudad_origen;
     private Ubicacion ciudad_destino;
-    private Date fecha_maxima_entrega; // deberia ser en destino
-    private Date fecha_recepcion; // en origen 2023-01-03 09:23:41
+    private Date fecha_maxima_entrega;
+    private Date fecha_recepcion;
     private Vuelo[] lista_vuelos;
 
     public Paquete(int id, Ubicacion ciudad_almacen, PlanRuta plan_rutas, Ubicacion ciudad_origen,
