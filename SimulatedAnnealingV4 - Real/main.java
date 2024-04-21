@@ -1,5 +1,6 @@
 import Clases.Aeropuerto;
 import Clases.EstadoAlmacen;
+import Clases.Funciones;
 import Clases.GrafoVuelos;
 import Clases.Paquete;
 import Clases.PlanRuta;
@@ -29,7 +30,8 @@ public class main {
         // TODO: El costo real deberia considerar cuantos almacenes esta ocupando. Si
         // TODO: ocupa un aeropuerto / vuelo concurrido el costo deberia ser mayor.
 
-        public Solucion(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, ArrayList<Aeropuerto> aeropuertos, double costo) {
+        public Solucion(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, ArrayList<Aeropuerto> aeropuertos,
+                double costo) {
             this.paquetes = paquetes;
             this.rutas = rutas;
             this.aeropuertos = aeropuertos;
@@ -45,9 +47,8 @@ public class main {
 
                 // ArrayList<CapacidadPorTiempo> huecos = getRouteHoles(randomRoute);
                 // for (CapacidadPorTiempo hueco : huecos) {
-                //     //agregarlos a su aeropuerto correspondiente
+                // //agregarlos a su aeropuerto correspondiente
                 // }
-
 
                 this.rutas.add(randomRoute);
                 costo += randomRoute.getVuelos().size();
@@ -58,7 +59,8 @@ public class main {
 
         public Solucion generateNeighbour(List<PlanRuta> todasLasRutas) {
 
-            Solucion neighbour = new Solucion(new ArrayList<>(this.paquetes), new ArrayList<>(this.rutas), new ArrayList<>(this.aeropuertos), costo);
+            Solucion neighbour = new Solucion(new ArrayList<>(this.paquetes), new ArrayList<>(this.rutas),
+                    new ArrayList<>(this.aeropuertos), costo);
             int randomPackageIndex = (int) (Math.random() * this.paquetes.size());
             Paquete randomPackage = neighbour.paquetes.get(randomPackageIndex);
             ArrayList<PlanRuta> availableRoutes = new ArrayList<>();
@@ -81,28 +83,25 @@ public class main {
                 return neighbour;
             }
 
-
             // for (PlanRuta availableRoute : availableRoutes) {
-            //     boolean capacidadDisponible = true;
-            //     for (Vuelo vuelo : availableRoute.getVuelos()) {
-            //         if (!vuelo.getPlan_vuelo().getAeropuerto().tieneCapacidadDisponible(vuelo.getFecha_salida())) {
-            //             capacidadDisponible = false;
-            //             break;
-            //         }
-            //     }
-            //     if (capacidadDisponible) {
-            //         neighbour.rutas.set(randomPackageIndex, availableRoute);
-            //         break;
-            //     }
+            // boolean capacidadDisponible = true;
+            // for (Vuelo vuelo : availableRoute.getVuelos()) {
+            // if
+            // (!vuelo.getPlan_vuelo().getAeropuerto().tieneCapacidadDisponible(vuelo.getFecha_salida()))
+            // {
+            // capacidadDisponible = false;
+            // break;
+            // }
+            // }
+            // if (capacidadDisponible) {
+            // neighbour.rutas.set(randomPackageIndex, availableRoute);
+            // break;
+            // }
             // }
 
             int randomRouteIndex = (int) (Math.random() * availableRoutes.size());
             PlanRuta randomRoute = availableRoutes.get(randomRouteIndex);
             neighbour.rutas.set(randomPackageIndex, randomRoute);
-
-
-
-
 
             double newCost = 0;
             for (int i = 0; i < neighbour.paquetes.size(); i++) {
@@ -153,96 +152,107 @@ public class main {
 
     public static void main(String[] args) {
         Funciones funciones = new Funciones();
-        
+
         String inputPath = "input";
         Aeropuerto[] aeropuertos = funciones.leerAeropuertos(inputPath);
-        
+
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<>();
         for (Aeropuerto aeropuerto : aeropuertos) {
-        ubicacionMap.put(aeropuerto.getUbicacion().getId(),
-        aeropuerto.getUbicacion());
+            ubicacionMap.put(aeropuerto.getUbicacion().getId(),
+                    aeropuerto.getUbicacion());
         }
-        
+
         Paquete[] paquetes = funciones.leerPaquetes(inputPath, ubicacionMap);
         Vuelo[] vuelos = funciones.leerVuelos(inputPath, ubicacionMap);
 
-        for(Vuelo vuelo : vuelos) {
-            System.out.println(vuelo.getPlan_vuelo().getCiudadOrigen().getId() + " -> " + vuelo.getPlan_vuelo().getCiudadDestino().getId());
-            System.out.println(vuelo.getPlan_vuelo().getHora_ciudad_origen() + " -> " + vuelo.getPlan_vuelo().getHora_ciudad_destino());
+        for (Vuelo vuelo : vuelos) {
+            System.out.println(vuelo.getPlan_vuelo().getCiudadOrigen().getId() + " -> "
+                    + vuelo.getPlan_vuelo().getCiudadDestino().getId());
+            System.out.println(vuelo.getPlan_vuelo().getHora_ciudad_origen() + " -> "
+                    + vuelo.getPlan_vuelo().getHora_ciudad_destino());
         }
-        
+
         // ArrayList<Ubicacion> ubicaciones = funciones.generarUbicaciones(10);
-        // ArrayList<Aeropuerto> aeropuertos = funciones.generarAeropuertos(ubicaciones, 4);
+        // ArrayList<Aeropuerto> aeropuertos = funciones.generarAeropuertos(ubicaciones,
+        // 4);
         // ArrayList<Paquete> paquetes = funciones.generarPaquetes(100, aeropuertos, 3);
-        // ArrayList<PlanVuelo> planVuelos = funciones.generarPlanesDeVuelo(aeropuertos, 1);
-        // ArrayList<Vuelo> vuelos = funciones.generarVuelos(aeropuertos, planVuelos, 4);
-        // ArrayList<PlanRuta> rutasPorPaquete = funciones.asignarVuelosAPaquetes(paquetes, vuelos);
-        // Boolean funca = funciones.verificar_capacidad_aeropuertos(paquetes, rutasPorPaquete, aeropuertos);
-        
+        // ArrayList<PlanVuelo> planVuelos = funciones.generarPlanesDeVuelo(aeropuertos,
+        // 1);
+        // ArrayList<Vuelo> vuelos = funciones.generarVuelos(aeropuertos, planVuelos,
+        // 4);
+        // ArrayList<PlanRuta> rutasPorPaquete =
+        // funciones.asignarVuelosAPaquetes(paquetes, vuelos);
+        // Boolean funca = funciones.verificar_capacidad_aeropuertos(paquetes,
+        // rutasPorPaquete, aeropuertos);
+
         funciones.ordenarPaquetes(paquetes);
         funciones.ordenarVuelos(vuelos);
         GrafoVuelos grafoVuelos = new GrafoVuelos();
         for (Vuelo vuelo : vuelos) {
-        grafoVuelos.agregarVuelo(vuelo);
+            grafoVuelos.agregarVuelo(vuelo);
         }
 
         Date date = Date.from(LocalDateTime.of(2023, 1, 6, 1, 0).toInstant(ZoneOffset.UTC));
-        
+
         List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
 
-    
-        
-        //String fechaActual = "2023-01-02 00:00:00";
-        
+        // String fechaActual = "2023-01-02 00:00:00";
+
         // double temperature = 10000;
         // double coolingRate = 0.003;
         // int neighbourCount = 100;
-        
-        // Solucion current = new Solucion(new ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), new ArrayList<Aeropuerto>(Arrays.asList(aeropuertos)), 0);
+
+        // Solucion current = new Solucion(new
+        // ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), new
+        // ArrayList<Aeropuerto>(Arrays.asList(aeropuertos)), 0);
         // current.initialize(todasLasRutas);
         // printRutasTXT(current.paquetes, current.rutas, "initial.txt");
-        
+
         // while (temperature > 1) {
-        //     // Pick a random neighboring solution
-        //     ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-        //     for (int i = 0; i < neighbourCount; i++) {
-        //     neighbours.add(current.generateNeighbour(todasLasRutas));
-        //     }
-            
-        //     int bestNeighbourIndex = 0;
-        //     double bestNeighbourCost = Double.MAX_VALUE;
-        //     for (int i = 0; i < neighbours.size(); i++) {
-        //     Solucion neighbour = neighbours.get(i);
-        //     double neighbourCost = neighbour.costo;
-        //     if (neighbourCost < bestNeighbourCost) {
-        //     bestNeighbourCost = neighbourCost;
-        //     bestNeighbourIndex = i;
-        //     }
-        //     }
-            
-        //     // Calculate the cost difference between the new and current routes
-        //     double currentCost = current.costo;
-        //     double newCost = neighbours.get(bestNeighbourIndex).costo;
-        //     double costDifference = newCost - currentCost;
-            
-        //     // Decide if we should accept the new solution
-        //     if (costDifference < 0 || Math.exp(-costDifference / temperature) >
-        //     Math.random()) {
-        //     current = neighbours.get(bestNeighbourIndex);
-        //     }
-            
-        //     // Cool down the system
-        //     temperature *= 1 - coolingRate;
+        // // Pick a random neighboring solution
+        // ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+        // for (int i = 0; i < neighbourCount; i++) {
+        // neighbours.add(current.generateNeighbour(todasLasRutas));
         // }
-        // EstadoAlmacen estado = funciones.obtenerEstadoAlmacen(current.paquetes, current.rutas, current.aeropuertos);
+
+        // int bestNeighbourIndex = 0;
+        // double bestNeighbourCost = Double.MAX_VALUE;
+        // for (int i = 0; i < neighbours.size(); i++) {
+        // Solucion neighbour = neighbours.get(i);
+        // double neighbourCost = neighbour.costo;
+        // if (neighbourCost < bestNeighbourCost) {
+        // bestNeighbourCost = neighbourCost;
+        // bestNeighbourIndex = i;
+        // }
+        // }
+
+        // // Calculate the cost difference between the new and current routes
+        // double currentCost = current.costo;
+        // double newCost = neighbours.get(bestNeighbourIndex).costo;
+        // double costDifference = newCost - currentCost;
+
+        // // Decide if we should accept the new solution
+        // if (costDifference < 0 || Math.exp(-costDifference / temperature) >
+        // Math.random()) {
+        // current = neighbours.get(bestNeighbourIndex);
+        // }
+
+        // // Cool down the system
+        // temperature *= 1 - coolingRate;
+        // }
+        // EstadoAlmacen estado = funciones.obtenerEstadoAlmacen(current.paquetes,
+        // current.rutas, current.aeropuertos);
         // estado.consulta_historica();
         // System.out.println("VERIFICANDO CAPACIDAD");
-        // HashMap<Aeropuerto, Integer> curr = estado.verificar_capacidad_en(Date.from(LocalDateTime.of(2023, 1, 3, 15, 0).toInstant(ZoneOffset.UTC)));
+        // HashMap<Aeropuerto, Integer> curr =
+        // estado.verificar_capacidad_en(Date.from(LocalDateTime.of(2023, 1, 3, 15,
+        // 0).toInstant(ZoneOffset.UTC)));
         // for (Aeropuerto aeropuerto : curr.keySet()) {
-        //     System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " + curr.get(aeropuerto));
+        // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
+        // curr.get(aeropuerto));
         // }
         // System.out.println("Final cost: " + current.costo);
         // printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-        
+
     }
 }

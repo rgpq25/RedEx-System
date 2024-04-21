@@ -13,11 +13,13 @@ public class GrafoVuelos {
         }
     }
 
-    public ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo,
-            Date inicio, Date fin) {
+    public GrafoVuelos() {
+    }
+
+    private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date inicio, Date fin) {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
-        // Mueve la instancia de Calendar aquí para inicializarla una vez.
+        // Inicializa el calendario para la fecha de inicio.
         Calendar cal = Calendar.getInstance();
         cal.setTime(inicio);
 
@@ -26,7 +28,6 @@ public class GrafoVuelos {
 
         while (!cal.after(finCal)) {
             for (PlanVuelo plan : planesVuelo) {
-
                 // Configura la hora de partida según el plan.
                 cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
                 cal.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
@@ -38,17 +39,24 @@ public class GrafoVuelos {
                 calLlegada.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
                 Date fechaLlegada = calLlegada.getTime();
 
-                // Comprobar si la fecha de llegada es anterior a la de partida y ajustarla si
-                // es necesario.
+                // Ajusta la fecha de llegada si es necesario.
                 if (!fechaLlegada.after(fechaPartida)) {
-                    calLlegada.add(Calendar.DAY_OF_MONTH, 1); // Añadir un día a la fecha de llegada.
+                    calLlegada.add(Calendar.DAY_OF_MONTH, 1);
                     fechaLlegada = calLlegada.getTime();
                 }
-
-                // Agrega el vuelo a la lista.
-                vuelos.add(new Vuelo(plan, fechaPartida, fechaLlegada));
+                if (!plan.es_continental()) {
+                    long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 * 60 * 60); // Duración en
+                                                                                                          // horas
+                    if (duracion < 12 || duracion > 24) {
+                        calLlegada.add(Calendar.DAY_OF_MONTH, 1);
+                        fechaLlegada = calLlegada.getTime();
+                    }
+                }
+                // Añade el vuelo a la lista con la zona horaria correcta.
+                vuelos.add(new Vuelo(plan,
+                        Funciones.convertTimeZone(fechaPartida, plan.getCiudadOrigen().getZonaHoraria(), "GMT+0"),
+                        Funciones.convertTimeZone(fechaLlegada, plan.getCiudadDestino().getZonaHoraria(), "GMT+0")));
             }
-
             // Avanza al día siguiente.
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }

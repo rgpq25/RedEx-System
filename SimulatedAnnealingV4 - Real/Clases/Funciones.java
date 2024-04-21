@@ -1,3 +1,5 @@
+package Clases;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Date;
@@ -11,17 +13,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
-
-import Clases.Aeropuerto;
-import Clases.EstadoAlmacen;
-import Clases.Evento;
-import Clases.Paquete;
-import Clases.PlanRuta;
-import Clases.PlanVuelo;
-import Clases.RegistroAlmacenamiento;
-import Clases.Ubicacion;
-import Clases.Vuelo;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -250,10 +241,12 @@ public class Funciones {
         return ubicaciones;
     }
 
-    public ArrayList<Aeropuerto> generarAeropuertos(ArrayList<Ubicacion> ubicaciones, int capacidadMaxima) {
+    public ArrayList<Aeropuerto> generarAeropuertos(ArrayList<Ubicacion> ubicaciones) {
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<>();
+        Random random = new Random();
+        int capacidad = 100 + random.nextInt(401);
         for (Ubicacion ubicacion : ubicaciones) {
-            aeropuertos.add(new Aeropuerto(ubicacion, 0, capacidadMaxima));
+            aeropuertos.add(new Aeropuerto(ubicacion, 0, capacidad));
         }
         return aeropuertos;
     }
@@ -290,19 +283,28 @@ public class Funciones {
 
                         // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
                         // basada en distancia u otros factores)
-                        int duracionHoras = 1 + random.nextInt(8); // Duración de vuelo de 1 a 8 horas
-                        int duracionMinutos = random.nextInt(60);
+                        int duracionHoras; // Duración de vuelo de 1 a 8 horas
+                        int duracionMinutos = 0 + random.nextInt(59);
 
+                        int diferencia = destino.getUbicacion().diferenciaHoraria()
+                                - origen.getUbicacion().diferenciaHoraria();
+
+                        if (origen.getUbicacion().getContinente()
+                                .contentEquals(destino.getUbicacion().getContinente())) {
+                            duracionHoras = random.nextInt(12);
+                        } else {
+                            duracionHoras = 12 + random.nextInt(12);
+                        }
                         Calendar cal = Calendar.getInstance();
                         cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
                         cal.set(Calendar.MINUTE, horaSalidaMinuto);
-                        cal.add(Calendar.HOUR_OF_DAY, duracionHoras);
+                        cal.add(Calendar.HOUR_OF_DAY, duracionHoras - diferencia);
                         cal.add(Calendar.MINUTE, duracionMinutos);
 
                         String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
                                 cal.get(Calendar.MINUTE));
 
-                        int capacidad = 100 + random.nextInt(401); // Capacidades entre 100 y 500
+                        int capacidad = 100 + random.nextInt(401);
 
                         PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
                                 horaSalida, horaLlegada, capacidad);
@@ -313,46 +315,6 @@ public class Funciones {
         }
 
         return planes;
-    }
-
-    public ArrayList<Vuelo> generarVuelos(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planesVuelo,
-            int maxDias) {
-        ArrayList<Vuelo> vuelos = new ArrayList<>();
-
-        // Mueve la instancia de Calendar aquí para inicializarla una vez por día.
-        Calendar cal = Calendar.getInstance();
-
-        for (int day = 0; day < maxDias; day++) {
-            // Utiliza la fecha actual como base y añade la cantidad de días correspondiente
-            // a la iteración.
-            cal.setTime(new Date());
-            cal.add(Calendar.DAY_OF_MONTH, day);
-
-            for (PlanVuelo plan : planesVuelo) {
-                // Configura la hora de partida según el plan.
-                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
-                cal.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
-                Date fechaPartida = cal.getTime();
-
-                // Clona 'cal' para configurar la hora de llegada.
-                Calendar calLlegada = (Calendar) cal.clone();
-                calLlegada.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
-                calLlegada.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
-                Date fechaLlegada = calLlegada.getTime();
-
-                // Comprobar si la fecha de llegada es anterior a la de partida y ajustarla si
-                // es necesario.
-                if (!fechaLlegada.after(fechaPartida)) {
-                    calLlegada.add(Calendar.DAY_OF_MONTH, 1); // Añadir un día a la fecha de llegada.
-                    fechaLlegada = calLlegada.getTime();
-                }
-
-                // Agrega el vuelo a la lista.
-                vuelos.add(new Vuelo(plan, fechaPartida, fechaLlegada));
-            }
-        }
-
-        return vuelos;
     }
 
     public ArrayList<PlanRuta> asignarVuelosAPaquetes(ArrayList<Paquete> paquetes, ArrayList<Vuelo> vuelos) {

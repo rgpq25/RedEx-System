@@ -1,7 +1,6 @@
 package Clases;
 
 import java.util.Date;
-import java.util.HashMap;
 
 public class Evento {
     private Date fechaHora;
