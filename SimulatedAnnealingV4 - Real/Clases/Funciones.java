@@ -15,6 +15,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
 import java.util.stream.Collectors;
@@ -24,29 +27,39 @@ public class Funciones {
     public Funciones() {
     }
 
-    public static Date parseDateString(String dateString, String format, String timeZone) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+
+    public static String getFormattedDate(Date date){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+
+    public static void printFormattedDate(Date date){
+        System.out.println(getFormattedDate(date));
+    }
+
+    
+    public static Date parseDateString(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            return sdf.parse(dateString);
+            return format.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+
     public static Date convertTimeZone(Date date, String fromTimeZone, String toTimeZone) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone(fromTimeZone));
-        String formattedDate = sdf.format(date);
-
-        sdf.setTimeZone(TimeZone.getTimeZone(toTimeZone));
-        try {
-            return sdf.parse(formattedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        long timeInMillis = date.getTime();
+        
+        int fromOffset = TimeZone.getTimeZone(fromTimeZone).getOffset(timeInMillis);
+        int toOffset = TimeZone.getTimeZone(toTimeZone).getOffset(timeInMillis);
+        
+        int offsetDifference = toOffset - fromOffset;
+        
+        return new Date(timeInMillis + offsetDifference);
     }
 
     public static Date addDays(Date date, int days) {
@@ -109,13 +122,27 @@ public class Funciones {
                 paquete.setCiudadDestino(ubicacionMap.get(parts[2].trim()));
 
                 String firstDateString = parts[0].trim();
-                Date fecha_recepcion = parseDateString(firstDateString, "yyyy-MM-dd HH:mm:ss",
-                        paquete.getCiudadOrigen().getZonaHoraria());
-                fecha_recepcion = convertTimeZone(fecha_recepcion, paquete.getCiudadOrigen().getZonaHoraria(), "GMT+0");
-                Date fecha_maxima_entrega = addDays(fecha_recepcion, 2);
 
-                paquete.setFecha_recepcion(fecha_recepcion);
-                paquete.setFecha_maxima_entrega(fecha_maxima_entrega);
+
+                Date fecha_recepcion_GMTOrigin = parseDateString(firstDateString);
+
+                //lo llevamos a UTC
+                Date fecha_recepcion_GMT0 = convertTimeZone(
+                    fecha_recepcion_GMTOrigin, 
+                    paquete.getCiudadOrigen().getZonaHoraria(), 
+                    "UTC"
+                );
+
+                
+                Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); //aqui estaria en timezone de destino
+                Date fecha_maxima_entrega_GMT0 = convertTimeZone(
+                    fecha_maxima_entrega_GMTDestino, 
+                    paquete.getCiudadDestino().getZonaHoraria(), 
+                    "UTC"
+                );
+
+                paquete.setFecha_recepcion(fecha_recepcion_GMT0);
+                paquete.setFecha_maxima_entrega(fecha_maxima_entrega_GMT0);
                 paquetes_list.add(paquete);
 
                 id++;
@@ -159,10 +186,8 @@ public class Funciones {
 
                 String dateSalida = parts[2].trim();
                 String dateLlegada = parts[3].trim();
-                Date fecha_salida = parseDateString(dateSalida, "yyyy-MM-dd HH:mm:ss",
-                        vuelo.getPlan_vuelo().getCiudadOrigen().getZonaHoraria());
-                Date fecha_llegada = parseDateString(dateLlegada, "yyyy-MM-dd HH:mm:ss",
-                        vuelo.getPlan_vuelo().getCiudadDestino().getZonaHoraria());
+                Date fecha_salida = parseDateString(dateSalida);
+                Date fecha_llegada = parseDateString(dateLlegada);
                 vuelo.setFecha_salida(fecha_salida);
                 vuelo.setFecha_llegada(fecha_llegada);
 

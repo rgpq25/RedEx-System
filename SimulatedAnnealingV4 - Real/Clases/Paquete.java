@@ -117,9 +117,12 @@ public class Paquete {
         this.fecha_recepcion = fecha_recepcion;
     }
 
-    public void print() {
-        System.out.println("Paquete " + id + " - " + ciudad_origen.getId() + " - " + ciudad_destino.getId() + " - "
-                + fecha_recepcion + " - " + fecha_maxima_entrega);
+    @Override
+    public String toString() {
+        return "Paquete " + id + " - " + ciudad_origen.getId() + " - " + ciudad_destino.getId() + " - "
+                + Funciones.getFormattedDate(fecha_recepcion)
+                + " - " 
+                + Funciones.getFormattedDate(fecha_maxima_entrega);
     }
 
     public Vuelo[] getListaVuelos() {

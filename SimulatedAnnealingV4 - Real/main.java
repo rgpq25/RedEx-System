@@ -103,7 +103,7 @@ public class main {
 
             //restamos fecha de paquete - baseline para darnos la diferencia
             long diff = getDifferenceInDays(
-                Funciones.parseDateString("2024-01-01 00:00:00","yyyy-MM-dd HH:mm:ss","GMT+0"), 
+                Funciones.parseDateString("2024-01-01 00:00:00"), 
                 randomPackage.getFecha_recepcion()
             );
 
@@ -115,7 +115,7 @@ public class main {
 
             if(
                 randomRoute.getVuelos().get(0).getFecha_salida().getTime() != 
-                Funciones.parseDateString("2024-01-01 00:00:00","yyyy-MM-dd HH:mm:ss","GMT+0").getTime()
+                Funciones.parseDateString("2024-01-01 00:00:00").getTime()
             ){
                 System.out.println("se encontro una ruta que no tenia fecha 2024-01-01, error al manejar memoria");
 
@@ -203,10 +203,14 @@ public class main {
         ubicacionMap.put("LDZA", new Ubicacion("LDZA", "Europa",          "Croacia",    "Zagreb",               "zagr", "GMT+2"));
         ubicacionMap.put("EKCH", new Ubicacion("EKCH", "Europa",          "Dinamarca",  "Copenhague",           "cope", "GMT+2"));
 
-        ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
+        //ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
         ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
-        ArrayList<Vuelo> vuelos = Funciones.leerVuelos(inputPath, ubicacionMap);
-        ArrayList<PlanVuelo> planes_vuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
+        //ArrayList<PlanVuelo> planes_vuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
+
+
+        for(Paquete paquete : paquetes){
+            System.out.println(paquete.toString());
+        }
 
         //ArrayList<Ubicacion> ubicaciones = Funciones.generarUbicaciones(10);
         //ArrayList<Aeropuerto> aeropuertos = Funciones.generarAeropuertos(ubicaciones,
@@ -221,17 +225,16 @@ public class main {
         // Boolean funca = funciones.verificar_capacidad_aeropuertos(paquetes,
         // rutasPorPaquete, aeropuertos);
 
-        //Funciones.ordenarPaquetes(paquetes);
-        //Funciones.ordenarVuelos(vuelos);
-        GrafoVuelos grafoVuelos = new GrafoVuelos(planes_vuelos, paquetes);
+    
+        //GrafoVuelos grafoVuelos = new GrafoVuelos(planes_vuelos, paquetes);
 
-        Date date = Date.from(LocalDateTime.of(2023, 1, 1, 1, 0).toInstant(ZoneOffset.UTC));
+        //Date date = Date.from(LocalDateTime.of(2023, 1, 1, 1, 0).toInstant(ZoneOffset.UTC));
 
-        List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
+        //List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
 
-        for(PlanRuta ruta : todasLasRutas){
-            System.out.println(ruta.toString());
-        }
+        // for(PlanRuta ruta : todasLasRutas){
+        //     System.out.println(ruta.toString());
+        // }
 
         // String fechaActual = "2023-01-02 00:00:00";
 
