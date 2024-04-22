@@ -27,18 +27,20 @@ public class Funciones {
     public Funciones() {
     }
 
+    public static int stringGmt2Int(String gmt) {
+        return Integer.parseInt(gmt.replace("GMT", ""));
+    }
 
-    public static String getFormattedDate(Date date){
+    public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
     }
 
-    public static void printFormattedDate(Date date){
+    public static void printFormattedDate(Date date) {
         System.out.println(getFormattedDate(date));
     }
 
-    
-    public static Date parseDateString(String dateString){
+    public static Date parseDateString(String dateString) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             return format.parse(dateString);
@@ -48,17 +50,16 @@ public class Funciones {
         }
     }
 
-
     public static Date convertTimeZone(Date date, String fromTimeZone, String toTimeZone) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone(fromTimeZone));
         long timeInMillis = date.getTime();
-        
+
         int fromOffset = TimeZone.getTimeZone(fromTimeZone).getOffset(timeInMillis);
         int toOffset = TimeZone.getTimeZone(toTimeZone).getOffset(timeInMillis);
-        
+
         int offsetDifference = toOffset - fromOffset;
-        
+
         return new Date(timeInMillis + offsetDifference);
     }
 
@@ -71,7 +72,6 @@ public class Funciones {
 
     public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
         ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
-
 
         try {
             File file = new File(inputPath + "/aeropuertos.csv");
@@ -123,23 +123,20 @@ public class Funciones {
 
                 String firstDateString = parts[0].trim();
 
-
                 Date fecha_recepcion_GMTOrigin = parseDateString(firstDateString);
 
-                //lo llevamos a UTC
+                // lo llevamos a UTC
                 Date fecha_recepcion_GMT0 = convertTimeZone(
-                    fecha_recepcion_GMTOrigin, 
-                    paquete.getCiudadOrigen().getZonaHoraria(), 
-                    "UTC"
-                );
+                        fecha_recepcion_GMTOrigin,
+                        paquete.getCiudadOrigen().getZonaHoraria(),
+                        "UTC");
 
-                
-                Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); //aqui estaria en timezone de destino
+                Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en
+                                                                                              // timezone de destino
                 Date fecha_maxima_entrega_GMT0 = convertTimeZone(
-                    fecha_maxima_entrega_GMTDestino, 
-                    paquete.getCiudadDestino().getZonaHoraria(), 
-                    "UTC"
-                );
+                        fecha_maxima_entrega_GMTDestino,
+                        paquete.getCiudadDestino().getZonaHoraria(),
+                        "UTC");
 
                 paquete.setFecha_recepcion(fecha_recepcion_GMT0);
                 paquete.setFecha_maxima_entrega(fecha_maxima_entrega_GMT0);

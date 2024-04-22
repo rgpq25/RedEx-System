@@ -13,6 +13,26 @@ public class GrafoVuelos {
         }
     }
 
+    public Date hora_local_a_fecha_generica(Date fechaGMT0, String hora_local, int diferencia_horaria) {
+        Calendar cal = Calendar.getInstance();
+        int horaGenerica = Integer.parseInt(hora_local.split(":")[0]);
+        cal.setTime(fechaGMT0);
+
+        if (horaGenerica - diferencia_horaria < 0) {
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            horaGenerica = 24 + horaGenerica + diferencia_horaria;
+        } else if (horaGenerica - diferencia_horaria >= 24) {
+            cal.add(Calendar.DAY_OF_MONTH, +1);
+            horaGenerica = horaGenerica + diferencia_horaria - 24;
+        } else {
+            horaGenerica = horaGenerica + diferencia_horaria;
+        }
+
+        cal.set(Calendar.HOUR_OF_DAY, horaGenerica);
+        cal.set(Calendar.MINUTE, Integer.parseInt(hora_local.split(":")[1]));
+        return cal.getTime();
+    }
+
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
         // Encuentra el paquete con la fecha de recepción más temprana
         Optional<Paquete> minRecepcionPaquete = paquetes.stream()
@@ -34,6 +54,63 @@ public class GrafoVuelos {
     public GrafoVuelos() {
     }
 
+    /*
+     * private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date
+     * inicio, Date fin) {
+     * ArrayList<Vuelo> vuelos = new ArrayList<>();
+     * 
+     * // Inicializa el calendario para la fecha de inicio.
+     * Calendar cal = Calendar.getInstance();
+     * cal.setTime(inicio);
+     * 
+     * Calendar finCal = Calendar.getInstance();
+     * finCal.setTime(fin);
+     * 
+     * while (!cal.after(finCal)) {
+     * for (PlanVuelo plan : planesVuelo) {
+     * // Configura la hora de partida según el plan.
+     * cal.set(Calendar.HOUR_OF_DAY,
+     * Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
+     * cal.set(Calendar.MINUTE,
+     * Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
+     * Date fechaPartida = cal.getTime();
+     * 
+     * // Clona 'cal' para configurar la hora de llegada.
+     * Calendar calLlegada = (Calendar) cal.clone();
+     * calLlegada.set(Calendar.HOUR_OF_DAY,
+     * Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
+     * calLlegada.set(Calendar.MINUTE,
+     * Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
+     * Date fechaLlegada = calLlegada.getTime();
+     * 
+     * // Ajusta la fecha de llegada si es necesario.
+     * if (!fechaLlegada.after(fechaPartida)) {
+     * calLlegada.add(Calendar.DAY_OF_MONTH, 1);
+     * fechaLlegada = calLlegada.getTime();
+     * }
+     * if (!plan.es_continental()) {
+     * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
+     * 60 * 60); // Duración en
+     * // horas
+     * if (duracion < 12 || duracion > 24) {
+     * calLlegada.add(Calendar.DAY_OF_MONTH, 1);
+     * fechaLlegada = calLlegada.getTime();
+     * }
+     * }
+     * // Añade el vuelo a la lista con la zona horaria correcta.
+     * vuelos.add(new Vuelo(plan,
+     * Funciones.convertTimeZone(fechaPartida,
+     * plan.getCiudadOrigen().getZonaHoraria(), "GMT+0"),
+     * Funciones.convertTimeZone(fechaLlegada,
+     * plan.getCiudadDestino().getZonaHoraria(), "GMT+0")));
+     * }
+     * // Avanza al día siguiente.
+     * cal.add(Calendar.DAY_OF_MONTH, 1);
+     * }
+     * 
+     * return vuelos;
+     * }
+     */
     private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date inicio, Date fin) {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
@@ -46,34 +123,43 @@ public class GrafoVuelos {
 
         while (!cal.after(finCal)) {
             for (PlanVuelo plan : planesVuelo) {
-                // Configura la hora de partida según el plan.
-                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
-                cal.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
-                Date fechaPartida = cal.getTime();
+                // Usa la función hora_local_a_fecha_generica para configurar la hora de partida
+                // en GMT+0.
+                Date fechaPartida = hora_local_a_fecha_generica(cal.getTime(), plan.getHora_ciudad_origen(),
+                        Funciones.stringGmt2Int(plan.getCiudadOrigen().getZonaHoraria()));
 
                 // Clona 'cal' para configurar la hora de llegada.
                 Calendar calLlegada = (Calendar) cal.clone();
-                calLlegada.set(Calendar.HOUR_OF_DAY, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
-                calLlegada.set(Calendar.MINUTE, Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
-                Date fechaLlegada = calLlegada.getTime();
+                Date fechaLlegada = hora_local_a_fecha_generica(calLlegada.getTime(), plan.getHora_ciudad_destino(),
+                        Funciones.stringGmt2Int(plan.getCiudadDestino().getZonaHoraria()));
 
                 // Ajusta la fecha de llegada si es necesario.
                 if (!fechaLlegada.after(fechaPartida)) {
                     calLlegada.add(Calendar.DAY_OF_MONTH, 1);
                     fechaLlegada = calLlegada.getTime();
                 }
-                if (!plan.es_continental()) {
-                    long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 * 60 * 60); // Duración en
-                                                                                                          // horas
-                    if (duracion < 12 || duracion > 24) {
-                        calLlegada.add(Calendar.DAY_OF_MONTH, 1);
-                        fechaLlegada = calLlegada.getTime();
-                    }
-                }
-                // Añade el vuelo a la lista con la zona horaria correcta.
-                vuelos.add(new Vuelo(plan,
-                        Funciones.convertTimeZone(fechaPartida, plan.getCiudadOrigen().getZonaHoraria(), "GMT+0"),
-                        Funciones.convertTimeZone(fechaLlegada, plan.getCiudadDestino().getZonaHoraria(), "GMT+0")));
+                /*
+                 * if (!plan.es_continental()) {
+                 * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
+                 * 60 * 60); // Duración en
+                 * // horas
+                 * if (duracion < 12 || duracion > 24) {
+                 * System.out.println("Caso no contemplado: " + plan.toString());
+                 * continue;
+                 * }
+                 * }
+                 * if (plan.es_continental()) {
+                 * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
+                 * 60 * 60); // Duración en
+                 * // horas
+                 * if (duracion < 0 || duracion > 12) {
+                 * System.out.println("Caso no contemplado: " + plan.toString());
+                 * continue;
+                 * }
+                 * }
+                 */
+                // Añade el vuelo a la lista con la fecha y hora en GMT+0.
+                vuelos.add(new Vuelo(plan, fechaPartida, fechaLlegada));
             }
             // Avanza al día siguiente.
             cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -103,12 +189,12 @@ public class GrafoVuelos {
 
     // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
     // aeropuertos
-    public List<PlanRuta> buscarTodasLasRutas(Date fechaHoraInicio) {
-        List<PlanRuta> rutasTotal = new ArrayList<>();
+    public ArrayList<PlanRuta> buscarTodasLasRutas(Date fechaHoraInicio) {
+        ArrayList<PlanRuta> rutasTotal = new ArrayList<>();
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
-                    List<PlanRuta> rutas = buscarRutas(origen, destino, fechaHoraInicio);
+                    ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fechaHoraInicio);
 
                     rutasTotal.addAll(rutas);
                 }
@@ -119,8 +205,8 @@ public class GrafoVuelos {
 
     // Busca rutas de un origen a un destino comenzando en una fecha y hora
     // específicas
-    public List<PlanRuta> buscarRutas(String origen, String destino, Date fechaHoraInicio) {
-        List<PlanRuta> rutas = new ArrayList<>();
+    public ArrayList<PlanRuta> buscarRutas(String origen, String destino, Date fechaHoraInicio) {
+        ArrayList<PlanRuta> rutas = new ArrayList<>();
         buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas);
         return rutas;
     }
