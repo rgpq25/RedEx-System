@@ -11,6 +11,11 @@ public class PlanRuta {
         this.vuelos = new ArrayList<Vuelo>();
     }
 
+    public PlanRuta(PlanRuta plan){
+        this.id = plan.id;
+        this.vuelos = new ArrayList<Vuelo>(plan.vuelos);
+    }
+
     public PlanRuta(ArrayList<Vuelo> vuelos) {
         this.vuelos = vuelos;
     }
@@ -34,7 +39,9 @@ public class PlanRuta {
     public String toString() {
         StringBuilder descripcion = new StringBuilder("Ruta " + id + ": ");
         for (Vuelo vuelo : vuelos) {
-            descripcion.append(vuelo.getPlan_vuelo().getCiudadOrigen().getId())
+            descripcion.append(vuelo.getFecha_salida())
+                    .append(" -> ")
+                    .append(vuelo.getPlan_vuelo().getCiudadOrigen().getId())
                     .append(" -> ")
                     .append(vuelo.getPlan_vuelo().getCiudadDestino().getId())
                     .append(" (ID: ")

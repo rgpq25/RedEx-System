@@ -81,4 +81,13 @@ public class PlanVuelo {
     public void setCapacidad_maxima(int capacidad_maxima) {
         this.capacidad_maxima = capacidad_maxima;
     }
+
+
+    //override method to do a toString
+    @Override
+    public String toString() {
+        return "PlanVuelo [capacidad_maxima=" + capacidad_maxima + ", ciudad_destino=" + ciudad_destino.getId()
+                + ", ciudad_origen=" + ciudad_origen.getId() + ", hora_ciudad_destino=" + hora_ciudad_destino
+                + ", hora_ciudad_origen=" + hora_ciudad_origen + ", id=" + id + "]";
+    }
 }
