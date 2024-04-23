@@ -289,7 +289,6 @@ public class Funciones {
         return calendar.getTime();
     }
 
-
     public static ArrayList<Ubicacion> generarUbicaciones(int cantidad) {
         // Lista expandida de ubicaciones posibles con zonas horarias ajustadas
         Ubicacion[] posiblesUbicaciones = {
@@ -333,7 +332,8 @@ public class Funciones {
         return aeropuertos;
     }
 
-    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio, Date fechaFin, String outputPath) {
+    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio,
+            Date fechaFin, String outputPath) {
         File csvFile = new File(outputPath + "/paquetes.csv");
         PrintWriter out;
         try {
@@ -346,9 +346,11 @@ public class Funciones {
                 Aeropuerto destino = aeropuertos.get(1);
                 Date fechaRecepcion = generateRandomDateTime(fechaInicio, fechaFin);
                 paquetes.add(
-                        new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(), fechaRecepcion));
+                        new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(),
+                                fechaRecepcion));
 
-                out.println(Funciones.getFormattedDate(fechaRecepcion) + "," + origen.getUbicacion().getId() + "," + destino.getUbicacion().getId());
+                out.println(Funciones.getFormattedDate(fechaRecepcion) + "," + origen.getUbicacion().getId() + ","
+                        + destino.getUbicacion().getId());
             }
 
             out.close();
@@ -360,7 +362,8 @@ public class Funciones {
         }
     }
 
-    public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion, String outputPath) {
+    public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos,
+            int repeticionesPorConexion, String outputPath) {
         File csvFile = new File(outputPath + "/vuelos.csv");
         PrintWriter out;
 
@@ -382,7 +385,7 @@ public class Funciones {
 
                             // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
                             // basada en distancia u otros factores)
-                            int duracionHoras; // Duración de vuelo de 1 a 8 horas
+                            int duracionHoras;
                             int duracionMinutos = 0 + random.nextInt(59);
 
                             int diferencia = destino.getUbicacion().diferenciaHoraria()
@@ -390,7 +393,7 @@ public class Funciones {
 
                             if (origen.getUbicacion().getContinente()
                                     .contentEquals(destino.getUbicacion().getContinente())) {
-                                duracionHoras = random.nextInt(12);
+                                duracionHoras = 2 + random.nextInt(10);
                             } else {
                                 duracionHoras = 12 + random.nextInt(12);
                             }
@@ -412,7 +415,8 @@ public class Funciones {
                                     horaSalida, horaLlegada, capacidad);
                             planes.add(plan);
 
-                            out.println(origen.getUbicacion().getId() + "," + destino.getUbicacion().getId() + "," + horaSalida + "," + horaLlegada + "," + capacidad);
+                            out.println(origen.getUbicacion().getId() + "," + destino.getUbicacion().getId() + ","
+                                    + horaSalida + "," + horaLlegada + "," + capacidad);
                         }
                     }
                 }
