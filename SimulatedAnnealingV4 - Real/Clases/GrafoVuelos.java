@@ -208,19 +208,18 @@ public class GrafoVuelos {
     // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
     // aeropuertos
     public ArrayList<PlanRuta> buscarTodasLasRutas() {
+        System.out.println("Buscando rutas");
         ArrayList<PlanRuta> rutasTotal = new ArrayList<>();
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
-                    System.out.println("Buscando");
                     ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
 
                     rutasTotal.addAll(rutas);
-                    System.out.println("Se agrego ruta desde " + origen + " a " + destino + " con " + rutas.size()
-                            + " rutas encontradas");
                 }
             }
         }
+        System.out.println("Se encontraron " + rutasTotal.size() + " rutas");
         return rutasTotal;
     }
 

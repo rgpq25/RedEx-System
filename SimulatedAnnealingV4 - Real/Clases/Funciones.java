@@ -71,9 +71,10 @@ public class Funciones {
         return calendar.getTime();
     }
 
-    public static long getDifferenceInDays(Date startDate, Date endDate) {
-        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
-        return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    public static int getDifferenceInDays(Date startDate, Date endDate) {
+        long diffInMillies = Math.abs(startDate.getTime() - endDate.getTime());
+        int diffInDays = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        return diffInDays;
     }
 
     public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
