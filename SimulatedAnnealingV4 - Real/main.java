@@ -213,9 +213,16 @@ public class main {
         //ArrayList<Ubicacion> ubicaciones = Funciones.generarUbicaciones(10);
         //ArrayList<Aeropuerto> aeropuertos = Funciones.generarAeropuertos(ubicaciones,
         // 4);
-        ArrayList<Paquete> paquetes = Funciones.generarPaquetes(100, aeropuertos, 3, generatedInputPath);
-        //ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, 1, generatedInputPath);
-        ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
+
+        ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
+            100, 
+            aeropuertos, 
+            Funciones.parseDateString("2024-01-01 00:00:00"), 
+            Funciones.parseDateString("2024-01-05 23:59:59"), 
+            generatedInputPath
+        );
+
+        ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, 1, generatedInputPath);
         // ArrayList<PlanRuta> rutasPorPaquete =
         // funciones.asignarVuelosAPaquetes(paquetes, vuelos);
         // Boolean funca = funciones.verificar_capacidad_aeropuertos(paquetes,

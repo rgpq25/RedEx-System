@@ -268,6 +268,29 @@ public class Funciones {
         }
     }
 
+    public static Date generateRandomDateTime(Date startDate, Date endDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        // Obtener la diferencia de tiempo en milisegundos
+        long startMillis = calendar.getTimeInMillis();
+        long endMillis = (endDate != null) ? endDate.getTime() : System.currentTimeMillis();
+
+        // Asegurarse de que la fecha de inicio no es posterior a la fecha de fin
+        if (endDate != null && startMillis > endMillis) {
+            throw new IllegalArgumentException("La fecha de inicio debe ser antes de la fecha de fin.");
+        }
+
+        // Generar un tiempo aleatorio en este rango
+        Random random = new Random();
+        long randomMillis = startMillis + (long) (random.nextDouble() * (endMillis - startMillis));
+
+        // Configurar el tiempo aleatorio generado
+        calendar.setTimeInMillis(randomMillis);
+        return calendar.getTime();
+    }
+
+
     public static ArrayList<Ubicacion> generarUbicaciones(int cantidad) {
         // Lista expandida de ubicaciones posibles con zonas horarias ajustadas
         Ubicacion[] posiblesUbicaciones = {
@@ -311,25 +334,22 @@ public class Funciones {
         return aeropuertos;
     }
 
-    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, int maximo_dias, String outputPath) {
+    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio, Date fechaFin, String outputPath) {
         File csvFile = new File(outputPath + "/paquetes.csv");
         PrintWriter out;
         try {
             out = new PrintWriter(csvFile);
 
             ArrayList<Paquete> paquetes = new ArrayList<>();
-            Random rand = new Random();
             for (int i = 0; i < n; i++) {
                 Collections.shuffle(aeropuertos);
                 Aeropuerto origen = aeropuertos.get(0);
                 Aeropuerto destino = aeropuertos.get(1);
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DAY_OF_MONTH, rand.nextInt(maximo_dias + 1));
-                Date fechaRecepcion = (Date) cal.getTime();
+                Date fechaRecepcion = generateRandomDateTime(fechaInicio, fechaFin);
                 paquetes.add(
                         new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(), fechaRecepcion));
 
-                out.println(fechaRecepcion + "," + origen.getUbicacion().getId() + "," + destino.getUbicacion().getId());
+                out.println(Funciones.getFormattedDate(fechaRecepcion) + "," + origen.getUbicacion().getId() + "," + destino.getUbicacion().getId());
             }
 
             out.close();
