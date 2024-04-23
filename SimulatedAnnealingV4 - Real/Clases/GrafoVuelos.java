@@ -15,19 +15,6 @@ public class GrafoVuelos {
         }
     }
 
-    public void imprimirRutas() {
-        ArrayList<PlanRuta> rutas = buscarTodasLasRutas();
-        int id = 1;
-        for (PlanRuta ruta : rutas) {
-            System.out.println("Ruta " + id++);
-            for (Vuelo vuelo : ruta.getVuelos()) {
-                System.out.println(
-                        "  Vuelo " + vuelo.getId() + " desde " + vuelo.getPlan_vuelo().getCiudadOrigen().getId() + " a "
-                                + vuelo.getPlan_vuelo().getCiudadDestino().getId());
-            }
-        }
-    }
-
     public Date hora_local_a_fecha_generica(Date fechaGMT0, String hora_local, int diferencia_horaria) {
         Calendar cal = Calendar.getInstance();
         int horaGenerica = Integer.parseInt(hora_local.split(":")[0]);
@@ -207,19 +194,23 @@ public class GrafoVuelos {
 
     // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
     // aeropuertos
-    public ArrayList<PlanRuta> buscarTodasLasRutas() {
+    public HashMap<String, ArrayList<PlanRuta>> buscarTodasLasRutas() {
         System.out.println("Buscando rutas");
-        ArrayList<PlanRuta> rutasTotal = new ArrayList<>();
+        HashMap<String, ArrayList<PlanRuta>> rutasTotal = new HashMap<>();
+        int totalRutas = 0; // Inicializar un contador para el total de rutas
+
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
                     ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
-
-                    rutasTotal.addAll(rutas);
+                    String clave = origen + "-" + destino;
+                    rutasTotal.put(clave, rutas);
+                    totalRutas += rutas.size(); // Sumar el número de rutas encontradas para este par origen-destino
                 }
             }
         }
-        System.out.println("Se encontraron " + rutasTotal.size() + " rutas");
+        System.out.println("Se encontraron " + rutasTotal.size() + " pares de origen-destino con rutas.");
+        System.out.println("Número total de rutas encontradas: " + totalRutas); // Imprimir el total de rutas
         return rutasTotal;
     }
 
@@ -244,20 +235,25 @@ public class GrafoVuelos {
         }
 
         if (!grafo.containsKey(actual) || aeropuertosVisitados.size() >= 5) {
-            return; /*Aca esta el cambio*/ 
+            return;
         }
 
-
-        for (Vuelo vuelo : grafo.get(actual)) {
-            if (fechaHoraActual.before(vuelo.getFecha_salida())
-                    && !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
-                rutaActual.getVuelos().add(vuelo);
-                aeropuertosVisitados.add(actual);
-                buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino().getId(), destino, vuelo.getFecha_llegada(),
-                        rutaActual, aeropuertosVisitados, rutas);
-                // Remover el último vuelo agregado para seguir con el backtracking
-                rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
-                aeropuertosVisitados.remove(actual);
+        // Asegurar que los vuelos están ordenados por fecha de salida
+        List<Vuelo> vuelosOrdenados = new ArrayList<>(grafo.get(actual));
+        Collections.sort(vuelosOrdenados, Comparator.comparing(Vuelo::getFecha_salida).reversed());
+        for (Vuelo vuelo : vuelosOrdenados) {
+            if (fechaHoraActual.before(vuelo.getFecha_salida())) {
+                if (!aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
+                    rutaActual.getVuelos().add(vuelo);
+                    aeropuertosVisitados.add(actual);
+                    buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino().getId(), destino, vuelo.getFecha_llegada(),
+                            rutaActual, aeropuertosVisitados, rutas);
+                    // Backtracking
+                    rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
+                    aeropuertosVisitados.remove(actual);
+                }
+            } else {
+                break;
             }
         }
     }
