@@ -44,11 +44,16 @@ public class PlanRuta {
     public String toString() {
         StringBuilder descripcion = new StringBuilder("Ruta " + id + ": ");
         for (Vuelo vuelo : vuelos) {
-            descripcion.append(vuelo.getFecha_salida())
-                    .append(" -> ")
+            descripcion
                     .append(vuelo.getPlan_vuelo().getCiudadOrigen().getId())
-                    .append(" -> ")
-                    .append(vuelo.getPlan_vuelo().getCiudadDestino().getId())
+                    .append(" (")
+                    .append(Funciones.getFormattedDate(vuelo.getFecha_salida()))
+                    .append(") -> ")
+                    .append(vuelo.getPlan_vuelo().getCiudadDestino().getId())   
+                    .append(" (")
+                    .append(Funciones.getFormattedDate(vuelo.getFecha_llegada()))
+                    .append(") ")
+                    
                     .append(" (ID: ")
                     .append(vuelo.getId())
                     .append(") | ");

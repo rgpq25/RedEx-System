@@ -58,10 +58,7 @@ public class main {
             this.costo = costo;
         }
 
-        public long getDifferenceInDays(Date startDate, Date endDate) {
-            long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
-            return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        }
+        
 
         public Solucion generateNeighbour(List<PlanRuta> todasLasRutas) {
 
@@ -101,26 +98,20 @@ public class main {
             // }
             // }
 
-            //restamos fecha de paquete - baseline para darnos la diferencia
-            long diff = getDifferenceInDays(
-                Funciones.parseDateString("2024-01-01 00:00:00"), 
-                randomPackage.getFecha_recepcion()
-            );
-
-            System.out.println("Diferencia de dias: " + diff);
-
 
             int randomRouteIndex = (int) (Math.random() * availableRoutes.size());
             PlanRuta randomRoute = new PlanRuta(availableRoutes.get(randomRouteIndex));
 
-            if(
-                randomRoute.getVuelos().get(0).getFecha_salida().getTime() != 
-                Funciones.parseDateString("2024-01-01 00:00:00").getTime()
-            ){
-                System.out.println("se encontro una ruta que no tenia fecha 2024-01-01, error al manejar memoria");
+            // //restamos fecha de paquete - baseline para darnos la diferencia
+            long diff = Funciones.getDifferenceInDays(
+                randomRoute.getVuelos().get(0).getFecha_salida(), 
+                randomPackage.getFecha_recepcion()
+            );
 
-            }
-            
+            //System.out.println("Diferencia de dias: " + diff);
+
+
+            //TODO: Confirmar que esto no afecta el plan ruta original con una impresion del plan ruta escogido originalmente
             for (Vuelo vuelo : randomRoute.getVuelos()) {
                 Date newFechaSalida = new Date(vuelo.getFecha_salida().getTime() + TimeUnit.DAYS.toMillis(diff));
                 Date newFechaLlegada = new Date(vuelo.getFecha_llegada().getTime() + TimeUnit.DAYS.toMillis(diff));
@@ -161,14 +152,14 @@ public class main {
                 String destino_paquete = paquetes.get(i).getCiudadDestino().getId();
                 Date fecha_recepcion = paquetes.get(i).getFecha_recepcion();
                 out.println(
-                        "Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + fecha_recepcion);
+                        "Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  " + Funciones.getFormattedDate(fecha_recepcion));
                 for (int j = 0; j < rutas.get(i).length(); j++) {
                     String id_origen = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getCiudadOrigen().getId();
                     String id_destino = rutas.get(i).getVuelos().get(j).getPlan_vuelo().getCiudadDestino().getId();
                     Date fecha_salida = rutas.get(i).getVuelos().get(j).getFecha_salida();
                     Date fecha_llegada = rutas.get(i).getVuelos().get(j).getFecha_llegada();
 
-                    out.println("         " + id_origen + "-" + id_destino + " " + fecha_salida + "-" + fecha_llegada);
+                    out.println("         " + id_origen + "-" + id_destino + " " + Funciones.getFormattedDate(fecha_salida) + " - " + Funciones.getFormattedDate(fecha_llegada));
                 }
                 out.println();
             }
@@ -180,119 +171,122 @@ public class main {
     }
 
     public static void main(String[] args) {
-        String inputPath = "input";
+        String inputPath = "inputReal";
+        String generatedInputPath = "inputGenerado";
 
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
-        ubicacionMap.put("SKBO", new Ubicacion("SKBO", "América del Sur", "Colombia",   "Bogotá",               "bogo", "GMT-5"));
-        ubicacionMap.put("SEQM", new Ubicacion("SEQM", "América del Sur", "Ecuador",    "Quito",                "quit", "GMT-5"));
-        ubicacionMap.put("SVMI", new Ubicacion("SVMI", "América del Sur", "Venezuela",  "Caracas",              "cara", "GMT-4"));
-        ubicacionMap.put("SBBR", new Ubicacion("SBBR", "América del Sur", "Brasil",     "Brasilia",             "bras", "GMT-3"));
-        ubicacionMap.put("SPIM", new Ubicacion("SPIM", "América del Sur", "Perú",       "Lima",                 "lima", "GMT-5"));
-        ubicacionMap.put("SLLP", new Ubicacion("SLLP", "América del Sur", "Bolivia",    "La Paz",               "lapa", "GMT-4"));
-        ubicacionMap.put("SCEL", new Ubicacion("SCEL", "América del Sur", "Chile",      "Santiago de Chile",    "sant", "GMT-3"));
-        ubicacionMap.put("SABE", new Ubicacion("SABE", "América del Sur", "Argentina",  "Buenos Aires",         "buen", "GMT-3"));
-        ubicacionMap.put("SGAS", new Ubicacion("SGAS", "América del Sur", "Paraguay",   "Asunción",             "asun", "GMT-4"));
-        ubicacionMap.put("SUAA", new Ubicacion("SUAA", "América del Sur", "Uruguay",    "Montevideo",           "mont", "GMT-3"));
-        ubicacionMap.put("LATI", new Ubicacion("LATI", "Europa",          "Albania",    "Tirana",               "tira", "GMT+2"));
-        ubicacionMap.put("EDDI", new Ubicacion("EDDI", "Europa",          "Alemania",   "Berlín",               "berl", "GMT+2"));
-        ubicacionMap.put("LOWW", new Ubicacion("LOWW", "Europa",          "Austria",    "Viena",                "vien", "GMT+2"));
-        ubicacionMap.put("EBCI", new Ubicacion("EBCI", "Europa",          "Bélgica",    "Bruselas",             "brus", "GMT+2"));
-        ubicacionMap.put("UMMS", new Ubicacion("UMMS", "Europa",          "Bielorrusia","Minsk",                "mins", "GMT+3"));
-        ubicacionMap.put("LBSF", new Ubicacion("LBSF", "Europa",          "Bulgaria",   "Sofia",                "sofi", "GMT+3"));
-        ubicacionMap.put("LKPR", new Ubicacion("LKPR", "Europa",          "Checa",      "Praga",                "prag", "GMT+2"));
-        ubicacionMap.put("LDZA", new Ubicacion("LDZA", "Europa",          "Croacia",    "Zagreb",               "zagr", "GMT+2"));
-        ubicacionMap.put("EKCH", new Ubicacion("EKCH", "Europa",          "Dinamarca",  "Copenhague",           "cope", "GMT+2"));
+        ubicacionMap.put("SKBO",new Ubicacion("SKBO", "America del Sur", "Colombia", "Bogota", "bogo", "GMT-5"));
+        ubicacionMap.put("SEQM",new Ubicacion("SEQM", "America del Sur", "Ecuador", "Quito", "quit", "GMT-5"));
+        ubicacionMap.put("SVMI",new Ubicacion("SVMI", "America del Sur", "Venezuela", "Caracas", "cara", "GMT-4"));
+        ubicacionMap.put("SBBR",new Ubicacion("SBBR", "America del Sur", "Brasil", "Brasilia", "bras", "GMT-3"));
+        ubicacionMap.put("SPIM",new Ubicacion("SPIM", "America del Sur", "Perú", "Lima", "lima", "GMT-5"));
+        ubicacionMap.put("SLLP",new Ubicacion("SLLP", "America del Sur", "Bolivia", "La Paz", "lapa", "GMT-4"));
+        ubicacionMap.put("SCEL",new Ubicacion("SCEL", "America del Sur", "Chile", "Santiago de Chile", "sant", "GMT-3"));
+        ubicacionMap.put("SABE",new Ubicacion("SABE", "America del Sur", "Argentina", "Buenos Aires", "buen", "GMT-3"));
+        ubicacionMap.put("SGAS",new Ubicacion("SGAS", "America del Sur", "Paraguay", "Asunción", "asun", "GMT-4"));
+        ubicacionMap.put("SUAA",new Ubicacion("SUAA", "America del Sur", "Uruguay", "Montevideo", "mont", "GMT-3"));
+        ubicacionMap.put("LATI",new Ubicacion("LATI", "Europa", "Albania", "Tirana", "tira", "GMT+2"));
+        ubicacionMap.put("EDDI",new Ubicacion("EDDI", "Europa", "Alemania", "Berlin", "berl", "GMT+2"));
+        ubicacionMap.put("LOWW",new Ubicacion("LOWW", "Europa", "Austria", "Viena", "vien", "GMT+2"));
+        ubicacionMap.put("EBCI",new Ubicacion("EBCI", "Europa", "Belgica", "Bruselas", "brus", "GMT+2"));
+        ubicacionMap.put("UMMS",new Ubicacion("UMMS", "Europa", "Bielorrusia", "Minsk", "mins", "GMT+3"));
+        ubicacionMap.put("LBSF",new Ubicacion("LBSF", "Europa", "Bulgaria", "Sofia", "sofi", "GMT+3"));
+        ubicacionMap.put("LKPR",new Ubicacion("LKPR", "Europa", "Checa", "Praga", "prag", "GMT+2"));
+        ubicacionMap.put("LDZA",new Ubicacion("LDZA", "Europa", "Croacia", "Zagreb", "zagr", "GMT+2"));
+        ubicacionMap.put("EKCH",new Ubicacion("EKCH", "Europa", "Dinamarca", "Copenhague", "cope", "GMT+2"));
+        ubicacionMap.put("EHAM",new Ubicacion("EHAM", "Europa", "Holanda", "Amsterdam", "amst", "GMT+2"));
+        ubicacionMap.put("VIDP",new Ubicacion("VIDP", "Asia", "India", "Delhi", "delh", "GMT+5"));
+        ubicacionMap.put("RKSI",new Ubicacion("RKSI", "Asia", "Corea del Sur", "Seul", "seul", "GMT+9"));
+        ubicacionMap.put("VTBS",new Ubicacion("VTBS", "Asia", "Tailandia", "Bangkok", "bang", "GMT+7"));
+        ubicacionMap.put("OMDB",new Ubicacion("OMDB", "Asia", "Emiratos A.U", "Dubai", "emir", "GMT+4"));
+        ubicacionMap.put("ZBAA",new Ubicacion("ZBAA", "Asia", "China", "Beijing", "beij", "GMT+8"));
+        ubicacionMap.put("RJTT",new Ubicacion("RJTT", "Asia", "Japon", "Tokyo", "toky", "GMT+9"));
+        ubicacionMap.put("WMKK",new Ubicacion("WMKK", "Asia", "Malasia", "Kuala Lumpur", "kual", "GMT+8"));
+        ubicacionMap.put("WSSS",new Ubicacion("WSSS", "Asia", "Singapur", "Singapore", "sing", "GMT+8"));
+        ubicacionMap.put("WIII",new Ubicacion("WIII", "Asia", "Indonesia", "Jakarta", "jaka", "GMT+7"));
+        ubicacionMap.put("RPLL",new Ubicacion("RPLL", "Asia", "Filipinas", "Manila", "mani", "GMT+8"));
 
-        //ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-        ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
-        //ArrayList<PlanVuelo> planes_vuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
-
-
-        for(Paquete paquete : paquetes){
-            System.out.println(paquete.toString());
-        }
+        ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
+        //ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
+        //ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
 
         //ArrayList<Ubicacion> ubicaciones = Funciones.generarUbicaciones(10);
         //ArrayList<Aeropuerto> aeropuertos = Funciones.generarAeropuertos(ubicaciones,
         // 4);
-        // ArrayList<Paquete> paquetes = funciones.generarPaquetes(100, aeropuertos, 3);
-        // ArrayList<PlanVuelo> planVuelos = funciones.generarPlanesDeVuelo(aeropuertos,
-        // 1);
-        // ArrayList<Vuelo> vuelos = funciones.generarVuelos(aeropuertos, planVuelos,
-        // 4);
+        ArrayList<Paquete> paquetes = Funciones.generarPaquetes(100, aeropuertos, 3, generatedInputPath);
+        //ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, 1, generatedInputPath);
+        ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
         // ArrayList<PlanRuta> rutasPorPaquete =
         // funciones.asignarVuelosAPaquetes(paquetes, vuelos);
         // Boolean funca = funciones.verificar_capacidad_aeropuertos(paquetes,
         // rutasPorPaquete, aeropuertos);
 
+        if(true){
+            return;
+        }
     
-        //GrafoVuelos grafoVuelos = new GrafoVuelos(planes_vuelos, paquetes);
+        GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
 
-        //Date date = Date.from(LocalDateTime.of(2023, 1, 1, 1, 0).toInstant(ZoneOffset.UTC));
+        List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
 
-        //List<PlanRuta> todasLasRutas = grafoVuelos.buscarTodasLasRutas(date);
+        for(PlanRuta ruta : todasLasRutas){
+            System.out.println(ruta.toString());
+        }
 
-        // for(PlanRuta ruta : todasLasRutas){
-        //     System.out.println(ruta.toString());
-        // }
+        
 
-        // String fechaActual = "2023-01-02 00:00:00";
 
-        // double temperature = 10000;
-        // double coolingRate = 0.003;
-        // int neighbourCount = 100;
+        double temperature = 10000;
+        double coolingRate = 0.003;
+        int neighbourCount = 100;
 
-        // Solucion current = new Solucion(new
-        // ArrayList<Paquete>(Arrays.asList(paquetes)), new ArrayList<PlanRuta>(), new
-        // ArrayList<Aeropuerto>(Arrays.asList(aeropuertos)), 0);
-        // current.initialize(todasLasRutas);
-        // printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+        Solucion current = new Solucion(paquetes, new ArrayList<PlanRuta>(), aeropuertos, 0);
+        current.initialize(todasLasRutas);
+        printRutasTXT(current.paquetes, current.rutas, "initial.txt");
 
-        // while (temperature > 1) {
-        // // Pick a random neighboring solution
-        // ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-        // for (int i = 0; i < neighbourCount; i++) {
-        // neighbours.add(current.generateNeighbour(todasLasRutas));
-        // }
+        while (temperature > 1) {
+            // Pick a random neighboring solution
+            ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+            for (int i = 0; i < neighbourCount; i++) {
+            neighbours.add(current.generateNeighbour(todasLasRutas));
+            }
 
-        // int bestNeighbourIndex = 0;
-        // double bestNeighbourCost = Double.MAX_VALUE;
-        // for (int i = 0; i < neighbours.size(); i++) {
-        // Solucion neighbour = neighbours.get(i);
-        // double neighbourCost = neighbour.costo;
-        // if (neighbourCost < bestNeighbourCost) {
-        // bestNeighbourCost = neighbourCost;
-        // bestNeighbourIndex = i;
-        // }
-        // }
+            int bestNeighbourIndex = 0;
+            double bestNeighbourCost = Double.MAX_VALUE;
+            for (int i = 0; i < neighbours.size(); i++) {
+                Solucion neighbour = neighbours.get(i);
+                double neighbourCost = neighbour.costo;
+                if (neighbourCost < bestNeighbourCost) {
+                    bestNeighbourCost = neighbourCost;
+                    bestNeighbourIndex = i;
+                }
+            }
 
-        // // Calculate the cost difference between the new and current routes
-        // double currentCost = current.costo;
-        // double newCost = neighbours.get(bestNeighbourIndex).costo;
-        // double costDifference = newCost - currentCost;
+            // Calculate the cost difference between the new and current routes
+            double currentCost = current.costo;
+            double newCost = neighbours.get(bestNeighbourIndex).costo;
+            double costDifference = newCost - currentCost;
 
-        // // Decide if we should accept the new solution
-        // if (costDifference < 0 || Math.exp(-costDifference / temperature) >
-        // Math.random()) {
-        // current = neighbours.get(bestNeighbourIndex);
-        // }
+            // Decide if we should accept the new solution
+            if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
+                current = neighbours.get(bestNeighbourIndex);
+            }
 
-        // // Cool down the system
-        // temperature *= 1 - coolingRate;
-        // }
-        // EstadoAlmacen estado = funciones.obtenerEstadoAlmacen(current.paquetes,
-        // current.rutas, current.aeropuertos);
+            // Cool down the system
+            temperature *= 1 - coolingRate;
+        }
+
+        // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(current.paquetes, current.rutas, current.aeropuertos);
         // estado.consulta_historica();
         // System.out.println("VERIFICANDO CAPACIDAD");
         // HashMap<Aeropuerto, Integer> curr =
-        // estado.verificar_capacidad_en(Date.from(LocalDateTime.of(2023, 1, 3, 15,
-        // 0).toInstant(ZoneOffset.UTC)));
+        // estado.verificar_capacidad_en(Date.from(LocalDateTime.of(2023, 1, 3, 15,0).toInstant(ZoneOffset.UTC)));
         // for (Aeropuerto aeropuerto : curr.keySet()) {
-        // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
-        // curr.get(aeropuerto));
+        //     System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
+        //     curr.get(aeropuerto));
         // }
-        // System.out.println("Final cost: " + current.costo);
-        // printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+        System.out.println("Final cost: " + current.costo);
+        printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
 
     }
 }

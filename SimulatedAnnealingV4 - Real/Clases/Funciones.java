@@ -2,6 +2,7 @@ package Clases;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
-
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Funciones {
@@ -68,6 +69,11 @@ public class Funciones {
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, days);
         return calendar.getTime();
+    }
+
+    public static long getDifferenceInDays(Date startDate, Date endDate) {
+        long diffInMillies = Math.abs(endDate.getTime() - startDate.getTime());
+        return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
     public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
@@ -305,23 +311,37 @@ public class Funciones {
         return aeropuertos;
     }
 
-    public ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, int maximo_dias) {
-        ArrayList<Paquete> paquetes = new ArrayList<>();
-        Random rand = new Random();
-        for (int i = 0; i < n; i++) {
-            Collections.shuffle(aeropuertos);
-            Aeropuerto origen = aeropuertos.get(0);
-            Aeropuerto destino = aeropuertos.get(1);
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DAY_OF_MONTH, rand.nextInt(maximo_dias + 1));
-            Date fechaRecepcion = (Date) cal.getTime();
-            paquetes.add(
-                    new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(), fechaRecepcion));
+    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, int maximo_dias, String outputPath) {
+        File csvFile = new File(outputPath + "/paquetes.csv");
+        PrintWriter out;
+        try {
+            out = new PrintWriter(csvFile);
+
+            ArrayList<Paquete> paquetes = new ArrayList<>();
+            Random rand = new Random();
+            for (int i = 0; i < n; i++) {
+                Collections.shuffle(aeropuertos);
+                Aeropuerto origen = aeropuertos.get(0);
+                Aeropuerto destino = aeropuertos.get(1);
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DAY_OF_MONTH, rand.nextInt(maximo_dias + 1));
+                Date fechaRecepcion = (Date) cal.getTime();
+                paquetes.add(
+                        new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(), fechaRecepcion));
+
+                out.println(fechaRecepcion + "," + origen.getUbicacion().getId() + "," + destino.getUbicacion().getId());
+            }
+
+            out.close();
+
+            return paquetes;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
-        return paquetes;
     }
 
-    public ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion) {
+    public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion, String outputPath) {
         Random random = new Random();
         ArrayList<PlanVuelo> planes = new ArrayList<>();
 
@@ -493,7 +513,7 @@ public class Funciones {
         return funciones.verificar_capacidad(registros, aeropuertos);
     }
 
-    public EstadoAlmacen obtenerEstadoAlmacen(ArrayList<Paquete> paquetes,
+    public static EstadoAlmacen obtenerEstadoAlmacen(ArrayList<Paquete> paquetes,
             ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
         Funciones funciones = new Funciones();
         ArrayList<RegistroAlmacenamiento> registros = funciones.crearRegistrosAlmacenamiento(paquetes, planRutas,

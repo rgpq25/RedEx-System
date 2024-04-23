@@ -36,8 +36,8 @@ def read_vuelos(file_path, data):
 
             origin_code       = parts[0]
             destiny_code      = parts[1]
-            time_origin_city  = parts[2]
-            time_destiny_city = parts[3]
+            time_origin_city  = parts[2] + ":00"
+            time_destiny_city = parts[3] + ":00"
             capacity          = parts[4]
 
             data.append([origin_code, destiny_code, time_origin_city, time_destiny_city, capacity])
