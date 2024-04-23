@@ -66,7 +66,7 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelos) {
             agregarVuelo(vuelo);
         }
-        System.out.println("Termino la generacion de vuelos");
+        // System.out.println("Termino la generacion de vuelos");
     }
 
     public GrafoVuelos() {
@@ -244,12 +244,13 @@ public class GrafoVuelos {
             return;
         }
 
-        if (!grafo.containsKey(actual)) {
-            return;
+        if (!grafo.containsKey(actual) || aeropuertosVisitados.size() >= 5) {
+            return; /*Aca esta el cambio*/ 
         }
 
+
         for (Vuelo vuelo : grafo.get(actual)) {
-            if (fechaHoraActual.before(vuelo.getFecha_llegada())
+            if (fechaHoraActual.before(vuelo.getFecha_salida())
                     && !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
                 rutaActual.getVuelos().add(vuelo);
                 aeropuertosVisitados.add(actual);
