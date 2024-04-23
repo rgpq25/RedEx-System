@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -31,27 +32,47 @@ public class Funciones {
     public Funciones() {
     }
 
-    public Date parseDateString(String dateString, String format, String timeZone) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+    public static int stringGmt2Int(String gmt) {
+        return Integer.parseInt(gmt.replace("GMT", ""));
+    }
+    
+    public static Date parseDateString(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            return sdf.parse(dateString);
+            return format.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Date addDays(Date date, int days) {
+    public static Date convertTimeZone(Date date, String fromTimeZone, String toTimeZone) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone(fromTimeZone));
+        long timeInMillis = date.getTime();
+
+        int fromOffset = TimeZone.getTimeZone(fromTimeZone).getOffset(timeInMillis);
+        int toOffset = TimeZone.getTimeZone(toTimeZone).getOffset(timeInMillis);
+
+        int offsetDifference = toOffset - fromOffset;
+
+        return new Date(timeInMillis + offsetDifference);
+    }
+    
+    public static Date addDays(Date date, int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, days);
         return calendar.getTime();
     }
 
-    public Paquete[] leerPaquetes(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
-        List<Paquete> paquetes_list = new ArrayList<Paquete>();
-        Paquete[] paquetes = null;
+    public static String getFormattedDate(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+
+    public static ArrayList<Paquete> leerPaquetes(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        ArrayList<Paquete> paquetes_list = new ArrayList<Paquete>();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -73,31 +94,41 @@ public class Funciones {
                 paquete.setCiudadDestino(ubicacionMap.get(parts[2].trim()));
 
                 String firstDateString = parts[0].trim();
-                Date fecha_recepcion = parseDateString(firstDateString, "yyyy-MM-dd HH:mm:ss",
-                        paquete.getCiudadOrigen().getZonaHoraria());
-                Date fecha_maxima_entrega = addDays(fecha_recepcion, 2);
 
-                paquete.setFecha_recepcion(fecha_recepcion);
-                paquete.setFecha_maxima_entrega(fecha_maxima_entrega);
+                Date fecha_recepcion_GMTOrigin = parseDateString(firstDateString);
+
+                // lo llevamos a UTC
+                Date fecha_recepcion_GMT0 = convertTimeZone(
+                        fecha_recepcion_GMTOrigin,
+                        paquete.getCiudadOrigen().getZonaHoraria(),
+                        "UTC");
+
+                Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en
+                                                                                              // timezone de destino
+                Date fecha_maxima_entrega_GMT0 = convertTimeZone(
+                        fecha_maxima_entrega_GMTDestino,
+                        paquete.getCiudadDestino().getZonaHoraria(),
+                        "UTC");
+
+                paquete.setFecha_recepcion(fecha_recepcion_GMT0);
+                paquete.setFecha_maxima_entrega(fecha_maxima_entrega_GMT0);
                 paquetes_list.add(paquete);
 
                 id++;
             }
 
             scanner.close();
-            paquetes = paquetes_list.toArray(new Paquete[paquetes_list.size()]);
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
         }
-        return paquetes;
+        return paquetes_list;
     }
 
 
-    public Vuelo[] leerVuelos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
-        List<Vuelo> vuelos_list = new ArrayList<Vuelo>();
-        Vuelo[] vuelos = null;
+    public static ArrayList<Vuelo> leerVuelos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        ArrayList<Vuelo> vuelos_list = new ArrayList<Vuelo>();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -125,10 +156,8 @@ public class Funciones {
 
                 String dateSalida = parts[2].trim();
                 String dateLlegada = parts[3].trim();
-                Date fecha_salida = parseDateString(dateSalida, "yyyy-MM-dd HH:mm:ss",
-                        vuelo.getPlan_vuelo().getCiudadOrigen().getZonaHoraria());
-                Date fecha_llegada = parseDateString(dateLlegada, "yyyy-MM-dd HH:mm:ss",
-                        vuelo.getPlan_vuelo().getCiudadDestino().getZonaHoraria());
+                Date fecha_salida = parseDateString(dateSalida);
+                Date fecha_llegada = parseDateString(dateLlegada);
                 vuelo.setFecha_salida(fecha_salida);
                 vuelo.setFecha_llegada(fecha_llegada);
 
@@ -136,19 +165,52 @@ public class Funciones {
                 id++;
             }
             scanner.close();
-            vuelos = vuelos_list.toArray(new Vuelo[vuelos_list.size()]);
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
         }
-        return vuelos;
+        return vuelos_list;
     }
 
+    public static ArrayList<PlanVuelo> leerPlanVuelos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
 
-    public Aeropuerto[] leerAeropuertos(String inputPath) {
-        List<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
-        Aeropuerto[] aeropuertos = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        try {
+            File file = new File(inputPath + "/vuelos.csv");
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter(",");
+
+            int id = 1;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+
+                PlanVuelo planVuelo = new PlanVuelo();
+                planVuelo.setId(id);
+                planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+                planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+                planVuelo.setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
+                planVuelo.setHora_ciudad_origen(parts[2].trim());
+                planVuelo.setHora_ciudad_destino(parts[3].trim());
+
+                vuelos_list.add(planVuelo);
+                id++;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return vuelos_list;
+    }
+
+    public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+        ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
+
         try {
             File file = new File(inputPath + "/aeropuertos.csv");
             Scanner scanner = new Scanner(file);
@@ -160,22 +222,19 @@ public class Funciones {
 
                 Aeropuerto aeropuerto = new Aeropuerto();
 
-                Ubicacion ubicacion = new Ubicacion(parts[0].trim(), "GMT" + parts[2].trim());
-
-                aeropuerto.setUbicacion(ubicacion);
+                aeropuerto.setUbicacion(ubicacionMap.get(parts[0].trim()));
                 aeropuerto.setCapacidad_maxima(Integer.parseInt(parts[1].trim()));
                 aeropuerto.setCapacidad_utilizada(0);
                 aeropuertos_list.add(aeropuerto);
             }
 
             scanner.close();
-            aeropuertos = aeropuertos_list.toArray(new Aeropuerto[aeropuertos_list.size()]);
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
         }
-        return aeropuertos;
+        return aeropuertos_list;
     }
 
 
@@ -221,46 +280,120 @@ public class Funciones {
         return vuelos;
     }
 
+    public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio, Date fechaFin, String outputPath) {
+        File csvFile = new File(outputPath + "/paquetes.csv");
+        PrintWriter out;
+        try {
+            out = new PrintWriter(csvFile);
 
-    public ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion) {
-        Random random = new Random();
-        ArrayList<PlanVuelo> planes = new ArrayList<>();
+            ArrayList<Paquete> paquetes = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                Collections.shuffle(aeropuertos);
+                Aeropuerto origen = aeropuertos.get(0);
+                Aeropuerto destino = aeropuertos.get(1);
+                Date fechaRecepcion = generateRandomDateTime(fechaInicio, fechaFin);
+                paquetes.add(
+                        new Paquete(origen.getUbicacion(), origen.getUbicacion(), destino.getUbicacion(), fechaRecepcion));
 
-        int idPlan = 0;
-        // Generar planes para cada par de aeropuertos
-        for (Aeropuerto origen : aeropuertos) {
-            for (Aeropuerto destino : aeropuertos) {
-                if (!origen.equals(destino)) {
-                    for (int i = 0; i < repeticionesPorConexion; i++) {
-                        int horaSalidaHora = random.nextInt(24);
-                        int horaSalidaMinuto = random.nextInt(60);
-                        String horaSalida = String.format("%02d:%02d", horaSalidaHora, horaSalidaMinuto);
+                out.println(Funciones.getFormattedDate(fechaRecepcion) + "," + origen.getUbicacion().getId() + "," + destino.getUbicacion().getId());
+            }
 
-                        // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
-                        // basada en distancia u otros factores)
-                        int duracionHoras = 1 + random.nextInt(8); // Duración de vuelo de 1 a 8 horas
-                        int duracionMinutos = random.nextInt(60);
+            out.close();
 
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
-                        cal.set(Calendar.MINUTE, horaSalidaMinuto);
-                        cal.add(Calendar.HOUR_OF_DAY, duracionHoras);
-                        cal.add(Calendar.MINUTE, duracionMinutos);
+            return paquetes;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-                        String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
-                                cal.get(Calendar.MINUTE));
+    public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion, String outputPath) {
+        File csvFile = new File(outputPath + "/vuelos.csv");
+        PrintWriter out;
 
-                        int capacidad = 100 + random.nextInt(401); // Capacidades entre 100 y 500
+        try {
+            out = new PrintWriter(csvFile);
 
-                        PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
-                                horaSalida, horaLlegada, capacidad);
-                        planes.add(plan);
+            Random random = new Random();
+            ArrayList<PlanVuelo> planes = new ArrayList<>();
+
+            int idPlan = 0;
+            // Generar planes para cada par de aeropuertos
+            for (Aeropuerto origen : aeropuertos) {
+                for (Aeropuerto destino : aeropuertos) {
+                    if (!origen.equals(destino)) {
+                        for (int i = 0; i < repeticionesPorConexion; i++) {
+                            int horaSalidaHora = random.nextInt(24);
+                            int horaSalidaMinuto = random.nextInt(60);
+                            String horaSalida = String.format("%02d:%02d", horaSalidaHora, horaSalidaMinuto);
+
+                            // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
+                            // basada en distancia u otros factores)
+                            int duracionHoras; // Duración de vuelo de 1 a 8 horas
+                            int duracionMinutos = 0 + random.nextInt(59);
+
+                            int diferencia = destino.getUbicacion().diferenciaHoraria()
+                                    - origen.getUbicacion().diferenciaHoraria();
+
+                            if (origen.getUbicacion().getContinente()
+                                    .contentEquals(destino.getUbicacion().getContinente())) {
+                                duracionHoras = random.nextInt(12);
+                            } else {
+                                duracionHoras = 12 + random.nextInt(12);
+                            }
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
+                            cal.set(Calendar.MINUTE, horaSalidaMinuto);
+                            cal.add(Calendar.HOUR_OF_DAY, duracionHoras - diferencia);
+                            cal.add(Calendar.MINUTE, duracionMinutos);
+
+                            String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
+                                    cal.get(Calendar.MINUTE));
+
+                            int capacidad = 100 + random.nextInt(401);
+
+                            horaSalida = horaSalida.concat(":00");
+                            horaLlegada = horaLlegada.concat(":00");
+
+                            PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
+                                    horaSalida, horaLlegada, capacidad);
+                            planes.add(plan);
+
+                            out.println(origen.getUbicacion().getId() + "," + destino.getUbicacion().getId() + "," + horaSalida + "," + horaLlegada + "," + capacidad);
+                        }
                     }
                 }
             }
+
+            out.close();
+            return planes;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Date generateRandomDateTime(Date startDate, Date endDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        // Obtener la diferencia de tiempo en milisegundos
+        long startMillis = calendar.getTimeInMillis();
+        long endMillis = (endDate != null) ? endDate.getTime() : System.currentTimeMillis();
+
+        // Asegurarse de que la fecha de inicio no es posterior a la fecha de fin
+        if (endDate != null && startMillis > endMillis) {
+            throw new IllegalArgumentException("La fecha de inicio debe ser antes de la fecha de fin.");
         }
 
-        return planes;
+        // Generar un tiempo aleatorio en este rango
+        Random random = new Random();
+        long randomMillis = startMillis + (long) (random.nextDouble() * (endMillis - startMillis));
+
+        // Configurar el tiempo aleatorio generado
+        calendar.setTimeInMillis(randomMillis);
+        return calendar.getTime();
     }
 
     public ArrayList<Ubicacion> generarUbicaciones(int cantidad) {
