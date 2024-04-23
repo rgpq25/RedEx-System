@@ -171,7 +171,7 @@ public class main {
     }
 
     public static void main(String[] args) {
-        String inputPath = "inputReal";
+        String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
 
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
@@ -207,19 +207,19 @@ public class main {
         ubicacionMap.put("RPLL",new Ubicacion("RPLL", "Asia", "Filipinas", "Manila", "mani", "GMT+8"));
 
         ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-        //ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
-        //ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
+        ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
+        ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
 
 
-        ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
-            50, 
-            aeropuertos, 
-            Funciones.parseDateString("2024-01-01 00:00:00"), 
-            Funciones.parseDateString("2024-01-02 23:59:59"), 
-            generatedInputPath
-        );
+        // ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
+        //     50, 
+        //     aeropuertos, 
+        //     Funciones.parseDateString("2024-01-01 00:00:00"), 
+        //     Funciones.parseDateString("2024-01-02 23:59:59"), 
+        //     generatedInputPath
+        // );
 
-        ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, 1, generatedInputPath);
+        //ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, 1, generatedInputPath);
 
 
         // ArrayList<PlanRuta> rutasPorPaquete =

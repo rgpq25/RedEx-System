@@ -222,15 +222,13 @@ public class Funciones {
                 String line = scanner.nextLine();
                 String[] parts = line.split(",");
 
-                // TODO: Horas de vuelo segun registro de datos ya estan en sus horas
-                // correspondientes
                 PlanVuelo planVuelo = new PlanVuelo();
                 planVuelo.setId(id);
                 planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
                 planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
                 planVuelo.setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
-                planVuelo.setHora_ciudad_origen(parts[2].trim().split(" ")[1]);
-                planVuelo.setHora_ciudad_destino(parts[3].trim().split(" ")[1]);
+                planVuelo.setHora_ciudad_origen(parts[2].trim());
+                planVuelo.setHora_ciudad_destino(parts[3].trim());
 
                 vuelos_list.add(planVuelo);
                 id++;
