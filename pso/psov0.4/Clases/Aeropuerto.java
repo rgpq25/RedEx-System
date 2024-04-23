@@ -1,9 +1,14 @@
 package Clases;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+
 public class Aeropuerto {
     private Ubicacion ubicacion;
     private int capacidad_utilizada;
     private int capacidad_maxima;
+
 
     public Aeropuerto(Ubicacion ubicacion, int capacidad_utilizada, int capacidad_maxima) {
         this.ubicacion = ubicacion;
@@ -47,4 +52,6 @@ public class Aeropuerto {
         System.out.println("Aeropuerto: " + this.ubicacion.getId() + " | GMT: " + this.ubicacion.getZonaHoraria()
                 + " | " + this.capacidad_utilizada + " " + this.capacidad_maxima);
     }
+
+    
 }
