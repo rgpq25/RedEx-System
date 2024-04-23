@@ -14,7 +14,7 @@ public class Ubicacion {
     }
 
     public int diferenciaHoraria() {
-        return Integer.parseInt(zona_horaria.replaceAll("GMD", ""));
+        return Integer.parseInt(zona_horaria.replaceAll("GMT", ""));
     }
 
     public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,

@@ -66,6 +66,7 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelos) {
             agregarVuelo(vuelo);
         }
+        System.out.println("Termino la generacion de vuelos");
     }
 
     public GrafoVuelos() {
@@ -211,9 +212,12 @@ public class GrafoVuelos {
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
+                    System.out.println("Buscando");
                     ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
 
                     rutasTotal.addAll(rutas);
+                    System.out.println("Se agrego ruta desde " + origen + " a " + destino + " con " + rutas.size()
+                            + " rutas encontradas");
                 }
             }
         }

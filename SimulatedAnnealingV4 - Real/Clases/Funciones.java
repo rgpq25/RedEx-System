@@ -362,53 +362,70 @@ public class Funciones {
     }
 
     public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos, int repeticionesPorConexion, String outputPath) {
-        Random random = new Random();
-        ArrayList<PlanVuelo> planes = new ArrayList<>();
+        File csvFile = new File(outputPath + "/vuelos.csv");
+        PrintWriter out;
 
-        int idPlan = 0;
-        // Generar planes para cada par de aeropuertos
-        for (Aeropuerto origen : aeropuertos) {
-            for (Aeropuerto destino : aeropuertos) {
-                if (!origen.equals(destino)) {
-                    for (int i = 0; i < repeticionesPorConexion; i++) {
-                        int horaSalidaHora = random.nextInt(24);
-                        int horaSalidaMinuto = random.nextInt(60);
-                        String horaSalida = String.format("%02d:%02d", horaSalidaHora, horaSalidaMinuto);
+        try {
+            out = new PrintWriter(csvFile);
 
-                        // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
-                        // basada en distancia u otros factores)
-                        int duracionHoras; // Duración de vuelo de 1 a 8 horas
-                        int duracionMinutos = 0 + random.nextInt(59);
+            Random random = new Random();
+            ArrayList<PlanVuelo> planes = new ArrayList<>();
 
-                        int diferencia = destino.getUbicacion().diferenciaHoraria()
-                                - origen.getUbicacion().diferenciaHoraria();
+            int idPlan = 0;
+            // Generar planes para cada par de aeropuertos
+            for (Aeropuerto origen : aeropuertos) {
+                for (Aeropuerto destino : aeropuertos) {
+                    if (!origen.equals(destino)) {
+                        for (int i = 0; i < repeticionesPorConexion; i++) {
+                            int horaSalidaHora = random.nextInt(24);
+                            int horaSalidaMinuto = random.nextInt(60);
+                            String horaSalida = String.format("%02d:%02d", horaSalidaHora, horaSalidaMinuto);
 
-                        if (origen.getUbicacion().getContinente()
-                                .contentEquals(destino.getUbicacion().getContinente())) {
-                            duracionHoras = random.nextInt(12);
-                        } else {
-                            duracionHoras = 12 + random.nextInt(12);
+                            // Calcular duración del vuelo basada en una lógica ficticia o real (puede ser
+                            // basada en distancia u otros factores)
+                            int duracionHoras; // Duración de vuelo de 1 a 8 horas
+                            int duracionMinutos = 0 + random.nextInt(59);
+
+                            int diferencia = destino.getUbicacion().diferenciaHoraria()
+                                    - origen.getUbicacion().diferenciaHoraria();
+
+                            if (origen.getUbicacion().getContinente()
+                                    .contentEquals(destino.getUbicacion().getContinente())) {
+                                duracionHoras = random.nextInt(12);
+                            } else {
+                                duracionHoras = 12 + random.nextInt(12);
+                            }
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
+                            cal.set(Calendar.MINUTE, horaSalidaMinuto);
+                            cal.add(Calendar.HOUR_OF_DAY, duracionHoras - diferencia);
+                            cal.add(Calendar.MINUTE, duracionMinutos);
+
+                            String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
+                                    cal.get(Calendar.MINUTE));
+
+                            int capacidad = 100 + random.nextInt(401);
+
+                            horaSalida = horaSalida.concat(":00");
+                            horaLlegada = horaLlegada.concat(":00");
+
+                            PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
+                                    horaSalida, horaLlegada, capacidad);
+                            planes.add(plan);
+
+                            out.println(origen.getUbicacion().getId() + "," + destino.getUbicacion().getId() + "," + horaSalida + "," + horaLlegada + "," + capacidad);
                         }
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(Calendar.HOUR_OF_DAY, horaSalidaHora);
-                        cal.set(Calendar.MINUTE, horaSalidaMinuto);
-                        cal.add(Calendar.HOUR_OF_DAY, duracionHoras - diferencia);
-                        cal.add(Calendar.MINUTE, duracionMinutos);
-
-                        String horaLlegada = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY),
-                                cal.get(Calendar.MINUTE));
-
-                        int capacidad = 100 + random.nextInt(401);
-
-                        PlanVuelo plan = new PlanVuelo(idPlan++, origen.getUbicacion(), destino.getUbicacion(),
-                                horaSalida, horaLlegada, capacidad);
-                        planes.add(plan);
                     }
                 }
             }
-        }
 
-        return planes;
+            out.close();
+            return planes;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public ArrayList<PlanRuta> asignarVuelosAPaquetes(ArrayList<Paquete> paquetes, ArrayList<Vuelo> vuelos) {
