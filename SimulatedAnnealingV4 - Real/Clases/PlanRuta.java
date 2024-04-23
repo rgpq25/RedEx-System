@@ -6,17 +6,12 @@ public class PlanRuta {
     Integer id;
     ArrayList<Vuelo> vuelos;
 
-    public PlanRuta(int id) {
-        this.id = id;
-        this.vuelos = new ArrayList<Vuelo>();
-    }
-
     public PlanRuta() {
         this.id = ContadorID.obtenerSiguienteID();
         this.vuelos = new ArrayList<Vuelo>();
     }
 
-    public PlanRuta(PlanRuta plan) {
+    public PlanRuta(PlanRuta plan){
         this.id = plan.id;
         this.vuelos = new ArrayList<Vuelo>(plan.vuelos);
     }
