@@ -11,7 +11,12 @@ public class PlanRuta {
         this.vuelos = new ArrayList<Vuelo>();
     }
 
-    public PlanRuta(PlanRuta plan){
+    public PlanRuta(int id) {
+        this.id = id;
+        this.vuelos = new ArrayList<Vuelo>();
+    }
+
+    public PlanRuta(PlanRuta plan) {
         this.id = plan.id;
         this.vuelos = new ArrayList<Vuelo>(plan.vuelos);
     }

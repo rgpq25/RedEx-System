@@ -5,11 +5,26 @@ import java.util.*;
 public class GrafoVuelos {
     private Map<String, List<Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
+    private Date fecha_inicio;
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, Date inicio, Date fin) {
+        fecha_inicio = inicio;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
             agregarVuelo(vuelo);
+        }
+    }
+
+    public void imprimirRutas() {
+        ArrayList<PlanRuta> rutas = buscarTodasLasRutas();
+        int id = 1;
+        for (PlanRuta ruta : rutas) {
+            System.out.println("Ruta " + id++);
+            for (Vuelo vuelo : ruta.getVuelos()) {
+                System.out.println(
+                        "  Vuelo " + vuelo.getId() + " desde " + vuelo.getPlan_vuelo().getCiudadOrigen().getId() + " a "
+                                + vuelo.getPlan_vuelo().getCiudadDestino().getId());
+            }
         }
     }
 
@@ -44,6 +59,8 @@ public class GrafoVuelos {
 
         Date inicio = minRecepcionPaquete.map(p -> p.getFecha_recepcion()).orElse(new Date());
         Date fin = maxEntregaPaquete.map(p -> p.getFecha_maxima_entrega()).orElse(new Date());
+
+        fecha_inicio = inicio;
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
@@ -189,12 +206,12 @@ public class GrafoVuelos {
 
     // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
     // aeropuertos
-    public ArrayList<PlanRuta> buscarTodasLasRutas(Date fechaHoraInicio) {
+    public ArrayList<PlanRuta> buscarTodasLasRutas() {
         ArrayList<PlanRuta> rutasTotal = new ArrayList<>();
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
-                    ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fechaHoraInicio);
+                    ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
 
                     rutasTotal.addAll(rutas);
                 }
