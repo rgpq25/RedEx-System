@@ -94,11 +94,14 @@ public class main {
             return true;
         }
 
-        public void initialize(List<PlanRuta> todasLasRutas) {
+        public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
 
             for (int i = 0; i < paquetes.size(); i++) {
-                int randomRouteIndex = (int) (Math.random() * todasLasRutas.size());
-                PlanRuta randomRoute = todasLasRutas.get(randomRouteIndex);
+                String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
+                String destinoPaquete = paquetes.get(i).getCiudadDestino().getId();
+                String keyString = origenPaquete + "-" + destinoPaquete;
+                int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
+                PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
 
                 this.rutas.add(randomRoute);
             }
@@ -106,18 +109,32 @@ public class main {
             this.costo = getSolutionCost();
         }
 
-        public Solucion generateNeighbour(List<PlanRuta> todasLasRutas) {
+        public Solucion generateNeighbour(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
 
             Solucion neighbour = new Solucion(new ArrayList<>(this.paquetes), new ArrayList<>(this.rutas),
                     new ArrayList<>(this.aeropuertos), costo);
             int randomPackageIndex = (int) (Math.random() * this.paquetes.size());
+
+            // int[] randomPackageIndexes = new int[windowSize];
+            // for (int i = 0; i < windowSize; i++) {
+            //     randomPackageIndexes[i] = (int) (Math.random() * this.paquetes.size());
+            //     //TODO: Asegurar que sena unicos, que no repitan
+            // }
+
+            // ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
+            // for (int i = 0; i < windowSize; i++) {
+            //     randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+            // }
+
             Paquete randomPackage = neighbour.paquetes.get(randomPackageIndex);
             ArrayList<PlanRuta> availableRoutes = new ArrayList<>();
 
-            // TODO: Iterar solo en las rutas que cumple con el origen y destino (array o
-            // hashmap separado en la generacion de rutas del grafo), acelearia velocidad de
-            // busqueda
-            for (PlanRuta ruta : todasLasRutas) {
+
+            String origenPaquete = randomPackage.getCiudadOrigen().getId();
+            String destinoPaquete = randomPackage.getCiudadDestino().getId();
+            String keyString = origenPaquete + "-" + destinoPaquete;
+
+            for (PlanRuta ruta : todasLasRutas.get(keyString)) {
                 String idRutaOrigen = ruta.getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
                 String idRutaDestino = ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo()
                         .getCiudadDestino().getId();
@@ -273,10 +290,21 @@ public class main {
 
         // TODO: No procesar paquetes que aun no seran recibidos
 
+
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         int flightsMultiplier = 1; // gives off around 800 flights if = 1
+
+
+
+        int windowSize = 1;
+        double temperature = 100000;
+        double coolingRate = 0.001;
+        int neighbourCount = 1;
+
+
+
 
         String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
@@ -303,12 +331,13 @@ public class main {
             return;
         }
 
+
+
         ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
         ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         long startTime = System.nanoTime();
-
         HashMap<String, ArrayList<PlanRuta>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
 
         long endTime = System.nanoTime();
@@ -316,14 +345,8 @@ public class main {
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
 
-        if (true) {
-            return;
-        }
 
-        double temperature = 10000;
-        double coolingRate = 0.002;
-        int neighbourCount = 1;
-
+       
         Solucion current = new Solucion(paquetes, new ArrayList<PlanRuta>(), aeropuertos, 0);
         current.initialize(todasLasRutas);
         printRutasTXT(current.paquetes, current.rutas, "initial.txt");
@@ -332,7 +355,7 @@ public class main {
             // Pick a random neighboring solution
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
             for (int i = 0; i < neighbourCount; i++) {
-                neighbours.add(current.generateNeighbour(todasLasRutas));
+                neighbours.add(current.generateNeighbour(todasLasRutas, windowSize));
             }
 
             int bestNeighbourIndex = 0;
@@ -356,17 +379,18 @@ public class main {
                 current = neighbours.get(bestNeighbourIndex);
             }
 
+
+            int cnt = (int) (current.costo / 10000);
             if (current.costo < 10000) {
-                System.out.println("Final cost: " + current.costo);
+                System.out.println("Final cost: " + current.costo + " | Packages left: " + cnt + " | Temperature: " + temperature);
                 printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                 return;
             }
 
             // Cool down the system
             temperature *= 1 - coolingRate;
-            System.out.println("Current cost: " + current.costo + " | Temperature: " + temperature);
-            if (temperature % 1000 == 0)
-                System.out.println("Current cost: " + current.costo + " | Temperature: " + temperature);
+            
+            System.out.println("Current cost: " + current.costo + " | Packages left: " + cnt + " | Temperature: " + temperature);
         }
 
         // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(current.paquetes,
@@ -380,7 +404,9 @@ public class main {
         // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
         // curr.get(aeropuerto));
         // }
-        System.out.println("Final cost: " + current.costo);
+        
+        int cnt2 = (int) (current.costo / 10000);
+        System.out.println("Final cost: " + current.costo + " | Packages left: " + cnt2 + " | Temperature: " + temperature);
         printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
 
     }
