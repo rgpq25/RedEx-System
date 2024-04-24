@@ -136,7 +136,7 @@ public class main {
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
-        int flightsMultiplier = 1; // gives off around 800 flights if = 1
+        int flightsMultiplier = 1;
         
 
         //SImmulated Annealing Parameters
