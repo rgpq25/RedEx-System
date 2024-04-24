@@ -1,9 +1,10 @@
 package Clases;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GrafoVuelos {
-    private Map<String, List<Vuelo>> grafo = new HashMap<>();
+    private HashMap<String, List<Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
 
@@ -59,63 +60,6 @@ public class GrafoVuelos {
     public GrafoVuelos() {
     }
 
-    /*
-     * private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date
-     * inicio, Date fin) {
-     * ArrayList<Vuelo> vuelos = new ArrayList<>();
-     * 
-     * // Inicializa el calendario para la fecha de inicio.
-     * Calendar cal = Calendar.getInstance();
-     * cal.setTime(inicio);
-     * 
-     * Calendar finCal = Calendar.getInstance();
-     * finCal.setTime(fin);
-     * 
-     * while (!cal.after(finCal)) {
-     * for (PlanVuelo plan : planesVuelo) {
-     * // Configura la hora de partida según el plan.
-     * cal.set(Calendar.HOUR_OF_DAY,
-     * Integer.parseInt(plan.getHora_ciudad_origen().split(":")[0]));
-     * cal.set(Calendar.MINUTE,
-     * Integer.parseInt(plan.getHora_ciudad_origen().split(":")[1]));
-     * Date fechaPartida = cal.getTime();
-     * 
-     * // Clona 'cal' para configurar la hora de llegada.
-     * Calendar calLlegada = (Calendar) cal.clone();
-     * calLlegada.set(Calendar.HOUR_OF_DAY,
-     * Integer.parseInt(plan.getHora_ciudad_destino().split(":")[0]));
-     * calLlegada.set(Calendar.MINUTE,
-     * Integer.parseInt(plan.getHora_ciudad_destino().split(":")[1]));
-     * Date fechaLlegada = calLlegada.getTime();
-     * 
-     * // Ajusta la fecha de llegada si es necesario.
-     * if (!fechaLlegada.after(fechaPartida)) {
-     * calLlegada.add(Calendar.DAY_OF_MONTH, 1);
-     * fechaLlegada = calLlegada.getTime();
-     * }
-     * if (!plan.es_continental()) {
-     * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
-     * 60 * 60); // Duración en
-     * // horas
-     * if (duracion < 12 || duracion > 24) {
-     * calLlegada.add(Calendar.DAY_OF_MONTH, 1);
-     * fechaLlegada = calLlegada.getTime();
-     * }
-     * }
-     * // Añade el vuelo a la lista con la zona horaria correcta.
-     * vuelos.add(new Vuelo(plan,
-     * Funciones.convertTimeZone(fechaPartida,
-     * plan.getCiudadOrigen().getZonaHoraria(), "GMT+0"),
-     * Funciones.convertTimeZone(fechaLlegada,
-     * plan.getCiudadDestino().getZonaHoraria(), "GMT+0")));
-     * }
-     * // Avanza al día siguiente.
-     * cal.add(Calendar.DAY_OF_MONTH, 1);
-     * }
-     * 
-     * return vuelos;
-     * }
-     */
     private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date inicio, Date fin) {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
@@ -194,23 +138,40 @@ public class GrafoVuelos {
 
     // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
     // aeropuertos
-    public HashMap<String, ArrayList<PlanRuta>> buscarTodasLasRutas() {
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
+
+    // Ajuste de la función para retornar la estructura compleja
+    public HashMap<String, HashMap<String, ArrayList<PlanRuta>>> buscarTodasLasRutas() {
         System.out.println("Buscando rutas");
-        HashMap<String, ArrayList<PlanRuta>> rutasTotal = new HashMap<>();
-        int totalRutas = 0; // Inicializar un contador para el total de rutas
+        HashMap<String, HashMap<String, ArrayList<PlanRuta>>> rutasTotal = new HashMap<>();
 
         for (String origen : grafo.keySet()) {
             for (String destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
                     ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
-                    String clave = origen + "-" + destino;
-                    rutasTotal.put(clave, rutas);
-                    totalRutas += rutas.size(); // Sumar el número de rutas encontradas para este par origen-destino
+                    String claveOrigenDestino = origen + "-" + destino;
+
+                    // Por cada ruta, generamos las claves de fecha y las agregamos al hashmap
+                    // interno
+                    for (PlanRuta ruta : rutas) {
+                        Date inicioRuta = ruta.getInicio(); // Asumimos que PlanRuta tiene un método getInicio()
+                        Date finRuta = ruta.getFin(); // Asumimos que PlanRuta tiene un método getFin()
+
+                        // Formatear las fechas de inicio y fin
+                        String fechaClave = dateFormat.format(inicioRuta) + " a " + dateFormat.format(finRuta);
+
+                        // Asegurarse de que los HashMaps estén inicializados
+                        rutasTotal.putIfAbsent(claveOrigenDestino, new HashMap<>());
+                        rutasTotal.get(claveOrigenDestino).putIfAbsent(fechaClave, new ArrayList<>());
+
+                        // Agregar la ruta al ArrayList correspondiente
+                        rutasTotal.get(claveOrigenDestino).get(fechaClave).add(ruta);
+                    }
                 }
             }
         }
         System.out.println("Se encontraron " + rutasTotal.size() + " pares de origen-destino con rutas.");
-        System.out.println("Número total de rutas encontradas: " + totalRutas); // Imprimir el total de rutas
         return rutasTotal;
     }
 
