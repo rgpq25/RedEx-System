@@ -23,164 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 public class main {
 
-    public static class Solucion {
-        public ArrayList<Paquete> paquetes;
-        public ArrayList<PlanRuta> rutas;
-        public ArrayList<Aeropuerto> aeropuertos;
-        public double costo;
-
-        // TODO: El costo real deberia considerar cuantos almacenes esta ocupando. Si
-        // TODO: ocupa un aeropuerto / vuelo concurrido el costo deberia ser mayor.
-
-        public Solucion(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, ArrayList<Aeropuerto> aeropuertos,
-                double costo) {
-            this.paquetes = paquetes;
-            this.rutas = rutas;
-            this.aeropuertos = aeropuertos;
-            this.costo = costo;
-        }
-
-        public double getSolutionCost() {
-            double cost = 0;
-
-            for (int i = 0; i < this.paquetes.size(); i++) {
-                String idRutaOrigen = this.rutas.get(i).getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-                String idRutaDestino = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                        .getPlan_vuelo().getCiudadDestino().getId();
-
-                String idPaqueteOrigen = this.paquetes.get(i).getCiudadOrigen().getId();
-                String idPaqueteDestino = this.paquetes.get(i).getCiudadDestino().getId();
-
-                Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
-                Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                        .getFecha_llegada();
-
-                Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
-                Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
-
-                if (!idRutaOrigen.equals(idPaqueteOrigen) ||
-                        !idRutaDestino.equals(idPaqueteDestino) ||
-                        !horaSalidaRuta.after(horaRecepcionPaquete) ||
-                        !horaLlegadaRuta.before(horaMaximaEntregaPaquete)) {
-                    cost += 10000;
-                }
-            }
-
-            return cost;
-        }
-
-        public boolean isCurrentRouteValid(int i) {
-            String idRutaOrigen = this.rutas.get(i).getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-            String idRutaDestino = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                    .getPlan_vuelo().getCiudadDestino().getId();
-
-            String idPaqueteOrigen = this.paquetes.get(i).getCiudadOrigen().getId();
-            String idPaqueteDestino = this.paquetes.get(i).getCiudadDestino().getId();
-
-            Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
-            Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                    .getFecha_llegada();
-
-            Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
-            Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
-
-            if (!idRutaOrigen.equals(idPaqueteOrigen) ||
-                    !idRutaDestino.equals(idPaqueteDestino) ||
-                    !horaSalidaRuta.after(horaRecepcionPaquete) ||
-                    !horaLlegadaRuta.before(horaMaximaEntregaPaquete)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
-
-            for (int i = 0; i < paquetes.size(); i++) {
-                String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
-                String destinoPaquete = paquetes.get(i).getCiudadDestino().getId();
-                String keyString = origenPaquete + "-" + destinoPaquete;
-                int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
-                PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
-
-                this.rutas.add(randomRoute);
-            }
-
-            this.costo = getSolutionCost();
-        }
-
-        public Solucion generateNeighbour(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
-
-            Solucion neighbour = new Solucion(new ArrayList<>(this.paquetes), new ArrayList<>(this.rutas),
-                    new ArrayList<>(this.aeropuertos), costo);
-            int randomPackageIndex = (int) (Math.random() * this.paquetes.size());
-
-            // int[] randomPackageIndexes = new int[windowSize];
-            // for (int i = 0; i < windowSize; i++) {
-            //     randomPackageIndexes[i] = (int) (Math.random() * this.paquetes.size());
-            //     //TODO: Asegurar que sena unicos, que no repitan
-            // }
-
-            // ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
-            // for (int i = 0; i < windowSize; i++) {
-            //     randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
-            // }
-
-            Paquete randomPackage = neighbour.paquetes.get(randomPackageIndex);
-            ArrayList<PlanRuta> availableRoutes = new ArrayList<>();
-
-
-            String origenPaquete = randomPackage.getCiudadOrigen().getId();
-            String destinoPaquete = randomPackage.getCiudadDestino().getId();
-            String keyString = origenPaquete + "-" + destinoPaquete;
-
-            for (PlanRuta ruta : todasLasRutas.get(keyString)) {
-                String idRutaOrigen = ruta.getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-                String idRutaDestino = ruta.getVuelos().get(ruta.getVuelos().size() - 1).getPlan_vuelo()
-                        .getCiudadDestino().getId();
-
-                String idPaqueteOrigen = randomPackage.getCiudadOrigen().getId();
-                String idPaqueteDestino = randomPackage.getCiudadDestino().getId();
-
-                Date horaSalidaRuta = ruta.getVuelos().get(0).getFecha_salida();
-                Date horaLlegadaRuta = ruta.getVuelos().get(ruta.getVuelos().size() - 1).getFecha_llegada();
-
-                Date horaRecepcionPaquete = randomPackage.getFecha_recepcion();
-                Date horaMaximaEntregaPaquete = randomPackage.getFecha_maxima_entrega();
-
-                if (idRutaOrigen.equals(idPaqueteOrigen) &&
-                        idRutaDestino.equals(idPaqueteDestino) &&
-                        horaSalidaRuta.after(horaRecepcionPaquete) &&
-                        horaLlegadaRuta.before(horaMaximaEntregaPaquete)) {
-                    availableRoutes.add(ruta);
-                }
-            }
-
-            double newCost = this.costo;
-            if (availableRoutes.size() == 0 && isCurrentRouteValid(randomPackageIndex) == true) {
-                newCost += 10000;
-            } else if (availableRoutes.size() > 0 && isCurrentRouteValid(randomPackageIndex) == false) {
-                newCost -= 10000;
-            }
-
-            // TODO: Alternativa, escojer un random index en un loop y verificar si es
-            // valido, si no repetir (sera mas rapido facil)
-            int randomRouteIndex = (int) (Math.random() * availableRoutes.size());
-            PlanRuta randomRoute = new PlanRuta(availableRoutes.get(randomRouteIndex));
-
-            neighbour.rutas.set(randomPackageIndex, randomRoute);
-            neighbour.costo = newCost;
-
-            return neighbour;
-        }
-
-        public void printTxt() {
-            for (int i = 0; i < paquetes.size(); i++) {
-                System.out.println("Paquete " + paquetes.get(i).getId() + " -> " + rutas.get(i).toString());
-            }
-        }
-    }
-
     public static void printRutasTXT(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> rutas, String filename) {
         File csvFile = new File(filename);
         PrintWriter out;
@@ -290,18 +132,23 @@ public class main {
 
         // TODO: No procesar paquetes que aun no seran recibidos
 
-
+        //Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         int flightsMultiplier = 1; // gives off around 800 flights if = 1
+        
 
-
-
-        int windowSize = 1;
+        //SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
+        int windowSize = 50;
+        boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
+                                               //if true, execution time does not scale up if windowSize gets bigger
+
+        //Weight Parameters
+        double badSolutionPenalization = 100;
 
 
 
@@ -312,7 +159,6 @@ public class main {
         HashMap<String, Ubicacion> ubicacionMap = getUbicacionMap(maxAirports);
         ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
 
-        // truncate aeropuertos to get only the first maxAirports elements
         aeropuertos = new ArrayList<Aeropuerto>(aeropuertos.subList(0, maxAirports));
 
         if (generateNewData == true) {
@@ -347,16 +193,24 @@ public class main {
 
 
        
-        Solucion current = new Solucion(paquetes, new ArrayList<PlanRuta>(), aeropuertos, 0);
+        Solucion current = new Solucion(
+            paquetes, 
+            new ArrayList<PlanRuta>(), 
+            aeropuertos, 
+            new HashMap<Integer, Integer>(),
+            0, 
+            badSolutionPenalization
+        );
         current.initialize(todasLasRutas);
         printRutasTXT(current.paquetes, current.rutas, "initial.txt");
 
+        startTime = System.nanoTime();
         while (temperature > 1) {
-            // Pick a random neighboring solution
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
             for (int i = 0; i < neighbourCount; i++) {
-                neighbours.add(current.generateNeighbour(todasLasRutas, windowSize));
+                neighbours.add(current.generateNeighbour(todasLasRutas, windowSize, randomizeNeighboors));
             }
+
 
             int bestNeighbourIndex = 0;
             double bestNeighbourCost = Double.MAX_VALUE;
@@ -369,22 +223,20 @@ public class main {
                 }
             }
 
-            // Calculate the cost difference between the new and current routes
+
             double currentCost = current.costo;
             double newCost = neighbours.get(bestNeighbourIndex).costo;
             double costDifference = newCost - currentCost;
 
-            // Decide if we should accept the new solution
+
             if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
                 current = neighbours.get(bestNeighbourIndex);
             }
 
 
-            int cnt = (int) (current.costo / 10000);
-            if (current.costo < 10000) {
-                System.out.println("Final cost: " + current.costo + " | Packages left: " + cnt + " | Temperature: " + temperature);
-                printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-                return;
+            int cnt = (int) (current.costo / badSolutionPenalization);
+            if (current.costo < badSolutionPenalization) {
+                break;
             }
 
             // Cool down the system
@@ -393,21 +245,28 @@ public class main {
             System.out.println("Current cost: " + current.costo + " | Packages left: " + cnt + " | Temperature: " + temperature);
         }
 
-        // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(current.paquetes,
-        // current.rutas, current.aeropuertos);
-        // estado.consulta_historica();
-        // System.out.println("VERIFICANDO CAPACIDAD");
-        // HashMap<Aeropuerto, Integer> curr =
-        // estado.verificar_capacidad_en(Date.from(LocalDateTime.of(2023, 1, 3,
-        // 15,0).toInstant(ZoneOffset.UTC)));
-        // for (Aeropuerto aeropuerto : curr.keySet()) {
-        // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
-        // curr.get(aeropuerto));
-        // }
         
-        int cnt2 = (int) (current.costo / 10000);
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration / 1000000000) + " segundos");
+        int cnt2 = (int) (current.costo / badSolutionPenalization);
         System.out.println("Final cost: " + current.costo + " | Packages left: " + cnt2 + " | Temperature: " + temperature);
         printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+
+
+
+        // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(
+        //     current.paquetes,
+        //     current.rutas, 
+        //     current.aeropuertos
+        // );
+
+        // System.out.println("VERIFICANDO CAPACIDAD");
+        // HashMap<Aeropuerto, Integer> curr = estado.verificar_capacidad_en(Funciones.parseDateString("2024-01-02 00:00:00"));
+        // for (Aeropuerto aeropuerto : curr.keySet()) {
+        //     System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
+        //     curr.get(aeropuerto));
+        // }
 
     }
 }

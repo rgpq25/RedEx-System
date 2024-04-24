@@ -29,6 +29,10 @@ public class PlanRuta {
         return vuelos;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public void agregarVuelo(Vuelo vuelo) {
         vuelos.add(vuelo);
     }
