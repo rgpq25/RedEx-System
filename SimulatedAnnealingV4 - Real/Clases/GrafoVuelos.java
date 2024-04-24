@@ -152,11 +152,9 @@ public class GrafoVuelos {
                     ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
                     String claveOrigenDestino = origen + "-" + destino;
 
-                    // Por cada ruta, generamos las claves de fecha y las agregamos al hashmap
-                    // interno
                     for (PlanRuta ruta : rutas) {
-                        Date inicioRuta = ruta.getInicio(); // Asumimos que PlanRuta tiene un método getInicio()
-                        Date finRuta = ruta.getFin(); // Asumimos que PlanRuta tiene un método getFin()
+                        Date inicioRuta = ruta.getInicio();
+                        Date finRuta = ruta.getFin();
 
                         // Formatear las fechas de inicio y fin
                         String fechaClave = dateFormat.format(inicioRuta) + " a " + dateFormat.format(finRuta);
