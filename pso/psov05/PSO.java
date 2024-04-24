@@ -17,7 +17,6 @@ import Clases.Vuelo;
 import Clases.Aeropuerto;
 import Clases.Ubicacion;
 import Clases.Paquete;
-import Clases.PlanRuta;
 
 public class PSO {
 
@@ -37,14 +36,14 @@ public class PSO {
             bestPosition = new ArrayList<>();
             for (int i = 0; i < numPackages; i++) {
                 position.add(new Random().nextInt(numRoutes));
-                velocity.add(Math.random()*2-1);
+                velocity.add(Math.random());
             }
             bestPosition.addAll(position);
             bestFitness = Double.POSITIVE_INFINITY;
         }
     }
 
-    static double calcularCosto(Paquete paquete, PlanRuta planRuta) {
+    static double calcularCosto(Paquete paquete, Ruta ruta, List<Ruta> rutas) {
         final double COSTO_MAXIMO = Double.POSITIVE_INFINITY;
         String formato = "yyyy-MM-dd HH:mm";
 
@@ -78,7 +77,7 @@ public class PSO {
         //return 0;
     }
 
-    static double fitness(List<Integer> position, List<Paquete> packages, List<PlanRuta> rutas) {
+    static double fitness(List<Integer> position, List<Paquete> packages, List<Ruta> rutas) {
         double totalCost = 0;
         for (int i = 0; i < position.size(); i++) {
             double costo = calcularCosto(packages.get(i), rutas.get(position.get(i)), rutas);

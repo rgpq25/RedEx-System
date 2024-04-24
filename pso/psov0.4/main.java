@@ -22,6 +22,8 @@ import Clases.Ubicacion;
 import Clases.Vuelo;
 import Clases.Paquete;
 import Clases.EstadoAlmacen;
+import Clases.PlanRuta;
+
 //import org.apache.commons.lang3.ArrayUtils;
 
 
@@ -121,16 +123,13 @@ public class main {
 
 
         GrafoVuelos grafo_vuelos = new GrafoVuelos(planVuelos, paquetes);
-        //Itera el array de vuelos y los agrega al grafo
+        List<PlanRuta> todasLasRutas = grafo_vuelos.buscarTodasLasRutas();
+        System.out.println("Se consiguieron " + todasLasRutas.size() + " rutas posibles.");
 
-        for (Vuelo vuelo : vuelos) {
-            vuelo.print();
-            grafo_vuelos.agregarVuelo(vuelo);
-        }
-        
-
+    
         //AQUI ES DONDE SE ARMA RUTAS
 
+        /* 
         //turn string into Date
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = null;
@@ -139,7 +138,10 @@ public class main {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        */
 
+
+        /* 
         List<Ruta> rutas = grafo_vuelos.buscarTodasLasRutas(date);
 
         //print rutas size
@@ -153,10 +155,10 @@ public class main {
         }
 
         List<Paquete> paquetes = Arrays.asList(paquetesLeidos);
-
+        
         EspacioBusquedaPSO espacioBusqueda = new EspacioBusquedaPSO(paquetes, grafo_vuelos.buscarTodasLasRutas(date));
         System.out.println(espacioBusqueda);
-
+*/
 
         //PSO pso = new PSO();
         int[] bestComb = PSO.pso(paquetes, rutas, 100, 1000, 0.7, 1.4, 1.4);
