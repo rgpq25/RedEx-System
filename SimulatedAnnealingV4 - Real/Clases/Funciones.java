@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -553,47 +554,61 @@ public class Funciones {
         return funciones.verificar_capacidad(registros, aeropuertos);
     }
 
-    public static EstadoAlmacen obtenerEstadoAlmacen(ArrayList<Paquete> paquetes,
-            ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
-        Funciones funciones = new Funciones();
-        ArrayList<RegistroAlmacenamiento> registros = funciones.crearRegistrosAlmacenamiento(paquetes, planRutas,
-                aeropuertos);
-        if (funciones.verificar_capacidad(registros, aeropuertos)) {
+    /*
+     * public static EstadoAlmacen obtenerEstadoAlmacen(ArrayList<Paquete> paquetes,
+     * ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
+     * Funciones funciones = new Funciones();
+     * ArrayList<RegistroAlmacenamiento> registros =
+     * funciones.crearRegistrosAlmacenamiento(paquetes, planRutas,
+     * aeropuertos);
+     * if (funciones.verificar_capacidad(registros, aeropuertos)) {
+     * 
+     * HashMap<Aeropuerto, HashMap<Date, Integer>> eventos_acumulados = new
+     * HashMap<Aeropuerto, HashMap<Date, Integer>>();
+     * HashMap<Aeropuerto, HashMap<Date, Integer>> acumulado_aeropuerto = new
+     * HashMap<Aeropuerto, HashMap<Date, Integer>>();
+     * // Crea eventos de inicio y fin
+     * for (RegistroAlmacenamiento registro : registros) {
+     * eventos_acumulados.putIfAbsent(registro.getAeropuerto(), new HashMap<Date,
+     * Integer>());
+     * eventos_acumulados.get(registro.getAeropuerto()).putIfAbsent(registro.
+     * getFechaInicio(), 0);
+     * eventos_acumulados.get(registro.getAeropuerto()).putIfAbsent(registro.
+     * getFechaFin(), 0);
+     * 
+     * eventos_acumulados.get(registro.getAeropuerto()).put(registro.getFechaInicio(
+     * ),
+     * eventos_acumulados.get(registro.getAeropuerto()).get(registro.getFechaInicio(
+     * )) + 1);
+     * eventos_acumulados.get(registro.getAeropuerto()).put(registro.getFechaFin(),
+     * eventos_acumulados.get(registro.getAeropuerto()).get(registro.getFechaFin())
+     * - 1);
+     * }
+     * 
+     * for (Aeropuerto aeropuerto : eventos_acumulados.keySet()) {
+     * HashMap<Date, Integer> registrosPorFecha =
+     * eventos_acumulados.get(aeropuerto);
+     * ArrayList<Date> fechasOrdenadas = new
+     * ArrayList<>(registrosPorFecha.keySet());
+     * Collections.sort(fechasOrdenadas);
+     * 
+     * HashMap<Date, Integer> acumuladosPorFecha = new HashMap<>();
+     * int acumulado = 0;
+     * 
+     * for (Date fecha : fechasOrdenadas) {
+     * acumulado += registrosPorFecha.get(fecha);
+     * acumuladosPorFecha.put(fecha, acumulado);
+     * }
+     * 
+     * acumulado_aeropuerto.put(aeropuerto, acumuladosPorFecha);
+     * }
+     * 
+     * return new EstadoAlmacen(acumulado_aeropuerto);
+     * 
+     * }
+     * 
+     * return null;
+     * }
+     */
 
-            HashMap<Aeropuerto, HashMap<Date, Integer>> eventos_acumulados = new HashMap<Aeropuerto, HashMap<Date, Integer>>();
-            HashMap<Aeropuerto, HashMap<Date, Integer>> acumulado_aeropuerto = new HashMap<Aeropuerto, HashMap<Date, Integer>>();
-            // Crea eventos de inicio y fin
-            for (RegistroAlmacenamiento registro : registros) {
-                eventos_acumulados.putIfAbsent(registro.getAeropuerto(), new HashMap<Date, Integer>());
-                eventos_acumulados.get(registro.getAeropuerto()).putIfAbsent(registro.getFechaInicio(), 0);
-                eventos_acumulados.get(registro.getAeropuerto()).putIfAbsent(registro.getFechaFin(), 0);
-
-                eventos_acumulados.get(registro.getAeropuerto()).put(registro.getFechaInicio(),
-                        eventos_acumulados.get(registro.getAeropuerto()).get(registro.getFechaInicio()) + 1);
-                eventos_acumulados.get(registro.getAeropuerto()).put(registro.getFechaFin(),
-                        eventos_acumulados.get(registro.getAeropuerto()).get(registro.getFechaFin()) - 1);
-            }
-
-            for (Aeropuerto aeropuerto : eventos_acumulados.keySet()) {
-                HashMap<Date, Integer> registrosPorFecha = eventos_acumulados.get(aeropuerto);
-                ArrayList<Date> fechasOrdenadas = new ArrayList<>(registrosPorFecha.keySet());
-                Collections.sort(fechasOrdenadas);
-
-                HashMap<Date, Integer> acumuladosPorFecha = new HashMap<>();
-                int acumulado = 0;
-
-                for (Date fecha : fechasOrdenadas) {
-                    acumulado += registrosPorFecha.get(fecha);
-                    acumuladosPorFecha.put(fecha, acumulado);
-                }
-
-                acumulado_aeropuerto.put(aeropuerto, acumuladosPorFecha);
-            }
-
-            return new EstadoAlmacen(acumulado_aeropuerto);
-
-        }
-
-        return null;
-    }
 }
