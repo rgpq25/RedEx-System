@@ -62,12 +62,12 @@ public class main {
         //grafoVuelos.imprimirVuelos();
 
         long startTime = System.nanoTime();
-        HashMap<String, ArrayList<PlanRuta>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        HashMap<String, ArrayList<PlanRuta>> rutas = grafoVuelos.buscarTodasLasRutas();
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
-        funciones.imprimirTodasLasRutas(todasLasRutas);
+        //funciones.imprimirTodasLasRutas(rutas);
 
         /*for (Aeropuerto aeropuerto : aeropuertos) {
         ubicacionMap.put(aeropuerto.getUbicacion().getId(),
@@ -111,16 +111,17 @@ public class main {
         //print paquetes
         /*for (Paquete paquete : paquetesLeidos) {
             paquete.print();
-        }
+        }*/
 
-        List<Paquete> paquetes = Arrays.asList(paquetesLeidos);
+        //List<Paquete> paquetes = Arrays.asList(paquetesLeidos);
 
-        EspacioBusquedaPSO espacioBusqueda = new EspacioBusquedaPSO(paquetes, grafo_vuelos.buscarTodasLasRutas(date));
-        System.out.println(espacioBusqueda);
+        //EspacioBusquedaPSO espacioBusqueda = new EspacioBusquedaPSO(paquetes, todasLasRutas);
+        //System.out.println(espacioBusqueda);
 
 
         //PSO pso = new PSO();
         int[] bestComb = PSO.pso(paquetes, rutas, 100, 1000, 0.7, 1.4, 1.4);
+
         List<Integer> bestCombList = new ArrayList<>();
         for (int i = 0; i < bestComb.length; i++) {
             bestCombList.add(bestComb[i]);
@@ -128,7 +129,7 @@ public class main {
         //double bestFit = PSO.fitness(Arrays.asList(ArrayUtils.toObject(bestComb)), paquetes, rutas);
         double bestFit = PSO.fitness(bestCombList, paquetes, rutas);
 
-        for (int i = 0; i < bestComb.length; i++) {
+        /*for (int i = 0; i < bestComb.length; i++) {
             int paqueteIdx = i + 1;
             for (Ruta ruta : rutas) {
                 Matcher matcher = Pattern.compile("\\d+").matcher(ruta.identificador);
@@ -142,7 +143,15 @@ public class main {
                 }
             }
         } */
-
+        for (int i = 0; i < bestComb.length; i++) {
+            String ciudadOrigen = paquetes.get(i).getCiudadOrigen().getId();
+            //get ciudad destino paquete id
+            String ciudadDestino = paquetes.get(i).getCiudadDestino().getId();
+            String cadena = ciudadOrigen + "-" + ciudadDestino;
+            ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+            System.out.println("La mejor ruta para el paquete " + i + " fue:");
+            System.out.println(planRutas.get(bestComb[i]));
+        }
     }
 }
 
