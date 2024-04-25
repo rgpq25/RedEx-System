@@ -1,4 +1,5 @@
 import Clases.Aeropuerto;
+import Clases.Duracion;
 import Clases.EstadoAlmacen;
 import Clases.Funciones;
 import Clases.GrafoVuelos;
@@ -134,7 +135,7 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 11; // MAX AIRPORTS IS 30
+        int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 700;
         int flightsMultiplier = 1;
 
@@ -178,12 +179,15 @@ public class main {
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         long startTime = System.nanoTime();
-        HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
+        
+
+
         
         Solucion current = new Solucion(
             paquetes,
@@ -250,7 +254,7 @@ public class main {
 
         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
         1000000000) + " segundos");
-        
+
         int cnt2 = (int) (current.costo / badSolutionPenalization);
         System.out.println(
         "Final cost: " + current.costo + " | Packages left: " + cnt2 +

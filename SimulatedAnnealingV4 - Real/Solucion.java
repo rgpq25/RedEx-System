@@ -3,6 +3,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import Clases.Aeropuerto;
+import Clases.Duracion;
 import Clases.EstadoAlmacen;
 import Clases.Funciones;
 import Clases.Paquete;
@@ -164,7 +165,7 @@ public class Solucion {
         return true;
     }
 
-    public void initialize(HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas) {
+    public void initialize(HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> todasLasRutas) {
 
         for (int i = 0; i < paquetes.size(); i++) {
             String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
@@ -174,8 +175,9 @@ public class Solucion {
 
             Date fechaRecepcion = paquetes.get(i).getFecha_recepcion();
             Date fechaMaximaEntrega = paquetes.get(i).getFecha_maxima_entrega();
-            
-            PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
+            Duracion _duracion = new Duracion(fechaRecepcion, fechaMaximaEntrega);
+            PlanRuta randomRoute = todasLasRutas.get(keyString).get(_duracion).get(randomRouteIndex);
+            randomRoute.toString();
 
             this.rutas.add(randomRoute);
         }
@@ -183,7 +185,7 @@ public class Solucion {
         this.costo = getSolutionCost();
     }
 
-    public Solucion generateNeighbour(HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas, int windowSize,
+    public Solucion generateNeighbour(HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> todasLasRutas, int windowSize,
             boolean randomizeNeighboors) {
 
         Solucion neighbour = new Solucion(
@@ -216,10 +218,14 @@ public class Solucion {
             String destinoPaquete = randomPackages.get(j).getCiudadDestino().getId();
             String keyString = origenPaquete + "-" + destinoPaquete;
 
+            Date fechaRecepcion = randomPackages.get(j).getFecha_recepcion();
+            Date fechaMaximaEntrega = randomPackages.get(j).getFecha_maxima_entrega();
+            Duracion _duracion = new Duracion(fechaRecepcion, fechaMaximaEntrega);
+
             if (randomizeNeighboors) {
                 while (true) {
                     int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
-                    PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
+                    PlanRuta randomRoute = todasLasRutas.get(keyString).get(_duracion).get(randomRouteIndex);
                     //check if origin and destiny is different
                     if(
                         neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
@@ -237,7 +243,7 @@ public class Solucion {
                 }
             } else {
                 // TODO: A esta opcion no se le ha agregado la ocupacion de vuelos y almacenes
-                for (PlanRuta ruta : todasLasRutas.get(keyString)) {
+                for (PlanRuta ruta : todasLasRutas.get(keyString).get(_duracion)) {
                     if (isCurrentRouteValid(randomPackages.get(j), ruta) == true) {
                         availableRoutesPerPackage.get(j).add(ruta);
                     }
