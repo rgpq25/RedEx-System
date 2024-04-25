@@ -13,10 +13,15 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map;
+
 import Clases.Vuelo;
 import Clases.Aeropuerto;
 import Clases.Ubicacion;
 import Clases.Paquete;
+import Clases.PlanRuta;
 
 public class PSO {
 
@@ -30,66 +35,89 @@ public class PSO {
         List<Integer> bestPosition;
         double bestFitness;
 
-        Particle(int numPackages, int numRoutes) {
+        Particle(List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas) {
             position = new ArrayList<>();
             velocity = new ArrayList<>();
             bestPosition = new ArrayList<>();
-            for (int i = 0; i < numPackages; i++) {
-                position.add(new Random().nextInt(numRoutes));
+            //iterate for each package using a counter
+            for (int i = 0; i < packages.size(); i++) {
+                //get ciudad origen paquete id
+                String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
+                //get ciudad destino paquete id
+                String ciudadDestino = packages.get(i).getCiudadDestino().getId();
+                String cadena = ciudadOrigen + "-" + ciudadDestino;
+                ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+                position.add(new Random().nextInt(planRutas.size()));
                 velocity.add(Math.random());
             }
+
+
+            /*for (int i = 0; i < packages.size(); i++) {
+                position.add(new Random().nextInt(numRoutes));
+                velocity.add(Math.random());
+            }*/
             bestPosition.addAll(position);
             bestFitness = Double.POSITIVE_INFINITY;
         }
     }
 
-    static double calcularCosto(Paquete paquete, Ruta ruta, List<Ruta> rutas) {
+    static double calcularCosto(Paquete paquete, PlanRuta planRuta) {
         final double COSTO_MAXIMO = Double.POSITIVE_INFINITY;
         String formato = "yyyy-MM-dd HH:mm";
 
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(ruta.identificador);
-        int numeroRuta = matcher.find() ? Integer.parseInt(matcher.group()) : -1;
+        //Pattern pattern = Pattern.compile("\\d+");
+        //Matcher matcher = pattern.matcher(ruta.identificador);
+        //int numeroRuta = matcher.find() ? Integer.parseInt(matcher.group()) : -1;
 
-        if (numeroRuta >= rutas.size())
-            return COSTO_MAXIMO;
+        /*if (numeroRuta >= rutas.size())
+            return COSTO_MAXIMO;*/
 
-        if (!ruta.vuelos.get(0).getPlan_vuelo().getCiudadOrigen().getId().equals(paquete.getCiudadOrigen().getId()) ||
-                !ruta.vuelos.get(ruta.vuelos.size() - 1).getPlan_vuelo().getCiudadDestino().getId().equals(paquete.getCiudadDestino().getId()))
-            return 1000;
+        //NOTA: Se supone que cumple esta condicion, para eso se usa el GRAFO
+        /*if (!planRuta.getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId().equals(paquete.getCiudadOrigen().getId()) ||
+                !planRuta.getVuelos().get(planRuta.getVuelos().size() - 1).getPlan_vuelo().getCiudadDestino().getId().equals(paquete.getCiudadDestino().getId()))
+            return 1000;*/
 
         //long tiempoRecepcion = Paquete.FORMATO_FECHA.parse(paquete.fechaRecepcion).getTime();
         //long tiempoRecepcion = new SimpleDateFormat(formato).parse(paquete.getFecha_recepcion()).getTime();
         long tiempoRecepcion = paquete.getFecha_recepcion().getTime();
         //long tiempoPartidaRuta = new SimpleDateFormat(formato).parse(ruta.vuelos.get(0).fechaPartida).getTime();
-        long tiempoPartidaRuta = ruta.vuelos.get(0).getFecha_salida().getTime();
+        long tiempoPartidaRuta = planRuta.getVuelos().get(0).getFecha_salida().getTime();
         //long tiempoLlegadaRuta = new SimpleDateFormat(formato).parse(ruta.vuelos.get(ruta.vuelos.size() - 1).fechaLlegada).getTime();
-        long tiempoLlegadaRuta = ruta.vuelos.get(ruta.vuelos.size() - 1).getFecha_llegada().getTime();
+        long tiempoLlegadaRuta = planRuta.getVuelos().get(planRuta.getVuelos().size() - 1).getFecha_llegada().getTime();
 
         if (tiempoPartidaRuta < tiempoRecepcion)
             return 1000;
 
+        //Esto verifica el tiempo maximo de entrega FALTA MODIFICAR ESTO
         if (tiempoLlegadaRuta - tiempoRecepcion > 48 * 3600 * 1000)
             return 100;
 
+        //Por ahora devuelve el total de horas de viaje FALTA MODIFICAR ESTO    
         double horasParaEntrega = (tiempoLlegadaRuta - tiempoRecepcion) / (3600.0 * 1000);
         return Math.max(0, horasParaEntrega);
         //return 0;
     }
 
-    static double fitness(List<Integer> position, List<Paquete> packages, List<Ruta> rutas) {
+    static double fitness(List<Integer> position, List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas) {
         double totalCost = 0;
         for (int i = 0; i < position.size(); i++) {
-            double costo = calcularCosto(packages.get(i), rutas.get(position.get(i)), rutas);
+            String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
+            String ciudadDestino = packages.get(i).getCiudadDestino().getId();
+            String cadena = ciudadOrigen + "-" + ciudadDestino;
+            ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+            if (planRutas == null) {
+                return Double.POSITIVE_INFINITY;
+            }
+            double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
             totalCost += costo;
         }
         return totalCost;
     }
 
-    static int[] pso(List<Paquete> packages, List<Ruta> rutas, int numParticles, int maxIterations, double w, double c1, double c2) {
+    static int[] pso(List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas, int numParticles, int maxIterations, double w, double c1, double c2) {
         List<Particle> particles = new ArrayList<>();
         for (int i = 0; i < numParticles; i++) {
-            particles.add(new Particle(packages.size(), rutas.size()));
+            particles.add(new Particle(packages, rutas));
         }
 
         List<Integer> globalBestPosition = particles.get(0).position;
@@ -115,7 +143,13 @@ public class PSO {
                             c2 * Math.random() * (globalBestPosition.get(i) - particle.position.get(i)));
 
                     particle.position.set(i, particle.position.get(i) + particle.velocity.get(i).intValue());
-                    particle.position.set(i, Math.max(0, Math.min(particle.position.get(i), rutas.size() - 1)));
+
+                    String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
+                    String ciudadDestino = packages.get(i).getCiudadDestino().getId();
+                    String cadena = ciudadOrigen + "-" + ciudadDestino;
+                    ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+
+                    particle.position.set(i, Math.max(0, Math.min(particle.position.get(i), planRutas.size() - 1)));
                 }
             }
             // System.out.println("Mejor posición: " + globalBestPosition + " con fitness " + globalBestFitness);
