@@ -8,4 +8,8 @@ public class ContadorID {
     public static int obtenerSiguienteID() {
         return contador.incrementAndGet();
     }
+
+    public static void reiniciar() {
+        contador.set(0);
+    }
 }

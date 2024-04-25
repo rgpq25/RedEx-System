@@ -1,5 +1,6 @@
 package Clases;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -7,25 +8,53 @@ import java.util.Date;
 public class PlanRuta {
     Integer id;
     ArrayList<Vuelo> vuelos;
+    String codigo;
 
     public PlanRuta() {
         this.id = ContadorID.obtenerSiguienteID();
         this.vuelos = new ArrayList<Vuelo>();
+        this.codigo = "";
     }
 
     public PlanRuta(int id) {
         this.id = id;
         this.vuelos = new ArrayList<Vuelo>();
+
+    }
+
+    private void updateCodigo() {
+        StringBuilder sb = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm"); // Formato para las fechas
+
+        for (Vuelo v : vuelos) {
+            String ciudadOrigen = v.getPlan_vuelo().getHora_ciudad_origen();
+            String fechaPartida = sdf.format(v.getFecha_salida());
+            String ciudadDestino = v.getPlan_vuelo().getHora_ciudad_destino();
+            String fechaLlegada = sdf.format(v.getFecha_llegada());
+
+            sb.append(ciudadOrigen).append("-").append(fechaPartida).append("-")
+                    .append(ciudadDestino).append("-").append(fechaLlegada).append(";");
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1); // Elimina el último punto y coma
+        }
+        this.codigo = sb.toString();
+    }
+
+    public String getCodigo() {
+        return codigo;
     }
 
     public PlanRuta(PlanRuta plan) {
         this.id = plan.id;
         this.vuelos = new ArrayList<Vuelo>(plan.vuelos);
         this.vuelos.sort(Comparator.comparing(Vuelo::getFecha_salida));
+        updateCodigo();
     }
 
     public PlanRuta(ArrayList<Vuelo> vuelos) {
         this.vuelos.sort(Comparator.comparing(Vuelo::getFecha_salida));
+        updateCodigo();
     }
 
     public ArrayList<Vuelo> getVuelos() {
@@ -73,10 +102,18 @@ public class PlanRuta {
     }
 
     public Date getInicio() {
-        return vuelos.get(0).getFecha_salida();
+        if (!vuelos.isEmpty()) {
+            return vuelos.get(0).getFecha_salida();
+        } else {
+            return null;
+        }
     }
 
     public Date getFin() {
-        return vuelos.get(vuelos.size() - 1).getFecha_llegada();
+        if (!vuelos.isEmpty()) {
+            return vuelos.get(vuelos.size() - 1).getFecha_llegada();
+        } else {
+            return null;
+        }
     }
 }

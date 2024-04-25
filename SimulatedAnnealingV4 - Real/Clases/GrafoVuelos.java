@@ -144,6 +144,7 @@ public class GrafoVuelos {
 
     // Ajuste de la función para retornar la estructura compleja
     public HashMap<String, HashMap<String, ArrayList<PlanRuta>>> buscarTodasLasRutas() {
+        ContadorID.reiniciar();
         System.out.println("Buscando rutas");
         HashMap<String, HashMap<String, ArrayList<PlanRuta>>> rutasTotal = new HashMap<>();
         int total_rutas = 0;
@@ -182,13 +183,13 @@ public class GrafoVuelos {
         boolean continental = origen.getContinente().equals(destino.getContinente());
 
         ArrayList<PlanRuta> rutas = new ArrayList<>();
-        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas, continental, null);
+        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas, continental);
         return rutas;
     }
 
     // Método DFS para encontrar rutas
     private void buscarRutasDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRuta rutaActual,
-            Set<Ubicacion> aeropuertosVisitados, ArrayList<PlanRuta> rutas, boolean continental, Date fechaInicio) {
+            Set<Ubicacion> aeropuertosVisitados, ArrayList<PlanRuta> rutas, boolean continental) {
         if (actual.equals(destino)) {
             // Clonar la lista de vuelos para la nueva ruta
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
@@ -209,19 +210,21 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelosOrdenados) {
             if (fechaHoraActual.before(vuelo.getFecha_salida())) {
                 // Establecer fechaInicio si es la primera adición de vuelo a la ruta
+                Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
                     fechaInicio = vuelo.getFecha_salida();
                 }
                 // Calcular la diferencia de tiempo desde el inicio hasta la fecha de salida del
                 // vuelo actual
                 long duracionRuta = vuelo.getFecha_llegada().getTime() - fechaInicio.getTime();
-                long duracionRutaHoras = TimeUnit.MILLISECONDS.toHours(duracionRuta);
-                if (duracionRutaHoras <= 48) {
+                long duracionRutaHoras = (duracionRuta + 3599999) / 3600000;
+                // if (true) {
+                if (duracionRutaHoras <= 60) {
                     if (!aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino())) {
                         rutaActual.getVuelos().add(vuelo);
                         aeropuertosVisitados.add(actual);
                         buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
-                                rutaActual, aeropuertosVisitados, rutas, continental, fechaInicio);
+                                rutaActual, aeropuertosVisitados, rutas, continental);
                         // Backtracking
                         rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
                         aeropuertosVisitados.remove(actual);
@@ -232,13 +235,9 @@ public class GrafoVuelos {
                 }
             }
         }
-    // Restablecer fechaInicio a null si se eliminan todos los vuelos en el
-    // backtracking
-    if(rutaActual.getVuelos().isEmpty())
+        // Restablecer fechaInicio a null si se eliminan todos los vuelos en el
+        // backtracking
 
-    {
-        fechaInicio = null;
     }
-}
 
 }

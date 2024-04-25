@@ -134,7 +134,7 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 10; // MAX AIRPORTS IS 30
+        int maxAirports = 30; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         int flightsMultiplier = 1;
 
@@ -185,32 +185,6 @@ public class main {
         long duration = endTime - startTime;
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
-        int contador = 0; // Inicializa un contador para las rutas menores a 96 horas
-        for (HashMap<String, ArrayList<PlanRuta>> mapDestino : todasLasRutas.values()) {
-            for (ArrayList<PlanRuta> rutas : mapDestino.values()) {
-                for (PlanRuta ruta : rutas) {
-                    if (!ruta.getVuelos().isEmpty()) {
-                        // Obtiene el primer y último vuelo de la ruta
-                        Vuelo primerVuelo = ruta.getVuelos().get(0);
-                        Vuelo ultimoVuelo = ruta.getVuelos().get(ruta.getVuelos().size() - 1);
-
-                        // Calcula la duración de la ruta
-                        long tiempoInicio = primerVuelo.getFecha_salida().getTime();
-                        long tiempoFin = ultimoVuelo.getFecha_llegada().getTime();
-                        long duracion = tiempoFin - tiempoInicio;
-
-                        // Convierte la duración de milisegundos a horas
-                        long duracionHoras = TimeUnit.MILLISECONDS.toHours(duracion);
-
-                        // Incrementa el contador si la duración es menor a 96 horas
-                        if (duracionHoras <= 48) {
-                            contador++;
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println("Cantidad de rutas menores a 48 horas: " + contador);
         /*
          * Solucion current = new Solucion(
          * paquetes,
