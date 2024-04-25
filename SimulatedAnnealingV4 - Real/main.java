@@ -132,26 +132,23 @@ public class main {
 
         // TODO: No procesar paquetes que aun no seran recibidos
 
-        //Data Generation Parameters
+        // Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         int flightsMultiplier = 1;
-        
 
-        //SImmulated Annealing Parameters
+        // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
         int windowSize = 50;
-        boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
-                                               //if true, execution time does not scale up if windowSize gets bigger
+        boolean randomizeNeighboors = true; // if true, wont search for all valid routes, but will randomize until it
+                                            // gets a correct one
+                                            // if true, execution time does not scale up if windowSize gets bigger
 
-        //Weight Parameters
+        // Weight Parameters
         double badSolutionPenalization = 100;
-
-
-
 
         String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
@@ -177,96 +174,120 @@ public class main {
             return;
         }
 
-
-
         ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
         ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         long startTime = System.nanoTime();
-        HashMap<String, ArrayList<PlanRuta>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
+        int contador = 0; // Inicializa un contador para las rutas menores a 96 horas
+        for (HashMap<String, ArrayList<PlanRuta>> mapDestino : todasLasRutas.values()) {
+            for (ArrayList<PlanRuta> rutas : mapDestino.values()) {
+                for (PlanRuta ruta : rutas) {
+                    if (!ruta.getVuelos().isEmpty()) {
+                        // Obtiene el primer y último vuelo de la ruta
+                        Vuelo primerVuelo = ruta.getVuelos().get(0);
+                        Vuelo ultimoVuelo = ruta.getVuelos().get(ruta.getVuelos().size() - 1);
 
+                        // Calcula la duración de la ruta
+                        long tiempoInicio = primerVuelo.getFecha_salida().getTime();
+                        long tiempoFin = ultimoVuelo.getFecha_llegada().getTime();
+                        long duracion = tiempoFin - tiempoInicio;
 
-       
-        Solucion current = new Solucion(
-            paquetes, 
-            new ArrayList<PlanRuta>(), 
-            aeropuertos, 
-            new HashMap<Integer, Integer>(),
-            0, 
-            badSolutionPenalization
-        );
-        current.initialize(todasLasRutas);
-        printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+                        // Convierte la duración de milisegundos a horas
+                        long duracionHoras = TimeUnit.MILLISECONDS.toHours(duracion);
 
-        startTime = System.nanoTime();
-        while (temperature > 1) {
-            ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-            for (int i = 0; i < neighbourCount; i++) {
-                neighbours.add(current.generateNeighbour(todasLasRutas, windowSize, randomizeNeighboors));
-            }
-
-
-            int bestNeighbourIndex = 0;
-            double bestNeighbourCost = Double.MAX_VALUE;
-            for (int i = 0; i < neighbours.size(); i++) {
-                Solucion neighbour = neighbours.get(i);
-                double neighbourCost = neighbour.costo;
-                if (neighbourCost < bestNeighbourCost) {
-                    bestNeighbourCost = neighbourCost;
-                    bestNeighbourIndex = i;
+                        // Incrementa el contador si la duración es menor a 96 horas
+                        if (duracionHoras <= 48) {
+                            contador++;
+                        }
+                    }
                 }
             }
-
-
-            double currentCost = current.costo;
-            double newCost = neighbours.get(bestNeighbourIndex).costo;
-            double costDifference = newCost - currentCost;
-
-
-            if (costDifference < 0 || Math.exp(-costDifference / temperature) > Math.random()) {
-                current = neighbours.get(bestNeighbourIndex);
-            }
-
-
-            int cnt = (int) (current.costo / badSolutionPenalization);
-            if (current.costo < badSolutionPenalization) {
-                break;
-            }
-
-            // Cool down the system
-            temperature *= 1 - coolingRate;
-            
-            System.out.println("Current cost: " + current.costo + " | Packages left: " + cnt + " | Temperature: " + temperature);
         }
-
-        
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration / 1000000000) + " segundos");
-        int cnt2 = (int) (current.costo / badSolutionPenalization);
-        System.out.println("Final cost: " + current.costo + " | Packages left: " + cnt2 + " | Temperature: " + temperature);
-        printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-
-
-
-        // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(
-        //     current.paquetes,
-        //     current.rutas, 
-        //     current.aeropuertos
-        // );
-
-        // System.out.println("VERIFICANDO CAPACIDAD");
-        // HashMap<Aeropuerto, Integer> curr = estado.verificar_capacidad_en(Funciones.parseDateString("2024-01-02 00:00:00"));
-        // for (Aeropuerto aeropuerto : curr.keySet()) {
-        //     System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: " +
-        //     curr.get(aeropuerto));
-        // }
-
+        System.out.println("Cantidad de rutas menores a 48 horas: " + contador);
+        /*
+         * Solucion current = new Solucion(
+         * paquetes,
+         * new ArrayList<PlanRuta>(),
+         * aeropuertos,
+         * new HashMap<Integer, Integer>(),
+         * 0,
+         * badSolutionPenalization);
+         * current.initialize(todasLasRutas);
+         * printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+         * 
+         * startTime = System.nanoTime();
+         * while (temperature > 1) {
+         * ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+         * for (int i = 0; i < neighbourCount; i++) {
+         * neighbours.add(current.generateNeighbour(todasLasRutas, windowSize,
+         * randomizeNeighboors));
+         * }
+         * 
+         * int bestNeighbourIndex = 0;
+         * double bestNeighbourCost = Double.MAX_VALUE;
+         * for (int i = 0; i < neighbours.size(); i++) {
+         * Solucion neighbour = neighbours.get(i);
+         * double neighbourCost = neighbour.costo;
+         * if (neighbourCost < bestNeighbourCost) {
+         * bestNeighbourCost = neighbourCost;
+         * bestNeighbourIndex = i;
+         * }
+         * }
+         * 
+         * double currentCost = current.costo;
+         * double newCost = neighbours.get(bestNeighbourIndex).costo;
+         * double costDifference = newCost - currentCost;
+         * 
+         * if (costDifference < 0 || Math.exp(-costDifference / temperature) >
+         * Math.random()) {
+         * current = neighbours.get(bestNeighbourIndex);
+         * }
+         * 
+         * int cnt = (int) (current.costo / badSolutionPenalization);
+         * if (current.costo < badSolutionPenalization) {
+         * break;
+         * }
+         * 
+         * // Cool down the system
+         * temperature *= 1 - coolingRate;
+         * 
+         * System.out.println(
+         * "Current cost: " + current.costo + " | Packages left: " + cnt +
+         * " | Temperature: " + temperature);
+         * }
+         * 
+         * endTime = System.nanoTime();
+         * duration = endTime - startTime;
+         * System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
+         * 1000000000) + " segundos");
+         * int cnt2 = (int) (current.costo / badSolutionPenalization);
+         * System.out.println(
+         * "Final cost: " + current.costo + " | Packages left: " + cnt2 +
+         * " | Temperature: " + temperature);
+         * printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+         * 
+         * // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(
+         * // current.paquetes,
+         * // current.rutas,
+         * // current.aeropuertos
+         * // );
+         * 
+         * // System.out.println("VERIFICANDO CAPACIDAD");
+         * // HashMap<Aeropuerto, Integer> curr =
+         * // estado.verificar_capacidad_en(Funciones.parseDateString("2024-01-02
+         * // 00:00:00"));
+         * // for (Aeropuerto aeropuerto : curr.keySet()) {
+         * // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: "
+         * +
+         * // curr.get(aeropuerto));
+         * // }
+         */
     }
 }
