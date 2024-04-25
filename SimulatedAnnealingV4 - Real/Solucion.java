@@ -144,26 +144,37 @@ public class Solucion {
 
     public void ocupyRouteFlights(PlanRuta ruta) {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
+            
             int idVuelo = ruta.getVuelos().get(i).getId();
+            if(ocupacionVuelos.get(idVuelo) == null){
+                ocupacionVuelos.put(idVuelo, 0);
+            }
             ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) + 1);
         }
     }
 
-    public boolean isAirportCapacityAvailable() {
-        EstadoAlmacen estado = new EstadoAlmacen(
-                this.paquetes,
-                this.rutas,
-                this.aeropuertos);
-        return estado.verificar_capacidad_maxima();
+    public boolean isAirportCapacityAvailable(){
+        // if(true)return true;
+        // this.estado = Funciones.obtenerEstadoAlmacen(
+        //     this.paquetes,
+        //     this.rutas, 
+        //     this.aeropuertos
+        // );
+        // return estado.verificar_capacidad_maxima();
+        return true;
     }
 
-    public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
+    public void initialize(HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas) {
 
         for (int i = 0; i < paquetes.size(); i++) {
             String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
             String destinoPaquete = paquetes.get(i).getCiudadDestino().getId();
             String keyString = origenPaquete + "-" + destinoPaquete;
             int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
+
+            Date fechaRecepcion = paquetes.get(i).getFecha_recepcion();
+            Date fechaMaximaEntrega = paquetes.get(i).getFecha_maxima_entrega();
+            
             PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
 
             this.rutas.add(randomRoute);
@@ -172,7 +183,7 @@ public class Solucion {
         this.costo = getSolutionCost();
     }
 
-    public Solucion generateNeighbour(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize,
+    public Solucion generateNeighbour(HashMap<String, HashMap<String, ArrayList<PlanRuta>>> todasLasRutas, int windowSize,
             boolean randomizeNeighboors) {
 
         Solucion neighbour = new Solucion(
@@ -209,9 +220,12 @@ public class Solucion {
                 while (true) {
                     int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
                     PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
-                    if (neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true &&
-                            neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true &&
-                            neighbour.isAirportCapacityAvailable() == true) {
+                    //check if origin and destiny is different
+                    if(
+                        neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
+                        //&& neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
+                        //&& neighbour.isAirportCapacityAvailable() == true
+                    ){
                         neighbour.ocupyRouteFlights(randomRoute);
                         if (neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false) { // su solucion no era
                                                                                                // valida
