@@ -29,7 +29,7 @@ public class PSO {
         List<Double> velocity;
         List<Integer> bestPosition;
         double bestFitness;
-        //A CAMBIAR
+
         Particle(int numPackages, int numRoutes) {
             position = new ArrayList<>();
             velocity = new ArrayList<>();
