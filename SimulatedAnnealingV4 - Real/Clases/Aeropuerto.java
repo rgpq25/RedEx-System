@@ -2,12 +2,13 @@ package Clases;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class Aeropuerto {
     private Ubicacion ubicacion;
     private int capacidad_utilizada;
     private int capacidad_maxima;
-    
+
     private ArrayList<CapacidadPorTiempo> capacidadPorTiempo;
 
     public Aeropuerto(Ubicacion ubicacion, int capacidad_utilizada, int capacidad_maxima) {
@@ -53,7 +54,6 @@ public class Aeropuerto {
                 + " | " + this.capacidad_utilizada + " " + this.capacidad_maxima);
     }
 
-
     public boolean tieneCapacidadDisponible(Date momento) {
         int capacidadUtilizada = 0;
         for (CapacidadPorTiempo c : capacidadPorTiempo) {
@@ -79,5 +79,23 @@ public class Aeropuerto {
             this.tiempoFin = tiempoFin;
             this.capacidadUtilizada = capacidadUtilizada;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Aeropuerto that = (Aeropuerto) o;
+        return capacidad_utilizada == that.capacidad_utilizada &&
+                capacidad_maxima == that.capacidad_maxima &&
+                Objects.equals(ubicacion, that.ubicacion) &&
+                Objects.equals(capacidadPorTiempo, that.capacidadPorTiempo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ubicacion, capacidad_utilizada, capacidad_maxima, capacidadPorTiempo);
     }
 }

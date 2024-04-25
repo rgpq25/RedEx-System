@@ -1,5 +1,7 @@
 package Clases;
 
+import java.util.Objects;
+
 public class Ubicacion {
     String id;
     String continente;
@@ -15,6 +17,26 @@ public class Ubicacion {
 
     public int diferenciaHoraria() {
         return Integer.parseInt(zona_horaria.replaceAll("GMT", ""));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Ubicacion ubicacion = (Ubicacion) o;
+        return Objects.equals(id, ubicacion.id) &&
+                Objects.equals(continente, ubicacion.continente) &&
+                Objects.equals(pais, ubicacion.pais) &&
+                Objects.equals(ciudad, ubicacion.ciudad) &&
+                Objects.equals(ciudad_abreviada, ubicacion.ciudad_abreviada) &&
+                Objects.equals(zona_horaria, ubicacion.zona_horaria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, continente, pais, ciudad, ciudad_abreviada, zona_horaria);
     }
 
     public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
