@@ -137,17 +137,12 @@ public class GrafoVuelos {
         }
     }
 
-    // Busca todas las rutas desde todos los aeropuertos hacia todos los otros
-    // aeropuertos
-
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
-
-    // Ajuste de la función para retornar la estructura compleja
-    public HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> buscarTodasLasRutas() {
+    public HashMap<String, ArrayList<PlanRuta>> buscarTodasLasRutas() {
         ContadorID.reiniciar();
         System.out.println("Buscando rutas");
-        HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> rutasTotal = new HashMap<>();
+        HashMap<String, ArrayList<PlanRuta>> rutasTotal = new HashMap<>();
         int total_rutas = 0;
+
         for (Ubicacion origen : grafo.keySet()) {
             for (Ubicacion destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
@@ -155,23 +150,15 @@ public class GrafoVuelos {
                     total_rutas += rutas.size();
                     String claveOrigenDestino = origen + "-" + destino;
 
-                    for (PlanRuta ruta : rutas) {
-                        Date inicioRuta = ruta.getInicio();
-                        Date finRuta = ruta.getFin();
+                    // Asegurarse de que el ArrayList está inicializado
+                    rutasTotal.putIfAbsent(claveOrigenDestino, new ArrayList<>());
 
-                        // Formatear las fechas de inicio y fin
-                        Duracion fechas = new Duracion(inicioRuta, finRuta);
-
-                        // Asegurarse de que los HashMaps estén inicializados
-                        rutasTotal.putIfAbsent(claveOrigenDestino, new HashMap<>());
-                        rutasTotal.get(claveOrigenDestino).putIfAbsent(fechas, new ArrayList<>());
-
-                        // Agregar la ruta al ArrayList correspondiente
-                        rutasTotal.get(claveOrigenDestino).get(fechas).add(ruta);
-                    }
+                    // Agregar todas las rutas encontradas al ArrayList bajo la clave origen-destino
+                    rutasTotal.get(claveOrigenDestino).addAll(rutas);
                 }
             }
         }
+
         System.out.println("Se encontraron " + rutasTotal.size() + " pares de origen-destino con rutas.");
         System.out.println("Se encontraron " + total_rutas + " rutas en total.");
         return rutasTotal;
