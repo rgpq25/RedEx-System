@@ -1,8 +1,22 @@
-package Clases;
+
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.*;
+import Clases.Vuelo;
+import Clases.Aeropuerto;
+import Clases.Ubicacion;
+import Clases.PlanVuelo;
+import Clases.PlanRuta;
+import Clases.Paquete;
+import Clases.Funciones;
+import Clases.ContadorID;
 
 public class GrafoVuelos {
     private HashMap<Ubicacion, ArrayList<Vuelo>> grafo = new HashMap<>();
@@ -197,6 +211,9 @@ public class GrafoVuelos {
         }
 
         // Asegurar que los vuelos están ordenados por fecha de salida
+        if (!grafo.containsKey(actual)) {
+            return;
+        }
         ArrayList<Vuelo> vuelosOrdenados = new ArrayList<>(grafo.get(actual));
         Collections.sort(vuelosOrdenados, Comparator.comparing(Vuelo::getFecha_salida));
 
