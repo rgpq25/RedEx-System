@@ -179,7 +179,7 @@ public class main {
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         long startTime = System.nanoTime();
-        HashMap<String, HashMap<Duracion, ArrayList<PlanRuta>>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        HashMap<String,ArrayList<PlanRuta>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
