@@ -19,6 +19,7 @@ import java.util.Map;
 
 import Clases.Vuelo;
 import Clases.Aeropuerto;
+import Clases.MedianCalculator;
 import Clases.Ubicacion;
 import Clases.Paquete;
 import Clases.PlanRuta;
@@ -94,9 +95,11 @@ public class PSO {
 
         long diferencia_fecha_maxima = paquete.getFecha_maxima_entrega().getTime() - paquete.getFecha_recepcion().getTime();
         long diferencia_fecha_entrega = tiempoLlegadaRuta - tiempoRecepcion;
+        double porcentaje_tiempo = (diferencia_fecha_entrega*100)/diferencia_fecha_maxima;
+        return Math.max(0, porcentaje_tiempo);
 
         //Verifica que el primer vuelo no salga antes de recibir el paquete
-        if (tiempoPartidaRuta < tiempoRecepcion)
+        /*if (tiempoPartidaRuta < tiempoRecepcion)
             return 1000000;
 
         //Esto verifica el tiempo maximo de entrega FALTA MODIFICAR ESTO
@@ -105,11 +108,12 @@ public class PSO {
 
         //Por ahora devuelve el total de horas de viaje FALTA MODIFICAR ESTO    
         double horasParaEntrega = (tiempoLlegadaRuta - tiempoRecepcion) / (3600.0 * 1000);
-        return Math.max(0, horasParaEntrega);
+        return Math.max(0, horasParaEntrega);*/
         //return 0;
     }
 
     static double fitness(List<Integer> position, List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas) {
+        ArrayList<Double> costos = new ArrayList<>();
         double totalCost = 0;
         for (int i = 0; i < position.size(); i++) {
             String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
@@ -119,9 +123,12 @@ public class PSO {
             if (planRutas == null) {
                 return 1000000;
             }
-            double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
-            totalCost += costo;
+            //double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
+            //totalCost += costo;
+            costos.add(calcularCosto(packages.get(i), planRutas.get(position.get(i))));
         }
+        double median = MedianCalculator.calculateMedian(costos);
+        totalCost += median;
         return totalCost;
     }
 
