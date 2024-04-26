@@ -19,6 +19,7 @@ import java.util.Map;
 
 import Clases.Vuelo;
 import Clases.Aeropuerto;
+import Clases.Funciones;
 import Clases.MedianCalculator;
 import Clases.Ubicacion;
 import Clases.Paquete;
@@ -112,9 +113,11 @@ public class PSO {
         //return 0;
     }
 
-    static double fitness(List<Integer> position, List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas) {
+    static double fitness(List<Integer> position, ArrayList<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos ) {
         ArrayList<Double> costos = new ArrayList<>();
         double totalCost = 0;
+        ArrayList<PlanRuta> planRutasEscogidas = new ArrayList<>(); 
+        Funciones funciones = new Funciones();
         for (int i = 0; i < position.size(); i++) {
             String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
             String ciudadDestino = packages.get(i).getCiudadDestino().getId();
@@ -123,16 +126,24 @@ public class PSO {
             if (planRutas == null) {
                 return 1000000;
             }
+            
             //double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
             //totalCost += costo;
             costos.add(calcularCosto(packages.get(i), planRutas.get(position.get(i))));
+            planRutasEscogidas.add(planRutas.get(position.get(i)));
         }
         double median = MedianCalculator.calculateMedian(costos);
         totalCost += median;
+        
+        boolean cumpleCapacidadAeropuertos = funciones.verificar_capacidad_aeropuertos(packages, planRutasEscogidas, aeropuertos);
+        if(!cumpleCapacidadAeropuertos){
+            return 1000000;
+        }
+
         return totalCost;
     }
 
-    static int[] pso(List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas, int numParticles, int maxIterations, double w, double c1, double c2) {
+    static int[] pso(ArrayList<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos, int numParticles, int maxIterations, double w, double c1, double c2) {
         List<Particle> particles = new ArrayList<>();
         for (int i = 0; i < numParticles; i++) {
             particles.add(new Particle(packages, rutas));
@@ -143,7 +154,7 @@ public class PSO {
 
         for (int iter = 0; iter < maxIterations; iter++) {
             for (Particle particle : particles) {
-                double fitnessVal = fitness(particle.position, packages, rutas);
+                double fitnessVal = fitness(particle.position, packages, rutas,aeropuertos);
 
                 if (fitnessVal <= particle.bestFitness) {
                     particle.bestFitness = fitnessVal;

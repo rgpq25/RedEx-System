@@ -520,4 +520,84 @@ public class Funciones {
         return aeropuertos;
     }
 
+    public boolean verificar_capacidad_aeropuertos(ArrayList<Paquete> paquetes,
+            ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
+        //Funciones funciones = new Funciones();
+        ArrayList<RegistroAlmacenamiento> registros = crearRegistrosAlmacenamiento(paquetes, planRutas,
+                aeropuertos);
+        return verificar_capacidad(registros, aeropuertos);
+    }
+
+    public ArrayList<RegistroAlmacenamiento> crearRegistrosAlmacenamiento(ArrayList<Paquete> paquetes,
+            ArrayList<PlanRuta> planRutas, ArrayList<Aeropuerto> aeropuertos) {
+        ArrayList<RegistroAlmacenamiento> almacenamiento = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < paquetes.size(); i++) {
+            Date currentTime = paquetes.get(i).getFecha_recepcion();
+            for (Vuelo vuelo : planRutas.get(i).getVuelos()) {
+                if (currentTime.before(vuelo.getFecha_salida())) {
+                    almacenamiento.add(new RegistroAlmacenamiento(paquetes.get(i).getId(),
+                            currentTime,
+                            vuelo.getFecha_salida(),
+                            extraAeropuerto(aeropuertos, vuelo.getPlan_vuelo().getCiudadOrigen().getId())));
+                }
+                currentTime = vuelo.getFecha_llegada();
+            }
+            // Final storage for 1 minute after the last flight
+            calendar.setTime(currentTime);
+            calendar.add(Calendar.MINUTE, 1); // Añadir un minuto a la última hora de llegada
+            Date finalTime = calendar.getTime(); // Obtener la fecha actualizada
+
+            almacenamiento.add(new RegistroAlmacenamiento(paquetes.get(i).getId(),
+                    currentTime,
+                    finalTime,
+                    extraAeropuerto(aeropuertos, paquetes.get(i).getCiudadDestino().getId())));
+        }
+        return almacenamiento;
+    }
+
+    public Aeropuerto extraAeropuerto(ArrayList<Aeropuerto> aeropuertos, String id) {
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            if (aeropuerto.getId() == id) {
+                return aeropuerto;
+            }
+        }
+        return null;
+    }
+
+    public boolean verificar_capacidad(ArrayList<RegistroAlmacenamiento> registros, ArrayList<Aeropuerto> aeropuertos) {
+        ArrayList<Evento> eventos = new ArrayList<>();
+
+        // Crea eventos de inicio y fin
+        for (RegistroAlmacenamiento registro : registros) {
+            eventos.add(new Evento(registro.getFechaInicio(), registro.getAeropuerto(), 1)); // Evento de inicio
+            eventos.add(new Evento(registro.getFechaFin(), registro.getAeropuerto(), -1)); // Evento de fin
+        }
+
+        // Ordena los eventos por fecha y hora
+        Collections.sort(eventos, Comparator.comparing(Evento::getFechaHora));
+
+        HashMap<Aeropuerto, Integer> acumuladosPorAeropuerto = new HashMap<>();
+        HashMap<Aeropuerto, Integer> capacidadMaximaPorAeropuerto = new HashMap<>();
+
+        // Inicializar capacidades máximas
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            capacidadMaximaPorAeropuerto.put(aeropuerto, aeropuerto.getCapacidad_maxima());
+        }
+
+        // Verificar la capacidad en cada cambio de evento
+        for (Evento evento : eventos) {
+            int acumuladoActual = acumuladosPorAeropuerto.getOrDefault(evento.getAeropuerto(), 0) + evento.getCambio();
+            acumuladosPorAeropuerto.put(evento.getAeropuerto(), acumuladoActual);
+
+            // Comprueba si la capacidad se ha excedido
+            if (acumuladoActual > capacidadMaximaPorAeropuerto.get(evento.getAeropuerto())) {
+                return false; // Retorna falso si se excede la capacidad en algún momento
+            }
+        }
+
+        return true; // Retorna verdadero si nunca se excede la capacidad
+    }
+
+
 }
