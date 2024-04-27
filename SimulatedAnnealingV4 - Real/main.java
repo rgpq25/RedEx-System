@@ -253,14 +253,16 @@ public class main {
             double newCost = bestNeighbourCost;
             double costDifference = newCost - currentCost;
             
+
             if (
                 costDifference < 0 || 
                 Math.exp(-costDifference / temperature) > Math.random()
             ) {
                 current = neighbours.get(bestNeighbourIndex);
             }
-            
-            int cnt = (int) (current.costo / badSolutionPenalization);
+
+
+            int cnt = (int) (current.getSolutionCost() / badSolutionPenalization);
             if (current.getSolutionCost() < badSolutionPenalization) {
                 break;
             }
