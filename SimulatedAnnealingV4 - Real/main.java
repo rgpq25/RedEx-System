@@ -144,7 +144,7 @@ public class main {
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 100;
-        int windowSize = 50; //best = 50 MUST BE LESS THE packagesAmount
+        int windowSize = 100; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
@@ -242,6 +242,7 @@ public class main {
             for (int i = 0; i < neighbours.size(); i++) {
                 Solucion neighbour = neighbours.get(i);
                 double neighbourCost = neighbour.getSolutionCost();
+                //System.out.println("Current cost: " + neighbourCost);
                 if (neighbourCost < bestNeighbourCost) {
                     bestNeighbourCost = neighbourCost;
                     bestNeighbourIndex = i;
@@ -260,7 +261,7 @@ public class main {
             }
             
             int cnt = (int) (current.costo / badSolutionPenalization);
-            if (current.costo < badSolutionPenalization) {
+            if (current.getSolutionCost() < badSolutionPenalization) {
                 break;
             }
             
@@ -268,7 +269,7 @@ public class main {
             temperature *= 1 - coolingRate;
             
             System.out.println(
-            "Current cost: " + current.costo + 
+            "Current cost: " + current.getSolutionCost() + 
             " | Packages left: " + cnt +
             " | Temperature: " + temperature);
         }
