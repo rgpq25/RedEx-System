@@ -164,7 +164,7 @@ public class Solucion {
 
             int usedCapacity = 0;
             if (ocupacionVuelos.get(ruta.getVuelos().get(i).getId()) == null) {
-                ocupacionVuelos.put(ruta.getVuelos().get(i).getId(), 0);
+                usedCapacity = 0;
             } else {
                 usedCapacity = ocupacionVuelos.get(ruta.getVuelos().get(i).getId());
             }
@@ -188,7 +188,7 @@ public class Solucion {
             int idVuelo = ruta.getVuelos().get(i).getId();
 
             if(ocupacionVuelos.get(idVuelo) == null){
-                ocupacionVuelos.put(idVuelo, 0);
+                ocupacionVuelos.put(idVuelo, 1);
             } else {
                 ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) + 1);
             }
@@ -201,6 +201,7 @@ public class Solucion {
             int idVuelo = ruta.getVuelos().get(i).getId();
             if(ocupacionVuelos.get(idVuelo) == 0){
                 System.out.println("Se intento desocupar un vuelo que no estaba ocupado");
+                
                 throw new Error("Se intento desocupar un vuelo que no estaba ocupado");
             }
             ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) - 1);
@@ -243,7 +244,7 @@ public class Solucion {
                 new ArrayList<>(this.paquetes),
                 new ArrayList<>(this.rutas), // me asegurara de no alterar los vuelos de otras rutas? deberia hacer una
                                              // copia de cada vuelo para asegurarlo
-                new ArrayList<>(this.aeropuertos),
+                this.aeropuertos,
                 new HashMap<Integer, Integer>(this.ocupacionVuelos),
                 this.costo,
                 this.badSolutionPenalization,
@@ -259,7 +260,7 @@ public class Solucion {
             while(indexes.get(randomIndex) != null){
                 randomIndex = (int) (Math.random() * this.paquetes.size());
             }
-            randomPackageIndexes[i] = (int) (Math.random() * this.paquetes.size());
+            randomPackageIndexes[i] = randomIndex;
             indexes.put(randomPackageIndexes[i], true);
         }
 
