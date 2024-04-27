@@ -62,9 +62,9 @@ for file_name in os.listdir(input_directory):
     if file_name.startswith('pack_enviado_') and file_name.endswith('.txt'):
         read_pack_enviado(input_file, packagesData)
 
-    if file_name == 'Planes.vuelo.v1.txt':
+    if file_name == 'planes_vuelo.v3.txt':
         read_vuelos(input_file, flightsData)
         
     
-save_to_csv(packagesData, os.path.join(output_directory,'paquetes.csv'))
+#save_to_csv(packagesData, os.path.join(output_directory,'paquetes.csv'))
 save_to_csv(flightsData, os.path.join(output_directory,'vuelos.csv'))

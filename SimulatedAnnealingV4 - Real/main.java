@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class main {
@@ -135,9 +136,9 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 10; // MAX AIRPORTS IS 30
+        int maxAirports = 30; // MAX AIRPORTS IS 30
         int packagesAmount = 700;
-        int flightsMultiplier = 1;
+        int flightsMultiplier = 8;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
@@ -150,7 +151,7 @@ public class main {
         // Weight Parameters
         double badSolutionPenalization = 100;
 
-        String inputPath = "inputGenerado";
+        String inputPath = "inputReal";
         String generatedInputPath = "inputGenerado";
 
         HashMap<String, Ubicacion> ubicacionMap = getUbicacionMap(maxAirports);
@@ -179,7 +180,22 @@ public class main {
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         long startTime = System.nanoTime();
-        HashMap<String,ArrayList<PlanRuta>> todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        HashMap<String, ArrayList<PlanRuta>> todasLasRutas = new HashMap<String, ArrayList<PlanRuta>>();
+        todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+
+
+        System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
+        for (Map.Entry<String, ArrayList<PlanRuta>> entry : todasLasRutas.entrySet()) {
+            String key = entry.getKey();
+            ArrayList<PlanRuta> value = entry.getValue();
+            if (value.size() == 0) {
+                System.out.println("No route available for " + key);
+            }
+        }
+
+        if(true){
+            return;
+        }
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;

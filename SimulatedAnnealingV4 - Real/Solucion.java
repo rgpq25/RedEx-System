@@ -171,10 +171,23 @@ public class Solucion {
             String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
             String destinoPaquete = paquetes.get(i).getCiudadDestino().getId();
             String keyString = origenPaquete + "-" + destinoPaquete;
+            // System.out.println("The key was " + keyString);
+
             int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
+            // System.out.println("The random index was " + randomRouteIndex);
+            // System.out.println("Size of the routes with key " + keyString + " is " + todasLasRutas.get(keyString).size());
+            // for(int j = 0; j < todasLasRutas.get(keyString).size(); j++){
+            //     System.out.println("Route " + j + " is " + todasLasRutas.get(keyString).get(j).toString());
+            // }
+            // System.out.println("====================================");
+
+            if(todasLasRutas.get(keyString) == null){
+                System.out.println("EROR AQUI");
+                int eee = 1;
+            }
 
             PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
-            randomRoute.toString();
+            //randomRoute.toString();
 
             this.rutas.add(randomRoute);
         }
