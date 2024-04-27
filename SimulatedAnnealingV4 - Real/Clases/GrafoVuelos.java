@@ -177,6 +177,7 @@ public class GrafoVuelos {
         HashMap<String, ArrayList<PlanRuta>> rutasTotal = new HashMap<>();
         AtomicInteger totalRutas = new AtomicInteger(0); // Usar AtomicInteger para manejar la suma en un entorno
                                                          // multihilo
+        AtomicInteger total = new AtomicInteger(0);
         int nThreads = Runtime.getRuntime().availableProcessors(); // Número de hilos basado en los procesadores
                                                                    // disponibles
         ExecutorService executor = Executors.newFixedThreadPool(nThreads); // Crear un pool de hilos
@@ -189,6 +190,8 @@ public class GrafoVuelos {
                     // Envío de la tarea de búsqueda de rutas para ejecución en paralelo
                     Future<HashMap<String, ArrayList<PlanRuta>>> future = executor.submit(() -> {
                         ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
+                        total.getAndAdd(1);
+                        // System.out.print(total.get() + " ");
                         HashMap<String, ArrayList<PlanRuta>> result = new HashMap<>();
                         String claveOrigenDestino = origen.getId() + "-" + destino.getId();
                         result.put(claveOrigenDestino, rutas);
@@ -229,16 +232,19 @@ public class GrafoVuelos {
             tamanho_max = 3;
         }
         ArrayList<PlanRuta> rutas = new ArrayList<>();
+        // long startTime = System.nanoTime();
         buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas, continental,
                 tamanho_max);
         if (rutas.size() == 0) {
             System.out.println("No se encontraron rutas para " + origen.getId() + "-" + destino.getId());
         }
-
+        // long endTime = System.nanoTime();
+        // long duration = endTime - startTime;
         // System.out
         // .println("Encontrados " + rutas.size() + " rutas para " + origen.getId() +
-        // "-" + destino.getId()
-        // + " en " + (float) (duration / 1000000000) + " segundos");
+        // "-"
+        // + destino.getId()
+        // + " en " + (float) (duration / 1000000) + " milisegundos");
         return rutas;
     }
 
