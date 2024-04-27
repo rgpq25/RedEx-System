@@ -26,7 +26,7 @@ public class EstadoAlmacen {
     }
 
     public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> plan,
-            ArrayList<Vuelo> vuelos, ArrayList<Aeropuerto> aeropuertos) {
+            HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> aeropuertos) {
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
         HashMap<Aeropuerto, TreeMap<Date, Integer>> usoHistorico = new HashMap<>();
 
@@ -34,18 +34,18 @@ public class EstadoAlmacen {
         for (Aeropuerto aeropuerto : aeropuertos) {
             usoHistorico.put(aeropuerto, new TreeMap<>());
         }
-        for (Vuelo vuelo : vuelos) {
+        for (Integer IdVuelo : vuelos.keySet()) {
             // Encuentra el aeropuerto de salida y llegada basado en el vuelo
             Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
-                    vuelo.getPlan_vuelo().getCiudadOrigen(), aeropuertos);
+                    vuelos.get(IdVuelo).getPlan_vuelo().getCiudadOrigen(), aeropuertos);
             Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
-                    vuelo.getPlan_vuelo().getCiudadDestino(), aeropuertos);
+                    vuelos.get(IdVuelo).getPlan_vuelo().getCiudadDestino(), aeropuertos);
 
             // Registrar salida de paquete
-            registrarCapacidad(aeropuertoSalida, vuelo.getFecha_salida(), -vuelo.getCapacidad_utilizada(),
+            registrarCapacidad(aeropuertoSalida, vuelos.get(IdVuelo).getFecha_salida(), -capacidades.get(IdVuelo),
                     usoHistorico);
 
-            registrarCapacidad(aeropuertoLlegada, vuelo.getFecha_llegada(), vuelo.getCapacidad_utilizada(),
+            registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFecha_llegada(), capacidades.get(IdVuelo),
                     usoHistorico);
         }
         for (int i = 0; i < paquetes.size(); i++) {
