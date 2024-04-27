@@ -137,14 +137,14 @@ public class main {
         // Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
-        int packagesAmount = 100000;
+        int packagesAmount = 100;
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
-        int windowSize = 1000; //best = 50
+        int windowSize = 50; //best = 50
         boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
                                                //if true, execution time does not scale up if windowSize gets bigger
 
@@ -208,7 +208,6 @@ public class main {
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
         
-
 
         
         Solucion current = new Solucion(
@@ -283,18 +282,19 @@ public class main {
         "Final cost: " + current.costo + " | Packages left: " + cnt2 +
         " | Temperature: " + temperature);
         printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+        current.printFlightOcupation("ocupacionVuelos.txt");
         
-        EstadoAlmacen estado = new EstadoAlmacen(
-            current.paquetes, 
-            current.rutas,
-            current.vuelos_hash, 
-            current.ocupacionVuelos, 
-            current.aeropuertos
-        );
+        // EstadoAlmacen estado = new EstadoAlmacen(
+        //     current.paquetes, 
+        //     current.rutas,
+        //     current.vuelos_hash, 
+        //     current.ocupacionVuelos, 
+        //     current.aeropuertos
+        // );
         
-        System.out.println("VERIFICANDO CAPACIDAD");
+        // System.out.println("VERIFICANDO CAPACIDAD");
 
-        estado.consulta_historica();
+        // estado.consulta_historica();
          
     }
 }

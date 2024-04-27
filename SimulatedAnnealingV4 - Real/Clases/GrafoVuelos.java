@@ -83,6 +83,7 @@ public class GrafoVuelos {
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
+        System.out.println("Vuelos generados: " + vuelos.size());
 
     }
 

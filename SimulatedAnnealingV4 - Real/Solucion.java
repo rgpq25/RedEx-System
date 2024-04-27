@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +47,36 @@ public class Solucion {
         this.badSolutionPenalization = badSolutionPenalization;
 
         this.vuelos_hash = vuelos_hash;
+    }
+
+    public void printFlightOcupation(String filename){
+
+        File csvFile = new File(filename);
+        PrintWriter out;
+
+
+        try {
+            out = new PrintWriter(csvFile);
+
+            for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
+                Vuelo vuelo = vuelos_hash.get(entry.getKey());
+                Date fechaSalida = vuelo.getFecha_salida();
+                Date fechaLlegada = vuelo.getFecha_llegada();
+                String origen = vuelo.getPlan_vuelo().getCiudadOrigen().getId();   
+                String destino = vuelo.getPlan_vuelo().getCiudadDestino().getId();
+                out.println(
+                    "Vuelo (" + entry.getKey() + ")  " + 
+                    origen + "-" + destino + " " + 
+                    Funciones.getFormattedDate(fechaSalida) + " - " + Funciones.getFormattedDate(fechaLlegada) + 
+                    " -> " + entry.getValue() + " / " + vuelo.getPlan_vuelo().getCapacidad_maxima());
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //iterate over ocupacionVuelos
+        
     }
 
     public double getSolutionCost() {
@@ -162,6 +195,13 @@ public class Solucion {
         }
     }
 
+    public void deocupyRouteFlights(PlanRuta ruta) {
+        for (int i = 0; i < ruta.getVuelos().size(); i++) {
+            int idVuelo = ruta.getVuelos().get(i).getId();
+            ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) - 1);
+        }
+    }
+
     public boolean isAirportCapacityAvailable(){
         // if(true)return true;
         this.estado = new EstadoAlmacen( paquetes, rutas,
@@ -179,25 +219,13 @@ public class Solucion {
             String origenPaquete = paquetes.get(i).getCiudadOrigen().getId();
             String destinoPaquete = paquetes.get(i).getCiudadDestino().getId();
             String keyString = origenPaquete + "-" + destinoPaquete;
-            // System.out.println("The key was " + keyString);
 
             int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
-            // System.out.println("The random index was " + randomRouteIndex);
-            // System.out.println("Size of the routes with key " + keyString + " is " + todasLasRutas.get(keyString).size());
-            // for(int j = 0; j < todasLasRutas.get(keyString).size(); j++){
-            //     System.out.println("Route " + j + " is " + todasLasRutas.get(keyString).get(j).toString());
-            // }
-            // System.out.println("====================================");
-
-            if(todasLasRutas.get(keyString) == null){
-                System.out.println("EROR AQUI");
-                int eee = 1;
-            }
 
             PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
-            //randomRoute.toString();
 
             this.rutas.add(randomRoute);
+            this.ocupyRouteFlights(randomRoute);
         }
 
         this.costo = getSolutionCost();
@@ -218,16 +246,25 @@ public class Solucion {
                 
                 );
 
+
+        HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
         int[] randomPackageIndexes = new int[windowSize];
         for (int i = 0; i < windowSize; i++) {
+            int randomIndex = (int) (Math.random() * this.paquetes.size());
+            while(indexes.get(randomIndex) != null){
+                randomIndex = (int) (Math.random() * this.paquetes.size());
+            }
             randomPackageIndexes[i] = (int) (Math.random() * this.paquetes.size());
-            // TODO: Asegurar que sena unicos, que no repitan
+            indexes.put(randomPackageIndexes[i], true);
         }
 
         ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
         ArrayList<ArrayList<PlanRuta>> availableRoutesPerPackage = new ArrayList<ArrayList<PlanRuta>>();
 
         for (int i = 0; i < windowSize; i++) {
+            PlanRuta oldRoute = rutas.get(randomPackageIndexes[i]);
+            neighbour.deocupyRouteFlights(oldRoute);
+
             randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
             availableRoutesPerPackage.add(new ArrayList<PlanRuta>());
         }
@@ -246,7 +283,7 @@ public class Solucion {
                     //check if origin and destiny is different
                     if(
                         neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
-                        //&& neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
+                        && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
                         //&& neighbour.isAirportCapacityAvailable() == true
                     ){
                         neighbour.ocupyRouteFlights(randomRoute);
