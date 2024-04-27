@@ -175,9 +175,7 @@ public class Solucion {
                 return false;
             }
             if (usedCapacity == maxCapacity) {
-                throw new Error("En la ruta de id " + ruta.getId()
-                        + " se excedio la capacidad maxima, buscar error =================================");
-                //return false;
+                return false;
             }
         }
 
@@ -188,16 +186,23 @@ public class Solucion {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
             
             int idVuelo = ruta.getVuelos().get(i).getId();
+
             if(ocupacionVuelos.get(idVuelo) == null){
                 ocupacionVuelos.put(idVuelo, 0);
+            } else {
+                ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) + 1);
             }
-            ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) + 1);
+            
         }
     }
 
     public void deocupyRouteFlights(PlanRuta ruta) {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
             int idVuelo = ruta.getVuelos().get(i).getId();
+            if(ocupacionVuelos.get(idVuelo) == 0){
+                System.out.println("Se intento desocupar un vuelo que no estaba ocupado");
+                throw new Error("Se intento desocupar un vuelo que no estaba ocupado");
+            }
             ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) - 1);
         }
     }

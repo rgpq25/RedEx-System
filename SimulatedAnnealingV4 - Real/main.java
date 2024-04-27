@@ -137,7 +137,7 @@ public class main {
         // Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
-        int packagesAmount = 100;
+        int packagesAmount = 10000;
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
