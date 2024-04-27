@@ -227,13 +227,14 @@ public class GrafoVuelos {
         boolean continental = origen.getContinente().equals(destino.getContinente());
         int tamanho_max = 0;
         if (continental) {
-            tamanho_max = 2;
-        } else {
             tamanho_max = 3;
+        } else {
+            tamanho_max = 4;
         }
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         // long startTime = System.nanoTime();
-        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), rutas, continental,
+        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), new HashSet<>(), rutas,
+                continental,
                 tamanho_max);
         if (rutas.size() == 0) {
             System.out.println("No se encontraron rutas para " + origen.getId() + "-" + destino.getId());
@@ -244,13 +245,15 @@ public class GrafoVuelos {
         // .println("Encontrados " + rutas.size() + " rutas para " + origen.getId() +
         // "-"
         // + destino.getId()
+
         // + " en " + (float) (duration / 1000000) + " milisegundos");
         return rutas;
     }
 
     // Método DFS para encontrar rutas
     private void buscarRutasDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRuta rutaActual,
-            Set<String> aeropuertosVisitados, ArrayList<PlanRuta> rutas, boolean continental, int tamanho_max) {
+            Set<String> aeropuertosVisitados, Set<String> continentesVisitados, ArrayList<PlanRuta> rutas,
+            boolean continental, int tamanho_max) {
         if (actual.getId().equals(destino.getId())) {
             // Clonar la lista de vuelos para la nueva ruta
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
@@ -260,7 +263,7 @@ public class GrafoVuelos {
             return;
         }
 
-        if (aeropuertosVisitados.size() >= tamanho_max) {
+        if (aeropuertosVisitados.size() > tamanho_max) {
             return;
         }
 
@@ -271,13 +274,13 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelosOrdenados) {
 
             if ((!vuelo.getPlan_vuelo().getCiudadDestino().getContinente().equals(actual.getContinente()) &&
-                    !vuelo.getPlan_vuelo().getCiudadDestino().getContinente()
-                            .equals(destino.getContinente()))) {
+                    continental)) {
                 continue;
-
             }
 
-            if (fechaHoraActual.before(vuelo.getFecha_salida())) {
+            if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
+                    !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())
+                    && !continentesVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getContinente())) {
                 // Establecer fechaInicio si es la primera adición de vuelo a la ruta
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
@@ -294,15 +297,16 @@ public class GrafoVuelos {
                     limite = 60;
                 }
                 if (duracionRutaHoras <= limite) {
-                    if (!aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
-                        rutaActual.getVuelos().add(vuelo);
-                        aeropuertosVisitados.add(actual.getId());
-                        buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
-                                rutaActual, aeropuertosVisitados, rutas, continental, tamanho_max);
-                        // Backtracking
-                        rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
-                        aeropuertosVisitados.remove(actual.getId());
-                    }
+                    rutaActual.getVuelos().add(vuelo);
+                    aeropuertosVisitados.add(actual.getId());
+                    continentesVisitados.add(actual.getContinente());
+                    buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
+                            rutaActual, aeropuertosVisitados, continentesVisitados, rutas, continental,
+                            tamanho_max);
+                    // Backtracking
+                    rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
+                    continentesVisitados.remove(actual.getContinente());
+                    aeropuertosVisitados.remove(actual.getId());
                 } else {
                     // Si se excede la duración máxima, terminar la búsqueda desde este punto
                     break;
