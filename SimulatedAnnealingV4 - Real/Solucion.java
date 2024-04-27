@@ -8,6 +8,7 @@ import Clases.EstadoAlmacen;
 import Clases.Funciones;
 import Clases.Paquete;
 import Clases.PlanRuta;
+import Clases.Vuelo;
 
 public class Solucion {
     public ArrayList<Paquete> paquetes;
@@ -19,6 +20,7 @@ public class Solucion {
 
     public double costo;
     public double badSolutionPenalization;
+    HashMap<Integer, Vuelo> vuelos_hash;
 
     // TODO: El costo real deberia considerar cuantos almacenes esta ocupando. Si
     // TODO: ocupa un aeropuerto / vuelo concurrido el costo deberia ser mayor.
@@ -29,7 +31,9 @@ public class Solucion {
             ArrayList<Aeropuerto> aeropuertos,
             HashMap<Integer, Integer> ocupacionVuelos,
             double costo,
-            double badSolutionPenalization) {
+            double badSolutionPenalization,
+            HashMap<Integer, Vuelo> vuelos_hash
+    ) {
         this.paquetes = paquetes;
         this.rutas = rutas;
         this.aeropuertos = aeropuertos;
@@ -38,6 +42,8 @@ public class Solucion {
 
         this.costo = costo;
         this.badSolutionPenalization = badSolutionPenalization;
+
+        this.vuelos_hash = vuelos_hash;
     }
 
     public double getSolutionCost() {
@@ -136,7 +142,9 @@ public class Solucion {
                 return false;
             }
             if (usedCapacity == maxCapacity) {
-                return false;
+                throw new Error("En la ruta de id " + ruta.getId()
+                        + " se excedio la capacidad maxima, buscar error =================================");
+                //return false;
             }
         }
 
@@ -156,13 +164,13 @@ public class Solucion {
 
     public boolean isAirportCapacityAvailable(){
         // if(true)return true;
-        // this.estado = Funciones.obtenerEstadoAlmacen(
-        //     this.paquetes,
-        //     this.rutas, 
-        //     this.aeropuertos
-        // );
-        // return estado.verificar_capacidad_maxima();
-        return true;
+        this.estado = new EstadoAlmacen( paquetes, rutas,
+        vuelos_hash, ocupacionVuelos, aeropuertos);
+        if(estado.verificar_capacidad_maxima() == true){
+            System.out.println("Se excedio la capacidad maxima de los aeropuertos");
+            throw new Error("Se excedio la capacidad maxima de los aeropuertos");
+        }
+        return false;
     }
 
     public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
@@ -205,7 +213,10 @@ public class Solucion {
                 new ArrayList<>(this.aeropuertos),
                 new HashMap<Integer, Integer>(this.ocupacionVuelos),
                 this.costo,
-                this.badSolutionPenalization);
+                this.badSolutionPenalization,
+                this.vuelos_hash
+                
+                );
 
         int[] randomPackageIndexes = new int[windowSize];
         for (int i = 0; i < windowSize; i++) {

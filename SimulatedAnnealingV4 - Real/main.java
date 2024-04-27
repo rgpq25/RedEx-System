@@ -136,22 +136,22 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 30; // MAX AIRPORTS IS 30
-        int packagesAmount = 700;
-        int flightsMultiplier = 8;
+        int maxAirports = 10; // MAX AIRPORTS IS 30
+        int packagesAmount = 100000;
+        int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
-        int windowSize = 50; //best = 50
+        int windowSize = 1000; //best = 50
         boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
                                                //if true, execution time does not scale up if windowSize gets bigger
 
         // Weight Parameters
         double badSolutionPenalization = 100;
 
-        String inputPath = "inputReal";
+        String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
 
         HashMap<String, Ubicacion> ubicacionMap = getUbicacionMap(maxAirports);
@@ -179,9 +179,18 @@ public class main {
         ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
 
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
+        HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
+
         long startTime = System.nanoTime();
         HashMap<String, ArrayList<PlanRuta>> todasLasRutas = new HashMap<String, ArrayList<PlanRuta>>();
-        todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+
+        try {
+            todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
 
         System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
@@ -193,9 +202,6 @@ public class main {
             }
         }
 
-        if(true){
-            return;
-        }
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
@@ -211,7 +217,8 @@ public class main {
             aeropuertos,
             new HashMap<Integer, Integer>(),
             0,
-            badSolutionPenalization
+            badSolutionPenalization,
+            vuelos_map
         );
         current.initialize(todasLasRutas);
         printRutasTXT(current.paquetes, current.rutas, "initial.txt");
@@ -277,21 +284,17 @@ public class main {
         " | Temperature: " + temperature);
         printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
         
-        // EstadoAlmacen estado = Funciones.obtenerEstadoAlmacen(
-        // current.paquetes,
-        // current.rutas,
-        // current.aeropuertos
-        // );
+        EstadoAlmacen estado = new EstadoAlmacen(
+            current.paquetes, 
+            current.rutas,
+            current.vuelos_hash, 
+            current.ocupacionVuelos, 
+            current.aeropuertos
+        );
         
-        // System.out.println("VERIFICANDO CAPACIDAD");
-        // HashMap<Aeropuerto, Integer> curr =
-        // estado.verificar_capacidad_en(Funciones.parseDateString("2024-01-02
-        // 00:00:00"));
-        // for (Aeropuerto aeropuerto : curr.keySet()) {
-        // System.out.println("Aeropuerto: " + aeropuerto.getId() + " | Capacidad: "
-        //+
-        // curr.get(aeropuerto));
-        // }
+        System.out.println("VERIFICANDO CAPACIDAD");
+
+        estado.consulta_historica();
          
     }
 }
