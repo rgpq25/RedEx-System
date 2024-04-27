@@ -137,19 +137,19 @@ public class main {
         // Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 10; // MAX AIRPORTS IS 30
-        int packagesAmount = 10000;
+        int packagesAmount = 500;
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
-        int neighbourCount = 1;
-        int windowSize = 100; //best = 50 MUST BE LESS THE packagesAmount
-        boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
-                                               //if true, execution time does not scale up if windowSize gets bigger
+        int neighbourCount = 100;
+        int windowSize = 50; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
+        double flightPenalization = 200;
+        double airportPenalization = 300;
 
         String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
@@ -217,6 +217,8 @@ public class main {
             new HashMap<Integer, Integer>(),
             0,
             badSolutionPenalization,
+            flightPenalization,
+            airportPenalization,
             vuelos_map
         );
         current.initialize(todasLasRutas);
@@ -228,10 +230,9 @@ public class main {
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
             for (int i = 0; i < neighbourCount; i++) {
                 neighbours.add(
-                    current.generateNeighbour(
+                    current.generateNeighbourSteroids(
                         todasLasRutas, 
-                        windowSize,
-                        randomizeNeighboors
+                        windowSize
                     )
                 );
             }
@@ -240,15 +241,15 @@ public class main {
             double bestNeighbourCost = Double.MAX_VALUE;
             for (int i = 0; i < neighbours.size(); i++) {
                 Solucion neighbour = neighbours.get(i);
-                double neighbourCost = neighbour.costo;
+                double neighbourCost = neighbour.getSolutionCost();
                 if (neighbourCost < bestNeighbourCost) {
                     bestNeighbourCost = neighbourCost;
                     bestNeighbourIndex = i;
                 }
             }
          
-            double currentCost = current.costo;
-            double newCost = neighbours.get(bestNeighbourIndex).costo;
+            double currentCost = current.getSolutionCost();
+            double newCost = bestNeighbourCost;
             double costDifference = newCost - currentCost;
             
             if (
