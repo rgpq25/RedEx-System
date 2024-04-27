@@ -205,4 +205,25 @@ public class EstadoAlmacen {
         return porcentajes_Uso_Por_hora;
     }
 
+    public double calcularCostoTotalAlmacenamiento() {
+        HashMap<Aeropuerto, Integer> porcentajesUso = consultarPorcentajeUsoPromedioPorHora();
+        double costoTotal = 0.0;
+
+        for (Map.Entry<Aeropuerto, Integer> entrada : porcentajesUso.entrySet()) {
+            Aeropuerto aeropuerto = entrada.getKey();
+            int porcentajeUso = entrada.getValue();
+            double porcentajeCapacidadMaxima = porcentajeUso / 100.0; // Convertir a decimal
+
+            if (porcentajeCapacidadMaxima > 1.0) {
+                // Penalización exponencial si el uso excede la capacidad máxima
+                costoTotal += Math.pow((porcentajeCapacidadMaxima - 1.0) * 10, 2);
+            } else {
+                // Costo inversamente proporcional al uso si es menor que la capacidad máxima
+                costoTotal += 1 / porcentajeCapacidadMaxima;
+            }
+        }
+
+        return costoTotal;
+    }
+
 }
