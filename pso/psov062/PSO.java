@@ -114,7 +114,7 @@ public class PSO {
     }
 
     static double fitness(List<Integer> position, ArrayList<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos ) {
-        //ArrayList<Double> costos = new ArrayList<>();
+        ArrayList<Double> costosPaquetes = new ArrayList<>();
         double totalCost = 0;
         ArrayList<PlanRuta> planRutasEscogidas = new ArrayList<>(); 
         Funciones funciones = new Funciones();
@@ -128,18 +128,44 @@ public class PSO {
             }
             
             double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
-            totalCost += costo;
-            //costos.add(calcularCosto(packages.get(i), planRutas.get(position.get(i))));
+            //totalCost += costo;
+            costosPaquetes.add(calcularCosto(packages.get(i), planRutas.get(position.get(i))));
             planRutasEscogidas.add(planRutas.get(position.get(i)));
         }
-        //double median = MedianCalculator.calculateMedian(costos);
-        //totalCost += median;
+        double medianPaquetes = MedianCalculator.calculateMedian(costosPaquetes);
+        totalCost += medianPaquetes;
         
         boolean cumpleCapacidadAeropuertos = funciones.verificar_capacidad_aeropuertos(packages, planRutasEscogidas, aeropuertos);
         if(!cumpleCapacidadAeropuertos){
             return 1000000;
         }
 
+        ArrayList<Double> costosVuelos = new ArrayList<>();
+        HashMap<Integer, Vuelo> ocupacionVuelos= new HashMap<>();
+        for (int i = 0; i < position.size(); i++) {
+            PlanRuta planRuta = planRutasEscogidas.get(i);
+            for (Vuelo vuelo : planRuta.getVuelos()) {
+                if(ocupacionVuelos.containsKey(vuelo.getId())){
+                    ocupacionVuelos.get(vuelo.getId()).aumentar_capacidad_utilizada(1);
+                }
+                else{
+                    Vuelo vueloNuevo = new Vuelo(vuelo);
+                    vueloNuevo.setCapacidad_utilizada(1);
+                    ocupacionVuelos.put(vueloNuevo.getId(), vueloNuevo);
+                }
+            }
+        }
+        //iterate ocupacionVuelos
+        for (Map.Entry<Integer, Vuelo> entry : ocupacionVuelos.entrySet()) {
+            if(entry.getValue().getCapacidad_utilizada() > entry.getValue().getPlan_vuelo().getCapacidad_maxima()){
+                return 1000000;
+            }
+            else{
+                costosVuelos.add((double)entry.getValue().getCapacidad_utilizada()*100/entry.getValue().getPlan_vuelo().getCapacidad_maxima());
+            }
+        }
+        double medianVuelos = MedianCalculator.calculateMedian(costosPaquetes);
+        totalCost += medianVuelos;
         return totalCost;
     }
 
