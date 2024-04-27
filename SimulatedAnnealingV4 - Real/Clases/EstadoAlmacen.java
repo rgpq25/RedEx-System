@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class EstadoAlmacen {
@@ -24,8 +25,8 @@ public class EstadoAlmacen {
         return uso_historico;
     }
 
-    public EstadoAlmacen(ArrayList<Paquete> paquetes,
-            ArrayList<PlanRuta> rutas, ArrayList<Aeropuerto> aeropuertos) {
+    public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRuta> plan,
+            ArrayList<Vuelo> vuelos, ArrayList<Aeropuerto> aeropuertos) {
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
         HashMap<Aeropuerto, TreeMap<Date, Integer>> usoHistorico = new HashMap<>();
 
@@ -33,41 +34,41 @@ public class EstadoAlmacen {
         for (Aeropuerto aeropuerto : aeropuertos) {
             usoHistorico.put(aeropuerto, new TreeMap<>());
         }
+        for (Vuelo vuelo : vuelos) {
+            // Encuentra el aeropuerto de salida y llegada basado en el vuelo
+            Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
+                    vuelo.getPlan_vuelo().getCiudadOrigen(), aeropuertos);
+            Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
+                    vuelo.getPlan_vuelo().getCiudadDestino(), aeropuertos);
 
-        // Procesar cada paquete y su ruta de vuelos
-        for (Paquete paquete : paquetes) {
-            Date fechaLlegadaUltimoVuelo = null;
+            // Registrar salida de paquete
+            registrarCapacidad(aeropuertoSalida, vuelo.getFecha_salida(), -vuelo.getCapacidad_utilizada(),
+                    usoHistorico);
 
-            for (PlanRuta ruta : rutas) {
-                for (Vuelo vuelo : ruta.getVuelos()) {
-                    // Encuentra el aeropuerto de salida y llegada basado en el vuelo
-                    Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
-                            vuelo.getPlan_vuelo().getCiudadOrigen(), aeropuertos);
-                    Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
-                            vuelo.getPlan_vuelo().getCiudadDestino(), aeropuertos);
+            registrarCapacidad(aeropuertoLlegada, vuelo.getFecha_llegada(), vuelo.getCapacidad_utilizada(),
+                    usoHistorico);
+        }
+        for (int i = 0; i < paquetes.size(); i++) {
 
-                    // Registrar salida de paquete
-                    registrarCapacidad(aeropuertoSalida, vuelo.getFecha_llegada(), -1, usoHistorico);
-
-                    // Registrar llegada de paquete
-                    fechaLlegadaUltimoVuelo = vuelo.getFecha_llegada(); // Actualizar la fecha de llegada del último
-                                                                        // vuelo
-                    registrarCapacidad(aeropuertoLlegada, vuelo.getFecha_llegada(), 1, usoHistorico);
-                }
-            }
-
-            // Registrar salida del paquete un minuto después de su llegada al aeropuerto
-            // destino
-            if (fechaLlegadaUltimoVuelo != null) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(fechaLlegadaUltimoVuelo);
-                calendar.add(Calendar.MINUTE, 1);
-                Date fechaSalida = calendar.getTime();
-                registrarCapacidad(encontrarAeropuertoPorUbicacion(paquete.getCiudadDestino(), aeropuertos),
-                        fechaSalida, -1, usoHistorico);
+            Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
+                    paquetes.get(i).getCiudadOrigen(), aeropuertos);
+            Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
+                    paquetes.get(i).getCiudadDestino(), aeropuertos);
+            registrarCapacidad(aeropuertoSalida, paquetes.get(i).getFecha_recepcion(), 1,
+                    usoHistorico);
+            registrarCapacidad(aeropuertoLlegada, plan.get(i).getFin(), -1,
+                    usoHistorico);
+        }
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            TreeMap<Date, Integer> capacidad = usoHistorico.get(aeropuerto);
+            int sumaAcumulada = 0;
+            for (Map.Entry<Date, Integer> entrada : capacidad.entrySet()) {
+                sumaAcumulada += entrada.getValue();
+                // Actualizar el TreeMap con el valor acumulado
+                capacidad.put(entrada.getKey(), sumaAcumulada);
             }
         }
-        this.uso_historico = usoHistorico;
+
     }
 
     // Métodos auxiliares para encontrar aeropuertos y registrar capacidades

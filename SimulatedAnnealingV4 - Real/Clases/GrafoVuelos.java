@@ -8,6 +8,11 @@ public class GrafoVuelos {
     private HashMap<Ubicacion, ArrayList<Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
+    private HashMap<Integer, Vuelo> vuelos_hash = new HashMap<>();
+
+    public HashMap<Integer, Vuelo> getVuelosHash() {
+        return vuelos_hash;
+    }
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, Date inicio, Date fin) {
         fecha_inicio = inicio;
@@ -53,6 +58,7 @@ public class GrafoVuelos {
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
 
