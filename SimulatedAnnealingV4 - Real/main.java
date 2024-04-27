@@ -144,7 +144,7 @@ public class main {
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
-        int windowSize = 10; //best = 50 MUST BE LESS THE packagesAmount
+        int windowSize = 100; //best = 50 MUST BE LESS THE packagesAmount
         boolean randomizeNeighboors = true;    //if true, wont search for all valid routes, but will randomize until it gets a correct one
                                                //if true, execution time does not scale up if windowSize gets bigger
 

@@ -241,16 +241,14 @@ public class Solucion {
             boolean randomizeNeighboors) {
 
         Solucion neighbour = new Solucion(
-                new ArrayList<>(this.paquetes),
-                new ArrayList<>(this.rutas), // me asegurara de no alterar los vuelos de otras rutas? deberia hacer una
-                                             // copia de cada vuelo para asegurarlo
-                this.aeropuertos,
-                new HashMap<Integer, Integer>(this.ocupacionVuelos),
-                this.costo,
-                this.badSolutionPenalization,
-                this.vuelos_hash
-                
-                );
+            new ArrayList<>(this.paquetes),
+            new ArrayList<>(this.rutas),
+            this.aeropuertos,
+            new HashMap<Integer, Integer>(this.ocupacionVuelos),
+            this.costo,
+            this.badSolutionPenalization,
+            this.vuelos_hash
+        );
 
 
         HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
@@ -290,7 +288,7 @@ public class Solucion {
                     if(
                         neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
                         && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
-                        //&& neighbour.isAirportCapacityAvailable() == true
+                        && neighbour.isAirportCapacityAvailable() == true
                     ){
                         neighbour.ocupyRouteFlights(randomRoute);
                         if (neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false) { // su solucion no era
