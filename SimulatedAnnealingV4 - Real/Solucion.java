@@ -114,6 +114,10 @@ public class Solucion {
             }
         }
 
+        cost += this.getFlightCost(); //TODO: This should return sumatoria de porcentajes utilizados en todos los vuelos usados
+        estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos, this.aeropuertos);
+        cost += estado.calcularCostoTotalAlmacenamiento(); 
+
         return cost;
     }
 
@@ -240,9 +244,7 @@ public class Solucion {
                 this.ocupyRouteFlights(randomRoute);
             }
             if(this.isAirportCapacityAvailable() == true){
-                this.costo = this.getSolutionCost();
-                //this.costo += this.getFlightCost();
-                //this.costo += this.getAirportOcupationCost();
+                //this.costo = this.getSolutionCost();
                 return;
             } else {
                 this.rutas.clear();
@@ -309,17 +311,17 @@ public class Solucion {
                     && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
                 ){
                     neighbour.ocupyRouteFlights(randomRoute);
-                    if (neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false) { // su solucion no era
-                                                                                            // valida
-                        newCost -= neighbour.badSolutionPenalization;
-                    }
+                    // if (neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false) { // su solucion no era
+                    //                                                                         // valida
+                    //     newCost -= neighbour.badSolutionPenalization;
+                    // }
                     neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
                     break;
                 }
             }
         }
 
-        neighbour.costo = newCost;
+        //neighbour.costo = newCost;
 
         //TODO: Forzando solucion, debe optimizar
         if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
@@ -459,7 +461,8 @@ public class Solucion {
 
                 if(
                     neighbour.isCurrentRouteOnValidStartDate(randomPackages.get(j), randomRoute) == true
-                    && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
+                    && 
+                    neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
                 ){
                     // if (
                     //     neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false && 

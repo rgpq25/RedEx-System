@@ -136,20 +136,25 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 10; // MAX AIRPORTS IS 30
-        int packagesAmount = 500;
-        int flightsMultiplier = 1;
+        int maxAirports = 30; // MAX AIRPORTS IS 30
+        int packagesAmount = 6000;
+        int flightsMultiplier = 2;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
-        int neighbourCount = 100;
-        int windowSize = 100; //best = 50 MUST BE LESS THE packagesAmount
+        int neighbourCount = 1;
+        int windowSize = 200; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
         double flightPenalization = 200;
         double airportPenalization = 300;
+
+        //funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 + (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
+        double sumaPaquetesWeight = 10;
+        double sumaVuelosWeight = 4;
+        double promedioPonderadoTiempoAeropuertoWeight = 4;
 
         String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
@@ -230,7 +235,7 @@ public class main {
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
             for (int i = 0; i < neighbourCount; i++) {
                 neighbours.add(
-                    current.generateNeighbourSteroids(
+                    current.generateNeighbour(
                         todasLasRutas, 
                         windowSize
                     )
