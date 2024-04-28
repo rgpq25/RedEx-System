@@ -1,4 +1,4 @@
-package Clases;
+package com.pucp.pe.Clases;
 
 import java.util.Date;
 import java.util.ArrayList;
