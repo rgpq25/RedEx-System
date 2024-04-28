@@ -19,6 +19,7 @@ import java.util.Map;
 
 import Clases.Vuelo;
 import Clases.Aeropuerto;
+import Clases.EstadoAlmacen;
 import Clases.Funciones;
 import Clases.MedianCalculator;
 import Clases.Ubicacion;
@@ -31,24 +32,38 @@ public class PSO {
     public PSO() {
     }
 
+    /*public void checkFirstFlightTime(position, packages, rutas) {
+        for (int i = 0; i < position.size(); i++) {
+            String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
+            String ciudadDestino = packages.get(i).getCiudadDestino().getId();
+            String cadena = ciudadOrigen + "-" + ciudadDestino;
+            ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+            if (planRutas == null) {
+                //print error message
+                System.out.println("No hay rutas para el paquete"+ packages.get(i).getId());
+                return Double.MAX_VALUE;
+            }
+            
+            double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
+            costoPaquetes += costo;
+            planRutasEscogidas.add(planRutas.get(position.get(i)));
+        }
+
+    }*/
+
     static class Particle {
         List<Integer> position;
         List<Double> velocity;
         List<Integer> bestPosition;
         double bestFitness;
 
-        Particle(List<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas) {
+        Particle(List<Paquete> packages,HashMap<Integer, ArrayList<PlanRuta>> rutas) {
             position = new ArrayList<>();
             velocity = new ArrayList<>();
             bestPosition = new ArrayList<>();
             //iterate for each package using a counter
             for (int i = 0; i < packages.size(); i++) {
-                //get ciudad origen paquete id
-                String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
-                //get ciudad destino paquete id
-                String ciudadDestino = packages.get(i).getCiudadDestino().getId();
-                String cadena = ciudadOrigen + "-" + ciudadDestino;
-                ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+                ArrayList<PlanRuta> planRutas = rutas.get(packages.get(i).getId());
                 if (planRutas == null) {
                     position.add(0);
                     velocity.add(Math.random());
@@ -97,84 +112,81 @@ public class PSO {
         long diferencia_fecha_maxima = paquete.getFecha_maxima_entrega().getTime() - paquete.getFecha_recepcion().getTime();
         long diferencia_fecha_entrega = tiempoLlegadaRuta - tiempoRecepcion;
         double porcentaje_tiempo = (diferencia_fecha_entrega)/diferencia_fecha_maxima;
+        //Verifica que el primer vuelo no salga antes de recibir el paquete
+        if (tiempoPartidaRuta < tiempoRecepcion)
+            return 1000000;
+            //return Double.MAX_VALUE;
         if (porcentaje_tiempo > 1)
             return 10;
         return Math.max(0, porcentaje_tiempo);
 
-        //Verifica que el primer vuelo no salga antes de recibir el paquete
-        /*if (tiempoPartidaRuta < tiempoRecepcion)
-            return 1000000;
-
-        //Esto verifica el tiempo maximo de entrega FALTA MODIFICAR ESTO
-        if (tiempoLlegadaRuta - tiempoRecepcion > 48 * 3600 * 1000)
-            return 100;
-
-        //Por ahora devuelve el total de horas de viaje FALTA MODIFICAR ESTO    
-        double horasParaEntrega = (tiempoLlegadaRuta - tiempoRecepcion) / (3600.0 * 1000);
-        return Math.max(0, horasParaEntrega);*/
-        //return 0;
     }
 
-    static double fitness(List<Integer> position, ArrayList<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos ) {
-        ArrayList<Double> costosPaquetes = new ArrayList<>();
+    public static void ocupyRouteFlights(PlanRuta ruta, HashMap<Integer, Integer> ocupacionVuelos) {
+        for (int i = 0; i < ruta.getVuelos().size(); i++) {
+            
+            int idVuelo = ruta.getVuelos().get(i).getId();
+
+            if(ocupacionVuelos.get(idVuelo) == null){
+                ocupacionVuelos.put(idVuelo, 1);
+            } else {
+                ocupacionVuelos.put(idVuelo, ocupacionVuelos.get(idVuelo) + 1);
+            }
+            
+        }
+    }
+
+    static double fitness(List<Integer> position, ArrayList<Paquete> packages, HashMap<Integer, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos,
+    HashMap<Integer, Vuelo> vuelos_map ) {
+        //ArrayList<Double> costosPaquetes = new ArrayList<>();
         double totalCost = 0;
+        double costoPaquetes = 0;
+        double costoVuelos = 0;
+        double costoAeropuertos = 0;
         ArrayList<PlanRuta> planRutasEscogidas = new ArrayList<>(); 
         Funciones funciones = new Funciones();
         for (int i = 0; i < position.size(); i++) {
-            String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
-            String ciudadDestino = packages.get(i).getCiudadDestino().getId();
-            String cadena = ciudadOrigen + "-" + ciudadDestino;
-            ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+
+            ArrayList<PlanRuta> planRutas = rutas.get(packages.get(i).getId());
             if (planRutas == null) {
-                return 1000000;
+                //print error message
+                System.out.println("No hay rutas para el paquete"+ packages.get(i).getId());
+                return Double.MAX_VALUE;
             }
             
             double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
-            totalCost += costo;
-            costosPaquetes.add(calcularCosto(packages.get(i), planRutas.get(position.get(i))));
+            costoPaquetes += costo;
             planRutasEscogidas.add(planRutas.get(position.get(i)));
         }
-        //double medianPaquetes = MedianCalculator.calculateMedian(costosPaquetes);
-        //totalCost += medianPaquetes;
         
-        //TO DO CAMBIAR
-        boolean cumpleCapacidadAeropuertos = funciones.verificar_capacidad_aeropuertos(packages, planRutasEscogidas, aeropuertos);
-        if(!cumpleCapacidadAeropuertos){
-            return 1000000;
-        }
-        //TO DO costo aeropuertos, usar cuando se construya en el main con el grafo
-
-        ArrayList<Double> costosVuelos = new ArrayList<>();
-        HashMap<Integer, Vuelo> ocupacionVuelos= new HashMap<>();
+        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<>();
         for (int i = 0; i < position.size(); i++) {
             PlanRuta planRuta = planRutasEscogidas.get(i);
-            for (Vuelo vuelo : planRuta.getVuelos()) {
-                if(ocupacionVuelos.containsKey(vuelo.getId())){
-                    ocupacionVuelos.get(vuelo.getId()).aumentar_capacidad_utilizada(1);
-                }
-                else{
-                    Vuelo vueloNuevo = new Vuelo(vuelo);
-                    vueloNuevo.setCapacidad_utilizada(1);
-                    ocupacionVuelos.put(vueloNuevo.getId(), vueloNuevo);
-                }
-            }
+            ocupyRouteFlights(planRuta, ocupacionVuelos);
         }
+        //HashMap<Integer, Vuelo> vuelos_hash
+
+        EstadoAlmacen estado= new EstadoAlmacen(packages, planRutasEscogidas, vuelos_map, ocupacionVuelos, aeropuertos);
+        costoAeropuertos += estado.calcularCostoTotalAlmacenamiento();
+
+        //TO DO costo aeropuertos, usar cuando se construya en el main con el grafo
         //iterate ocupacionVuelos
-        for (Map.Entry<Integer, Vuelo> entry : ocupacionVuelos.entrySet()) {
-            if(entry.getValue().getCapacidad_utilizada() > entry.getValue().getPlan_vuelo().getCapacidad_maxima()){
+        for (Map.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
+            if(entry.getValue() > vuelos_map.get(entry.getKey()).getPlan_vuelo().getCapacidad_maxima()){
                 return 1000000;
+                //return Double.MAX_VALUE;
             }
             else{
-                //costosVuelos.add((double)entry.getValue().getCapacidad_utilizada()/entry.getValue().getPlan_vuelo().getCapacidad_maxima());
-                totalCost += (double)entry.getValue().getCapacidad_utilizada()/entry.getValue().getPlan_vuelo().getCapacidad_maxima();
+                costoVuelos += (double)entry.getValue()/vuelos_map.get(entry.getKey()).getPlan_vuelo().getCapacidad_maxima();
             }
         }
-        //double medianVuelos = MedianCalculator.calculateMedian(costosPaquetes);
-        //totalCost += medianVuelos;
+        
+        totalCost = costoPaquetes*10 + costoVuelos*4 + costoAeropuertos*4;
         return totalCost;
     }
 
-    static int[] pso(ArrayList<Paquete> packages, HashMap<String, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos, int numParticles, int maxIterations, double w, double c1, double c2) {
+    static int[] pso(ArrayList<Paquete> packages, HashMap<Integer, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos,HashMap<Integer, Vuelo> vuelos_map,
+     int numParticles, int maxIterations, double w, double c1, double c2) {
         List<Particle> particles = new ArrayList<>();
         for (int i = 0; i < numParticles; i++) {
             particles.add(new Particle(packages, rutas));
@@ -185,7 +197,7 @@ public class PSO {
 
         for (int iter = 0; iter < maxIterations; iter++) {
             for (Particle particle : particles) {
-                double fitnessVal = fitness(particle.position, packages, rutas,aeropuertos);
+                double fitnessVal = fitness(particle.position, packages, rutas,aeropuertos,vuelos_map);
 
                 if (fitnessVal <= particle.bestFitness) {
                     particle.bestFitness = fitnessVal;
