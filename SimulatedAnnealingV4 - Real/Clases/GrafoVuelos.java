@@ -227,9 +227,9 @@ public class GrafoVuelos {
         boolean continental = origen.getContinente().equals(destino.getContinente());
         int tamanho_max = 0;
         if (continental) {
-            tamanho_max = 3;
+            tamanho_max = 2;
         } else {
-            tamanho_max = 4;
+            tamanho_max = 3;
         }
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         // long startTime = System.nanoTime();

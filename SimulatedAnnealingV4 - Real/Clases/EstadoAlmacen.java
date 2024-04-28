@@ -219,7 +219,7 @@ public class EstadoAlmacen {
                 costoTotal += Math.pow((porcentajeCapacidadMaxima - 1.0) * 10, 2);
             } else {
                 // Costo inversamente proporcional al uso si es menor que la capacidad máxima
-                costoTotal += 1 / porcentajeCapacidadMaxima;
+                costoTotal += porcentajeCapacidadMaxima;
             }
         }
 
