@@ -183,23 +183,26 @@ public class EstadoAlmacen {
             ArrayList<Date> fechasList = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
             Collections.sort(fechasList);
 
-            long totalMinutos = calcular_minutos_entre(fechasList.get(0), fechasList.get(fechasList.size() - 1));
+            if (!fechasList.isEmpty()) { // Verificar que la lista no esté vacía
+                long totalMinutos = calcular_minutos_entre(fechasList.get(0), fechasList.get(fechasList.size() - 1));
+                double totalUso = 0;
 
-            double totalUso = 0;
+                for (int i = 0; i < fechasList.size() - 1; i++) {
+                    Date fechaActual = fechasList.get(i);
+                    Date fechaSiguiente = fechasList.get(i + 1);
+                    long lapso = calcular_minutos_entre(fechaActual, fechaSiguiente);
+                    int usoActual = uso_historico.get(aeropuerto).get(fechaActual);
 
-            for (int i = 0; i < fechasList.size() - 1; i++) {
-                Date fechaActual = fechasList.get(i);
-                Date fechaSiguiente = fechasList.get(i + 1);
+                    totalUso += usoActual * lapso;
+                }
 
-                long lapso = calcular_minutos_entre(fechaActual, fechaSiguiente);
-                int usoActual = uso_historico.get(aeropuerto).get(fechaActual);
-
-                totalUso += usoActual * lapso;
+                double promedioHoras = totalUso / totalMinutos * 60;
+                int porcentaje = (int) (promedioHoras / aeropuerto.getCapacidad_maxima() * 100);
+                porcentajes_Uso_Por_hora.put(aeropuerto, porcentaje);
+            } else {
+                // Manejar el caso donde no hay datos históricos para el aeropuerto
+                porcentajes_Uso_Por_hora.put(aeropuerto, 0); // Por ejemplo, asignar 0 como porcentaje
             }
-
-            double promedioHoras = totalUso / totalMinutos * 60;
-            int porcentaje = (int) (promedioHoras / aeropuerto.getCapacidad_maxima() * 100);
-            porcentajes_Uso_Por_hora.put(aeropuerto, porcentaje);
         }
 
         return porcentajes_Uso_Por_hora;
