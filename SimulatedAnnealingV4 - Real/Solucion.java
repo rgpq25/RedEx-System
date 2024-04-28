@@ -30,6 +30,13 @@ public class Solucion {
     public double flightCost;
     public double airportCost;
 
+    public double STPaquetes;
+    public double STVuelos;
+    public double PPTAeropuerto;
+
+
+    public double costoDePaquetesYRutasErroneas;
+
 
     HashMap<Integer, Vuelo> vuelos_hash;
 
@@ -56,6 +63,8 @@ public class Solucion {
         this.airportPenalization = airportPenalization;
 
         this.vuelos_hash = vuelos_hash;
+
+        this.costoDePaquetesYRutasErroneas = 0;
     }
 
     public void printFlightOcupation(String filename){
@@ -88,38 +97,122 @@ public class Solucion {
         
     }
 
+    public double getSTPaquetes(){
+        double sum = 0;
+        for(int i = 0; i < paquetes.size(); i++){
+            double tiempoRecepcion = paquetes.get(i).getFecha_recepcion().getTime();
+            double tiempoLlegadaRuta = rutas.get(i).getVuelos().get(rutas.get(i).getVuelos().size() - 1).getFecha_llegada().getTime();
+            double diferenciaFechaMaxima = paquetes.get(i).getFecha_maxima_entrega().getTime() - tiempoRecepcion;
+            double diferenciaFechaEntrega = tiempoLlegadaRuta - tiempoRecepcion;
+            double porcentajeTiempo = (diferenciaFechaEntrega)/diferenciaFechaMaxima;
+            sum += Math.max(0, porcentajeTiempo);
+        }
+        return sum;
+    }
+
+    public double getSTVuelos(){
+        double sum = 0;
+        for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
+            Vuelo vuelo = vuelos_hash.get(entry.getKey());
+            int maxCapacity = vuelo.getPlan_vuelo().getCapacidad_maxima();
+            int usedCapacity = entry.getValue();
+            double porcentajeOcupacion = (double)usedCapacity / (double)maxCapacity;
+            sum += porcentajeOcupacion;
+        }
+        return sum;
+    }
+
+    public double getPPTAeropuerto(){
+        this.estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos, this.aeropuertos);
+        return this.estado.calcularCostoTotalAlmacenamiento();
+    }
+
+    public double[] getCostoPaquete(int i){
+        double currentCost = 0;
+        double conteoSinSentido = 0;
+
+        Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
+        Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1).getFecha_llegada();
+
+        Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
+        Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
+
+
+        if (horaSalidaRuta.after(horaRecepcionPaquete) == false) { //inusable
+            currentCost += 100000;
+        }
+
+        if (horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true) { //para colapso es usable
+            currentCost += 100;
+        }
+
+        if(horaSalidaRuta.after(horaRecepcionPaquete) == false || horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true){
+            conteoSinSentido++;
+        }
+
+        currentCost += (double)horaLlegadaRuta.getTime() / horaMaximaEntregaPaquete.getTime();
+
+        return new double[]{currentCost, conteoSinSentido};
+    }
+
+
     public double getSolutionCost() {
         double cost = 0;
+        double conteoSinSentido = 0;
 
         for (int i = 0; i < this.paquetes.size(); i++) {
-            String idRutaOrigen = this.rutas.get(i).getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-            String idRutaDestino = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                    .getPlan_vuelo().getCiudadDestino().getId();
+            double[] costAndConteo = getCostoPaquete(i);
+            cost += costAndConteo[0];
+            conteoSinSentido += costAndConteo[1];
+        }
 
-            String idPaqueteOrigen = this.paquetes.get(i).getCiudadOrigen().getId();
-            String idPaqueteDestino = this.paquetes.get(i).getCiudadDestino().getId();
+        this.costoDePaquetesYRutasErroneas = conteoSinSentido;
+        cost = cost * 10;
 
+        cost += this.getSTVuelos() * 4;
+        costo += this.getPPTAeropuerto() * 4;
+
+        return cost;
+    }
+
+
+    public double getSolutionCost_RenzoBackup() {
+        double cost = 0;
+        double conteoSinSentido = 0;
+
+        for (int i = 0; i < this.paquetes.size(); i++) {
             Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
-            Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                    .getFecha_llegada();
+            Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1).getFecha_llegada();
 
             Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
             Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
 
-            if (!idRutaOrigen.equals(idPaqueteOrigen) ||
-                    !idRutaDestino.equals(idPaqueteDestino) ||
-                    !horaSalidaRuta.after(horaRecepcionPaquete) ||
-                    !horaLlegadaRuta.before(horaMaximaEntregaPaquete)) {
-                cost += this.badSolutionPenalization;
+
+            if (
+                horaSalidaRuta.after(horaRecepcionPaquete) == false //inusable
+            ) {
+                cost += 100000;
+            }
+
+            if (
+                horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true //para colapso es usable
+            ) {
+                cost += 10000;
+            }
+
+            if(horaSalidaRuta.after(horaRecepcionPaquete) == false || horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true){
+                conteoSinSentido++;
             }
         }
 
-        cost += this.getFlightCost(); //TODO: This should return sumatoria de porcentajes utilizados en todos los vuelos usados
-        estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos, this.aeropuertos);
-        cost += estado.calcularCostoTotalAlmacenamiento(); 
+        this.costoDePaquetesYRutasErroneas = conteoSinSentido;
+        cost += this.getSTVuelos() * 4;
+        costo += this.getPPTAeropuerto() * 4;
 
         return cost;
     }
+
+
 
     public boolean isCurrentRouteValid(int i) {
         String idRutaOrigen = this.rutas.get(i).getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
@@ -222,9 +315,7 @@ public class Solucion {
     }
 
     public boolean isAirportCapacityAvailable(){
-        // if(true)return true;
-        this.estado = new EstadoAlmacen( paquetes, rutas,
-        vuelos_hash, ocupacionVuelos, aeropuertos);
+        this.estado = new EstadoAlmacen( paquetes, rutas, vuelos_hash, ocupacionVuelos, aeropuertos);
         return estado.verificar_capacidad_maxima();
     }
 
@@ -293,19 +384,17 @@ public class Solucion {
             availableRoutesPerPackage.add(new ArrayList<PlanRuta>());
         }
 
-        double newCost = this.costo;
-
         for (int j = 0; j < windowSize; j++) {
             String origenPaquete = randomPackages.get(j).getCiudadOrigen().getId();
             String destinoPaquete = randomPackages.get(j).getCiudadDestino().getId();
             String keyString = origenPaquete + "-" + destinoPaquete;
 
+            int conteo=0;
             while (true) {
                 int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
                 PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
 
                 //check if origin and destiny is different
-                //TODO: Pendiente forzar airport capacity (done) y flight capacity, mas no isCurrentRouteValid
                 if(
                     neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
                     && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
@@ -318,12 +407,15 @@ public class Solucion {
                     neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
                     break;
                 }
+
+                if(conteo>=1000){
+                    printLogCouldntFindRoute(randomPackages.get(j), "logError.txt");
+                    return this;
+                }
+                conteo++;
             }
         }
 
-        //neighbour.costo = newCost;
-
-        //TODO: Forzando solucion, debe optimizar
         if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
             return generateNeighbour(todasLasRutas, windowSize);
         } else {
@@ -332,173 +424,21 @@ public class Solucion {
         
     }
 
+    public void printLogCouldntFindRoute(Paquete paquete, String filename){
+        File csvFile = new File(filename);
+        PrintWriter out;
 
-    public double getFlightCost(){
-        //we add 200 to the cost if the flights ocupation has exceeded
-        //TODO: This cost should consider the cost stablished by Jose in the Paint presentation
-        double flightCost = 0;
-        for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
-            Vuelo vuelo = vuelos_hash.get(entry.getKey());
-            int maxCapacity = vuelo.getPlan_vuelo().getCapacidad_maxima();
-            int usedCapacity = entry.getValue();
-            if(usedCapacity > maxCapacity){
-                flightCost += this.flightPenalization;
-            }
-        }
-
-        return flightCost;
-    }
-
-    public double getAirportOcupationCost(){
-        if(this.isAirportCapacityAvailable() == false){
-            return airportPenalization;
-        } else {
-            return 0;
-        }
-    }
-
-    public boolean isCurrentRouteOnValidStartDate(Paquete paquete, PlanRuta planRuta){
-        String idRutaOrigen = planRuta.getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-        String idRutaDestino = planRuta.getVuelos().get(planRuta.getVuelos().size() - 1)
-                .getPlan_vuelo().getCiudadDestino().getId();
-
-        String idPaqueteOrigen = paquete.getCiudadOrigen().getId();
-        String idPaqueteDestino = paquete.getCiudadDestino().getId();
-
-        Date horaSalidaRuta = planRuta.getVuelos().get(0).getFecha_salida();
-        Date horaRecepcionPaquete = paquete.getFecha_recepcion();
-
-        if (
-            !idRutaOrigen.equals(idPaqueteOrigen) 
-            || !idRutaDestino.equals(idPaqueteDestino) 
-            || !horaSalidaRuta.after(horaRecepcionPaquete) 
-            //|| !horaLlegadaRuta.before(horaMaximaEntregaPaquete)
-        ) {
-            return false;
-        }
-
-        return true;   
-    }
-
-    public boolean isCurrentRouteOnValidStartDate(int i) {
-        String idRutaOrigen = this.rutas.get(i).getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId();
-        String idRutaDestino = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1)
-                .getPlan_vuelo().getCiudadDestino().getId();
-
-        String idPaqueteOrigen = this.paquetes.get(i).getCiudadOrigen().getId();
-        String idPaqueteDestino = this.paquetes.get(i).getCiudadDestino().getId();
-
-        Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
-
-        Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
-
-        if (
-            !idRutaOrigen.equals(idPaqueteOrigen) 
-            || !idRutaDestino.equals(idPaqueteDestino) 
-            || !horaSalidaRuta.after(horaRecepcionPaquete) 
-            //|| !horaLlegadaRuta.before(horaMaximaEntregaPaquete)
-        ) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-
-
-    public Solucion generateNeighbourSteroids(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
-
-        Solucion neighbour = new Solucion(
-            new ArrayList<>(this.paquetes),
-            new ArrayList<>(this.rutas),
-            this.aeropuertos,
-            new HashMap<Integer, Integer>(this.ocupacionVuelos),
-            this.costo,
-            this.badSolutionPenalization,
-            this.flightPenalization,
-            this.airportPenalization,
-            this.vuelos_hash
-        );
-
-        //neighbour.costo -= neighbour.getFlightCost();
-        //neighbour.costo -= neighbour.getAirportOcupationCost();
-
-        //Pick packages to randomize its routes
-        HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
-        int[] randomPackageIndexes = new int[windowSize];
-        for (int i = 0; i < windowSize; i++) {
-            int randomIndex = (int) (Math.random() * this.paquetes.size());
-            while(indexes.get(randomIndex) != null){
-                randomIndex = (int) (Math.random() * this.paquetes.size());
-            }
-            randomPackageIndexes[i] = randomIndex;
-            indexes.put(randomPackageIndexes[i], true);
-        }
-
-        ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
-        ArrayList<ArrayList<PlanRuta>> availableRoutesPerPackage = new ArrayList<ArrayList<PlanRuta>>();
-
-        for (int i = 0; i < windowSize; i++) {
-            PlanRuta oldRoute = rutas.get(randomPackageIndexes[i]);
-            neighbour.deocupyRouteFlights(oldRoute);
-
-            randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
-            availableRoutesPerPackage.add(new ArrayList<PlanRuta>());
-        }
-
-
-        double newCost = this.costo;
-
-        for (int j = 0; j < windowSize; j++) {
-            String origenPaquete = randomPackages.get(j).getCiudadOrigen().getId();
-            String destinoPaquete = randomPackages.get(j).getCiudadDestino().getId();
-            String keyString = origenPaquete + "-" + destinoPaquete;
-
-            while (true) {
-                int randomRouteIndex = (int) (Math.random() * todasLasRutas.get(keyString).size());
-                PlanRuta randomRoute = todasLasRutas.get(keyString).get(randomRouteIndex);
-
-                if(
-                    neighbour.isCurrentRouteOnValidStartDate(randomPackages.get(j), randomRoute) == true
-                    && 
-                    neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
-                ){
-                    // if (
-                    //     neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == false && 
-                    //     neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true
-                    // ) { // su solucion no era valida
-                    //     newCost -= neighbour.badSolutionPenalization;
-                    // } else if (
-                    //     neighbour.isCurrentRouteValid(randomPackageIndexes[j]) == true && 
-                    //     neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == false
-                    // ) { // su solucion no era valida
-                    //     newCost += neighbour.badSolutionPenalization;
-                    // }
-
-                    neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
-                    neighbour.ocupyRouteFlights(randomRoute);
-                    break;
-                }
-            }           
-        }
-
-        //Manage flight ocupation cost
-        //newCost  += neighbour.getFlightCost();
-
-        //Manage airport ocupation cost
-        //newCost += neighbour.getAirportOcupationCost();
-
-        //regenerate solution if isAirportAvailable failed
-        // neighbour.costo = newCost;
-        return neighbour;
-    }
-
-
-
-    public void printTxt() {
-        for (int i = 0; i < paquetes.size(); i++) {
-            System.out.println("Paquete " + paquetes.get(i).getId() + " -> " + rutas.get(i).toString());
+        try {
+            out = new PrintWriter(csvFile);
+            out.println("No se pudo encontrar una ruta valida despues de 100 intentos");
+            out.println("Paquete: " + paquete.getId());
+            out.println("Origen: " + paquete.getCiudadOrigen().getId());
+            out.println("Destino: " + paquete.getCiudadDestino().getId());
+            out.println("Fecha Recepcion: " + Funciones.getFormattedDate(paquete.getFecha_recepcion()));
+            out.println("Fecha Maxima Entrega: " + Funciones.getFormattedDate(paquete.getFecha_maxima_entrega()));
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -137,14 +137,14 @@ public class main {
         // Data Generation Parameters
         boolean generateNewData = false;
         int maxAirports = 30; // MAX AIRPORTS IS 30
-        int packagesAmount = 6000;
-        int flightsMultiplier = 2;
+        int packagesAmount = 1000;
+        int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
         int neighbourCount = 1;
-        int windowSize = 200; //best = 50 MUST BE LESS THE packagesAmount
+        int windowSize = 20; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
@@ -204,6 +204,7 @@ public class main {
             ArrayList<PlanRuta> value = entry.getValue();
             if (value.size() == 0) {
                 System.out.println("No route available for " + key);
+                return;
             }
         }
 
@@ -267,8 +268,7 @@ public class main {
             }
 
 
-            int cnt = (int) (current.getSolutionCost() / badSolutionPenalization);
-            if (current.getSolutionCost() < badSolutionPenalization) {
+            if (current.costoDePaquetesYRutasErroneas == 0) {
                 break;
             }
             
@@ -277,7 +277,7 @@ public class main {
             
             System.out.println(
             "Current cost: " + current.getSolutionCost() + 
-            " | Packages left: " + cnt +
+            " | Packages left: " + current.costoDePaquetesYRutasErroneas +
             " | Temperature: " + temperature);
         }
         
@@ -287,10 +287,11 @@ public class main {
         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
         1000000000) + " segundos");
 
-        int cnt2 = (int) (current.costo / badSolutionPenalization);
         System.out.println(
-        "Final cost: " + current.costo + " | Packages left: " + cnt2 +
-        " | Temperature: " + temperature);
+            "Final cost: " + current.getSolutionCost() + 
+            " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+            " | Temperature: " + temperature
+        );
         printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
         current.printFlightOcupation("ocupacionVuelos.txt");
         
