@@ -1,0 +1,2811 @@
+Data loaded successfully
+Vuelos generados: 540
+Tiempo de ejecución (grafoVuelos): 0.0 segundos
+Buscando rutas
+Se encontraron 90 pares de origen-destino con rutas.
+Se encontraron 540 rutas en total.
+Checking if ORIGIN-DESTINATION has atleast 1 route available
+Tiempo de ejecución de la ordenación (buscarTodasLasRutas): 0.0 segundos
+Tiempo de (getRutasValidasPorPaquete): 0.0 segundos
+Tiempo de ejecución del algoritmo PSO: 46.0 segundos
+Best fitness: 145.2709154408373
+Paquete 0 - SUAA - SABE - Tue Jan 02 04:36:59 PET 2024 - Thu Jan 04 04:36:59 PET 2024
+La mejor ruta para el paquete 0 fue:
+Ruta 225: SUAA (2024-01-02 21:18:00) -> SABE (2024-01-03 07:46:00)  (ID: 234) | 
+
+Paquete 1 - SEQM - SCEL - Tue Jan 02 13:25:28 PET 2024 - Thu Jan 04 11:25:28 PET 2024
+La mejor ruta para el paquete 1 fue:
+Ruta 538: SEQM (2024-01-02 16:36:00) -> SCEL (2024-01-03 09:07:00)  (ID: 264) | 
+
+Paquete 2 - SBBR - SGAS - Tue Jan 02 15:05:09 PET 2024 - Thu Jan 04 16:05:09 PET 2024
+La mejor ruta para el paquete 2 fue:
+Ruta 246: SBBR (2024-01-03 08:19:00) -> SGAS (2024-01-03 12:24:00)  (ID: 392) | 
+
+Paquete 3 - SEQM - SGAS - Wed Jan 03 08:12:22 PET 2024 - Fri Jan 05 07:12:22 PET 2024
+La mejor ruta para el paquete 3 fue:
+Ruta 604: SEQM (2024-01-03 18:36:00) -> SGAS (2024-01-04 18:33:00)  (ID: 446) | 
+
+Paquete 4 - SABE - SUAA - Wed Jan 03 18:31:13 PET 2024 - Fri Jan 05 18:31:13 PET 2024
+La mejor ruta para el paquete 4 fue:
+Ruta 456: SABE (2024-01-04 17:22:00) -> SUAA (2024-01-04 19:47:00)  (ID: 708) | 
+
+Paquete 5 - SABE - SPIM - Wed Jan 03 13:00:11 PET 2024 - Fri Jan 05 15:00:11 PET 2024
+La mejor ruta para el paquete 5 fue:
+Ruta 455: SABE (2024-01-03 14:27:00) -> SPIM (2024-01-04 05:12:00)  (ID: 530) | 
+
+Paquete 6 - SGAS - SCEL - Tue Jan 02 13:13:33 PET 2024 - Thu Jan 04 12:13:33 PET 2024
+La mejor ruta para el paquete 6 fue:
+Ruta 535: SGAS (2024-01-02 19:41:00) -> SCEL (2024-01-02 23:01:00)  (ID: 320) | 
+
+Paquete 7 - SBBR - SCEL - Tue Jan 02 09:43:39 PET 2024 - Thu Jan 04 09:43:39 PET 2024
+La mejor ruta para el paquete 7 fue:
+Ruta 233: SBBR (2024-01-02 22:19:00) -> SCEL (2024-01-03 20:37:00)  (ID: 210) | 
+
+Paquete 8 - SABE - SCEL - Tue Jan 02 21:37:21 PET 2024 - Thu Jan 04 21:37:21 PET 2024
+La mejor ruta para el paquete 8 fue:
+Ruta 431: SABE (2024-01-03 16:02:00) -> SCEL (2024-01-03 19:32:00)  (ID: 536) | 
+
+Paquete 9 - SVMI - SGAS - Thu Jan 04 00:19:47 PET 2024 - Sat Jan 06 00:19:47 PET 2024
+La mejor ruta para el paquete 9 fue:
+Ruta 257: SVMI (2024-01-04 10:22:00) -> SGAS (2024-01-04 14:58:00)  (ID: 554) | 
+
+Paquete 10 - SGAS - SVMI - Mon Jan 01 17:28:01 PET 2024 - Wed Jan 03 17:28:01 PET 2024
+La mejor ruta para el paquete 10 fue:
+Ruta 529: SGAS (2024-01-02 12:53:00) -> SVMI (2024-01-02 16:36:00)  (ID: 308) | 
+
+Paquete 11 - SABE - SPIM - Wed Jan 03 12:09:26 PET 2024 - Fri Jan 05 14:09:26 PET 2024
+La mejor ruta para el paquete 11 fue:
+Ruta 455: SABE (2024-01-03 14:27:00) -> SPIM (2024-01-04 05:12:00)  (ID: 530) | 
+
+Paquete 12 - SKBO - SPIM - Wed Jan 03 23:31:33 PET 2024 - Fri Jan 05 23:31:33 PET 2024
+La mejor ruta para el paquete 12 fue:
+Ruta 108: SKBO (2024-01-04 18:30:00) -> SPIM (2024-01-04 18:49:00)  (ID: 692) | 
+
+Paquete 13 - SBBR - SEQM - Tue Jan 02 19:19:22 PET 2024 - Thu Jan 04 21:19:22 PET 2024
+La mejor ruta para el paquete 13 fue:
+Ruta 287: SBBR (2024-01-03 18:07:00) -> SEQM (2024-01-04 06:29:00)  (ID: 386) | 
+
+Paquete 14 - SCEL - SBBR - Wed Jan 03 18:27:05 PET 2024 - Fri Jan 05 18:27:05 PET 2024
+La mejor ruta para el paquete 14 fue:
+Ruta 107: SCEL (2024-01-04 16:55:00) -> SBBR (2024-01-04 21:12:00)  (ID: 652) | 
+
+Paquete 15 - SPIM - SCEL - Thu Jan 04 00:15:19 PET 2024 - Fri Jan 05 22:15:19 PET 2024
+La mejor ruta para el paquete 15 fue:
+Ruta 352: SPIM (2024-01-04 14:34:00) -> SCEL (2024-01-05 03:19:00)  (ID: 606) | 
+
+Paquete 16 - SUAA - SVMI - Mon Jan 01 22:45:38 PET 2024 - Wed Jan 03 23:45:38 PET 2024
+La mejor ruta para el paquete 16 fue:
+Ruta 64: SUAA (2024-01-02 17:11:00) -> SVMI (2024-01-03 04:59:00)  (ID: 218) | 
+
+Paquete 17 - SGAS - SPIM - Wed Jan 03 16:24:24 PET 2024 - Fri Jan 05 17:24:24 PET 2024
+La mejor ruta para el paquete 17 fue:
+Ruta 564: SGAS (2024-01-04 09:07:00) -> SPIM (2024-01-04 17:21:00)  (ID: 674) | 
+
+Paquete 18 - SKBO - SBBR - Tue Jan 02 17:16:48 PET 2024 - Thu Jan 04 15:16:48 PET 2024
+La mejor ruta para el paquete 18 fue:
+Ruta 76: SKBO (2024-01-03 09:40:00) -> SBBR (2024-01-03 09:41:00)  (ID: 508) | 
+
+Paquete 19 - SABE - SPIM - Tue Jan 02 23:57:13 PET 2024 - Fri Jan 05 01:57:13 PET 2024
+La mejor ruta para el paquete 19 fue:
+Ruta 455: SABE (2024-01-03 14:27:00) -> SPIM (2024-01-04 05:12:00)  (ID: 530) | 
+
+Paquete 20 - SCEL - SKBO - Thu Jan 04 01:26:09 PET 2024 - Sat Jan 06 03:26:09 PET 2024
+La mejor ruta para el paquete 20 fue:
+Ruta 106: SCEL (2024-01-04 10:42:00) -> SKBO (2024-01-04 20:18:00)  (ID: 664) | 
+
+Paquete 21 - SUAA - SLLP - Wed Jan 03 07:20:37 PET 2024 - Fri Jan 05 08:20:37 PET 2024
+La mejor ruta para el paquete 21 fue:
+Ruta 95: SUAA (2024-01-03 18:52:00) -> SLLP (2024-01-04 06:56:00)  (ID: 406) | 
+
+Paquete 22 - SGAS - SBBR - Mon Jan 01 19:51:19 PET 2024 - Wed Jan 03 18:51:19 PET 2024
+La mejor ruta para el paquete 22 fue:
+Ruta 530: SGAS (2024-01-02 17:05:00) -> SBBR (2024-01-03 05:43:00)  (ID: 310) | 
+
+Paquete 23 - SBBR - SUAA - Mon Jan 01 16:24:14 PET 2024 - Wed Jan 03 16:24:14 PET 2024
+La mejor ruta para el paquete 23 fue:
+Ruta 211: SBBR (2024-01-02 05:23:00) -> SUAA (2024-01-02 11:34:00)  (ID: 202) | 
+
+Paquete 24 - SCEL - SEQM - Mon Jan 01 23:48:14 PET 2024 - Thu Jan 04 01:48:14 PET 2024
+La mejor ruta para el paquete 24 fue:
+Ruta 67: SCEL (2024-01-02 12:53:00) -> SEQM (2024-01-02 16:47:00)  (ID: 298) | 
+
+Paquete 25 - SUAA - SPIM - Tue Jan 02 20:15:06 PET 2024 - Thu Jan 04 22:15:06 PET 2024
+La mejor ruta para el paquete 25 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 26 - SGAS - SCEL - Wed Jan 03 14:48:47 PET 2024 - Fri Jan 05 13:48:47 PET 2024
+La mejor ruta para el paquete 26 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 27 - SCEL - SVMI - Wed Jan 03 05:24:40 PET 2024 - Fri Jan 05 06:24:40 PET 2024
+La mejor ruta para el paquete 27 fue:
+Ruta 78: SCEL (2024-01-03 14:26:00) -> SVMI (2024-01-03 22:08:00)  (ID: 470) | 
+
+Paquete 28 - SPIM - SKBO - Wed Jan 03 21:24:57 PET 2024 - Fri Jan 05 21:24:57 PET 2024
+La mejor ruta para el paquete 28 fue:
+Ruta 278: SPIM (2024-01-04 19:17:00) -> SKBO (2024-01-05 14:10:00)  (ID: 610) | 
+
+Paquete 29 - SGAS - SABE - Tue Jan 02 04:49:57 PET 2024 - Thu Jan 04 03:49:57 PET 2024
+La mejor ruta para el paquete 29 fue:
+Ruta 528: SGAS (2024-01-02 10:13:00) -> SABE (2024-01-02 13:08:00)  (ID: 324) | 
+
+Paquete 30 - SGAS - SPIM - Wed Jan 03 21:44:33 PET 2024 - Fri Jan 05 22:44:33 PET 2024
+La mejor ruta para el paquete 30 fue:
+Ruta 564: SGAS (2024-01-04 09:07:00) -> SPIM (2024-01-04 17:21:00)  (ID: 674) | 
+
+Paquete 31 - SABE - SLLP - Wed Jan 03 08:28:52 PET 2024 - Fri Jan 05 09:28:52 PET 2024
+La mejor ruta para el paquete 31 fue:
+Ruta 539: SABE (2024-01-04 07:16:00) -> SLLP (2024-01-04 16:44:00)  (ID: 714) | 
+
+Paquete 32 - SEQM - SGAS - Mon Jan 01 10:21:23 PET 2024 - Wed Jan 03 09:21:23 PET 2024
+La mejor ruta para el paquete 32 fue:
+Ruta 547: SEQM (2024-01-01 18:36:00) -> SGAS (2024-01-02 18:33:00)  (ID: 86) | 
+
+Paquete 33 - SUAA - SEQM - Tue Jan 02 08:24:58 PET 2024 - Thu Jan 04 10:24:58 PET 2024
+La mejor ruta para el paquete 33 fue:
+Ruta 241: SUAA (2024-01-03 07:10:00) -> SEQM (2024-01-03 21:45:00)  (ID: 404) | 
+
+Paquete 34 - SCEL - SVMI - Wed Jan 03 09:32:31 PET 2024 - Fri Jan 05 10:32:31 PET 2024
+La mejor ruta para el paquete 34 fue:
+Ruta 78: SCEL (2024-01-03 14:26:00) -> SVMI (2024-01-03 22:08:00)  (ID: 470) | 
+
+Paquete 35 - SPIM - SBBR - Tue Jan 02 11:14:03 PET 2024 - Thu Jan 04 09:14:03 PET 2024
+La mejor ruta para el paquete 35 fue:
+Ruta 367: SPIM (2024-01-02 18:12:00) -> SBBR (2024-01-03 09:42:00)  (ID: 238) | 
+
+Paquete 36 - SPIM - SLLP - Mon Jan 01 20:38:33 PET 2024 - Wed Jan 03 19:38:33 PET 2024
+La mejor ruta para el paquete 36 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 37 - SBBR - SABE - Mon Jan 01 09:40:03 PET 2024 - Wed Jan 03 09:40:03 PET 2024
+La mejor ruta para el paquete 37 fue:
+Ruta 200: SBBR (2024-01-01 14:24:00) -> SABE (2024-01-01 17:27:00)  (ID: 36) | 
+
+Paquete 38 - SUAA - SPIM - Mon Jan 01 04:57:41 PET 2024 - Wed Jan 03 06:57:41 PET 2024
+La mejor ruta para el paquete 38 fue:
+Ruta 37: SUAA (2024-01-01 06:48:00) -> SPIM (2024-01-01 19:02:00)  (ID: 42) | 
+
+Paquete 39 - SCEL - SABE - Wed Jan 03 00:03:16 PET 2024 - Fri Jan 05 00:03:16 PET 2024
+La mejor ruta para el paquete 39 fue:
+Ruta 97: SCEL (2024-01-03 18:08:00) -> SABE (2024-01-03 22:40:00)  (ID: 486) | 
+
+Paquete 40 - SVMI - SGAS - Mon Jan 01 20:06:40 PET 2024 - Wed Jan 03 20:06:40 PET 2024
+La mejor ruta para el paquete 40 fue:
+Ruta 218: SVMI (2024-01-02 10:22:00) -> SGAS (2024-01-02 14:58:00)  (ID: 194) | 
+
+Paquete 41 - SKBO - SLLP - Thu Jan 04 03:13:05 PET 2024 - Sat Jan 06 02:13:05 PET 2024
+La mejor ruta para el paquete 41 fue:
+Ruta 103: SKBO (2024-01-04 23:38:00) -> SLLP (2024-01-05 19:59:00)  (ID: 696) | 
+
+Paquete 42 - SKBO - SLLP - Wed Jan 03 19:24:46 PET 2024 - Fri Jan 05 18:24:46 PET 2024
+La mejor ruta para el paquete 42 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 43 - SGAS - SBBR - Wed Jan 03 20:01:49 PET 2024 - Fri Jan 05 19:01:49 PET 2024
+La mejor ruta para el paquete 43 fue:
+Ruta 570: SGAS (2024-01-04 17:05:00) -> SBBR (2024-01-05 05:43:00)  (ID: 670) | 
+
+Paquete 44 - SABE - SPIM - Tue Jan 02 07:28:11 PET 2024 - Thu Jan 04 09:28:11 PET 2024
+La mejor ruta para el paquete 44 fue:
+Ruta 427: SABE (2024-01-02 14:27:00) -> SPIM (2024-01-03 05:12:00)  (ID: 350) | 
+
+Paquete 45 - SABE - SKBO - Tue Jan 02 21:28:01 PET 2024 - Thu Jan 04 23:28:01 PET 2024
+La mejor ruta para el paquete 45 fue:
+Ruta 424: SABE (2024-01-03 17:53:00) -> SKBO (2024-01-03 18:23:00)  (ID: 540) | 
+
+Paquete 46 - SKBO - SBBR - Tue Jan 02 22:41:44 PET 2024 - Thu Jan 04 20:41:44 PET 2024
+La mejor ruta para el paquete 46 fue:
+Ruta 76: SKBO (2024-01-03 09:40:00) -> SBBR (2024-01-03 09:41:00)  (ID: 508) | 
+
+Paquete 47 - SUAA - SKBO - Wed Jan 03 16:19:53 PET 2024 - Fri Jan 05 18:19:53 PET 2024
+La mejor ruta para el paquete 47 fue:
+Ruta 90: SUAA (2024-01-03 18:59:00) -> SKBO (2024-01-04 09:13:00)  (ID: 412) | 
+
+Paquete 48 - SPIM - SVMI - Mon Jan 01 15:55:55 PET 2024 - Wed Jan 03 14:55:55 PET 2024
+La mejor ruta para el paquete 48 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 49 - SLLP - SBBR - Wed Jan 03 14:13:37 PET 2024 - Fri Jan 05 13:13:37 PET 2024
+La mejor ruta para el paquete 49 fue:
+Ruta 423: SLLP (2024-01-04 11:30:00) -> SBBR (2024-01-04 21:01:00)  (ID: 634) | 
+
+Paquete 50 - SABE - SUAA - Mon Jan 01 03:13:37 PET 2024 - Wed Jan 03 03:13:37 PET 2024
+La mejor ruta para el paquete 50 fue:
+Ruta 378: SABE (2024-01-01 17:22:00) -> SUAA (2024-01-01 19:47:00)  (ID: 168) | 
+
+Paquete 51 - SLLP - SGAS - Wed Jan 03 22:35:08 PET 2024 - Fri Jan 05 22:35:08 PET 2024
+La mejor ruta para el paquete 51 fue:
+Ruta 437: SLLP (2024-01-04 16:19:00) -> SGAS (2024-01-05 08:25:00)  (ID: 644) | 
+
+Paquete 52 - SLLP - SBBR - Mon Jan 01 19:14:16 PET 2024 - Wed Jan 03 18:14:16 PET 2024
+La mejor ruta para el paquete 52 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 53 - SLLP - SGAS - Tue Jan 02 13:55:49 PET 2024 - Thu Jan 04 13:55:49 PET 2024
+La mejor ruta para el paquete 53 fue:
+Ruta 388: SLLP (2024-01-02 16:19:00) -> SGAS (2024-01-03 08:25:00)  (ID: 284) | 
+
+Paquete 54 - SPIM - SLLP - Mon Jan 01 23:28:18 PET 2024 - Wed Jan 03 22:28:18 PET 2024
+La mejor ruta para el paquete 54 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 55 - SVMI - SGAS - Tue Jan 02 16:51:57 PET 2024 - Thu Jan 04 16:51:57 PET 2024
+La mejor ruta para el paquete 55 fue:
+Ruta 238: SVMI (2024-01-03 10:22:00) -> SGAS (2024-01-03 14:58:00)  (ID: 374) | 
+
+Paquete 56 - SUAA - SGAS - Tue Jan 02 21:24:44 PET 2024 - Thu Jan 04 22:24:44 PET 2024
+La mejor ruta para el paquete 56 fue:
+Ruta 254: SUAA (2024-01-03 06:26:00) -> SGAS (2024-01-03 19:41:00)  (ID: 410) | 
+
+Paquete 57 - SBBR - SPIM - Wed Jan 03 01:23:06 PET 2024 - Fri Jan 05 03:23:06 PET 2024
+La mejor ruta para el paquete 57 fue:
+Ruta 235: SBBR (2024-01-03 05:31:00) -> SPIM (2024-01-03 14:52:00)  (ID: 384) | 
+
+Paquete 58 - SEQM - SPIM - Wed Jan 03 02:24:03 PET 2024 - Fri Jan 05 02:24:03 PET 2024
+La mejor ruta para el paquete 58 fue:
+Ruta 586: SEQM (2024-01-03 19:59:00) -> SPIM (2024-01-04 14:24:00)  (ID: 440) | 
+
+Paquete 59 - SUAA - SEQM - Tue Jan 02 18:07:47 PET 2024 - Thu Jan 04 20:07:47 PET 2024
+La mejor ruta para el paquete 59 fue:
+Ruta 241: SUAA (2024-01-03 07:10:00) -> SEQM (2024-01-03 21:45:00)  (ID: 404) | 
+
+Paquete 60 - SGAS - SPIM - Mon Jan 01 17:59:58 PET 2024 - Wed Jan 03 18:59:58 PET 2024
+La mejor ruta para el paquete 60 fue:
+Ruta 523: SGAS (2024-01-02 09:07:00) -> SPIM (2024-01-02 17:21:00)  (ID: 314) | 
+
+Paquete 61 - SKBO - SUAA - Mon Jan 01 06:49:14 PET 2024 - Wed Jan 03 04:49:14 PET 2024
+La mejor ruta para el paquete 61 fue:
+Ruta 24: SKBO (2024-01-01 15:06:00) -> SUAA (2024-01-01 23:30:00)  (ID: 150) | 
+
+Paquete 62 - SBBR - SABE - Tue Jan 02 19:59:57 PET 2024 - Thu Jan 04 19:59:57 PET 2024
+La mejor ruta para el paquete 62 fue:
+Ruta 242: SBBR (2024-01-03 14:24:00) -> SABE (2024-01-03 17:27:00)  (ID: 396) | 
+
+Paquete 63 - SUAA - SVMI - Tue Jan 02 20:27:09 PET 2024 - Thu Jan 04 21:27:09 PET 2024
+La mejor ruta para el paquete 63 fue:
+Ruta 88: SUAA (2024-01-03 17:11:00) -> SVMI (2024-01-04 04:59:00)  (ID: 398) | 
+
+Paquete 64 - SKBO - SLLP - Tue Jan 02 16:14:25 PET 2024 - Thu Jan 04 15:14:25 PET 2024
+La mejor ruta para el paquete 64 fue:
+Ruta 60: SKBO (2024-01-02 23:38:00) -> SLLP (2024-01-03 19:59:00)  (ID: 336) | 
+
+Paquete 65 - SLLP - SABE - Wed Jan 03 17:44:38 PET 2024 - Fri Jan 05 16:44:38 PET 2024
+La mejor ruta para el paquete 65 fue:
+Ruta 432: SLLP (2024-01-04 11:06:00) -> SABE (2024-01-04 12:30:00)  (ID: 648) | 
+
+Paquete 66 - SVMI - SLLP - Mon Jan 01 21:07:35 PET 2024 - Wed Jan 03 21:07:35 PET 2024
+La mejor ruta para el paquete 66 fue:
+Ruta 228: SVMI (2024-01-02 10:31:00) -> SLLP (2024-01-02 17:25:00)  (ID: 190) | 
+
+Paquete 67 - SEQM - SCEL - Wed Jan 03 07:55:26 PET 2024 - Fri Jan 05 05:55:26 PET 2024
+La mejor ruta para el paquete 67 fue:
+Ruta 561: SEQM (2024-01-03 16:36:00) -> SCEL (2024-01-04 09:07:00)  (ID: 444) | 
+
+Paquete 68 - SLLP - SGAS - Wed Jan 03 10:28:14 PET 2024 - Fri Jan 05 10:28:14 PET 2024
+La mejor ruta para el paquete 68 fue:
+Ruta 411: SLLP (2024-01-03 16:19:00) -> SGAS (2024-01-04 08:25:00)  (ID: 464) | 
+
+Paquete 69 - SVMI - SGAS - Tue Jan 02 20:09:21 PET 2024 - Thu Jan 04 20:09:21 PET 2024
+La mejor ruta para el paquete 69 fue:
+Ruta 238: SVMI (2024-01-03 10:22:00) -> SGAS (2024-01-03 14:58:00)  (ID: 374) | 
+
+Paquete 70 - SKBO - SEQM - Wed Jan 03 23:56:42 PET 2024 - Fri Jan 05 23:56:42 PET 2024
+La mejor ruta para el paquete 70 fue:
+Ruta 94: SKBO (2024-01-04 18:18:00) -> SEQM (2024-01-04 22:30:00)  (ID: 694) | 
+
+Paquete 71 - SKBO - SGAS - Mon Jan 01 05:35:46 PET 2024 - Wed Jan 03 04:35:46 PET 2024
+La mejor ruta para el paquete 71 fue:
+Ruta 50: SKBO (2024-01-01 23:12:00) -> SGAS (2024-01-02 17:59:00)  (ID: 160) | 
+
+Paquete 72 - SKBO - SEQM - Tue Jan 02 04:50:41 PET 2024 - Thu Jan 04 04:50:41 PET 2024
+La mejor ruta para el paquete 72 fue:
+Ruta 52: SKBO (2024-01-02 18:18:00) -> SEQM (2024-01-02 22:30:00)  (ID: 334) | 
+
+Paquete 73 - SEQM - SABE - Tue Jan 02 22:32:46 PET 2024 - Thu Jan 04 20:32:46 PET 2024
+La mejor ruta para el paquete 73 fue:
+Ruta 584: SEQM (2024-01-03 19:40:00) -> SABE (2024-01-03 20:31:00)  (ID: 450) | 
+
+Paquete 74 - SABE - SKBO - Mon Jan 01 03:33:40 PET 2024 - Wed Jan 03 05:33:40 PET 2024
+La mejor ruta para el paquete 74 fue:
+Ruta 372: SABE (2024-01-01 17:53:00) -> SKBO (2024-01-01 18:23:00)  (ID: 180) | 
+
+Paquete 75 - SPIM - SEQM - Tue Jan 02 12:23:52 PET 2024 - Thu Jan 04 12:23:52 PET 2024
+La mejor ruta para el paquete 75 fue:
+Ruta 371: SPIM (2024-01-02 16:11:00) -> SEQM (2024-01-03 12:31:00)  (ID: 242) | 
+
+Paquete 76 - SCEL - SVMI - Thu Jan 04 01:44:45 PET 2024 - Sat Jan 06 02:44:45 PET 2024
+La mejor ruta para el paquete 76 fue:
+Ruta 99: SCEL (2024-01-04 14:26:00) -> SVMI (2024-01-04 22:08:00)  (ID: 650) | 
+
+Paquete 77 - SPIM - SABE - Thu Jan 04 01:40:36 PET 2024 - Fri Jan 05 23:40:36 PET 2024
+La mejor ruta para el paquete 77 fue:
+Ruta 410: SPIM (2024-01-04 15:51:00) -> SABE (2024-01-04 18:43:00)  (ID: 612) | 
+
+Paquete 78 - SPIM - SLLP - Tue Jan 02 18:10:22 PET 2024 - Thu Jan 04 17:10:22 PET 2024
+La mejor ruta para el paquete 78 fue:
+Ruta 379: SPIM (2024-01-03 14:15:00) -> SLLP (2024-01-03 14:46:00)  (ID: 424) | 
+
+Paquete 79 - SABE - SKBO - Wed Jan 03 14:00:10 PET 2024 - Fri Jan 05 16:00:10 PET 2024
+La mejor ruta para el paquete 79 fue:
+Ruta 424: SABE (2024-01-03 17:53:00) -> SKBO (2024-01-03 18:23:00)  (ID: 540) | 
+
+Paquete 80 - SPIM - SLLP - Tue Jan 02 22:42:25 PET 2024 - Thu Jan 04 21:42:25 PET 2024
+La mejor ruta para el paquete 80 fue:
+Ruta 379: SPIM (2024-01-03 14:15:00) -> SLLP (2024-01-03 14:46:00)  (ID: 424) | 
+
+Paquete 81 - SLLP - SEQM - Tue Jan 02 11:12:48 PET 2024 - Thu Jan 04 12:12:48 PET 2024
+La mejor ruta para el paquete 81 fue:
+Ruta 385: SLLP (2024-01-02 12:59:00) -> SEQM (2024-01-02 17:09:00)  (ID: 280) | 
+
+Paquete 82 - SUAA - SCEL - Tue Jan 02 04:39:49 PET 2024 - Thu Jan 04 04:39:49 PET 2024
+La mejor ruta para el paquete 82 fue:
+Ruta 66: SUAA (2024-01-02 22:20:00) -> SCEL (2024-01-03 19:44:00)  (ID: 228) | 
+
+Paquete 83 - SPIM - SEQM - Mon Jan 01 09:53:26 PET 2024 - Wed Jan 03 09:53:26 PET 2024
+La mejor ruta para el paquete 83 fue:
+Ruta 347: SPIM (2024-01-01 16:11:00) -> SEQM (2024-01-02 12:31:00)  (ID: 62) | 
+
+Paquete 84 - SPIM - SLLP - Tue Jan 02 06:45:36 PET 2024 - Thu Jan 04 05:45:36 PET 2024
+La mejor ruta para el paquete 84 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 85 - SCEL - SBBR - Tue Jan 02 15:34:50 PET 2024 - Thu Jan 04 15:34:50 PET 2024
+La mejor ruta para el paquete 85 fue:
+Ruta 61: SCEL (2024-01-02 16:55:00) -> SBBR (2024-01-02 21:12:00)  (ID: 292) | 
+
+Paquete 86 - SBBR - SEQM - Mon Jan 01 07:17:15 PET 2024 - Wed Jan 03 09:17:15 PET 2024
+La mejor ruta para el paquete 86 fue:
+Ruta 210: SBBR (2024-01-01 18:07:00) -> SEQM (2024-01-02 06:29:00)  (ID: 26) | 
+
+Paquete 87 - SLLP - SBBR - Tue Jan 02 02:31:01 PET 2024 - Thu Jan 04 01:31:01 PET 2024
+La mejor ruta para el paquete 87 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 88 - SCEL - SKBO - Wed Jan 03 20:24:56 PET 2024 - Fri Jan 05 22:24:56 PET 2024
+La mejor ruta para el paquete 88 fue:
+Ruta 106: SCEL (2024-01-04 10:42:00) -> SKBO (2024-01-04 20:18:00)  (ID: 664) | 
+
+Paquete 89 - SKBO - SUAA - Mon Jan 01 20:50:54 PET 2024 - Wed Jan 03 18:50:54 PET 2024
+La mejor ruta para el paquete 89 fue:
+Ruta 46: SKBO (2024-01-02 15:06:00) -> SUAA (2024-01-02 23:30:00)  (ID: 330) | 
+
+Paquete 90 - SUAA - SCEL - Wed Jan 03 12:53:54 PET 2024 - Fri Jan 05 12:53:54 PET 2024
+La mejor ruta para el paquete 90 fue:
+Ruta 89: SUAA (2024-01-03 22:20:00) -> SCEL (2024-01-04 19:44:00)  (ID: 408) | 
+
+Paquete 91 - SLLP - SCEL - Wed Jan 03 14:07:18 PET 2024 - Fri Jan 05 13:07:18 PET 2024
+La mejor ruta para el paquete 91 fue:
+Ruta 422: SLLP (2024-01-04 07:33:00) -> SCEL (2024-01-04 14:53:00)  (ID: 642) | 
+
+Paquete 92 - SGAS - SLLP - Wed Jan 03 18:43:24 PET 2024 - Fri Jan 05 18:43:24 PET 2024
+La mejor ruta para el paquete 92 fue:
+Ruta 571: SGAS (2024-01-04 05:37:00) -> SLLP (2024-01-04 14:14:00)  (ID: 678) | 
+
+Paquete 93 - SLLP - SVMI - Wed Jan 03 19:14:13 PET 2024 - Fri Jan 05 19:14:13 PET 2024
+La mejor ruta para el paquete 93 fue:
+Ruta 425: SLLP (2024-01-03 23:07:00) -> SVMI (2024-01-04 19:49:00)  (ID: 452) | 
+
+Paquete 94 - SGAS - SVMI - Mon Jan 01 07:51:23 PET 2024 - Wed Jan 03 07:51:23 PET 2024
+La mejor ruta para el paquete 94 fue:
+Ruta 495: SGAS (2024-01-01 12:53:00) -> SVMI (2024-01-01 16:36:00)  (ID: 128) | 
+
+Paquete 95 - SKBO - SLLP - Thu Jan 04 01:15:49 PET 2024 - Sat Jan 06 00:15:49 PET 2024
+La mejor ruta para el paquete 95 fue:
+Ruta 103: SKBO (2024-01-04 23:38:00) -> SLLP (2024-01-05 19:59:00)  (ID: 696) | 
+
+Paquete 96 - SCEL - SLLP - Tue Jan 02 15:13:35 PET 2024 - Thu Jan 04 16:13:35 PET 2024
+La mejor ruta para el paquete 96 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 97 - SCEL - SUAA - Mon Jan 01 13:17:19 PET 2024 - Wed Jan 03 13:17:19 PET 2024
+La mejor ruta para el paquete 97 fue:
+Ruta 41: SCEL (2024-01-01 22:06:00) -> SUAA (2024-01-02 07:54:00)  (ID: 114) | 
+
+Paquete 98 - SUAA - SABE - Tue Jan 02 13:43:31 PET 2024 - Thu Jan 04 13:43:31 PET 2024
+La mejor ruta para el paquete 98 fue:
+Ruta 225: SUAA (2024-01-02 21:18:00) -> SABE (2024-01-03 07:46:00)  (ID: 234) | 
+
+Paquete 99 - SPIM - SKBO - Wed Jan 03 12:28:15 PET 2024 - Fri Jan 05 12:28:15 PET 2024
+La mejor ruta para el paquete 99 fue:
+Ruta 256: SPIM (2024-01-03 19:17:00) -> SKBO (2024-01-04 14:10:00)  (ID: 430) | 
+
+Paquete 100 - SVMI - SLLP - Tue Jan 02 03:06:38 PET 2024 - Thu Jan 04 03:06:38 PET 2024
+La mejor ruta para el paquete 100 fue:
+Ruta 228: SVMI (2024-01-02 10:31:00) -> SLLP (2024-01-02 17:25:00)  (ID: 190) | 
+
+Paquete 101 - SABE - SLLP - Thu Jan 04 02:19:23 PET 2024 - Sat Jan 06 03:19:23 PET 2024
+La mejor ruta para el paquete 101 fue:
+Ruta 539: SABE (2024-01-04 07:16:00) -> SLLP (2024-01-04 16:44:00)  (ID: 714) | 
+
+Paquete 102 - SEQM - SGAS - Wed Jan 03 22:55:25 PET 2024 - Fri Jan 05 21:55:25 PET 2024
+La mejor ruta para el paquete 102 fue:
+Ruta 620: SEQM (2024-01-04 18:36:00) -> SGAS (2024-01-05 18:33:00)  (ID: 626) | 
+
+Paquete 103 - SBBR - SCEL - Tue Jan 02 18:31:47 PET 2024 - Thu Jan 04 18:31:47 PET 2024
+La mejor ruta para el paquete 103 fue:
+Ruta 233: SBBR (2024-01-02 22:19:00) -> SCEL (2024-01-03 20:37:00)  (ID: 210) | 
+
+Paquete 104 - SKBO - SGAS - Mon Jan 01 12:38:25 PET 2024 - Wed Jan 03 11:38:25 PET 2024
+La mejor ruta para el paquete 104 fue:
+Ruta 50: SKBO (2024-01-01 23:12:00) -> SGAS (2024-01-02 17:59:00)  (ID: 160) | 
+
+Paquete 105 - SGAS - SCEL - Wed Jan 03 07:47:05 PET 2024 - Fri Jan 05 06:47:05 PET 2024
+La mejor ruta para el paquete 105 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 106 - SPIM - SKBO - Thu Jan 04 04:04:53 PET 2024 - Sat Jan 06 04:04:53 PET 2024
+La mejor ruta para el paquete 106 fue:
+Ruta 278: SPIM (2024-01-04 19:17:00) -> SKBO (2024-01-05 14:10:00)  (ID: 610) | 
+
+Paquete 107 - SUAA - SLLP - Tue Jan 02 18:27:43 PET 2024 - Thu Jan 04 19:27:43 PET 2024
+La mejor ruta para el paquete 107 fue:
+Ruta 69: SUAA (2024-01-02 18:52:00) -> SLLP (2024-01-03 06:56:00)  (ID: 226) | 
+
+Paquete 108 - SABE - SVMI - Wed Jan 03 01:00:51 PET 2024 - Fri Jan 05 02:00:51 PET 2024
+La mejor ruta para el paquete 108 fue:
+Ruta 442: SABE (2024-01-03 09:22:00) -> SVMI (2024-01-03 22:04:00)  (ID: 524) | 
+
+Paquete 109 - SEQM - SKBO - Tue Jan 02 15:19:38 PET 2024 - Thu Jan 04 15:19:38 PET 2024
+La mejor ruta para el paquete 109 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 110 - SVMI - SABE - Mon Jan 01 07:17:14 PET 2024 - Wed Jan 03 06:17:14 PET 2024
+La mejor ruta para el paquete 110 fue:
+Ruta 199: SVMI (2024-01-01 11:07:00) -> SABE (2024-01-01 11:38:00)  (ID: 18) | 
+
+Paquete 111 - SCEL - SGAS - Tue Jan 02 21:30:16 PET 2024 - Thu Jan 04 22:30:16 PET 2024
+La mejor ruta para el paquete 111 fue:
+Ruta 75: SCEL (2024-01-03 16:48:00) -> SGAS (2024-01-03 19:27:00)  (ID: 482) | 
+
+Paquete 112 - SPIM - SBBR - Thu Jan 04 03:21:07 PET 2024 - Sat Jan 06 01:21:07 PET 2024
+La mejor ruta para el paquete 112 fue:
+Ruta 419: SPIM (2024-01-04 18:12:00) -> SBBR (2024-01-05 09:42:00)  (ID: 598) | 
+
+Paquete 113 - SGAS - SCEL - Wed Jan 03 21:01:27 PET 2024 - Fri Jan 05 20:01:27 PET 2024
+La mejor ruta para el paquete 113 fue:
+Ruta 578: SGAS (2024-01-04 19:41:00) -> SCEL (2024-01-04 23:01:00)  (ID: 680) | 
+
+Paquete 114 - SKBO - SGAS - Tue Jan 02 22:01:45 PET 2024 - Thu Jan 04 21:01:45 PET 2024
+La mejor ruta para el paquete 114 fue:
+Ruta 71: SKBO (2024-01-02 23:12:00) -> SGAS (2024-01-03 17:59:00)  (ID: 340) | 
+
+Paquete 115 - SVMI - SLLP - Tue Jan 02 21:25:24 PET 2024 - Thu Jan 04 21:25:24 PET 2024
+La mejor ruta para el paquete 115 fue:
+Ruta 251: SVMI (2024-01-03 10:31:00) -> SLLP (2024-01-03 17:25:00)  (ID: 370) | 
+
+Paquete 116 - SLLP - SBBR - Mon Jan 01 18:45:27 PET 2024 - Wed Jan 03 17:45:27 PET 2024
+La mejor ruta para el paquete 116 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 117 - SKBO - SGAS - Mon Jan 01 13:34:01 PET 2024 - Wed Jan 03 12:34:01 PET 2024
+La mejor ruta para el paquete 117 fue:
+Ruta 50: SKBO (2024-01-01 23:12:00) -> SGAS (2024-01-02 17:59:00)  (ID: 160) | 
+
+Paquete 118 - SEQM - SLLP - Tue Jan 02 23:16:30 PET 2024 - Thu Jan 04 22:16:30 PET 2024
+La mejor ruta para el paquete 118 fue:
+Ruta 567: SEQM (2024-01-03 14:02:00) -> SLLP (2024-01-03 17:16:00)  (ID: 442) | 
+
+Paquete 119 - SGAS - SUAA - Mon Jan 01 04:43:20 PET 2024 - Wed Jan 03 03:43:20 PET 2024
+La mejor ruta para el paquete 119 fue:
+Ruta 492: SGAS (2024-01-01 14:10:00) -> SUAA (2024-01-01 20:23:00)  (ID: 132) | 
+
+Paquete 120 - SBBR - SABE - Wed Jan 03 14:26:53 PET 2024 - Fri Jan 05 14:26:53 PET 2024
+La mejor ruta para el paquete 120 fue:
+Ruta 260: SBBR (2024-01-04 14:24:00) -> SABE (2024-01-04 17:27:00)  (ID: 576) | 
+
+Paquete 121 - SPIM - SBBR - Tue Jan 02 00:27:43 PET 2024 - Wed Jan 03 22:27:43 PET 2024
+La mejor ruta para el paquete 121 fue:
+Ruta 367: SPIM (2024-01-02 18:12:00) -> SBBR (2024-01-03 09:42:00)  (ID: 238) | 
+
+Paquete 122 - SKBO - SCEL - Wed Jan 03 06:12:43 PET 2024 - Fri Jan 05 04:12:43 PET 2024
+La mejor ruta para el paquete 122 fue:
+Ruta 70: SKBO (2024-01-03 14:10:00) -> SCEL (2024-01-04 05:31:00)  (ID: 518) | 
+
+Paquete 123 - SBBR - SABE - Tue Jan 02 18:28:54 PET 2024 - Thu Jan 04 18:28:54 PET 2024
+La mejor ruta para el paquete 123 fue:
+Ruta 242: SBBR (2024-01-03 14:24:00) -> SABE (2024-01-03 17:27:00)  (ID: 396) | 
+
+Paquete 124 - SVMI - SKBO - Wed Jan 03 08:58:09 PET 2024 - Fri Jan 05 09:58:09 PET 2024
+La mejor ruta para el paquete 124 fue:
+Ruta 252: SVMI (2024-01-04 05:22:00) -> SKBO (2024-01-04 14:33:00)  (ID: 556) | 
+
+Paquete 125 - SPIM - SUAA - Mon Jan 01 17:32:13 PET 2024 - Wed Jan 03 15:32:13 PET 2024
+La mejor ruta para el paquete 125 fue:
+Ruta 305: SPIM (2024-01-01 19:37:00) -> SUAA (2024-01-02 18:59:00)  (ID: 60) | 
+
+Paquete 126 - SGAS - SBBR - Tue Jan 02 15:22:07 PET 2024 - Thu Jan 04 14:22:07 PET 2024
+La mejor ruta para el paquete 126 fue:
+Ruta 530: SGAS (2024-01-02 17:05:00) -> SBBR (2024-01-03 05:43:00)  (ID: 310) | 
+
+Paquete 127 - SABE - SLLP - Mon Jan 01 05:04:10 PET 2024 - Wed Jan 03 06:04:10 PET 2024
+La mejor ruta para el paquete 127 fue:
+Ruta 412: SABE (2024-01-01 07:16:00) -> SLLP (2024-01-01 16:44:00)  (ID: 174) | 
+
+Paquete 128 - SEQM - SGAS - Thu Jan 04 04:08:52 PET 2024 - Sat Jan 06 03:08:52 PET 2024
+La mejor ruta para el paquete 128 fue:
+Ruta 620: SEQM (2024-01-04 18:36:00) -> SGAS (2024-01-05 18:33:00)  (ID: 626) | 
+
+Paquete 129 - SVMI - SCEL - Tue Jan 02 03:02:55 PET 2024 - Thu Jan 04 02:02:55 PET 2024
+La mejor ruta para el paquete 129 fue:
+Ruta 230: SVMI (2024-01-02 19:05:00) -> SCEL (2024-01-03 06:52:00)  (ID: 192) | 
+
+Paquete 130 - SEQM - SUAA - Thu Jan 04 00:41:18 PET 2024 - Fri Jan 05 22:41:18 PET 2024
+La mejor ruta para el paquete 130 fue:
+Ruta 576: SEQM (2024-01-04 10:54:00) -> SUAA (2024-01-04 14:32:00)  (ID: 618) | 
+
+Paquete 131 - SKBO - SLLP - Tue Jan 02 12:13:25 PET 2024 - Thu Jan 04 11:13:25 PET 2024
+La mejor ruta para el paquete 131 fue:
+Ruta 60: SKBO (2024-01-02 23:38:00) -> SLLP (2024-01-03 19:59:00)  (ID: 336) | 
+
+Paquete 132 - SLLP - SGAS - Tue Jan 02 09:25:15 PET 2024 - Thu Jan 04 09:25:15 PET 2024
+La mejor ruta para el paquete 132 fue:
+Ruta 388: SLLP (2024-01-02 16:19:00) -> SGAS (2024-01-03 08:25:00)  (ID: 284) | 
+
+Paquete 133 - SGAS - SKBO - Mon Jan 01 13:57:19 PET 2024 - Wed Jan 03 14:57:19 PET 2024
+La mejor ruta para el paquete 133 fue:
+Ruta 493: SGAS (2024-01-01 18:00:00) -> SKBO (2024-01-02 16:03:00)  (ID: 142) | 
+
+Paquete 134 - SKBO - SLLP - Tue Jan 02 21:35:20 PET 2024 - Thu Jan 04 20:35:20 PET 2024
+La mejor ruta para el paquete 134 fue:
+Ruta 60: SKBO (2024-01-02 23:38:00) -> SLLP (2024-01-03 19:59:00)  (ID: 336) | 
+
+Paquete 135 - SUAA - SCEL - Tue Jan 02 19:42:06 PET 2024 - Thu Jan 04 19:42:06 PET 2024
+La mejor ruta para el paquete 135 fue:
+Ruta 66: SUAA (2024-01-02 22:20:00) -> SCEL (2024-01-03 19:44:00)  (ID: 228) | 
+
+Paquete 136 - SCEL - SLLP - Tue Jan 02 21:59:06 PET 2024 - Thu Jan 04 22:59:06 PET 2024
+La mejor ruta para el paquete 136 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 137 - SCEL - SVMI - Mon Jan 01 03:23:31 PET 2024 - Wed Jan 03 04:23:31 PET 2024
+La mejor ruta para el paquete 137 fue:
+Ruta 32: SCEL (2024-01-01 14:26:00) -> SVMI (2024-01-01 22:08:00)  (ID: 110) | 
+
+Paquete 138 - SUAA - SBBR - Tue Jan 02 02:20:51 PET 2024 - Thu Jan 04 02:20:51 PET 2024
+La mejor ruta para el paquete 138 fue:
+Ruta 77: SUAA (2024-01-02 18:02:00) -> SBBR (2024-01-02 20:10:00)  (ID: 220) | 
+
+Paquete 139 - SLLP - SKBO - Wed Jan 03 21:30:47 PET 2024 - Fri Jan 05 22:30:47 PET 2024
+La mejor ruta para el paquete 139 fue:
+Ruta 441: SLLP (2024-01-04 18:00:00) -> SKBO (2024-01-05 12:11:00)  (ID: 646) | 
+
+Paquete 140 - SCEL - SEQM - Wed Jan 03 17:30:32 PET 2024 - Fri Jan 05 19:30:32 PET 2024
+La mejor ruta para el paquete 140 fue:
+Ruta 109: SCEL (2024-01-04 12:53:00) -> SEQM (2024-01-04 16:47:00)  (ID: 658) | 
+
+Paquete 141 - SGAS - SUAA - Mon Jan 01 06:33:12 PET 2024 - Wed Jan 03 05:33:12 PET 2024
+La mejor ruta para el paquete 141 fue:
+Ruta 492: SGAS (2024-01-01 14:10:00) -> SUAA (2024-01-01 20:23:00)  (ID: 132) | 
+
+Paquete 142 - SLLP - SPIM - Wed Jan 03 01:34:34 PET 2024 - Fri Jan 05 02:34:34 PET 2024
+La mejor ruta para el paquete 142 fue:
+Ruta 420: SLLP (2024-01-03 20:27:00) -> SPIM (2024-01-04 08:24:00)  (ID: 458) | 
+
+Paquete 143 - SABE - SLLP - Mon Jan 01 14:39:54 PET 2024 - Wed Jan 03 15:39:54 PET 2024
+La mejor ruta para el paquete 143 fue:
+Ruta 460: SABE (2024-01-02 07:16:00) -> SLLP (2024-01-02 16:44:00)  (ID: 354) | 
+
+Paquete 144 - SLLP - SEQM - Wed Jan 03 20:45:34 PET 2024 - Fri Jan 05 21:45:34 PET 2024
+La mejor ruta para el paquete 144 fue:
+Ruta 434: SLLP (2024-01-04 12:59:00) -> SEQM (2024-01-04 17:09:00)  (ID: 640) | 
+
+Paquete 145 - SPIM - SABE - Mon Jan 01 13:48:25 PET 2024 - Wed Jan 03 11:48:25 PET 2024
+La mejor ruta para el paquete 145 fue:
+Ruta 334: SPIM (2024-01-01 15:51:00) -> SABE (2024-01-01 18:43:00)  (ID: 72) | 
+
+Paquete 146 - SKBO - SVMI - Tue Jan 02 22:34:34 PET 2024 - Thu Jan 04 21:34:34 PET 2024
+La mejor ruta para el paquete 146 fue:
+Ruta 81: SKBO (2024-01-03 19:45:00) -> SVMI (2024-01-04 18:22:00)  (ID: 506) | 
+
+Paquete 147 - SPIM - SLLP - Tue Jan 02 01:40:13 PET 2024 - Thu Jan 04 00:40:13 PET 2024
+La mejor ruta para el paquete 147 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 148 - SGAS - SLLP - Mon Jan 01 05:23:51 PET 2024 - Wed Jan 03 05:23:51 PET 2024
+La mejor ruta para el paquete 148 fue:
+Ruta 486: SGAS (2024-01-01 05:37:00) -> SLLP (2024-01-01 14:14:00)  (ID: 138) | 
+
+Paquete 149 - SBBR - SEQM - Wed Jan 03 23:19:27 PET 2024 - Sat Jan 06 01:19:27 PET 2024
+La mejor ruta para el paquete 149 fue:
+Ruta 319: SBBR (2024-01-04 18:07:00) -> SEQM (2024-01-05 06:29:00)  (ID: 566) | 
+
+Paquete 150 - SPIM - SBBR - Tue Jan 02 15:00:12 PET 2024 - Thu Jan 04 13:00:12 PET 2024
+La mejor ruta para el paquete 150 fue:
+Ruta 367: SPIM (2024-01-02 18:12:00) -> SBBR (2024-01-03 09:42:00)  (ID: 238) | 
+
+Paquete 151 - SGAS - SKBO - Tue Jan 02 02:23:30 PET 2024 - Thu Jan 04 03:23:30 PET 2024
+La mejor ruta para el paquete 151 fue:
+Ruta 526: SGAS (2024-01-02 18:00:00) -> SKBO (2024-01-03 16:03:00)  (ID: 322) | 
+
+Paquete 152 - SABE - SUAA - Tue Jan 02 18:01:26 PET 2024 - Thu Jan 04 18:01:26 PET 2024
+La mejor ruta para el paquete 152 fue:
+Ruta 429: SABE (2024-01-03 17:22:00) -> SUAA (2024-01-03 19:47:00)  (ID: 528) | 
+
+Paquete 153 - SLLP - SBBR - Tue Jan 02 18:37:00 PET 2024 - Thu Jan 04 17:37:00 PET 2024
+La mejor ruta para el paquete 153 fue:
+Ruta 401: SLLP (2024-01-03 11:30:00) -> SBBR (2024-01-03 21:01:00)  (ID: 454) | 
+
+Paquete 154 - SBBR - SPIM - Mon Jan 01 15:18:31 PET 2024 - Wed Jan 03 17:18:31 PET 2024
+La mejor ruta para el paquete 154 fue:
+Ruta 214: SBBR (2024-01-02 05:31:00) -> SPIM (2024-01-02 14:52:00)  (ID: 204) | 
+
+Paquete 155 - SBBR - SUAA - Mon Jan 01 08:52:35 PET 2024 - Wed Jan 03 08:52:35 PET 2024
+La mejor ruta para el paquete 155 fue:
+Ruta 211: SBBR (2024-01-02 05:23:00) -> SUAA (2024-01-02 11:34:00)  (ID: 202) | 
+
+Paquete 156 - SABE - SBBR - Mon Jan 01 18:58:47 PET 2024 - Wed Jan 03 18:58:47 PET 2024
+La mejor ruta para el paquete 156 fue:
+Ruta 386: SABE (2024-01-02 05:31:00) -> SBBR (2024-01-02 14:08:00)  (ID: 346) | 
+
+Paquete 157 - SPIM - SGAS - Mon Jan 01 14:45:40 PET 2024 - Wed Jan 03 13:45:40 PET 2024
+La mejor ruta para el paquete 157 fue:
+Ruta 358: SPIM (2024-01-01 22:29:00) -> SGAS (2024-01-02 06:22:00)  (ID: 68) | 
+
+Paquete 158 - SBBR - SPIM - Wed Jan 03 15:11:16 PET 2024 - Fri Jan 05 17:11:16 PET 2024
+La mejor ruta para el paquete 158 fue:
+Ruta 261: SBBR (2024-01-04 05:31:00) -> SPIM (2024-01-04 14:52:00)  (ID: 564) | 
+
+Paquete 159 - SBBR - SGAS - Tue Jan 02 15:55:30 PET 2024 - Thu Jan 04 16:55:30 PET 2024
+La mejor ruta para el paquete 159 fue:
+Ruta 246: SBBR (2024-01-03 08:19:00) -> SGAS (2024-01-03 12:24:00)  (ID: 392) | 
+
+Paquete 160 - SPIM - SLLP - Mon Jan 01 23:54:12 PET 2024 - Wed Jan 03 22:54:12 PET 2024
+La mejor ruta para el paquete 160 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 161 - SPIM - SABE - Wed Jan 03 03:58:18 PET 2024 - Fri Jan 05 01:58:18 PET 2024
+La mejor ruta para el paquete 161 fue:
+Ruta 390: SPIM (2024-01-03 15:51:00) -> SABE (2024-01-03 18:43:00)  (ID: 432) | 
+
+Paquete 162 - SEQM - SGAS - Tue Jan 02 23:43:11 PET 2024 - Thu Jan 04 22:43:11 PET 2024
+La mejor ruta para el paquete 162 fue:
+Ruta 604: SEQM (2024-01-03 18:36:00) -> SGAS (2024-01-04 18:33:00)  (ID: 446) | 
+
+Paquete 163 - SBBR - SUAA - Wed Jan 03 23:10:59 PET 2024 - Fri Jan 05 23:10:59 PET 2024
+La mejor ruta para el paquete 163 fue:
+Ruta 245: SBBR (2024-01-04 05:23:00) -> SUAA (2024-01-04 11:34:00)  (ID: 562) | 
+
+Paquete 164 - SEQM - SUAA - Mon Jan 01 05:38:37 PET 2024 - Wed Jan 03 03:38:37 PET 2024
+La mejor ruta para el paquete 164 fue:
+Ruta 505: SEQM (2024-01-01 10:54:00) -> SUAA (2024-01-01 14:32:00)  (ID: 78) | 
+
+Paquete 165 - SKBO - SUAA - Wed Jan 03 06:44:14 PET 2024 - Fri Jan 05 04:44:14 PET 2024
+La mejor ruta para el paquete 165 fue:
+Ruta 65: SKBO (2024-01-03 15:06:00) -> SUAA (2024-01-03 23:30:00)  (ID: 510) | 
+
+Paquete 166 - SABE - SGAS - Wed Jan 03 12:07:37 PET 2024 - Fri Jan 05 13:07:37 PET 2024
+La mejor ruta para el paquete 166 fue:
+Ruta 483: SABE (2024-01-03 15:33:00) -> SGAS (2024-01-03 17:46:00)  (ID: 538) | 
+
+Paquete 167 - SUAA - SGAS - Wed Jan 03 11:52:05 PET 2024 - Fri Jan 05 12:52:05 PET 2024
+La mejor ruta para el paquete 167 fue:
+Ruta 296: SUAA (2024-01-04 06:26:00) -> SGAS (2024-01-04 19:41:00)  (ID: 590) | 
+
+Paquete 168 - SBBR - SEQM - Mon Jan 01 04:22:41 PET 2024 - Wed Jan 03 06:22:41 PET 2024
+La mejor ruta para el paquete 168 fue:
+Ruta 210: SBBR (2024-01-01 18:07:00) -> SEQM (2024-01-02 06:29:00)  (ID: 26) | 
+
+Paquete 169 - SKBO - SLLP - Wed Jan 03 04:35:43 PET 2024 - Fri Jan 05 03:35:43 PET 2024
+La mejor ruta para el paquete 169 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 170 - SVMI - SABE - Mon Jan 01 19:27:40 PET 2024 - Wed Jan 03 18:27:40 PET 2024
+La mejor ruta para el paquete 170 fue:
+Ruta 224: SVMI (2024-01-02 11:07:00) -> SABE (2024-01-02 11:38:00)  (ID: 198) | 
+
+Paquete 171 - SKBO - SGAS - Thu Jan 04 03:18:40 PET 2024 - Sat Jan 06 02:18:40 PET 2024
+La mejor ruta para el paquete 171 fue:
+Ruta 114: SKBO (2024-01-04 23:12:00) -> SGAS (2024-01-05 17:59:00)  (ID: 700) | 
+
+Paquete 172 - SBBR - SKBO - Tue Jan 02 06:32:43 PET 2024 - Thu Jan 04 08:32:43 PET 2024
+La mejor ruta para el paquete 172 fue:
+Ruta 219: SBBR (2024-01-02 07:02:00) -> SKBO (2024-01-02 22:00:00)  (ID: 214) | 
+
+Paquete 173 - SCEL - SBBR - Wed Jan 03 14:36:30 PET 2024 - Fri Jan 05 14:36:30 PET 2024
+La mejor ruta para el paquete 173 fue:
+Ruta 84: SCEL (2024-01-03 16:55:00) -> SBBR (2024-01-03 21:12:00)  (ID: 472) | 
+
+Paquete 174 - SPIM - SUAA - Tue Jan 02 13:14:56 PET 2024 - Thu Jan 04 11:14:56 PET 2024
+La mejor ruta para el paquete 174 fue:
+Ruta 348: SPIM (2024-01-02 19:37:00) -> SUAA (2024-01-03 18:59:00)  (ID: 240) | 
+
+Paquete 175 - SPIM - SKBO - Wed Jan 03 17:48:20 PET 2024 - Fri Jan 05 17:48:20 PET 2024
+La mejor ruta para el paquete 175 fue:
+Ruta 256: SPIM (2024-01-03 19:17:00) -> SKBO (2024-01-04 14:10:00)  (ID: 430) | 
+
+Paquete 176 - SLLP - SEQM - Wed Jan 03 03:00:12 PET 2024 - Fri Jan 05 04:00:12 PET 2024
+La mejor ruta para el paquete 176 fue:
+Ruta 408: SLLP (2024-01-03 12:59:00) -> SEQM (2024-01-03 17:09:00)  (ID: 460) | 
+
+Paquete 177 - SKBO - SUAA - Mon Jan 01 14:53:22 PET 2024 - Wed Jan 03 12:53:22 PET 2024
+La mejor ruta para el paquete 177 fue:
+Ruta 24: SKBO (2024-01-01 15:06:00) -> SUAA (2024-01-01 23:30:00)  (ID: 150) | 
+
+Paquete 178 - SVMI - SEQM - Tue Jan 02 07:24:41 PET 2024 - Thu Jan 04 08:24:41 PET 2024
+La mejor ruta para el paquete 178 fue:
+Ruta 236: SVMI (2024-01-02 18:01:00) -> SEQM (2024-01-03 12:58:00)  (ID: 188) | 
+
+Paquete 179 - SGAS - SKBO - Thu Jan 04 00:17:42 PET 2024 - Sat Jan 06 01:17:42 PET 2024
+La mejor ruta para el paquete 179 fue:
+Ruta 568: SGAS (2024-01-04 18:00:00) -> SKBO (2024-01-05 16:03:00)  (ID: 682) | 
+
+Paquete 180 - SUAA - SLLP - Tue Jan 02 12:11:06 PET 2024 - Thu Jan 04 13:11:06 PET 2024
+La mejor ruta para el paquete 180 fue:
+Ruta 69: SUAA (2024-01-02 18:52:00) -> SLLP (2024-01-03 06:56:00)  (ID: 226) | 
+
+Paquete 181 - SKBO - SUAA - Tue Jan 02 17:14:00 PET 2024 - Thu Jan 04 15:14:00 PET 2024
+La mejor ruta para el paquete 181 fue:
+Ruta 65: SKBO (2024-01-03 15:06:00) -> SUAA (2024-01-03 23:30:00)  (ID: 510) | 
+
+Paquete 182 - SPIM - SEQM - Tue Jan 02 08:28:30 PET 2024 - Thu Jan 04 08:28:30 PET 2024
+La mejor ruta para el paquete 182 fue:
+Ruta 371: SPIM (2024-01-02 16:11:00) -> SEQM (2024-01-03 12:31:00)  (ID: 242) | 
+
+Paquete 183 - SUAA - SABE - Mon Jan 01 09:31:21 PET 2024 - Wed Jan 03 09:31:21 PET 2024
+La mejor ruta para el paquete 183 fue:
+Ruta 204: SUAA (2024-01-01 21:18:00) -> SABE (2024-01-02 07:46:00)  (ID: 54) | 
+
+Paquete 184 - SBBR - SPIM - Tue Jan 02 09:45:52 PET 2024 - Thu Jan 04 11:45:52 PET 2024
+La mejor ruta para el paquete 184 fue:
+Ruta 235: SBBR (2024-01-03 05:31:00) -> SPIM (2024-01-03 14:52:00)  (ID: 384) | 
+
+Paquete 185 - SKBO - SLLP - Wed Jan 03 17:30:17 PET 2024 - Fri Jan 05 16:30:17 PET 2024
+La mejor ruta para el paquete 185 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 186 - SVMI - SKBO - Mon Jan 01 23:25:56 PET 2024 - Thu Jan 04 00:25:56 PET 2024
+La mejor ruta para el paquete 186 fue:
+Ruta 213: SVMI (2024-01-02 05:22:00) -> SKBO (2024-01-02 14:33:00)  (ID: 196) | 
+
+Paquete 187 - SPIM - SBBR - Wed Jan 03 07:02:52 PET 2024 - Fri Jan 05 05:02:52 PET 2024
+La mejor ruta para el paquete 187 fue:
+Ruta 392: SPIM (2024-01-03 18:12:00) -> SBBR (2024-01-04 09:42:00)  (ID: 418) | 
+
+Paquete 188 - SVMI - SABE - Mon Jan 01 13:57:40 PET 2024 - Wed Jan 03 12:57:40 PET 2024
+La mejor ruta para el paquete 188 fue:
+Ruta 224: SVMI (2024-01-02 11:07:00) -> SABE (2024-01-02 11:38:00)  (ID: 198) | 
+
+Paquete 189 - SEQM - SABE - Tue Jan 02 07:22:23 PET 2024 - Thu Jan 04 05:22:23 PET 2024
+La mejor ruta para el paquete 189 fue:
+Ruta 565: SEQM (2024-01-02 19:40:00) -> SABE (2024-01-02 20:31:00)  (ID: 270) | 
+
+Paquete 190 - SKBO - SLLP - Wed Jan 03 05:59:52 PET 2024 - Fri Jan 05 04:59:52 PET 2024
+La mejor ruta para el paquete 190 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 191 - SABE - SBBR - Thu Jan 04 00:44:18 PET 2024 - Sat Jan 06 00:44:18 PET 2024
+La mejor ruta para el paquete 191 fue:
+Ruta 443: SABE (2024-01-04 05:31:00) -> SBBR (2024-01-04 14:08:00)  (ID: 706) | 
+
+Paquete 192 - SVMI - SPIM - Wed Jan 03 17:03:01 PET 2024 - Fri Jan 05 18:03:01 PET 2024
+La mejor ruta para el paquete 192 fue:
+Ruta 253: SVMI (2024-01-03 18:05:00) -> SPIM (2024-01-04 12:03:00)  (ID: 366) | 
+
+Paquete 193 - SUAA - SKBO - Wed Jan 03 19:45:24 PET 2024 - Fri Jan 05 21:45:24 PET 2024
+La mejor ruta para el paquete 193 fue:
+Ruta 117: SUAA (2024-01-04 18:59:00) -> SKBO (2024-01-05 09:13:00)  (ID: 592) | 
+
+Paquete 194 - SEQM - SBBR - Tue Jan 02 11:11:48 PET 2024 - Thu Jan 04 09:11:48 PET 2024
+La mejor ruta para el paquete 194 fue:
+Ruta 556: SEQM (2024-01-02 19:39:00) -> SBBR (2024-01-02 23:11:00)  (ID: 256) | 
+
+Paquete 195 - SGAS - SABE - Thu Jan 04 02:39:56 PET 2024 - Sat Jan 06 01:39:56 PET 2024
+La mejor ruta para el paquete 195 fue:
+Ruta 575: SGAS (2024-01-04 10:13:00) -> SABE (2024-01-04 13:08:00)  (ID: 684) | 
+
+Paquete 196 - SEQM - SKBO - Tue Jan 02 02:54:33 PET 2024 - Thu Jan 04 02:54:33 PET 2024
+La mejor ruta para el paquete 196 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 197 - SEQM - SVMI - Tue Jan 02 15:33:44 PET 2024 - Thu Jan 04 14:33:44 PET 2024
+La mejor ruta para el paquete 197 fue:
+Ruta 562: SEQM (2024-01-02 21:16:00) -> SVMI (2024-01-02 23:56:00)  (ID: 254) | 
+
+Paquete 198 - SPIM - SLLP - Tue Jan 02 14:16:54 PET 2024 - Thu Jan 04 13:16:54 PET 2024
+La mejor ruta para el paquete 198 fue:
+Ruta 379: SPIM (2024-01-03 14:15:00) -> SLLP (2024-01-03 14:46:00)  (ID: 424) | 
+
+Paquete 199 - SEQM - SABE - Tue Jan 02 22:07:23 PET 2024 - Thu Jan 04 20:07:23 PET 2024
+La mejor ruta para el paquete 199 fue:
+Ruta 584: SEQM (2024-01-03 19:40:00) -> SABE (2024-01-03 20:31:00)  (ID: 450) | 
+
+Paquete 200 - SABE - SGAS - Wed Jan 03 03:21:20 PET 2024 - Fri Jan 05 04:21:20 PET 2024
+La mejor ruta para el paquete 200 fue:
+Ruta 483: SABE (2024-01-03 15:33:00) -> SGAS (2024-01-03 17:46:00)  (ID: 538) | 
+
+Paquete 201 - SLLP - SVMI - Tue Jan 02 11:07:26 PET 2024 - Thu Jan 04 11:07:26 PET 2024
+La mejor ruta para el paquete 201 fue:
+Ruta 402: SLLP (2024-01-02 23:07:00) -> SVMI (2024-01-03 19:49:00)  (ID: 272) | 
+
+Paquete 202 - SCEL - SUAA - Wed Jan 03 17:59:51 PET 2024 - Fri Jan 05 17:59:51 PET 2024
+La mejor ruta para el paquete 202 fue:
+Ruta 86: SCEL (2024-01-03 22:06:00) -> SUAA (2024-01-04 07:54:00)  (ID: 474) | 
+
+Paquete 203 - SBBR - SCEL - Mon Jan 01 08:19:43 PET 2024 - Wed Jan 03 08:19:43 PET 2024
+La mejor ruta para el paquete 203 fue:
+Ruta 208: SBBR (2024-01-01 22:19:00) -> SCEL (2024-01-02 20:37:00)  (ID: 30) | 
+
+Paquete 204 - SVMI - SBBR - Tue Jan 02 13:50:21 PET 2024 - Thu Jan 04 12:50:21 PET 2024
+La mejor ruta para el paquete 204 fue:
+Ruta 223: SVMI (2024-01-02 13:58:00) -> SBBR (2024-01-02 18:53:00)  (ID: 182) | 
+
+Paquete 205 - SKBO - SABE - Wed Jan 03 23:19:10 PET 2024 - Fri Jan 05 21:19:10 PET 2024
+La mejor ruta para el paquete 205 fue:
+Ruta 105: SKBO (2024-01-04 20:46:00) -> SABE (2024-01-05 20:27:00)  (ID: 702) | 
+
+Paquete 206 - SLLP - SUAA - Wed Jan 03 04:08:39 PET 2024 - Fri Jan 05 03:08:39 PET 2024
+La mejor ruta para el paquete 206 fue:
+Ruta 391: SLLP (2024-01-03 05:08:00) -> SUAA (2024-01-03 13:06:00)  (ID: 456) | 
+
+Paquete 207 - SBBR - SVMI - Mon Jan 01 18:51:06 PET 2024 - Wed Jan 03 19:51:06 PET 2024
+La mejor ruta para el paquete 207 fue:
+Ruta 222: SBBR (2024-01-02 17:11:00) -> SVMI (2024-01-02 22:28:00)  (ID: 200) | 
+
+Paquete 208 - SVMI - SPIM - Mon Jan 01 11:09:26 PET 2024 - Wed Jan 03 12:09:26 PET 2024
+La mejor ruta para el paquete 208 fue:
+Ruta 205: SVMI (2024-01-01 18:05:00) -> SPIM (2024-01-02 12:03:00)  (ID: 6) | 
+
+Paquete 209 - SUAA - SBBR - Tue Jan 02 10:46:58 PET 2024 - Thu Jan 04 10:46:58 PET 2024
+La mejor ruta para el paquete 209 fue:
+Ruta 77: SUAA (2024-01-02 18:02:00) -> SBBR (2024-01-02 20:10:00)  (ID: 220) | 
+
+Paquete 210 - SUAA - SLLP - Wed Jan 03 21:41:45 PET 2024 - Fri Jan 05 22:41:45 PET 2024
+La mejor ruta para el paquete 210 fue:
+Ruta 115: SUAA (2024-01-04 18:52:00) -> SLLP (2024-01-05 06:56:00)  (ID: 586) | 
+
+Paquete 211 - SCEL - SKBO - Tue Jan 02 22:49:49 PET 2024 - Fri Jan 05 00:49:49 PET 2024
+La mejor ruta para el paquete 211 fue:
+Ruta 73: SCEL (2024-01-03 10:42:00) -> SKBO (2024-01-03 20:18:00)  (ID: 484) | 
+
+Paquete 212 - SVMI - SPIM - Wed Jan 03 21:36:58 PET 2024 - Fri Jan 05 22:36:58 PET 2024
+La mejor ruta para el paquete 212 fue:
+Ruta 276: SVMI (2024-01-04 18:05:00) -> SPIM (2024-01-05 12:03:00)  (ID: 546) | 
+
+Paquete 213 - SEQM - SBBR - Tue Jan 02 00:11:52 PET 2024 - Wed Jan 03 22:11:52 PET 2024
+La mejor ruta para el paquete 213 fue:
+Ruta 556: SEQM (2024-01-02 19:39:00) -> SBBR (2024-01-02 23:11:00)  (ID: 256) | 
+
+Paquete 214 - SKBO - SPIM - Tue Jan 02 13:38:15 PET 2024 - Thu Jan 04 13:38:15 PET 2024
+La mejor ruta para el paquete 214 fue:
+Ruta 62: SKBO (2024-01-02 18:30:00) -> SPIM (2024-01-02 18:49:00)  (ID: 332) | 
+
+Paquete 215 - SUAA - SKBO - Wed Jan 03 15:18:26 PET 2024 - Fri Jan 05 17:18:26 PET 2024
+La mejor ruta para el paquete 215 fue:
+Ruta 90: SUAA (2024-01-03 18:59:00) -> SKBO (2024-01-04 09:13:00)  (ID: 412) | 
+
+Paquete 216 - SVMI - SPIM - Mon Jan 01 09:35:42 PET 2024 - Wed Jan 03 10:35:42 PET 2024
+La mejor ruta para el paquete 216 fue:
+Ruta 205: SVMI (2024-01-01 18:05:00) -> SPIM (2024-01-02 12:03:00)  (ID: 6) | 
+
+Paquete 217 - SPIM - SKBO - Wed Jan 03 21:34:40 PET 2024 - Fri Jan 05 21:34:40 PET 2024
+La mejor ruta para el paquete 217 fue:
+Ruta 278: SPIM (2024-01-04 19:17:00) -> SKBO (2024-01-05 14:10:00)  (ID: 610) | 
+
+Paquete 218 - SKBO - SLLP - Thu Jan 04 01:38:35 PET 2024 - Sat Jan 06 00:38:35 PET 2024
+La mejor ruta para el paquete 218 fue:
+Ruta 103: SKBO (2024-01-04 23:38:00) -> SLLP (2024-01-05 19:59:00)  (ID: 696) | 
+
+Paquete 219 - SVMI - SKBO - Tue Jan 02 13:45:41 PET 2024 - Thu Jan 04 14:45:41 PET 2024
+La mejor ruta para el paquete 219 fue:
+Ruta 232: SVMI (2024-01-03 05:22:00) -> SKBO (2024-01-03 14:33:00)  (ID: 376) | 
+
+Paquete 220 - SUAA - SEQM - Tue Jan 02 06:31:19 PET 2024 - Thu Jan 04 08:31:19 PET 2024
+La mejor ruta para el paquete 220 fue:
+Ruta 217: SUAA (2024-01-02 07:10:00) -> SEQM (2024-01-02 21:45:00)  (ID: 224) | 
+
+Paquete 221 - SEQM - SABE - Tue Jan 02 08:24:01 PET 2024 - Thu Jan 04 06:24:01 PET 2024
+La mejor ruta para el paquete 221 fue:
+Ruta 565: SEQM (2024-01-02 19:40:00) -> SABE (2024-01-02 20:31:00)  (ID: 270) | 
+
+Paquete 222 - SLLP - SVMI - Wed Jan 03 23:34:17 PET 2024 - Fri Jan 05 23:34:17 PET 2024
+La mejor ruta para el paquete 222 fue:
+Ruta 452: SLLP (2024-01-04 23:07:00) -> SVMI (2024-01-05 19:49:00)  (ID: 632) | 
+
+Paquete 223 - SVMI - SABE - Tue Jan 02 03:42:41 PET 2024 - Thu Jan 04 02:42:41 PET 2024
+La mejor ruta para el paquete 223 fue:
+Ruta 224: SVMI (2024-01-02 11:07:00) -> SABE (2024-01-02 11:38:00)  (ID: 198) | 
+
+Paquete 224 - SVMI - SKBO - Wed Jan 03 22:03:42 PET 2024 - Fri Jan 05 23:03:42 PET 2024
+La mejor ruta para el paquete 224 fue:
+Ruta 252: SVMI (2024-01-04 05:22:00) -> SKBO (2024-01-04 14:33:00)  (ID: 556) | 
+
+Paquete 225 - SCEL - SPIM - Wed Jan 03 08:29:22 PET 2024 - Fri Jan 05 10:29:22 PET 2024
+La mejor ruta para el paquete 225 fue:
+Ruta 110: SCEL (2024-01-04 05:39:00) -> SPIM (2024-01-04 16:02:00)  (ID: 656) | 
+
+Paquete 226 - SLLP - SGAS - Wed Jan 03 04:18:59 PET 2024 - Fri Jan 05 04:18:59 PET 2024
+La mejor ruta para el paquete 226 fue:
+Ruta 411: SLLP (2024-01-03 16:19:00) -> SGAS (2024-01-04 08:25:00)  (ID: 464) | 
+
+Paquete 227 - SGAS - SKBO - Wed Jan 03 01:33:37 PET 2024 - Fri Jan 05 02:33:37 PET 2024
+La mejor ruta para el paquete 227 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 228 - SCEL - SUAA - Wed Jan 03 01:07:25 PET 2024 - Fri Jan 05 01:07:25 PET 2024
+La mejor ruta para el paquete 228 fue:
+Ruta 86: SCEL (2024-01-03 22:06:00) -> SUAA (2024-01-04 07:54:00)  (ID: 474) | 
+
+Paquete 229 - SCEL - SGAS - Mon Jan 01 11:20:16 PET 2024 - Wed Jan 03 12:20:16 PET 2024
+La mejor ruta para el paquete 229 fue:
+Ruta 33: SCEL (2024-01-01 16:48:00) -> SGAS (2024-01-01 19:27:00)  (ID: 122) | 
+
+Paquete 230 - SBBR - SABE - Mon Jan 01 08:19:31 PET 2024 - Wed Jan 03 08:19:31 PET 2024
+La mejor ruta para el paquete 230 fue:
+Ruta 200: SBBR (2024-01-01 14:24:00) -> SABE (2024-01-01 17:27:00)  (ID: 36) | 
+
+Paquete 231 - SVMI - SKBO - Wed Jan 03 22:46:48 PET 2024 - Fri Jan 05 23:46:48 PET 2024
+La mejor ruta para el paquete 231 fue:
+Ruta 252: SVMI (2024-01-04 05:22:00) -> SKBO (2024-01-04 14:33:00)  (ID: 556) | 
+
+Paquete 232 - SBBR - SKBO - Mon Jan 01 14:50:35 PET 2024 - Wed Jan 03 16:50:35 PET 2024
+La mejor ruta para el paquete 232 fue:
+Ruta 219: SBBR (2024-01-02 07:02:00) -> SKBO (2024-01-02 22:00:00)  (ID: 214) | 
+
+Paquete 233 - SBBR - SUAA - Wed Jan 03 22:41:30 PET 2024 - Fri Jan 05 22:41:30 PET 2024
+La mejor ruta para el paquete 233 fue:
+Ruta 245: SBBR (2024-01-04 05:23:00) -> SUAA (2024-01-04 11:34:00)  (ID: 562) | 
+
+Paquete 234 - SABE - SCEL - Tue Jan 02 17:29:55 PET 2024 - Thu Jan 04 17:29:55 PET 2024
+La mejor ruta para el paquete 234 fue:
+Ruta 431: SABE (2024-01-03 16:02:00) -> SCEL (2024-01-03 19:32:00)  (ID: 536) | 
+
+Paquete 235 - SABE - SLLP - Mon Jan 01 23:37:09 PET 2024 - Thu Jan 04 00:37:09 PET 2024
+La mejor ruta para el paquete 235 fue:
+Ruta 460: SABE (2024-01-02 07:16:00) -> SLLP (2024-01-02 16:44:00)  (ID: 354) | 
+
+Paquete 236 - SLLP - SPIM - Wed Jan 03 20:10:20 PET 2024 - Fri Jan 05 21:10:20 PET 2024
+La mejor ruta para el paquete 236 fue:
+Ruta 420: SLLP (2024-01-03 20:27:00) -> SPIM (2024-01-04 08:24:00)  (ID: 458) | 
+
+Paquete 237 - SVMI - SGAS - Tue Jan 02 19:08:55 PET 2024 - Thu Jan 04 19:08:55 PET 2024
+La mejor ruta para el paquete 237 fue:
+Ruta 238: SVMI (2024-01-03 10:22:00) -> SGAS (2024-01-03 14:58:00)  (ID: 374) | 
+
+Paquete 238 - SEQM - SUAA - Wed Jan 03 09:14:28 PET 2024 - Fri Jan 05 07:14:28 PET 2024
+La mejor ruta para el paquete 238 fue:
+Ruta 558: SEQM (2024-01-03 10:54:00) -> SUAA (2024-01-03 14:32:00)  (ID: 438) | 
+
+Paquete 239 - SKBO - SLLP - Mon Jan 01 05:08:00 PET 2024 - Wed Jan 03 04:08:00 PET 2024
+La mejor ruta para el paquete 239 fue:
+Ruta 40: SKBO (2024-01-01 23:38:00) -> SLLP (2024-01-02 19:59:00)  (ID: 156) | 
+
+Paquete 240 - SPIM - SABE - Tue Jan 02 12:50:07 PET 2024 - Thu Jan 04 10:50:07 PET 2024
+La mejor ruta para el paquete 240 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 241 - SGAS - SLLP - Wed Jan 03 05:00:56 PET 2024 - Fri Jan 05 05:00:56 PET 2024
+La mejor ruta para el paquete 241 fue:
+Ruta 550: SGAS (2024-01-03 05:37:00) -> SLLP (2024-01-03 14:14:00)  (ID: 498) | 
+
+Paquete 242 - SPIM - SGAS - Mon Jan 01 15:53:01 PET 2024 - Wed Jan 03 14:53:01 PET 2024
+La mejor ruta para el paquete 242 fue:
+Ruta 358: SPIM (2024-01-01 22:29:00) -> SGAS (2024-01-02 06:22:00)  (ID: 68) | 
+
+Paquete 243 - SKBO - SLLP - Mon Jan 01 23:56:22 PET 2024 - Wed Jan 03 22:56:22 PET 2024
+La mejor ruta para el paquete 243 fue:
+Ruta 60: SKBO (2024-01-02 23:38:00) -> SLLP (2024-01-03 19:59:00)  (ID: 336) | 
+
+Paquete 244 - SBBR - SUAA - Mon Jan 01 03:10:26 PET 2024 - Wed Jan 03 03:10:26 PET 2024
+La mejor ruta para el paquete 244 fue:
+Ruta 180: SBBR (2024-01-01 05:23:00) -> SUAA (2024-01-01 11:34:00)  (ID: 22) | 
+
+Paquete 245 - SEQM - SGAS - Tue Jan 02 17:01:09 PET 2024 - Thu Jan 04 16:01:09 PET 2024
+La mejor ruta para el paquete 245 fue:
+Ruta 569: SEQM (2024-01-02 18:36:00) -> SGAS (2024-01-03 18:33:00)  (ID: 266) | 
+
+Paquete 246 - SABE - SLLP - Wed Jan 03 02:44:49 PET 2024 - Fri Jan 05 03:44:49 PET 2024
+La mejor ruta para el paquete 246 fue:
+Ruta 501: SABE (2024-01-03 07:16:00) -> SLLP (2024-01-03 16:44:00)  (ID: 534) | 
+
+Paquete 247 - SLLP - SEQM - Mon Jan 01 23:27:58 PET 2024 - Thu Jan 04 00:27:58 PET 2024
+La mejor ruta para el paquete 247 fue:
+Ruta 385: SLLP (2024-01-02 12:59:00) -> SEQM (2024-01-02 17:09:00)  (ID: 280) | 
+
+Paquete 248 - SGAS - SEQM - Tue Jan 02 20:35:15 PET 2024 - Thu Jan 04 21:35:15 PET 2024
+La mejor ruta para el paquete 248 fue:
+Ruta 554: SGAS (2024-01-02 21:49:00) -> SEQM (2024-01-03 16:26:00)  (ID: 316) | 
+
+Paquete 249 - SBBR - SUAA - Mon Jan 01 05:35:52 PET 2024 - Wed Jan 03 05:35:52 PET 2024
+La mejor ruta para el paquete 249 fue:
+Ruta 211: SBBR (2024-01-02 05:23:00) -> SUAA (2024-01-02 11:34:00)  (ID: 202) | 
+
+Paquete 250 - SGAS - SPIM - Tue Jan 02 04:33:24 PET 2024 - Thu Jan 04 05:33:24 PET 2024
+La mejor ruta para el paquete 250 fue:
+Ruta 523: SGAS (2024-01-02 09:07:00) -> SPIM (2024-01-02 17:21:00)  (ID: 314) | 
+
+Paquete 251 - SEQM - SKBO - Mon Jan 01 22:47:02 PET 2024 - Wed Jan 03 22:47:02 PET 2024
+La mejor ruta para el paquete 251 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 252 - SKBO - SABE - Wed Jan 03 00:48:33 PET 2024 - Thu Jan 04 22:48:33 PET 2024
+La mejor ruta para el paquete 252 fue:
+Ruta 85: SKBO (2024-01-03 20:46:00) -> SABE (2024-01-04 20:27:00)  (ID: 522) | 
+
+Paquete 253 - SEQM - SABE - Tue Jan 02 13:30:13 PET 2024 - Thu Jan 04 11:30:13 PET 2024
+La mejor ruta para el paquete 253 fue:
+Ruta 565: SEQM (2024-01-02 19:40:00) -> SABE (2024-01-02 20:31:00)  (ID: 270) | 
+
+Paquete 254 - SLLP - SCEL - Tue Jan 02 14:46:57 PET 2024 - Thu Jan 04 13:46:57 PET 2024
+La mejor ruta para el paquete 254 fue:
+Ruta 396: SLLP (2024-01-03 07:33:00) -> SCEL (2024-01-03 14:53:00)  (ID: 462) | 
+
+Paquete 255 - SCEL - SKBO - Wed Jan 03 20:47:03 PET 2024 - Fri Jan 05 22:47:03 PET 2024
+La mejor ruta para el paquete 255 fue:
+Ruta 106: SCEL (2024-01-04 10:42:00) -> SKBO (2024-01-04 20:18:00)  (ID: 664) | 
+
+Paquete 256 - SGAS - SCEL - Wed Jan 03 06:34:18 PET 2024 - Fri Jan 05 05:34:18 PET 2024
+La mejor ruta para el paquete 256 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 257 - SCEL - SGAS - Wed Jan 03 08:38:50 PET 2024 - Fri Jan 05 09:38:50 PET 2024
+La mejor ruta para el paquete 257 fue:
+Ruta 75: SCEL (2024-01-03 16:48:00) -> SGAS (2024-01-03 19:27:00)  (ID: 482) | 
+
+Paquete 258 - SPIM - SVMI - Tue Jan 02 12:40:41 PET 2024 - Thu Jan 04 11:40:41 PET 2024
+La mejor ruta para el paquete 258 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 259 - SVMI - SBBR - Tue Jan 02 12:50:29 PET 2024 - Thu Jan 04 11:50:29 PET 2024
+La mejor ruta para el paquete 259 fue:
+Ruta 223: SVMI (2024-01-02 13:58:00) -> SBBR (2024-01-02 18:53:00)  (ID: 182) | 
+
+Paquete 260 - SGAS - SBBR - Wed Jan 03 00:48:15 PET 2024 - Thu Jan 04 23:48:15 PET 2024
+La mejor ruta para el paquete 260 fue:
+Ruta 553: SGAS (2024-01-03 17:05:00) -> SBBR (2024-01-04 05:43:00)  (ID: 490) | 
+
+Paquete 261 - SPIM - SABE - Tue Jan 02 15:30:36 PET 2024 - Thu Jan 04 13:30:36 PET 2024
+La mejor ruta para el paquete 261 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 262 - SCEL - SEQM - Wed Jan 03 12:50:49 PET 2024 - Fri Jan 05 14:50:49 PET 2024
+La mejor ruta para el paquete 262 fue:
+Ruta 87: SCEL (2024-01-03 12:53:00) -> SEQM (2024-01-03 16:47:00)  (ID: 478) | 
+
+Paquete 263 - SABE - SLLP - Wed Jan 03 15:02:49 PET 2024 - Fri Jan 05 16:02:49 PET 2024
+La mejor ruta para el paquete 263 fue:
+Ruta 539: SABE (2024-01-04 07:16:00) -> SLLP (2024-01-04 16:44:00)  (ID: 714) | 
+
+Paquete 264 - SEQM - SABE - Mon Jan 01 08:58:20 PET 2024 - Wed Jan 03 06:58:20 PET 2024
+La mejor ruta para el paquete 264 fue:
+Ruta 541: SEQM (2024-01-01 19:40:00) -> SABE (2024-01-01 20:31:00)  (ID: 90) | 
+
+Paquete 265 - SGAS - SUAA - Tue Jan 02 04:11:04 PET 2024 - Thu Jan 04 03:11:04 PET 2024
+La mejor ruta para el paquete 265 fue:
+Ruta 527: SGAS (2024-01-02 14:10:00) -> SUAA (2024-01-02 20:23:00)  (ID: 312) | 
+
+Paquete 266 - SPIM - SGAS - Thu Jan 04 04:32:43 PET 2024 - Sat Jan 06 03:32:43 PET 2024
+La mejor ruta para el paquete 266 fue:
+Ruta 428: SPIM (2024-01-04 22:29:00) -> SGAS (2024-01-05 06:22:00)  (ID: 608) | 
+
+Paquete 267 - SPIM - SKBO - Wed Jan 03 04:50:32 PET 2024 - Fri Jan 05 04:50:32 PET 2024
+La mejor ruta para el paquete 267 fue:
+Ruta 256: SPIM (2024-01-03 19:17:00) -> SKBO (2024-01-04 14:10:00)  (ID: 430) | 
+
+Paquete 268 - SGAS - SVMI - Thu Jan 04 00:29:44 PET 2024 - Sat Jan 06 00:29:44 PET 2024
+La mejor ruta para el paquete 268 fue:
+Ruta 573: SGAS (2024-01-04 12:53:00) -> SVMI (2024-01-04 16:36:00)  (ID: 668) | 
+
+Paquete 269 - SUAA - SKBO - Tue Jan 02 23:06:48 PET 2024 - Fri Jan 05 01:06:48 PET 2024
+La mejor ruta para el paquete 269 fue:
+Ruta 90: SUAA (2024-01-03 18:59:00) -> SKBO (2024-01-04 09:13:00)  (ID: 412) | 
+
+Paquete 270 - SEQM - SCEL - Mon Jan 01 17:47:45 PET 2024 - Wed Jan 03 15:47:45 PET 2024
+La mejor ruta para el paquete 270 fue:
+Ruta 538: SEQM (2024-01-02 16:36:00) -> SCEL (2024-01-03 09:07:00)  (ID: 264) | 
+
+Paquete 271 - SKBO - SLLP - Wed Jan 03 14:23:29 PET 2024 - Fri Jan 05 13:23:29 PET 2024
+La mejor ruta para el paquete 271 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 272 - SEQM - SCEL - Wed Jan 03 17:24:29 PET 2024 - Fri Jan 05 15:24:29 PET 2024
+La mejor ruta para el paquete 272 fue:
+Ruta 581: SEQM (2024-01-04 16:36:00) -> SCEL (2024-01-05 09:07:00)  (ID: 624) | 
+
+Paquete 273 - SLLP - SPIM - Wed Jan 03 01:58:36 PET 2024 - Fri Jan 05 02:58:36 PET 2024
+La mejor ruta para el paquete 273 fue:
+Ruta 420: SLLP (2024-01-03 20:27:00) -> SPIM (2024-01-04 08:24:00)  (ID: 458) | 
+
+Paquete 274 - SUAA - SPIM - Tue Jan 02 11:37:47 PET 2024 - Thu Jan 04 13:37:47 PET 2024
+La mejor ruta para el paquete 274 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 275 - SBBR - SUAA - Mon Jan 01 17:31:22 PET 2024 - Wed Jan 03 17:31:22 PET 2024
+La mejor ruta para el paquete 275 fue:
+Ruta 211: SBBR (2024-01-02 05:23:00) -> SUAA (2024-01-02 11:34:00)  (ID: 202) | 
+
+Paquete 276 - SVMI - SEQM - Mon Jan 01 08:36:22 PET 2024 - Wed Jan 03 09:36:22 PET 2024
+La mejor ruta para el paquete 276 fue:
+Ruta 212: SVMI (2024-01-01 18:01:00) -> SEQM (2024-01-02 12:58:00)  (ID: 8) | 
+
+Paquete 277 - SABE - SPIM - Tue Jan 02 13:40:00 PET 2024 - Thu Jan 04 15:40:00 PET 2024
+La mejor ruta para el paquete 277 fue:
+Ruta 427: SABE (2024-01-02 14:27:00) -> SPIM (2024-01-03 05:12:00)  (ID: 350) | 
+
+Paquete 278 - SCEL - SUAA - Tue Jan 02 08:46:56 PET 2024 - Thu Jan 04 08:46:56 PET 2024
+La mejor ruta para el paquete 278 fue:
+Ruta 63: SCEL (2024-01-02 22:06:00) -> SUAA (2024-01-03 07:54:00)  (ID: 294) | 
+
+Paquete 279 - SEQM - SUAA - Mon Jan 01 05:41:03 PET 2024 - Wed Jan 03 03:41:03 PET 2024
+La mejor ruta para el paquete 279 fue:
+Ruta 505: SEQM (2024-01-01 10:54:00) -> SUAA (2024-01-01 14:32:00)  (ID: 78) | 
+
+Paquete 280 - SVMI - SKBO - Mon Jan 01 05:14:29 PET 2024 - Wed Jan 03 06:14:29 PET 2024
+La mejor ruta para el paquete 280 fue:
+Ruta 184: SVMI (2024-01-01 05:22:00) -> SKBO (2024-01-01 14:33:00)  (ID: 16) | 
+
+Paquete 281 - SUAA - SKBO - Thu Jan 04 02:40:51 PET 2024 - Sat Jan 06 04:40:51 PET 2024
+La mejor ruta para el paquete 281 fue:
+Ruta 117: SUAA (2024-01-04 18:59:00) -> SKBO (2024-01-05 09:13:00)  (ID: 592) | 
+
+Paquete 282 - SLLP - SBBR - Mon Jan 01 18:34:25 PET 2024 - Wed Jan 03 17:34:25 PET 2024
+La mejor ruta para el paquete 282 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 283 - SGAS - SBBR - Tue Jan 02 07:07:55 PET 2024 - Thu Jan 04 06:07:55 PET 2024
+La mejor ruta para el paquete 283 fue:
+Ruta 530: SGAS (2024-01-02 17:05:00) -> SBBR (2024-01-03 05:43:00)  (ID: 310) | 
+
+Paquete 284 - SUAA - SVMI - Tue Jan 02 05:35:08 PET 2024 - Thu Jan 04 06:35:08 PET 2024
+La mejor ruta para el paquete 284 fue:
+Ruta 64: SUAA (2024-01-02 17:11:00) -> SVMI (2024-01-03 04:59:00)  (ID: 218) | 
+
+Paquete 285 - SUAA - SPIM - Wed Jan 03 05:38:03 PET 2024 - Fri Jan 05 07:38:03 PET 2024
+La mejor ruta para el paquete 285 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 286 - SCEL - SGAS - Mon Jan 01 15:19:15 PET 2024 - Wed Jan 03 16:19:15 PET 2024
+La mejor ruta para el paquete 286 fue:
+Ruta 33: SCEL (2024-01-01 16:48:00) -> SGAS (2024-01-01 19:27:00)  (ID: 122) | 
+
+Paquete 287 - SLLP - SEQM - Mon Jan 01 10:45:21 PET 2024 - Wed Jan 03 11:45:21 PET 2024
+La mejor ruta para el paquete 287 fue:
+Ruta 359: SLLP (2024-01-01 12:59:00) -> SEQM (2024-01-01 17:09:00)  (ID: 100) | 
+
+Paquete 288 - SCEL - SABE - Wed Jan 03 06:30:51 PET 2024 - Fri Jan 05 06:30:51 PET 2024
+La mejor ruta para el paquete 288 fue:
+Ruta 97: SCEL (2024-01-03 18:08:00) -> SABE (2024-01-03 22:40:00)  (ID: 486) | 
+
+Paquete 289 - SCEL - SLLP - Tue Jan 02 13:43:23 PET 2024 - Thu Jan 04 14:43:23 PET 2024
+La mejor ruta para el paquete 289 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 290 - SUAA - SCEL - Mon Jan 01 17:02:45 PET 2024 - Wed Jan 03 17:02:45 PET 2024
+La mejor ruta para el paquete 290 fue:
+Ruta 48: SUAA (2024-01-01 22:20:00) -> SCEL (2024-01-02 19:44:00)  (ID: 48) | 
+
+Paquete 291 - SUAA - SBBR - Mon Jan 01 04:05:48 PET 2024 - Wed Jan 03 04:05:48 PET 2024
+La mejor ruta para el paquete 291 fue:
+Ruta 54: SUAA (2024-01-01 18:02:00) -> SBBR (2024-01-01 20:10:00)  (ID: 40) | 
+
+Paquete 292 - SBBR - SVMI - Wed Jan 03 02:00:05 PET 2024 - Fri Jan 05 03:00:05 PET 2024
+La mejor ruta para el paquete 292 fue:
+Ruta 240: SBBR (2024-01-03 17:11:00) -> SVMI (2024-01-03 22:28:00)  (ID: 380) | 
+
+Paquete 293 - SEQM - SCEL - Wed Jan 03 02:18:29 PET 2024 - Fri Jan 05 00:18:29 PET 2024
+La mejor ruta para el paquete 293 fue:
+Ruta 561: SEQM (2024-01-03 16:36:00) -> SCEL (2024-01-04 09:07:00)  (ID: 444) | 
+
+Paquete 294 - SBBR - SPIM - Mon Jan 01 16:56:49 PET 2024 - Wed Jan 03 18:56:49 PET 2024
+La mejor ruta para el paquete 294 fue:
+Ruta 214: SBBR (2024-01-02 05:31:00) -> SPIM (2024-01-02 14:52:00)  (ID: 204) | 
+
+Paquete 295 - SPIM - SBBR - Mon Jan 01 11:05:49 PET 2024 - Wed Jan 03 09:05:49 PET 2024
+La mejor ruta para el paquete 295 fue:
+Ruta 337: SPIM (2024-01-01 18:12:00) -> SBBR (2024-01-02 09:42:00)  (ID: 58) | 
+
+Paquete 296 - SGAS - SBBR - Tue Jan 02 20:12:22 PET 2024 - Thu Jan 04 19:12:22 PET 2024
+La mejor ruta para el paquete 296 fue:
+Ruta 553: SGAS (2024-01-03 17:05:00) -> SBBR (2024-01-04 05:43:00)  (ID: 490) | 
+
+Paquete 297 - SVMI - SUAA - Wed Jan 03 06:35:16 PET 2024 - Fri Jan 05 05:35:16 PET 2024
+La mejor ruta para el paquete 297 fue:
+Ruta 244: SVMI (2024-01-03 19:32:00) -> SUAA (2024-01-03 22:57:00)  (ID: 364) | 
+
+Paquete 298 - SPIM - SVMI - Tue Jan 02 00:47:19 PET 2024 - Wed Jan 03 23:47:19 PET 2024
+La mejor ruta para el paquete 298 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 299 - SVMI - SUAA - Wed Jan 03 18:12:24 PET 2024 - Fri Jan 05 17:12:24 PET 2024
+La mejor ruta para el paquete 299 fue:
+Ruta 244: SVMI (2024-01-03 19:32:00) -> SUAA (2024-01-03 22:57:00)  (ID: 364) | 
+
+Paquete 300 - SPIM - SBBR - Tue Jan 02 18:08:20 PET 2024 - Thu Jan 04 16:08:20 PET 2024
+La mejor ruta para el paquete 300 fue:
+Ruta 367: SPIM (2024-01-02 18:12:00) -> SBBR (2024-01-03 09:42:00)  (ID: 238) | 
+
+Paquete 301 - SGAS - SVMI - Wed Jan 03 00:54:57 PET 2024 - Fri Jan 05 00:54:57 PET 2024
+La mejor ruta para el paquete 301 fue:
+Ruta 552: SGAS (2024-01-03 12:53:00) -> SVMI (2024-01-03 16:36:00)  (ID: 488) | 
+
+Paquete 302 - SCEL - SKBO - Tue Jan 02 08:44:59 PET 2024 - Thu Jan 04 10:44:59 PET 2024
+La mejor ruta para el paquete 302 fue:
+Ruta 55: SCEL (2024-01-02 10:42:00) -> SKBO (2024-01-02 20:18:00)  (ID: 304) | 
+
+Paquete 303 - SGAS - SCEL - Mon Jan 01 16:30:46 PET 2024 - Wed Jan 03 15:30:46 PET 2024
+La mejor ruta para el paquete 303 fue:
+Ruta 506: SGAS (2024-01-01 19:41:00) -> SCEL (2024-01-01 23:01:00)  (ID: 140) | 
+
+Paquete 304 - SPIM - SKBO - Mon Jan 01 07:07:07 PET 2024 - Wed Jan 03 07:07:07 PET 2024
+La mejor ruta para el paquete 304 fue:
+Ruta 216: SPIM (2024-01-01 19:17:00) -> SKBO (2024-01-02 14:10:00)  (ID: 70) | 
+
+Paquete 305 - SUAA - SPIM - Thu Jan 04 00:10:16 PET 2024 - Sat Jan 06 02:10:16 PET 2024
+La mejor ruta para el paquete 305 fue:
+Ruta 147: SUAA (2024-01-04 06:48:00) -> SPIM (2024-01-04 19:02:00)  (ID: 582) | 
+
+Paquete 306 - SVMI - SCEL - Mon Jan 01 13:05:21 PET 2024 - Wed Jan 03 12:05:21 PET 2024
+La mejor ruta para el paquete 306 fue:
+Ruta 209: SVMI (2024-01-01 19:05:00) -> SCEL (2024-01-02 06:52:00)  (ID: 12) | 
+
+Paquete 307 - SBBR - SLLP - Mon Jan 01 21:58:48 PET 2024 - Wed Jan 03 22:58:48 PET 2024
+La mejor ruta para el paquete 307 fue:
+Ruta 231: SBBR (2024-01-02 19:42:00) -> SLLP (2024-01-03 05:43:00)  (ID: 208) | 
+
+Paquete 308 - SVMI - SLLP - Wed Jan 03 03:46:06 PET 2024 - Fri Jan 05 03:46:06 PET 2024
+La mejor ruta para el paquete 308 fue:
+Ruta 251: SVMI (2024-01-03 10:31:00) -> SLLP (2024-01-03 17:25:00)  (ID: 370) | 
+
+Paquete 309 - SBBR - SEQM - Wed Jan 03 07:56:02 PET 2024 - Fri Jan 05 09:56:02 PET 2024
+La mejor ruta para el paquete 309 fue:
+Ruta 287: SBBR (2024-01-03 18:07:00) -> SEQM (2024-01-04 06:29:00)  (ID: 386) | 
+
+Paquete 310 - SBBR - SVMI - Tue Jan 02 08:48:57 PET 2024 - Thu Jan 04 09:48:57 PET 2024
+La mejor ruta para el paquete 310 fue:
+Ruta 222: SBBR (2024-01-02 17:11:00) -> SVMI (2024-01-02 22:28:00)  (ID: 200) | 
+
+Paquete 311 - SCEL - SABE - Tue Jan 02 22:33:41 PET 2024 - Thu Jan 04 22:33:41 PET 2024
+La mejor ruta para el paquete 311 fue:
+Ruta 97: SCEL (2024-01-03 18:08:00) -> SABE (2024-01-03 22:40:00)  (ID: 486) | 
+
+Paquete 312 - SCEL - SEQM - Mon Jan 01 23:02:07 PET 2024 - Thu Jan 04 01:02:07 PET 2024
+La mejor ruta para el paquete 312 fue:
+Ruta 67: SCEL (2024-01-02 12:53:00) -> SEQM (2024-01-02 16:47:00)  (ID: 298) | 
+
+Paquete 313 - SGAS - SVMI - Mon Jan 01 16:58:48 PET 2024 - Wed Jan 03 16:58:48 PET 2024
+La mejor ruta para el paquete 313 fue:
+Ruta 529: SGAS (2024-01-02 12:53:00) -> SVMI (2024-01-02 16:36:00)  (ID: 308) | 
+
+Paquete 314 - SUAA - SBBR - Wed Jan 03 15:09:13 PET 2024 - Fri Jan 05 15:09:13 PET 2024
+La mejor ruta para el paquete 314 fue:
+Ruta 98: SUAA (2024-01-03 18:02:00) -> SBBR (2024-01-03 20:10:00)  (ID: 400) | 
+
+Paquete 315 - SBBR - SVMI - Wed Jan 03 11:44:08 PET 2024 - Fri Jan 05 12:44:08 PET 2024
+La mejor ruta para el paquete 315 fue:
+Ruta 240: SBBR (2024-01-03 17:11:00) -> SVMI (2024-01-03 22:28:00)  (ID: 380) | 
+
+Paquete 316 - SUAA - SCEL - Mon Jan 01 05:27:19 PET 2024 - Wed Jan 03 05:27:19 PET 2024
+La mejor ruta para el paquete 316 fue:
+Ruta 48: SUAA (2024-01-01 22:20:00) -> SCEL (2024-01-02 19:44:00)  (ID: 48) | 
+
+Paquete 317 - SABE - SGAS - Wed Jan 03 01:54:39 PET 2024 - Fri Jan 05 02:54:39 PET 2024
+La mejor ruta para el paquete 317 fue:
+Ruta 483: SABE (2024-01-03 15:33:00) -> SGAS (2024-01-03 17:46:00)  (ID: 538) | 
+
+Paquete 318 - SKBO - SABE - Wed Jan 03 04:28:55 PET 2024 - Fri Jan 05 02:28:55 PET 2024
+La mejor ruta para el paquete 318 fue:
+Ruta 85: SKBO (2024-01-03 20:46:00) -> SABE (2024-01-04 20:27:00)  (ID: 522) | 
+
+Paquete 319 - SABE - SCEL - Mon Jan 01 05:52:34 PET 2024 - Wed Jan 03 05:52:34 PET 2024
+La mejor ruta para el paquete 319 fue:
+Ruta 369: SABE (2024-01-01 16:02:00) -> SCEL (2024-01-01 19:32:00)  (ID: 176) | 
+
+Paquete 320 - SBBR - SUAA - Wed Jan 03 23:45:44 PET 2024 - Fri Jan 05 23:45:44 PET 2024
+La mejor ruta para el paquete 320 fue:
+Ruta 245: SBBR (2024-01-04 05:23:00) -> SUAA (2024-01-04 11:34:00)  (ID: 562) | 
+
+Paquete 321 - SPIM - SVMI - Tue Jan 02 02:05:24 PET 2024 - Thu Jan 04 01:05:24 PET 2024
+La mejor ruta para el paquete 321 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 322 - SABE - SUAA - Wed Jan 03 06:40:05 PET 2024 - Fri Jan 05 06:40:05 PET 2024
+La mejor ruta para el paquete 322 fue:
+Ruta 429: SABE (2024-01-03 17:22:00) -> SUAA (2024-01-03 19:47:00)  (ID: 528) | 
+
+Paquete 323 - SPIM - SUAA - Mon Jan 01 22:15:24 PET 2024 - Wed Jan 03 20:15:24 PET 2024
+La mejor ruta para el paquete 323 fue:
+Ruta 348: SPIM (2024-01-02 19:37:00) -> SUAA (2024-01-03 18:59:00)  (ID: 240) | 
+
+Paquete 324 - SABE - SKBO - Wed Jan 03 11:19:28 PET 2024 - Fri Jan 05 13:19:28 PET 2024
+La mejor ruta para el paquete 324 fue:
+Ruta 424: SABE (2024-01-03 17:53:00) -> SKBO (2024-01-03 18:23:00)  (ID: 540) | 
+
+Paquete 325 - SCEL - SGAS - Mon Jan 01 16:28:17 PET 2024 - Wed Jan 03 17:28:17 PET 2024
+La mejor ruta para el paquete 325 fue:
+Ruta 33: SCEL (2024-01-01 16:48:00) -> SGAS (2024-01-01 19:27:00)  (ID: 122) | 
+
+Paquete 326 - SVMI - SLLP - Wed Jan 03 15:07:33 PET 2024 - Fri Jan 05 15:07:33 PET 2024
+La mejor ruta para el paquete 326 fue:
+Ruta 274: SVMI (2024-01-04 10:31:00) -> SLLP (2024-01-04 17:25:00)  (ID: 550) | 
+
+Paquete 327 - SUAA - SKBO - Mon Jan 01 10:29:01 PET 2024 - Wed Jan 03 12:29:01 PET 2024
+La mejor ruta para el paquete 327 fue:
+Ruta 45: SUAA (2024-01-01 18:59:00) -> SKBO (2024-01-02 09:13:00)  (ID: 52) | 
+
+Paquete 328 - SCEL - SEQM - Wed Jan 03 23:35:09 PET 2024 - Sat Jan 06 01:35:09 PET 2024
+La mejor ruta para el paquete 328 fue:
+Ruta 109: SCEL (2024-01-04 12:53:00) -> SEQM (2024-01-04 16:47:00)  (ID: 658) | 
+
+Paquete 329 - SCEL - SBBR - Tue Jan 02 21:31:15 PET 2024 - Thu Jan 04 21:31:15 PET 2024
+La mejor ruta para el paquete 329 fue:
+Ruta 84: SCEL (2024-01-03 16:55:00) -> SBBR (2024-01-03 21:12:00)  (ID: 472) | 
+
+Paquete 330 - SPIM - SLLP - Tue Jan 02 02:36:28 PET 2024 - Thu Jan 04 01:36:28 PET 2024
+La mejor ruta para el paquete 330 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 331 - SCEL - SVMI - Wed Jan 03 18:09:23 PET 2024 - Fri Jan 05 19:09:23 PET 2024
+La mejor ruta para el paquete 331 fue:
+Ruta 99: SCEL (2024-01-04 14:26:00) -> SVMI (2024-01-04 22:08:00)  (ID: 650) | 
+
+Paquete 332 - SPIM - SCEL - Tue Jan 02 20:48:21 PET 2024 - Thu Jan 04 18:48:21 PET 2024
+La mejor ruta para el paquete 332 fue:
+Ruta 320: SPIM (2024-01-03 14:34:00) -> SCEL (2024-01-04 03:19:00)  (ID: 426) | 
+
+Paquete 333 - SKBO - SPIM - Wed Jan 03 23:20:29 PET 2024 - Fri Jan 05 23:20:29 PET 2024
+La mejor ruta para el paquete 333 fue:
+Ruta 108: SKBO (2024-01-04 18:30:00) -> SPIM (2024-01-04 18:49:00)  (ID: 692) | 
+
+Paquete 334 - SLLP - SEQM - Wed Jan 03 09:07:40 PET 2024 - Fri Jan 05 10:07:40 PET 2024
+La mejor ruta para el paquete 334 fue:
+Ruta 408: SLLP (2024-01-03 12:59:00) -> SEQM (2024-01-03 17:09:00)  (ID: 460) | 
+
+Paquete 335 - SLLP - SBBR - Mon Jan 01 23:10:46 PET 2024 - Wed Jan 03 22:10:46 PET 2024
+La mejor ruta para el paquete 335 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 336 - SVMI - SLLP - Tue Jan 02 13:57:41 PET 2024 - Thu Jan 04 13:57:41 PET 2024
+La mejor ruta para el paquete 336 fue:
+Ruta 251: SVMI (2024-01-03 10:31:00) -> SLLP (2024-01-03 17:25:00)  (ID: 370) | 
+
+Paquete 337 - SUAA - SVMI - Wed Jan 03 04:20:11 PET 2024 - Fri Jan 05 05:20:11 PET 2024
+La mejor ruta para el paquete 337 fue:
+Ruta 88: SUAA (2024-01-03 17:11:00) -> SVMI (2024-01-04 04:59:00)  (ID: 398) | 
+
+Paquete 338 - SKBO - SCEL - Tue Jan 02 18:57:22 PET 2024 - Thu Jan 04 16:57:22 PET 2024
+La mejor ruta para el paquete 338 fue:
+Ruta 70: SKBO (2024-01-03 14:10:00) -> SCEL (2024-01-04 05:31:00)  (ID: 518) | 
+
+Paquete 339 - SUAA - SABE - Wed Jan 03 07:15:52 PET 2024 - Fri Jan 05 07:15:52 PET 2024
+La mejor ruta para el paquete 339 fue:
+Ruta 248: SUAA (2024-01-03 21:18:00) -> SABE (2024-01-04 07:46:00)  (ID: 414) | 
+
+Paquete 340 - SABE - SGAS - Mon Jan 01 10:27:24 PET 2024 - Wed Jan 03 11:27:24 PET 2024
+La mejor ruta para el paquete 340 fue:
+Ruta 430: SABE (2024-01-01 15:33:00) -> SGAS (2024-01-01 17:46:00)  (ID: 178) | 
+
+Paquete 341 - SBBR - SEQM - Thu Jan 04 01:24:09 PET 2024 - Sat Jan 06 03:24:09 PET 2024
+La mejor ruta para el paquete 341 fue:
+Ruta 319: SBBR (2024-01-04 18:07:00) -> SEQM (2024-01-05 06:29:00)  (ID: 566) | 
+
+Paquete 342 - SUAA - SVMI - Mon Jan 01 12:07:33 PET 2024 - Wed Jan 03 13:07:33 PET 2024
+La mejor ruta para el paquete 342 fue:
+Ruta 42: SUAA (2024-01-01 17:11:00) -> SVMI (2024-01-02 04:59:00)  (ID: 38) | 
+
+Paquete 343 - SCEL - SUAA - Mon Jan 01 22:09:38 PET 2024 - Wed Jan 03 22:09:38 PET 2024
+La mejor ruta para el paquete 343 fue:
+Ruta 63: SCEL (2024-01-02 22:06:00) -> SUAA (2024-01-03 07:54:00)  (ID: 294) | 
+
+Paquete 344 - SLLP - SPIM - Tue Jan 02 23:40:33 PET 2024 - Fri Jan 05 00:40:33 PET 2024
+La mejor ruta para el paquete 344 fue:
+Ruta 420: SLLP (2024-01-03 20:27:00) -> SPIM (2024-01-04 08:24:00)  (ID: 458) | 
+
+Paquete 345 - SVMI - SCEL - Wed Jan 03 06:07:06 PET 2024 - Fri Jan 05 05:07:06 PET 2024
+La mejor ruta para el paquete 345 fue:
+Ruta 250: SVMI (2024-01-03 19:05:00) -> SCEL (2024-01-04 06:52:00)  (ID: 372) | 
+
+Paquete 346 - SKBO - SLLP - Thu Jan 04 00:32:27 PET 2024 - Fri Jan 05 23:32:27 PET 2024
+La mejor ruta para el paquete 346 fue:
+Ruta 103: SKBO (2024-01-04 23:38:00) -> SLLP (2024-01-05 19:59:00)  (ID: 696) | 
+
+Paquete 347 - SGAS - SEQM - Tue Jan 02 00:38:24 PET 2024 - Thu Jan 04 01:38:24 PET 2024
+La mejor ruta para el paquete 347 fue:
+Ruta 554: SGAS (2024-01-02 21:49:00) -> SEQM (2024-01-03 16:26:00)  (ID: 316) | 
+
+Paquete 348 - SBBR - SKBO - Tue Jan 02 10:27:40 PET 2024 - Thu Jan 04 12:27:40 PET 2024
+La mejor ruta para el paquete 348 fue:
+Ruta 239: SBBR (2024-01-03 07:02:00) -> SKBO (2024-01-03 22:00:00)  (ID: 394) | 
+
+Paquete 349 - SBBR - SLLP - Tue Jan 02 16:49:38 PET 2024 - Thu Jan 04 17:49:38 PET 2024
+La mejor ruta para el paquete 349 fue:
+Ruta 231: SBBR (2024-01-02 19:42:00) -> SLLP (2024-01-03 05:43:00)  (ID: 208) | 
+
+Paquete 350 - SCEL - SBBR - Wed Jan 03 02:21:11 PET 2024 - Fri Jan 05 02:21:11 PET 2024
+La mejor ruta para el paquete 350 fue:
+Ruta 84: SCEL (2024-01-03 16:55:00) -> SBBR (2024-01-03 21:12:00)  (ID: 472) | 
+
+Paquete 351 - SUAA - SPIM - Tue Jan 02 19:45:39 PET 2024 - Thu Jan 04 21:45:39 PET 2024
+La mejor ruta para el paquete 351 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 352 - SBBR - SABE - Wed Jan 03 17:24:29 PET 2024 - Fri Jan 05 17:24:29 PET 2024
+La mejor ruta para el paquete 352 fue:
+Ruta 260: SBBR (2024-01-04 14:24:00) -> SABE (2024-01-04 17:27:00)  (ID: 576) | 
+
+Paquete 353 - SCEL - SKBO - Wed Jan 03 20:08:59 PET 2024 - Fri Jan 05 22:08:59 PET 2024
+La mejor ruta para el paquete 353 fue:
+Ruta 106: SCEL (2024-01-04 10:42:00) -> SKBO (2024-01-04 20:18:00)  (ID: 664) | 
+
+Paquete 354 - SKBO - SBBR - Wed Jan 03 08:14:43 PET 2024 - Fri Jan 05 06:14:43 PET 2024
+La mejor ruta para el paquete 354 fue:
+Ruta 76: SKBO (2024-01-03 09:40:00) -> SBBR (2024-01-03 09:41:00)  (ID: 508) | 
+
+Paquete 355 - SEQM - SABE - Tue Jan 02 14:45:19 PET 2024 - Thu Jan 04 12:45:19 PET 2024
+La mejor ruta para el paquete 355 fue:
+Ruta 565: SEQM (2024-01-02 19:40:00) -> SABE (2024-01-02 20:31:00)  (ID: 270) | 
+
+Paquete 356 - SBBR - SLLP - Mon Jan 01 21:27:35 PET 2024 - Wed Jan 03 22:27:35 PET 2024
+La mejor ruta para el paquete 356 fue:
+Ruta 231: SBBR (2024-01-02 19:42:00) -> SLLP (2024-01-03 05:43:00)  (ID: 208) | 
+
+Paquete 357 - SVMI - SCEL - Wed Jan 03 10:03:49 PET 2024 - Fri Jan 05 09:03:49 PET 2024
+La mejor ruta para el paquete 357 fue:
+Ruta 250: SVMI (2024-01-03 19:05:00) -> SCEL (2024-01-04 06:52:00)  (ID: 372) | 
+
+Paquete 358 - SEQM - SPIM - Wed Jan 03 20:04:10 PET 2024 - Fri Jan 05 20:04:10 PET 2024
+La mejor ruta para el paquete 358 fue:
+Ruta 606: SEQM (2024-01-04 19:59:00) -> SPIM (2024-01-05 14:24:00)  (ID: 620) | 
+
+Paquete 359 - SCEL - SUAA - Tue Jan 02 05:41:28 PET 2024 - Thu Jan 04 05:41:28 PET 2024
+La mejor ruta para el paquete 359 fue:
+Ruta 63: SCEL (2024-01-02 22:06:00) -> SUAA (2024-01-03 07:54:00)  (ID: 294) | 
+
+Paquete 360 - SKBO - SBBR - Mon Jan 01 15:20:31 PET 2024 - Wed Jan 03 13:20:31 PET 2024
+La mejor ruta para el paquete 360 fue:
+Ruta 44: SKBO (2024-01-02 09:40:00) -> SBBR (2024-01-02 09:41:00)  (ID: 328) | 
+
+Paquete 361 - SKBO - SUAA - Tue Jan 02 01:10:57 PET 2024 - Wed Jan 03 23:10:57 PET 2024
+La mejor ruta para el paquete 361 fue:
+Ruta 46: SKBO (2024-01-02 15:06:00) -> SUAA (2024-01-02 23:30:00)  (ID: 330) | 
+
+Paquete 362 - SGAS - SLLP - Mon Jan 01 07:34:05 PET 2024 - Wed Jan 03 07:34:05 PET 2024
+La mejor ruta para el paquete 362 fue:
+Ruta 524: SGAS (2024-01-02 05:37:00) -> SLLP (2024-01-02 14:14:00)  (ID: 318) | 
+
+Paquete 363 - SKBO - SEQM - Tue Jan 02 03:03:33 PET 2024 - Thu Jan 04 03:03:33 PET 2024
+La mejor ruta para el paquete 363 fue:
+Ruta 52: SKBO (2024-01-02 18:18:00) -> SEQM (2024-01-02 22:30:00)  (ID: 334) | 
+
+Paquete 364 - SKBO - SPIM - Tue Jan 02 07:56:20 PET 2024 - Thu Jan 04 07:56:20 PET 2024
+La mejor ruta para el paquete 364 fue:
+Ruta 62: SKBO (2024-01-02 18:30:00) -> SPIM (2024-01-02 18:49:00)  (ID: 332) | 
+
+Paquete 365 - SEQM - SPIM - Tue Jan 02 05:23:27 PET 2024 - Thu Jan 04 05:23:27 PET 2024
+La mejor ruta para el paquete 365 fue:
+Ruta 566: SEQM (2024-01-02 19:59:00) -> SPIM (2024-01-03 14:24:00)  (ID: 260) | 
+
+Paquete 366 - SBBR - SCEL - Tue Jan 02 03:32:21 PET 2024 - Thu Jan 04 03:32:21 PET 2024
+La mejor ruta para el paquete 366 fue:
+Ruta 233: SBBR (2024-01-02 22:19:00) -> SCEL (2024-01-03 20:37:00)  (ID: 210) | 
+
+Paquete 367 - SBBR - SUAA - Mon Jan 01 21:09:57 PET 2024 - Wed Jan 03 21:09:57 PET 2024
+La mejor ruta para el paquete 367 fue:
+Ruta 211: SBBR (2024-01-02 05:23:00) -> SUAA (2024-01-02 11:34:00)  (ID: 202) | 
+
+Paquete 368 - SUAA - SVMI - Tue Jan 02 14:38:47 PET 2024 - Thu Jan 04 15:38:47 PET 2024
+La mejor ruta para el paquete 368 fue:
+Ruta 64: SUAA (2024-01-02 17:11:00) -> SVMI (2024-01-03 04:59:00)  (ID: 218) | 
+
+Paquete 369 - SVMI - SUAA - Tue Jan 02 12:15:22 PET 2024 - Thu Jan 04 11:15:22 PET 2024
+La mejor ruta para el paquete 369 fue:
+Ruta 226: SVMI (2024-01-02 19:32:00) -> SUAA (2024-01-02 22:57:00)  (ID: 184) | 
+
+Paquete 370 - SEQM - SGAS - Wed Jan 03 10:36:23 PET 2024 - Fri Jan 05 09:36:23 PET 2024
+La mejor ruta para el paquete 370 fue:
+Ruta 604: SEQM (2024-01-03 18:36:00) -> SGAS (2024-01-04 18:33:00)  (ID: 446) | 
+
+Paquete 371 - SLLP - SBBR - Thu Jan 04 02:51:48 PET 2024 - Sat Jan 06 01:51:48 PET 2024
+La mejor ruta para el paquete 371 fue:
+Ruta 423: SLLP (2024-01-04 11:30:00) -> SBBR (2024-01-04 21:01:00)  (ID: 634) | 
+
+Paquete 372 - SCEL - SLLP - Wed Jan 03 04:30:31 PET 2024 - Fri Jan 05 05:30:31 PET 2024
+La mejor ruta para el paquete 372 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 373 - SCEL - SABE - Wed Jan 03 02:28:14 PET 2024 - Fri Jan 05 02:28:14 PET 2024
+La mejor ruta para el paquete 373 fue:
+Ruta 97: SCEL (2024-01-03 18:08:00) -> SABE (2024-01-03 22:40:00)  (ID: 486) | 
+
+Paquete 374 - SCEL - SABE - Tue Jan 02 04:30:37 PET 2024 - Thu Jan 04 04:30:37 PET 2024
+La mejor ruta para el paquete 374 fue:
+Ruta 74: SCEL (2024-01-02 18:08:00) -> SABE (2024-01-02 22:40:00)  (ID: 306) | 
+
+Paquete 375 - SKBO - SVMI - Tue Jan 02 23:30:53 PET 2024 - Thu Jan 04 22:30:53 PET 2024
+La mejor ruta para el paquete 375 fue:
+Ruta 81: SKBO (2024-01-03 19:45:00) -> SVMI (2024-01-04 18:22:00)  (ID: 506) | 
+
+Paquete 376 - SLLP - SABE - Wed Jan 03 14:19:48 PET 2024 - Fri Jan 05 13:19:48 PET 2024
+La mejor ruta para el paquete 376 fue:
+Ruta 432: SLLP (2024-01-04 11:06:00) -> SABE (2024-01-04 12:30:00)  (ID: 648) | 
+
+Paquete 377 - SKBO - SABE - Tue Jan 02 06:24:07 PET 2024 - Thu Jan 04 04:24:07 PET 2024
+La mejor ruta para el paquete 377 fue:
+Ruta 59: SKBO (2024-01-02 20:46:00) -> SABE (2024-01-03 20:27:00)  (ID: 342) | 
+
+Paquete 378 - SLLP - SVMI - Tue Jan 02 16:05:25 PET 2024 - Thu Jan 04 16:05:25 PET 2024
+La mejor ruta para el paquete 378 fue:
+Ruta 402: SLLP (2024-01-02 23:07:00) -> SVMI (2024-01-03 19:49:00)  (ID: 272) | 
+
+Paquete 379 - SABE - SUAA - Wed Jan 03 22:35:24 PET 2024 - Fri Jan 05 22:35:24 PET 2024
+La mejor ruta para el paquete 379 fue:
+Ruta 456: SABE (2024-01-04 17:22:00) -> SUAA (2024-01-04 19:47:00)  (ID: 708) | 
+
+Paquete 380 - SABE - SCEL - Wed Jan 03 17:52:44 PET 2024 - Fri Jan 05 17:52:44 PET 2024
+La mejor ruta para el paquete 380 fue:
+Ruta 463: SABE (2024-01-04 16:02:00) -> SCEL (2024-01-04 19:32:00)  (ID: 716) | 
+
+Paquete 381 - SPIM - SGAS - Mon Jan 01 23:39:26 PET 2024 - Wed Jan 03 22:39:26 PET 2024
+La mejor ruta para el paquete 381 fue:
+Ruta 382: SPIM (2024-01-02 22:29:00) -> SGAS (2024-01-03 06:22:00)  (ID: 248) | 
+
+Paquete 382 - SGAS - SCEL - Wed Jan 03 05:05:56 PET 2024 - Fri Jan 05 04:05:56 PET 2024
+La mejor ruta para el paquete 382 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 383 - SVMI - SGAS - Wed Jan 03 11:55:28 PET 2024 - Fri Jan 05 11:55:28 PET 2024
+La mejor ruta para el paquete 383 fue:
+Ruta 257: SVMI (2024-01-04 10:22:00) -> SGAS (2024-01-04 14:58:00)  (ID: 554) | 
+
+Paquete 384 - SPIM - SEQM - Tue Jan 02 13:30:14 PET 2024 - Thu Jan 04 13:30:14 PET 2024
+La mejor ruta para el paquete 384 fue:
+Ruta 371: SPIM (2024-01-02 16:11:00) -> SEQM (2024-01-03 12:31:00)  (ID: 242) | 
+
+Paquete 385 - SEQM - SPIM - Mon Jan 01 17:54:24 PET 2024 - Wed Jan 03 17:54:24 PET 2024
+La mejor ruta para el paquete 385 fue:
+Ruta 543: SEQM (2024-01-01 19:59:00) -> SPIM (2024-01-02 14:24:00)  (ID: 80) | 
+
+Paquete 386 - SEQM - SCEL - Tue Jan 02 23:20:06 PET 2024 - Thu Jan 04 21:20:06 PET 2024
+La mejor ruta para el paquete 386 fue:
+Ruta 561: SEQM (2024-01-03 16:36:00) -> SCEL (2024-01-04 09:07:00)  (ID: 444) | 
+
+Paquete 387 - SPIM - SKBO - Wed Jan 03 01:13:40 PET 2024 - Fri Jan 05 01:13:40 PET 2024
+La mejor ruta para el paquete 387 fue:
+Ruta 256: SPIM (2024-01-03 19:17:00) -> SKBO (2024-01-04 14:10:00)  (ID: 430) | 
+
+Paquete 388 - SEQM - SKBO - Tue Jan 02 05:10:06 PET 2024 - Thu Jan 04 05:10:06 PET 2024
+La mejor ruta para el paquete 388 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 389 - SPIM - SEQM - Wed Jan 03 09:12:34 PET 2024 - Fri Jan 05 09:12:34 PET 2024
+La mejor ruta para el paquete 389 fue:
+Ruta 397: SPIM (2024-01-03 16:11:00) -> SEQM (2024-01-04 12:31:00)  (ID: 422) | 
+
+Paquete 390 - SPIM - SBBR - Tue Jan 02 21:46:58 PET 2024 - Thu Jan 04 19:46:58 PET 2024
+La mejor ruta para el paquete 390 fue:
+Ruta 392: SPIM (2024-01-03 18:12:00) -> SBBR (2024-01-04 09:42:00)  (ID: 418) | 
+
+Paquete 391 - SCEL - SUAA - Mon Jan 01 11:59:55 PET 2024 - Wed Jan 03 11:59:55 PET 2024
+La mejor ruta para el paquete 391 fue:
+Ruta 41: SCEL (2024-01-01 22:06:00) -> SUAA (2024-01-02 07:54:00)  (ID: 114) | 
+
+Paquete 392 - SBBR - SPIM - Mon Jan 01 10:53:27 PET 2024 - Wed Jan 03 12:53:27 PET 2024
+La mejor ruta para el paquete 392 fue:
+Ruta 214: SBBR (2024-01-02 05:31:00) -> SPIM (2024-01-02 14:52:00)  (ID: 204) | 
+
+Paquete 393 - SEQM - SBBR - Tue Jan 02 16:22:39 PET 2024 - Thu Jan 04 14:22:39 PET 2024
+La mejor ruta para el paquete 393 fue:
+Ruta 556: SEQM (2024-01-02 19:39:00) -> SBBR (2024-01-02 23:11:00)  (ID: 256) | 
+
+Paquete 394 - SUAA - SGAS - Tue Jan 02 03:56:58 PET 2024 - Thu Jan 04 04:56:58 PET 2024
+La mejor ruta para el paquete 394 fue:
+Ruta 215: SUAA (2024-01-02 06:26:00) -> SGAS (2024-01-02 19:41:00)  (ID: 230) | 
+
+Paquete 395 - SLLP - SPIM - Tue Jan 02 14:03:30 PET 2024 - Thu Jan 04 15:03:30 PET 2024
+La mejor ruta para el paquete 395 fue:
+Ruta 394: SLLP (2024-01-02 20:27:00) -> SPIM (2024-01-03 08:24:00)  (ID: 278) | 
+
+Paquete 396 - SBBR - SUAA - Tue Jan 02 11:44:01 PET 2024 - Thu Jan 04 11:44:01 PET 2024
+La mejor ruta para el paquete 396 fue:
+Ruta 227: SBBR (2024-01-03 05:23:00) -> SUAA (2024-01-03 11:34:00)  (ID: 382) | 
+
+Paquete 397 - SVMI - SCEL - Tue Jan 02 19:52:11 PET 2024 - Thu Jan 04 18:52:11 PET 2024
+La mejor ruta para el paquete 397 fue:
+Ruta 250: SVMI (2024-01-03 19:05:00) -> SCEL (2024-01-04 06:52:00)  (ID: 372) | 
+
+Paquete 398 - SVMI - SUAA - Wed Jan 03 07:58:18 PET 2024 - Fri Jan 05 06:58:18 PET 2024
+La mejor ruta para el paquete 398 fue:
+Ruta 244: SVMI (2024-01-03 19:32:00) -> SUAA (2024-01-03 22:57:00)  (ID: 364) | 
+
+Paquete 399 - SEQM - SKBO - Tue Jan 02 02:01:19 PET 2024 - Thu Jan 04 02:01:19 PET 2024
+La mejor ruta para el paquete 399 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 400 - SLLP - SCEL - Tue Jan 02 14:07:34 PET 2024 - Thu Jan 04 13:07:34 PET 2024
+La mejor ruta para el paquete 400 fue:
+Ruta 396: SLLP (2024-01-03 07:33:00) -> SCEL (2024-01-03 14:53:00)  (ID: 462) | 
+
+Paquete 401 - SGAS - SCEL - Wed Jan 03 06:35:26 PET 2024 - Fri Jan 05 05:35:26 PET 2024
+La mejor ruta para el paquete 401 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 402 - SLLP - SGAS - Wed Jan 03 19:11:30 PET 2024 - Fri Jan 05 19:11:30 PET 2024
+La mejor ruta para el paquete 402 fue:
+Ruta 437: SLLP (2024-01-04 16:19:00) -> SGAS (2024-01-05 08:25:00)  (ID: 644) | 
+
+Paquete 403 - SLLP - SKBO - Tue Jan 02 15:23:08 PET 2024 - Thu Jan 04 16:23:08 PET 2024
+La mejor ruta para el paquete 403 fue:
+Ruta 389: SLLP (2024-01-02 18:00:00) -> SKBO (2024-01-03 12:11:00)  (ID: 286) | 
+
+Paquete 404 - SCEL - SEQM - Tue Jan 02 16:47:41 PET 2024 - Thu Jan 04 18:47:41 PET 2024
+La mejor ruta para el paquete 404 fue:
+Ruta 87: SCEL (2024-01-03 12:53:00) -> SEQM (2024-01-03 16:47:00)  (ID: 478) | 
+
+Paquete 405 - SUAA - SKBO - Tue Jan 02 10:58:43 PET 2024 - Thu Jan 04 12:58:43 PET 2024
+La mejor ruta para el paquete 405 fue:
+Ruta 68: SUAA (2024-01-02 18:59:00) -> SKBO (2024-01-03 09:13:00)  (ID: 232) | 
+
+Paquete 406 - SVMI - SPIM - Mon Jan 01 19:07:52 PET 2024 - Wed Jan 03 20:07:52 PET 2024
+La mejor ruta para el paquete 406 fue:
+Ruta 229: SVMI (2024-01-02 18:05:00) -> SPIM (2024-01-03 12:03:00)  (ID: 186) | 
+
+Paquete 407 - SGAS - SEQM - Wed Jan 03 08:11:08 PET 2024 - Fri Jan 05 09:11:08 PET 2024
+La mejor ruta para el paquete 407 fue:
+Ruta 574: SGAS (2024-01-03 21:49:00) -> SEQM (2024-01-04 16:26:00)  (ID: 496) | 
+
+Paquete 408 - SGAS - SPIM - Tue Jan 02 21:39:32 PET 2024 - Thu Jan 04 22:39:32 PET 2024
+La mejor ruta para el paquete 408 fue:
+Ruta 548: SGAS (2024-01-03 09:07:00) -> SPIM (2024-01-03 17:21:00)  (ID: 494) | 
+
+Paquete 409 - SVMI - SPIM - Tue Jan 02 02:15:09 PET 2024 - Thu Jan 04 03:15:09 PET 2024
+La mejor ruta para el paquete 409 fue:
+Ruta 229: SVMI (2024-01-02 18:05:00) -> SPIM (2024-01-03 12:03:00)  (ID: 186) | 
+
+Paquete 410 - SABE - SLLP - Mon Jan 01 19:12:22 PET 2024 - Wed Jan 03 20:12:22 PET 2024
+La mejor ruta para el paquete 410 fue:
+Ruta 460: SABE (2024-01-02 07:16:00) -> SLLP (2024-01-02 16:44:00)  (ID: 354) | 
+
+Paquete 411 - SVMI - SCEL - Wed Jan 03 16:06:20 PET 2024 - Fri Jan 05 15:06:20 PET 2024
+La mejor ruta para el paquete 411 fue:
+Ruta 250: SVMI (2024-01-03 19:05:00) -> SCEL (2024-01-04 06:52:00)  (ID: 372) | 
+
+Paquete 412 - SABE - SEQM - Wed Jan 03 14:54:48 PET 2024 - Fri Jan 05 16:54:48 PET 2024
+La mejor ruta para el paquete 412 fue:
+Ruta 537: SABE (2024-01-04 10:57:00) -> SEQM (2024-01-04 19:41:00)  (ID: 712) | 
+
+Paquete 413 - SBBR - SEQM - Mon Jan 01 05:19:07 PET 2024 - Wed Jan 03 07:19:07 PET 2024
+La mejor ruta para el paquete 413 fue:
+Ruta 210: SBBR (2024-01-01 18:07:00) -> SEQM (2024-01-02 06:29:00)  (ID: 26) | 
+
+Paquete 414 - SVMI - SCEL - Mon Jan 01 22:22:11 PET 2024 - Wed Jan 03 21:22:11 PET 2024
+La mejor ruta para el paquete 414 fue:
+Ruta 230: SVMI (2024-01-02 19:05:00) -> SCEL (2024-01-03 06:52:00)  (ID: 192) | 
+
+Paquete 415 - SABE - SVMI - Mon Jan 01 15:17:33 PET 2024 - Wed Jan 03 16:17:33 PET 2024
+La mejor ruta para el paquete 415 fue:
+Ruta 413: SABE (2024-01-02 09:22:00) -> SVMI (2024-01-02 22:04:00)  (ID: 344) | 
+
+Paquete 416 - SBBR - SKBO - Tue Jan 02 21:04:04 PET 2024 - Thu Jan 04 23:04:04 PET 2024
+La mejor ruta para el paquete 416 fue:
+Ruta 239: SBBR (2024-01-03 07:02:00) -> SKBO (2024-01-03 22:00:00)  (ID: 394) | 
+
+Paquete 417 - SLLP - SUAA - Wed Jan 03 12:17:27 PET 2024 - Fri Jan 05 11:17:27 PET 2024
+La mejor ruta para el paquete 417 fue:
+Ruta 414: SLLP (2024-01-04 05:08:00) -> SUAA (2024-01-04 13:06:00)  (ID: 636) | 
+
+Paquete 418 - SPIM - SGAS - Mon Jan 01 15:06:23 PET 2024 - Wed Jan 03 14:06:23 PET 2024
+La mejor ruta para el paquete 418 fue:
+Ruta 358: SPIM (2024-01-01 22:29:00) -> SGAS (2024-01-02 06:22:00)  (ID: 68) | 
+
+Paquete 419 - SBBR - SLLP - Tue Jan 02 16:47:08 PET 2024 - Thu Jan 04 17:47:08 PET 2024
+La mejor ruta para el paquete 419 fue:
+Ruta 231: SBBR (2024-01-02 19:42:00) -> SLLP (2024-01-03 05:43:00)  (ID: 208) | 
+
+Paquete 420 - SPIM - SVMI - Mon Jan 01 19:01:08 PET 2024 - Wed Jan 03 18:01:08 PET 2024
+La mejor ruta para el paquete 420 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 421 - SGAS - SEQM - Wed Jan 03 13:41:59 PET 2024 - Fri Jan 05 14:41:59 PET 2024
+La mejor ruta para el paquete 421 fue:
+Ruta 574: SGAS (2024-01-03 21:49:00) -> SEQM (2024-01-04 16:26:00)  (ID: 496) | 
+
+Paquete 422 - SEQM - SPIM - Mon Jan 01 10:53:26 PET 2024 - Wed Jan 03 10:53:26 PET 2024
+La mejor ruta para el paquete 422 fue:
+Ruta 543: SEQM (2024-01-01 19:59:00) -> SPIM (2024-01-02 14:24:00)  (ID: 80) | 
+
+Paquete 423 - SEQM - SABE - Wed Jan 03 17:49:06 PET 2024 - Fri Jan 05 15:49:06 PET 2024
+La mejor ruta para el paquete 423 fue:
+Ruta 584: SEQM (2024-01-03 19:40:00) -> SABE (2024-01-03 20:31:00)  (ID: 450) | 
+
+Paquete 424 - SLLP - SVMI - Mon Jan 01 13:10:27 PET 2024 - Wed Jan 03 13:10:27 PET 2024
+La mejor ruta para el paquete 424 fue:
+Ruta 375: SLLP (2024-01-01 23:07:00) -> SVMI (2024-01-02 19:49:00)  (ID: 92) | 
+
+Paquete 425 - SLLP - SGAS - Tue Jan 02 19:40:18 PET 2024 - Thu Jan 04 19:40:18 PET 2024
+La mejor ruta para el paquete 425 fue:
+Ruta 411: SLLP (2024-01-03 16:19:00) -> SGAS (2024-01-04 08:25:00)  (ID: 464) | 
+
+Paquete 426 - SKBO - SCEL - Tue Jan 02 03:43:06 PET 2024 - Thu Jan 04 01:43:06 PET 2024
+La mejor ruta para el paquete 426 fue:
+Ruta 47: SKBO (2024-01-02 14:10:00) -> SCEL (2024-01-03 05:31:00)  (ID: 338) | 
+
+Paquete 427 - SBBR - SVMI - Wed Jan 03 07:53:09 PET 2024 - Fri Jan 05 08:53:09 PET 2024
+La mejor ruta para el paquete 427 fue:
+Ruta 240: SBBR (2024-01-03 17:11:00) -> SVMI (2024-01-03 22:28:00)  (ID: 380) | 
+
+Paquete 428 - SUAA - SABE - Wed Jan 03 05:33:26 PET 2024 - Fri Jan 05 05:33:26 PET 2024
+La mejor ruta para el paquete 428 fue:
+Ruta 248: SUAA (2024-01-03 21:18:00) -> SABE (2024-01-04 07:46:00)  (ID: 414) | 
+
+Paquete 429 - SPIM - SBBR - Wed Jan 03 01:59:29 PET 2024 - Thu Jan 04 23:59:29 PET 2024
+La mejor ruta para el paquete 429 fue:
+Ruta 392: SPIM (2024-01-03 18:12:00) -> SBBR (2024-01-04 09:42:00)  (ID: 418) | 
+
+Paquete 430 - SKBO - SPIM - Mon Jan 01 20:32:29 PET 2024 - Wed Jan 03 20:32:29 PET 2024
+La mejor ruta para el paquete 430 fue:
+Ruta 62: SKBO (2024-01-02 18:30:00) -> SPIM (2024-01-02 18:49:00)  (ID: 332) | 
+
+Paquete 431 - SGAS - SABE - Mon Jan 01 17:23:34 PET 2024 - Wed Jan 03 16:23:34 PET 2024
+La mejor ruta para el paquete 431 fue:
+Ruta 528: SGAS (2024-01-02 10:13:00) -> SABE (2024-01-02 13:08:00)  (ID: 324) | 
+
+Paquete 432 - SEQM - SKBO - Tue Jan 02 20:01:42 PET 2024 - Thu Jan 04 20:01:42 PET 2024
+La mejor ruta para el paquete 432 fue:
+Ruta 563: SEQM (2024-01-03 18:33:00) -> SKBO (2024-01-03 23:21:00)  (ID: 448) | 
+
+Paquete 433 - SLLP - SBBR - Wed Jan 03 07:30:05 PET 2024 - Fri Jan 05 06:30:05 PET 2024
+La mejor ruta para el paquete 433 fue:
+Ruta 401: SLLP (2024-01-03 11:30:00) -> SBBR (2024-01-03 21:01:00)  (ID: 454) | 
+
+Paquete 434 - SKBO - SPIM - Thu Jan 04 02:35:10 PET 2024 - Sat Jan 06 02:35:10 PET 2024
+La mejor ruta para el paquete 434 fue:
+Ruta 108: SKBO (2024-01-04 18:30:00) -> SPIM (2024-01-04 18:49:00)  (ID: 692) | 
+
+Paquete 435 - SEQM - SUAA - Mon Jan 01 20:37:54 PET 2024 - Wed Jan 03 18:37:54 PET 2024
+La mejor ruta para el paquete 435 fue:
+Ruta 534: SEQM (2024-01-02 10:54:00) -> SUAA (2024-01-02 14:32:00)  (ID: 258) | 
+
+Paquete 436 - SKBO - SLLP - Thu Jan 04 00:07:37 PET 2024 - Fri Jan 05 23:07:37 PET 2024
+La mejor ruta para el paquete 436 fue:
+Ruta 103: SKBO (2024-01-04 23:38:00) -> SLLP (2024-01-05 19:59:00)  (ID: 696) | 
+
+Paquete 437 - SEQM - SGAS - Wed Jan 03 12:06:36 PET 2024 - Fri Jan 05 11:06:36 PET 2024
+La mejor ruta para el paquete 437 fue:
+Ruta 604: SEQM (2024-01-03 18:36:00) -> SGAS (2024-01-04 18:33:00)  (ID: 446) | 
+
+Paquete 438 - SPIM - SBBR - Thu Jan 04 00:06:20 PET 2024 - Fri Jan 05 22:06:20 PET 2024
+La mejor ruta para el paquete 438 fue:
+Ruta 419: SPIM (2024-01-04 18:12:00) -> SBBR (2024-01-05 09:42:00)  (ID: 598) | 
+
+Paquete 439 - SVMI - SPIM - Tue Jan 02 00:20:32 PET 2024 - Thu Jan 04 01:20:32 PET 2024
+La mejor ruta para el paquete 439 fue:
+Ruta 229: SVMI (2024-01-02 18:05:00) -> SPIM (2024-01-03 12:03:00)  (ID: 186) | 
+
+Paquete 440 - SUAA - SBBR - Wed Jan 03 10:03:22 PET 2024 - Fri Jan 05 10:03:22 PET 2024
+La mejor ruta para el paquete 440 fue:
+Ruta 98: SUAA (2024-01-03 18:02:00) -> SBBR (2024-01-03 20:10:00)  (ID: 400) | 
+
+Paquete 441 - SVMI - SUAA - Wed Jan 03 23:05:56 PET 2024 - Fri Jan 05 22:05:56 PET 2024
+La mejor ruta para el paquete 441 fue:
+Ruta 268: SVMI (2024-01-04 19:32:00) -> SUAA (2024-01-04 22:57:00)  (ID: 544) | 
+
+Paquete 442 - SUAA - SGAS - Wed Jan 03 21:42:21 PET 2024 - Fri Jan 05 22:42:21 PET 2024
+La mejor ruta para el paquete 442 fue:
+Ruta 296: SUAA (2024-01-04 06:26:00) -> SGAS (2024-01-04 19:41:00)  (ID: 590) | 
+
+Paquete 443 - SCEL - SKBO - Mon Jan 01 08:14:41 PET 2024 - Wed Jan 03 10:14:41 PET 2024
+La mejor ruta para el paquete 443 fue:
+Ruta 26: SCEL (2024-01-01 10:42:00) -> SKBO (2024-01-01 20:18:00)  (ID: 124) | 
+
+Paquete 444 - SGAS - SBBR - Wed Jan 03 05:22:24 PET 2024 - Fri Jan 05 04:22:24 PET 2024
+La mejor ruta para el paquete 444 fue:
+Ruta 553: SGAS (2024-01-03 17:05:00) -> SBBR (2024-01-04 05:43:00)  (ID: 490) | 
+
+Paquete 445 - SVMI - SKBO - Mon Jan 01 17:54:18 PET 2024 - Wed Jan 03 18:54:18 PET 2024
+La mejor ruta para el paquete 445 fue:
+Ruta 213: SVMI (2024-01-02 05:22:00) -> SKBO (2024-01-02 14:33:00)  (ID: 196) | 
+
+Paquete 446 - SABE - SUAA - Mon Jan 01 03:42:03 PET 2024 - Wed Jan 03 03:42:03 PET 2024
+La mejor ruta para el paquete 446 fue:
+Ruta 378: SABE (2024-01-01 17:22:00) -> SUAA (2024-01-01 19:47:00)  (ID: 168) | 
+
+Paquete 447 - SVMI - SKBO - Mon Jan 01 20:43:53 PET 2024 - Wed Jan 03 21:43:53 PET 2024
+La mejor ruta para el paquete 447 fue:
+Ruta 213: SVMI (2024-01-02 05:22:00) -> SKBO (2024-01-02 14:33:00)  (ID: 196) | 
+
+Paquete 448 - SVMI - SKBO - Tue Jan 02 14:48:45 PET 2024 - Thu Jan 04 15:48:45 PET 2024
+La mejor ruta para el paquete 448 fue:
+Ruta 232: SVMI (2024-01-03 05:22:00) -> SKBO (2024-01-03 14:33:00)  (ID: 376) | 
+
+Paquete 449 - SCEL - SLLP - Tue Jan 02 03:38:39 PET 2024 - Thu Jan 04 04:38:39 PET 2024
+La mejor ruta para el paquete 449 fue:
+Ruta 51: SCEL (2024-01-02 07:36:00) -> SLLP (2024-01-02 16:37:00)  (ID: 300) | 
+
+Paquete 450 - SCEL - SVMI - Tue Jan 02 02:15:28 PET 2024 - Thu Jan 04 03:15:28 PET 2024
+La mejor ruta para el paquete 450 fue:
+Ruta 57: SCEL (2024-01-02 14:26:00) -> SVMI (2024-01-02 22:08:00)  (ID: 290) | 
+
+Paquete 451 - SABE - SVMI - Mon Jan 01 17:38:14 PET 2024 - Wed Jan 03 18:38:14 PET 2024
+La mejor ruta para el paquete 451 fue:
+Ruta 413: SABE (2024-01-02 09:22:00) -> SVMI (2024-01-02 22:04:00)  (ID: 344) | 
+
+Paquete 452 - SVMI - SBBR - Tue Jan 02 01:10:05 PET 2024 - Thu Jan 04 00:10:05 PET 2024
+La mejor ruta para el paquete 452 fue:
+Ruta 223: SVMI (2024-01-02 13:58:00) -> SBBR (2024-01-02 18:53:00)  (ID: 182) | 
+
+Paquete 453 - SEQM - SUAA - Tue Jan 02 01:13:46 PET 2024 - Wed Jan 03 23:13:46 PET 2024
+La mejor ruta para el paquete 453 fue:
+Ruta 534: SEQM (2024-01-02 10:54:00) -> SUAA (2024-01-02 14:32:00)  (ID: 258) | 
+
+Paquete 454 - SABE - SPIM - Wed Jan 03 20:36:08 PET 2024 - Fri Jan 05 22:36:08 PET 2024
+La mejor ruta para el paquete 454 fue:
+Ruta 491: SABE (2024-01-04 14:27:00) -> SPIM (2024-01-05 05:12:00)  (ID: 710) | 
+
+Paquete 455 - SKBO - SPIM - Wed Jan 03 08:54:52 PET 2024 - Fri Jan 05 08:54:52 PET 2024
+La mejor ruta para el paquete 455 fue:
+Ruta 82: SKBO (2024-01-03 18:30:00) -> SPIM (2024-01-03 18:49:00)  (ID: 512) | 
+
+Paquete 456 - SVMI - SGAS - Tue Jan 02 20:54:13 PET 2024 - Thu Jan 04 20:54:13 PET 2024
+La mejor ruta para el paquete 456 fue:
+Ruta 238: SVMI (2024-01-03 10:22:00) -> SGAS (2024-01-03 14:58:00)  (ID: 374) | 
+
+Paquete 457 - SEQM - SCEL - Mon Jan 01 23:00:59 PET 2024 - Wed Jan 03 21:00:59 PET 2024
+La mejor ruta para el paquete 457 fue:
+Ruta 538: SEQM (2024-01-02 16:36:00) -> SCEL (2024-01-03 09:07:00)  (ID: 264) | 
+
+Paquete 458 - SGAS - SEQM - Mon Jan 01 09:13:32 PET 2024 - Wed Jan 03 10:13:32 PET 2024
+La mejor ruta para el paquete 458 fue:
+Ruta 532: SGAS (2024-01-01 21:49:00) -> SEQM (2024-01-02 16:26:00)  (ID: 136) | 
+
+Paquete 459 - SVMI - SKBO - Tue Jan 02 13:56:15 PET 2024 - Thu Jan 04 14:56:15 PET 2024
+La mejor ruta para el paquete 459 fue:
+Ruta 232: SVMI (2024-01-03 05:22:00) -> SKBO (2024-01-03 14:33:00)  (ID: 376) | 
+
+Paquete 460 - SBBR - SUAA - Tue Jan 02 20:33:47 PET 2024 - Thu Jan 04 20:33:47 PET 2024
+La mejor ruta para el paquete 460 fue:
+Ruta 227: SBBR (2024-01-03 05:23:00) -> SUAA (2024-01-03 11:34:00)  (ID: 382) | 
+
+Paquete 461 - SCEL - SKBO - Mon Jan 01 07:19:25 PET 2024 - Wed Jan 03 09:19:25 PET 2024
+La mejor ruta para el paquete 461 fue:
+Ruta 26: SCEL (2024-01-01 10:42:00) -> SKBO (2024-01-01 20:18:00)  (ID: 124) | 
+
+Paquete 462 - SEQM - SVMI - Mon Jan 01 20:15:19 PET 2024 - Wed Jan 03 19:15:19 PET 2024
+La mejor ruta para el paquete 462 fue:
+Ruta 540: SEQM (2024-01-01 21:16:00) -> SVMI (2024-01-01 23:56:00)  (ID: 74) | 
+
+Paquete 463 - SABE - SBBR - Wed Jan 03 02:20:18 PET 2024 - Fri Jan 05 02:20:18 PET 2024
+La mejor ruta para el paquete 463 fue:
+Ruta 415: SABE (2024-01-03 05:31:00) -> SBBR (2024-01-03 14:08:00)  (ID: 526) | 
+
+Paquete 464 - SABE - SEQM - Mon Jan 01 15:20:30 PET 2024 - Wed Jan 03 17:20:30 PET 2024
+La mejor ruta para el paquete 464 fue:
+Ruta 476: SABE (2024-01-02 10:57:00) -> SEQM (2024-01-02 19:41:00)  (ID: 352) | 
+
+Paquete 465 - SKBO - SGAS - Wed Jan 03 21:59:28 PET 2024 - Fri Jan 05 20:59:28 PET 2024
+La mejor ruta para el paquete 465 fue:
+Ruta 93: SKBO (2024-01-03 23:12:00) -> SGAS (2024-01-04 17:59:00)  (ID: 520) | 
+
+Paquete 466 - SGAS - SKBO - Wed Jan 03 15:41:02 PET 2024 - Fri Jan 05 16:41:02 PET 2024
+La mejor ruta para el paquete 466 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 467 - SBBR - SCEL - Wed Jan 03 03:16:14 PET 2024 - Fri Jan 05 03:16:14 PET 2024
+La mejor ruta para el paquete 467 fue:
+Ruta 255: SBBR (2024-01-03 22:19:00) -> SCEL (2024-01-04 20:37:00)  (ID: 390) | 
+
+Paquete 468 - SPIM - SBBR - Tue Jan 02 10:23:11 PET 2024 - Thu Jan 04 08:23:11 PET 2024
+La mejor ruta para el paquete 468 fue:
+Ruta 367: SPIM (2024-01-02 18:12:00) -> SBBR (2024-01-03 09:42:00)  (ID: 238) | 
+
+Paquete 469 - SVMI - SABE - Wed Jan 03 03:28:45 PET 2024 - Fri Jan 05 02:28:45 PET 2024
+La mejor ruta para el paquete 469 fue:
+Ruta 243: SVMI (2024-01-03 11:07:00) -> SABE (2024-01-03 11:38:00)  (ID: 378) | 
+
+Paquete 470 - SBBR - SABE - Wed Jan 03 20:21:03 PET 2024 - Fri Jan 05 20:21:03 PET 2024
+La mejor ruta para el paquete 470 fue:
+Ruta 260: SBBR (2024-01-04 14:24:00) -> SABE (2024-01-04 17:27:00)  (ID: 576) | 
+
+Paquete 471 - SKBO - SVMI - Thu Jan 04 01:26:50 PET 2024 - Sat Jan 06 00:26:50 PET 2024
+La mejor ruta para el paquete 471 fue:
+Ruta 102: SKBO (2024-01-04 19:45:00) -> SVMI (2024-01-05 18:22:00)  (ID: 686) | 
+
+Paquete 472 - SKBO - SCEL - Wed Jan 03 04:52:59 PET 2024 - Fri Jan 05 02:52:59 PET 2024
+La mejor ruta para el paquete 472 fue:
+Ruta 70: SKBO (2024-01-03 14:10:00) -> SCEL (2024-01-04 05:31:00)  (ID: 518) | 
+
+Paquete 473 - SBBR - SUAA - Wed Jan 03 18:59:44 PET 2024 - Fri Jan 05 18:59:44 PET 2024
+La mejor ruta para el paquete 473 fue:
+Ruta 245: SBBR (2024-01-04 05:23:00) -> SUAA (2024-01-04 11:34:00)  (ID: 562) | 
+
+Paquete 474 - SKBO - SVMI - Tue Jan 02 16:03:08 PET 2024 - Thu Jan 04 15:03:08 PET 2024
+La mejor ruta para el paquete 474 fue:
+Ruta 58: SKBO (2024-01-02 19:45:00) -> SVMI (2024-01-03 18:22:00)  (ID: 326) | 
+
+Paquete 475 - SKBO - SGAS - Tue Jan 02 19:37:54 PET 2024 - Thu Jan 04 18:37:54 PET 2024
+La mejor ruta para el paquete 475 fue:
+Ruta 71: SKBO (2024-01-02 23:12:00) -> SGAS (2024-01-03 17:59:00)  (ID: 340) | 
+
+Paquete 476 - SPIM - SABE - Tue Jan 02 07:33:25 PET 2024 - Thu Jan 04 05:33:25 PET 2024
+La mejor ruta para el paquete 476 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 477 - SKBO - SEQM - Tue Jan 02 03:31:20 PET 2024 - Thu Jan 04 03:31:20 PET 2024
+La mejor ruta para el paquete 477 fue:
+Ruta 52: SKBO (2024-01-02 18:18:00) -> SEQM (2024-01-02 22:30:00)  (ID: 334) | 
+
+Paquete 478 - SLLP - SVMI - Mon Jan 01 20:35:49 PET 2024 - Wed Jan 03 20:35:49 PET 2024
+La mejor ruta para el paquete 478 fue:
+Ruta 375: SLLP (2024-01-01 23:07:00) -> SVMI (2024-01-02 19:49:00)  (ID: 92) | 
+
+Paquete 479 - SCEL - SBBR - Tue Jan 02 12:20:35 PET 2024 - Thu Jan 04 12:20:35 PET 2024
+La mejor ruta para el paquete 479 fue:
+Ruta 61: SCEL (2024-01-02 16:55:00) -> SBBR (2024-01-02 21:12:00)  (ID: 292) | 
+
+Paquete 480 - SGAS - SBBR - Tue Jan 02 10:45:31 PET 2024 - Thu Jan 04 09:45:31 PET 2024
+La mejor ruta para el paquete 480 fue:
+Ruta 530: SGAS (2024-01-02 17:05:00) -> SBBR (2024-01-03 05:43:00)  (ID: 310) | 
+
+Paquete 481 - SGAS - SCEL - Mon Jan 01 18:36:10 PET 2024 - Wed Jan 03 17:36:10 PET 2024
+La mejor ruta para el paquete 481 fue:
+Ruta 506: SGAS (2024-01-01 19:41:00) -> SCEL (2024-01-01 23:01:00)  (ID: 140) | 
+
+Paquete 482 - SVMI - SBBR - Wed Jan 03 06:49:09 PET 2024 - Fri Jan 05 05:49:09 PET 2024
+La mejor ruta para el paquete 482 fue:
+Ruta 247: SVMI (2024-01-03 13:58:00) -> SBBR (2024-01-03 18:53:00)  (ID: 362) | 
+
+Paquete 483 - SPIM - SLLP - Tue Jan 02 03:27:48 PET 2024 - Thu Jan 04 02:27:48 PET 2024
+La mejor ruta para el paquete 483 fue:
+Ruta 353: SPIM (2024-01-02 14:15:00) -> SLLP (2024-01-02 14:46:00)  (ID: 244) | 
+
+Paquete 484 - SGAS - SEQM - Wed Jan 03 13:07:06 PET 2024 - Fri Jan 05 14:07:06 PET 2024
+La mejor ruta para el paquete 484 fue:
+Ruta 574: SGAS (2024-01-03 21:49:00) -> SEQM (2024-01-04 16:26:00)  (ID: 496) | 
+
+Paquete 485 - SLLP - SBBR - Mon Jan 01 07:49:23 PET 2024 - Wed Jan 03 06:49:23 PET 2024
+La mejor ruta para el paquete 485 fue:
+Ruta 350: SLLP (2024-01-01 11:30:00) -> SBBR (2024-01-01 21:01:00)  (ID: 94) | 
+
+Paquete 486 - SVMI - SCEL - Thu Jan 04 03:09:45 PET 2024 - Sat Jan 06 02:09:45 PET 2024
+La mejor ruta para el paquete 486 fue:
+Ruta 273: SVMI (2024-01-04 19:05:00) -> SCEL (2024-01-05 06:52:00)  (ID: 552) | 
+
+Paquete 487 - SVMI - SEQM - Wed Jan 03 22:19:52 PET 2024 - Fri Jan 05 23:19:52 PET 2024
+La mejor ruta para el paquete 487 fue:
+Ruta 297: SVMI (2024-01-04 18:01:00) -> SEQM (2024-01-05 12:58:00)  (ID: 548) | 
+
+Paquete 488 - SVMI - SGAS - Wed Jan 03 11:59:26 PET 2024 - Fri Jan 05 11:59:26 PET 2024
+La mejor ruta para el paquete 488 fue:
+Ruta 257: SVMI (2024-01-04 10:22:00) -> SGAS (2024-01-04 14:58:00)  (ID: 554) | 
+
+Paquete 489 - SEQM - SVMI - Tue Jan 02 12:23:31 PET 2024 - Thu Jan 04 11:23:31 PET 2024
+La mejor ruta para el paquete 489 fue:
+Ruta 562: SEQM (2024-01-02 21:16:00) -> SVMI (2024-01-02 23:56:00)  (ID: 254) | 
+
+Paquete 490 - SABE - SVMI - Tue Jan 02 04:31:33 PET 2024 - Thu Jan 04 05:31:33 PET 2024
+La mejor ruta para el paquete 490 fue:
+Ruta 413: SABE (2024-01-02 09:22:00) -> SVMI (2024-01-02 22:04:00)  (ID: 344) | 
+
+Paquete 491 - SGAS - SCEL - Wed Jan 03 11:04:46 PET 2024 - Fri Jan 05 10:04:46 PET 2024
+La mejor ruta para el paquete 491 fue:
+Ruta 559: SGAS (2024-01-03 19:41:00) -> SCEL (2024-01-03 23:01:00)  (ID: 500) | 
+
+Paquete 492 - SCEL - SGAS - Mon Jan 01 19:13:43 PET 2024 - Wed Jan 03 20:13:43 PET 2024
+La mejor ruta para el paquete 492 fue:
+Ruta 56: SCEL (2024-01-02 16:48:00) -> SGAS (2024-01-02 19:27:00)  (ID: 302) | 
+
+Paquete 493 - SGAS - SKBO - Wed Jan 03 03:47:31 PET 2024 - Fri Jan 05 04:47:31 PET 2024
+La mejor ruta para el paquete 493 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 494 - SEQM - SBBR - Tue Jan 02 23:54:45 PET 2024 - Thu Jan 04 21:54:45 PET 2024
+La mejor ruta para el paquete 494 fue:
+Ruta 579: SEQM (2024-01-03 19:39:00) -> SBBR (2024-01-03 23:11:00)  (ID: 436) | 
+
+Paquete 495 - SABE - SVMI - Wed Jan 03 13:02:51 PET 2024 - Fri Jan 05 14:02:51 PET 2024
+La mejor ruta para el paquete 495 fue:
+Ruta 472: SABE (2024-01-04 09:22:00) -> SVMI (2024-01-04 22:04:00)  (ID: 704) | 
+
+Paquete 496 - SBBR - SLLP - Wed Jan 03 03:09:06 PET 2024 - Fri Jan 05 04:09:06 PET 2024
+La mejor ruta para el paquete 496 fue:
+Ruta 249: SBBR (2024-01-03 19:42:00) -> SLLP (2024-01-04 05:43:00)  (ID: 388) | 
+
+Paquete 497 - SVMI - SCEL - Wed Jan 03 20:54:21 PET 2024 - Fri Jan 05 19:54:21 PET 2024
+La mejor ruta para el paquete 497 fue:
+Ruta 273: SVMI (2024-01-04 19:05:00) -> SCEL (2024-01-05 06:52:00)  (ID: 552) | 
+
+Paquete 498 - SUAA - SLLP - Mon Jan 01 23:07:50 PET 2024 - Thu Jan 04 00:07:50 PET 2024
+La mejor ruta para el paquete 498 fue:
+Ruta 69: SUAA (2024-01-02 18:52:00) -> SLLP (2024-01-03 06:56:00)  (ID: 226) | 
+
+Paquete 499 - SVMI - SLLP - Wed Jan 03 20:38:56 PET 2024 - Fri Jan 05 20:38:56 PET 2024
+La mejor ruta para el paquete 499 fue:
+Ruta 274: SVMI (2024-01-04 10:31:00) -> SLLP (2024-01-04 17:25:00)  (ID: 550) | 
+
+Paquete 500 - SPIM - SABE - Mon Jan 01 22:00:17 PET 2024 - Wed Jan 03 20:00:17 PET 2024
+La mejor ruta para el paquete 500 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 501 - SPIM - SBBR - Wed Jan 03 06:59:03 PET 2024 - Fri Jan 05 04:59:03 PET 2024
+La mejor ruta para el paquete 501 fue:
+Ruta 392: SPIM (2024-01-03 18:12:00) -> SBBR (2024-01-04 09:42:00)  (ID: 418) | 
+
+Paquete 502 - SPIM - SABE - Wed Jan 03 09:02:11 PET 2024 - Fri Jan 05 07:02:11 PET 2024
+La mejor ruta para el paquete 502 fue:
+Ruta 390: SPIM (2024-01-03 15:51:00) -> SABE (2024-01-03 18:43:00)  (ID: 432) | 
+
+Paquete 503 - SEQM - SBBR - Wed Jan 03 04:59:55 PET 2024 - Fri Jan 05 02:59:55 PET 2024
+La mejor ruta para el paquete 503 fue:
+Ruta 579: SEQM (2024-01-03 19:39:00) -> SBBR (2024-01-03 23:11:00)  (ID: 436) | 
+
+Paquete 504 - SKBO - SABE - Thu Jan 04 00:59:53 PET 2024 - Fri Jan 05 22:59:53 PET 2024
+La mejor ruta para el paquete 504 fue:
+Ruta 105: SKBO (2024-01-04 20:46:00) -> SABE (2024-01-05 20:27:00)  (ID: 702) | 
+
+Paquete 505 - SABE - SBBR - Tue Jan 02 11:53:11 PET 2024 - Thu Jan 04 11:53:11 PET 2024
+La mejor ruta para el paquete 505 fue:
+Ruta 415: SABE (2024-01-03 05:31:00) -> SBBR (2024-01-03 14:08:00)  (ID: 526) | 
+
+Paquete 506 - SPIM - SKBO - Mon Jan 01 12:46:46 PET 2024 - Wed Jan 03 12:46:46 PET 2024
+La mejor ruta para el paquete 506 fue:
+Ruta 216: SPIM (2024-01-01 19:17:00) -> SKBO (2024-01-02 14:10:00)  (ID: 70) | 
+
+Paquete 507 - SLLP - SGAS - Mon Jan 01 06:02:35 PET 2024 - Wed Jan 03 06:02:35 PET 2024
+La mejor ruta para el paquete 507 fue:
+Ruta 361: SLLP (2024-01-01 16:19:00) -> SGAS (2024-01-02 08:25:00)  (ID: 104) | 
+
+Paquete 508 - SLLP - SBBR - Mon Jan 01 18:42:50 PET 2024 - Wed Jan 03 17:42:50 PET 2024
+La mejor ruta para el paquete 508 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 509 - SCEL - SEQM - Tue Jan 02 08:17:19 PET 2024 - Thu Jan 04 10:17:19 PET 2024
+La mejor ruta para el paquete 509 fue:
+Ruta 67: SCEL (2024-01-02 12:53:00) -> SEQM (2024-01-02 16:47:00)  (ID: 298) | 
+
+Paquete 510 - SABE - SVMI - Wed Jan 03 16:05:51 PET 2024 - Fri Jan 05 17:05:51 PET 2024
+La mejor ruta para el paquete 510 fue:
+Ruta 472: SABE (2024-01-04 09:22:00) -> SVMI (2024-01-04 22:04:00)  (ID: 704) | 
+
+Paquete 511 - SKBO - SVMI - Thu Jan 04 00:46:10 PET 2024 - Fri Jan 05 23:46:10 PET 2024
+La mejor ruta para el paquete 511 fue:
+Ruta 102: SKBO (2024-01-04 19:45:00) -> SVMI (2024-01-05 18:22:00)  (ID: 686) | 
+
+Paquete 512 - SBBR - SCEL - Mon Jan 01 14:10:10 PET 2024 - Wed Jan 03 14:10:10 PET 2024
+La mejor ruta para el paquete 512 fue:
+Ruta 208: SBBR (2024-01-01 22:19:00) -> SCEL (2024-01-02 20:37:00)  (ID: 30) | 
+
+Paquete 513 - SLLP - SABE - Wed Jan 03 09:17:10 PET 2024 - Fri Jan 05 08:17:10 PET 2024
+La mejor ruta para el paquete 513 fue:
+Ruta 406: SLLP (2024-01-03 11:06:00) -> SABE (2024-01-03 12:30:00)  (ID: 468) | 
+
+Paquete 514 - SABE - SVMI - Wed Jan 03 21:50:33 PET 2024 - Fri Jan 05 22:50:33 PET 2024
+La mejor ruta para el paquete 514 fue:
+Ruta 472: SABE (2024-01-04 09:22:00) -> SVMI (2024-01-04 22:04:00)  (ID: 704) | 
+
+Paquete 515 - SPIM - SGAS - Tue Jan 02 03:37:58 PET 2024 - Thu Jan 04 02:37:58 PET 2024
+La mejor ruta para el paquete 515 fue:
+Ruta 382: SPIM (2024-01-02 22:29:00) -> SGAS (2024-01-03 06:22:00)  (ID: 248) | 
+
+Paquete 516 - SBBR - SCEL - Tue Jan 02 01:55:18 PET 2024 - Thu Jan 04 01:55:18 PET 2024
+La mejor ruta para el paquete 516 fue:
+Ruta 233: SBBR (2024-01-02 22:19:00) -> SCEL (2024-01-03 20:37:00)  (ID: 210) | 
+
+Paquete 517 - SGAS - SKBO - Tue Jan 02 22:15:28 PET 2024 - Thu Jan 04 23:15:28 PET 2024
+La mejor ruta para el paquete 517 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 518 - SUAA - SPIM - Mon Jan 01 11:05:54 PET 2024 - Wed Jan 03 13:05:54 PET 2024
+La mejor ruta para el paquete 518 fue:
+Ruta 104: SUAA (2024-01-02 06:48:00) -> SPIM (2024-01-02 19:02:00)  (ID: 222) | 
+
+Paquete 519 - SPIM - SABE - Wed Jan 03 11:56:11 PET 2024 - Fri Jan 05 09:56:11 PET 2024
+La mejor ruta para el paquete 519 fue:
+Ruta 390: SPIM (2024-01-03 15:51:00) -> SABE (2024-01-03 18:43:00)  (ID: 432) | 
+
+Paquete 520 - SLLP - SABE - Wed Jan 03 19:15:52 PET 2024 - Fri Jan 05 18:15:52 PET 2024
+La mejor ruta para el paquete 520 fue:
+Ruta 432: SLLP (2024-01-04 11:06:00) -> SABE (2024-01-04 12:30:00)  (ID: 648) | 
+
+Paquete 521 - SBBR - SEQM - Mon Jan 01 20:07:32 PET 2024 - Wed Jan 03 22:07:32 PET 2024
+La mejor ruta para el paquete 521 fue:
+Ruta 234: SBBR (2024-01-02 18:07:00) -> SEQM (2024-01-03 06:29:00)  (ID: 206) | 
+
+Paquete 522 - SUAA - SCEL - Tue Jan 02 19:34:14 PET 2024 - Thu Jan 04 19:34:14 PET 2024
+La mejor ruta para el paquete 522 fue:
+Ruta 66: SUAA (2024-01-02 22:20:00) -> SCEL (2024-01-03 19:44:00)  (ID: 228) | 
+
+Paquete 523 - SPIM - SVMI - Mon Jan 01 20:33:01 PET 2024 - Wed Jan 03 19:33:01 PET 2024
+La mejor ruta para el paquete 523 fue:
+Ruta 362: SPIM (2024-01-02 15:21:00) -> SVMI (2024-01-03 07:58:00)  (ID: 236) | 
+
+Paquete 524 - SBBR - SEQM - Thu Jan 04 02:31:54 PET 2024 - Sat Jan 06 04:31:54 PET 2024
+La mejor ruta para el paquete 524 fue:
+Ruta 319: SBBR (2024-01-04 18:07:00) -> SEQM (2024-01-05 06:29:00)  (ID: 566) | 
+
+Paquete 525 - SCEL - SUAA - Tue Jan 02 07:21:59 PET 2024 - Thu Jan 04 07:21:59 PET 2024
+La mejor ruta para el paquete 525 fue:
+Ruta 63: SCEL (2024-01-02 22:06:00) -> SUAA (2024-01-03 07:54:00)  (ID: 294) | 
+
+Paquete 526 - SCEL - SPIM - Wed Jan 03 19:00:03 PET 2024 - Fri Jan 05 21:00:03 PET 2024
+La mejor ruta para el paquete 526 fue:
+Ruta 110: SCEL (2024-01-04 05:39:00) -> SPIM (2024-01-04 16:02:00)  (ID: 656) | 
+
+Paquete 527 - SLLP - SABE - Wed Jan 03 04:32:17 PET 2024 - Fri Jan 05 03:32:17 PET 2024
+La mejor ruta para el paquete 527 fue:
+Ruta 406: SLLP (2024-01-03 11:06:00) -> SABE (2024-01-03 12:30:00)  (ID: 468) | 
+
+Paquete 528 - SVMI - SLLP - Mon Jan 01 06:30:27 PET 2024 - Wed Jan 03 06:30:27 PET 2024
+La mejor ruta para el paquete 528 fue:
+Ruta 197: SVMI (2024-01-01 10:31:00) -> SLLP (2024-01-01 17:25:00)  (ID: 10) | 
+
+Paquete 529 - SCEL - SBBR - Mon Jan 01 16:07:33 PET 2024 - Wed Jan 03 16:07:33 PET 2024
+La mejor ruta para el paquete 529 fue:
+Ruta 38: SCEL (2024-01-01 16:55:00) -> SBBR (2024-01-01 21:12:00)  (ID: 112) | 
+
+Paquete 530 - SGAS - SPIM - Tue Jan 02 13:24:56 PET 2024 - Thu Jan 04 14:24:56 PET 2024
+La mejor ruta para el paquete 530 fue:
+Ruta 548: SGAS (2024-01-03 09:07:00) -> SPIM (2024-01-03 17:21:00)  (ID: 494) | 
+
+Paquete 531 - SBBR - SGAS - Tue Jan 02 16:23:45 PET 2024 - Thu Jan 04 17:23:45 PET 2024
+La mejor ruta para el paquete 531 fue:
+Ruta 246: SBBR (2024-01-03 08:19:00) -> SGAS (2024-01-03 12:24:00)  (ID: 392) | 
+
+Paquete 532 - SGAS - SABE - Mon Jan 01 20:35:31 PET 2024 - Wed Jan 03 19:35:31 PET 2024
+La mejor ruta para el paquete 532 fue:
+Ruta 528: SGAS (2024-01-02 10:13:00) -> SABE (2024-01-02 13:08:00)  (ID: 324) | 
+
+Paquete 533 - SUAA - SPIM - Wed Jan 03 17:00:15 PET 2024 - Fri Jan 05 19:00:15 PET 2024
+La mejor ruta para el paquete 533 fue:
+Ruta 147: SUAA (2024-01-04 06:48:00) -> SPIM (2024-01-04 19:02:00)  (ID: 582) | 
+
+Paquete 534 - SBBR - SUAA - Wed Jan 03 14:07:25 PET 2024 - Fri Jan 05 14:07:25 PET 2024
+La mejor ruta para el paquete 534 fue:
+Ruta 245: SBBR (2024-01-04 05:23:00) -> SUAA (2024-01-04 11:34:00)  (ID: 562) | 
+
+Paquete 535 - SKBO - SLLP - Mon Jan 01 16:25:27 PET 2024 - Wed Jan 03 15:25:27 PET 2024
+La mejor ruta para el paquete 535 fue:
+Ruta 40: SKBO (2024-01-01 23:38:00) -> SLLP (2024-01-02 19:59:00)  (ID: 156) | 
+
+Paquete 536 - SLLP - SBBR - Mon Jan 01 21:58:11 PET 2024 - Wed Jan 03 20:58:11 PET 2024
+La mejor ruta para el paquete 536 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 537 - SABE - SVMI - Wed Jan 03 03:18:34 PET 2024 - Fri Jan 05 04:18:34 PET 2024
+La mejor ruta para el paquete 537 fue:
+Ruta 442: SABE (2024-01-03 09:22:00) -> SVMI (2024-01-03 22:04:00)  (ID: 524) | 
+
+Paquete 538 - SCEL - SLLP - Wed Jan 03 14:42:37 PET 2024 - Fri Jan 05 15:42:37 PET 2024
+La mejor ruta para el paquete 538 fue:
+Ruta 100: SCEL (2024-01-04 07:36:00) -> SLLP (2024-01-04 16:37:00)  (ID: 660) | 
+
+Paquete 539 - SKBO - SABE - Mon Jan 01 13:07:31 PET 2024 - Wed Jan 03 11:07:31 PET 2024
+La mejor ruta para el paquete 539 fue:
+Ruta 36: SKBO (2024-01-01 20:46:00) -> SABE (2024-01-02 20:27:00)  (ID: 162) | 
+
+Paquete 540 - SKBO - SCEL - Mon Jan 01 09:46:51 PET 2024 - Wed Jan 03 07:46:51 PET 2024
+La mejor ruta para el paquete 540 fue:
+Ruta 21: SKBO (2024-01-01 14:10:00) -> SCEL (2024-01-02 05:31:00)  (ID: 158) | 
+
+Paquete 541 - SBBR - SVMI - Tue Jan 02 15:35:13 PET 2024 - Thu Jan 04 16:35:13 PET 2024
+La mejor ruta para el paquete 541 fue:
+Ruta 222: SBBR (2024-01-02 17:11:00) -> SVMI (2024-01-02 22:28:00)  (ID: 200) | 
+
+Paquete 542 - SCEL - SABE - Mon Jan 01 23:58:36 PET 2024 - Wed Jan 03 23:58:36 PET 2024
+La mejor ruta para el paquete 542 fue:
+Ruta 74: SCEL (2024-01-02 18:08:00) -> SABE (2024-01-02 22:40:00)  (ID: 306) | 
+
+Paquete 543 - SGAS - SCEL - Tue Jan 02 07:57:04 PET 2024 - Thu Jan 04 06:57:04 PET 2024
+La mejor ruta para el paquete 543 fue:
+Ruta 535: SGAS (2024-01-02 19:41:00) -> SCEL (2024-01-02 23:01:00)  (ID: 320) | 
+
+Paquete 544 - SGAS - SUAA - Wed Jan 03 04:16:41 PET 2024 - Fri Jan 05 03:16:41 PET 2024
+La mejor ruta para el paquete 544 fue:
+Ruta 551: SGAS (2024-01-03 14:10:00) -> SUAA (2024-01-03 20:23:00)  (ID: 492) | 
+
+Paquete 545 - SABE - SUAA - Wed Jan 03 16:19:24 PET 2024 - Fri Jan 05 16:19:24 PET 2024
+La mejor ruta para el paquete 545 fue:
+Ruta 429: SABE (2024-01-03 17:22:00) -> SUAA (2024-01-03 19:47:00)  (ID: 528) | 
+
+Paquete 546 - SBBR - SLLP - Mon Jan 01 07:41:15 PET 2024 - Wed Jan 03 08:41:15 PET 2024
+La mejor ruta para el paquete 546 fue:
+Ruta 206: SBBR (2024-01-01 19:42:00) -> SLLP (2024-01-02 05:43:00)  (ID: 28) | 
+
+Paquete 547 - SKBO - SUAA - Wed Jan 03 19:58:29 PET 2024 - Fri Jan 05 17:58:29 PET 2024
+La mejor ruta para el paquete 547 fue:
+Ruta 91: SKBO (2024-01-04 15:06:00) -> SUAA (2024-01-04 23:30:00)  (ID: 690) | 
+
+Paquete 548 - SEQM - SKBO - Tue Jan 02 13:06:29 PET 2024 - Thu Jan 04 13:06:29 PET 2024
+La mejor ruta para el paquete 548 fue:
+Ruta 544: SEQM (2024-01-02 18:33:00) -> SKBO (2024-01-02 23:21:00)  (ID: 268) | 
+
+Paquete 549 - SLLP - SBBR - Wed Jan 03 08:05:43 PET 2024 - Fri Jan 05 07:05:43 PET 2024
+La mejor ruta para el paquete 549 fue:
+Ruta 401: SLLP (2024-01-03 11:30:00) -> SBBR (2024-01-03 21:01:00)  (ID: 454) | 
+
+Paquete 550 - SEQM - SGAS - Mon Jan 01 05:36:44 PET 2024 - Wed Jan 03 04:36:44 PET 2024
+La mejor ruta para el paquete 550 fue:
+Ruta 547: SEQM (2024-01-01 18:36:00) -> SGAS (2024-01-02 18:33:00)  (ID: 86) | 
+
+Paquete 551 - SEQM - SVMI - Mon Jan 01 14:36:05 PET 2024 - Wed Jan 03 13:36:05 PET 2024
+La mejor ruta para el paquete 551 fue:
+Ruta 540: SEQM (2024-01-01 21:16:00) -> SVMI (2024-01-01 23:56:00)  (ID: 74) | 
+
+Paquete 552 - SGAS - SUAA - Tue Jan 02 09:31:30 PET 2024 - Thu Jan 04 08:31:30 PET 2024
+La mejor ruta para el paquete 552 fue:
+Ruta 527: SGAS (2024-01-02 14:10:00) -> SUAA (2024-01-02 20:23:00)  (ID: 312) | 
+
+Paquete 553 - SPIM - SEQM - Mon Jan 01 23:43:58 PET 2024 - Wed Jan 03 23:43:58 PET 2024
+La mejor ruta para el paquete 553 fue:
+Ruta 371: SPIM (2024-01-02 16:11:00) -> SEQM (2024-01-03 12:31:00)  (ID: 242) | 
+
+Paquete 554 - SCEL - SGAS - Wed Jan 03 11:53:39 PET 2024 - Fri Jan 05 12:53:39 PET 2024
+La mejor ruta para el paquete 554 fue:
+Ruta 75: SCEL (2024-01-03 16:48:00) -> SGAS (2024-01-03 19:27:00)  (ID: 482) | 
+
+Paquete 555 - SLLP - SEQM - Mon Jan 01 10:51:37 PET 2024 - Wed Jan 03 11:51:37 PET 2024
+La mejor ruta para el paquete 555 fue:
+Ruta 359: SLLP (2024-01-01 12:59:00) -> SEQM (2024-01-01 17:09:00)  (ID: 100) | 
+
+Paquete 556 - SBBR - SGAS - Tue Jan 02 15:25:49 PET 2024 - Thu Jan 04 16:25:49 PET 2024
+La mejor ruta para el paquete 556 fue:
+Ruta 246: SBBR (2024-01-03 08:19:00) -> SGAS (2024-01-03 12:24:00)  (ID: 392) | 
+
+Paquete 557 - SABE - SKBO - Tue Jan 02 10:06:31 PET 2024 - Thu Jan 04 12:06:31 PET 2024
+La mejor ruta para el paquete 557 fue:
+Ruta 400: SABE (2024-01-02 17:53:00) -> SKBO (2024-01-02 18:23:00)  (ID: 360) | 
+
+Paquete 558 - SKBO - SGAS - Tue Jan 02 00:43:29 PET 2024 - Wed Jan 03 23:43:29 PET 2024
+La mejor ruta para el paquete 558 fue:
+Ruta 71: SKBO (2024-01-02 23:12:00) -> SGAS (2024-01-03 17:59:00)  (ID: 340) | 
+
+Paquete 559 - SUAA - SLLP - Tue Jan 02 20:40:23 PET 2024 - Thu Jan 04 21:40:23 PET 2024
+La mejor ruta para el paquete 559 fue:
+Ruta 95: SUAA (2024-01-03 18:52:00) -> SLLP (2024-01-04 06:56:00)  (ID: 406) | 
+
+Paquete 560 - SBBR - SEQM - Tue Jan 02 12:34:03 PET 2024 - Thu Jan 04 14:34:03 PET 2024
+La mejor ruta para el paquete 560 fue:
+Ruta 234: SBBR (2024-01-02 18:07:00) -> SEQM (2024-01-03 06:29:00)  (ID: 206) | 
+
+Paquete 561 - SUAA - SABE - Mon Jan 01 06:04:16 PET 2024 - Wed Jan 03 06:04:16 PET 2024
+La mejor ruta para el paquete 561 fue:
+Ruta 204: SUAA (2024-01-01 21:18:00) -> SABE (2024-01-02 07:46:00)  (ID: 54) | 
+
+Paquete 562 - SKBO - SVMI - Wed Jan 03 08:19:05 PET 2024 - Fri Jan 05 07:19:05 PET 2024
+La mejor ruta para el paquete 562 fue:
+Ruta 81: SKBO (2024-01-03 19:45:00) -> SVMI (2024-01-04 18:22:00)  (ID: 506) | 
+
+Paquete 563 - SVMI - SLLP - Tue Jan 02 06:25:50 PET 2024 - Thu Jan 04 06:25:50 PET 2024
+La mejor ruta para el paquete 563 fue:
+Ruta 228: SVMI (2024-01-02 10:31:00) -> SLLP (2024-01-02 17:25:00)  (ID: 190) | 
+
+Paquete 564 - SUAA - SEQM - Wed Jan 03 10:07:25 PET 2024 - Fri Jan 05 12:07:25 PET 2024
+La mejor ruta para el paquete 564 fue:
+Ruta 264: SUAA (2024-01-04 07:10:00) -> SEQM (2024-01-04 21:45:00)  (ID: 584) | 
+
+Paquete 565 - SLLP - SVMI - Tue Jan 02 18:42:19 PET 2024 - Thu Jan 04 18:42:19 PET 2024
+La mejor ruta para el paquete 565 fue:
+Ruta 402: SLLP (2024-01-02 23:07:00) -> SVMI (2024-01-03 19:49:00)  (ID: 272) | 
+
+Paquete 566 - SUAA - SGAS - Wed Jan 03 02:15:15 PET 2024 - Fri Jan 05 03:15:15 PET 2024
+La mejor ruta para el paquete 566 fue:
+Ruta 254: SUAA (2024-01-03 06:26:00) -> SGAS (2024-01-03 19:41:00)  (ID: 410) | 
+
+Paquete 567 - SBBR - SKBO - Mon Jan 01 12:58:35 PET 2024 - Wed Jan 03 14:58:35 PET 2024
+La mejor ruta para el paquete 567 fue:
+Ruta 219: SBBR (2024-01-02 07:02:00) -> SKBO (2024-01-02 22:00:00)  (ID: 214) | 
+
+Paquete 568 - SCEL - SLLP - Wed Jan 03 19:16:54 PET 2024 - Fri Jan 05 20:16:54 PET 2024
+La mejor ruta para el paquete 568 fue:
+Ruta 100: SCEL (2024-01-04 07:36:00) -> SLLP (2024-01-04 16:37:00)  (ID: 660) | 
+
+Paquete 569 - SPIM - SABE - Tue Jan 02 18:24:01 PET 2024 - Thu Jan 04 16:24:01 PET 2024
+La mejor ruta para el paquete 569 fue:
+Ruta 390: SPIM (2024-01-03 15:51:00) -> SABE (2024-01-03 18:43:00)  (ID: 432) | 
+
+Paquete 570 - SKBO - SVMI - Wed Jan 03 18:43:50 PET 2024 - Fri Jan 05 17:43:50 PET 2024
+La mejor ruta para el paquete 570 fue:
+Ruta 81: SKBO (2024-01-03 19:45:00) -> SVMI (2024-01-04 18:22:00)  (ID: 506) | 
+
+Paquete 571 - SEQM - SUAA - Tue Jan 02 10:22:42 PET 2024 - Thu Jan 04 08:22:42 PET 2024
+La mejor ruta para el paquete 571 fue:
+Ruta 534: SEQM (2024-01-02 10:54:00) -> SUAA (2024-01-02 14:32:00)  (ID: 258) | 
+
+Paquete 572 - SGAS - SUAA - Wed Jan 03 15:15:23 PET 2024 - Fri Jan 05 14:15:23 PET 2024
+La mejor ruta para el paquete 572 fue:
+Ruta 580: SGAS (2024-01-04 14:10:00) -> SUAA (2024-01-04 20:23:00)  (ID: 672) | 
+
+Paquete 573 - SEQM - SLLP - Tue Jan 02 04:06:58 PET 2024 - Thu Jan 04 03:06:58 PET 2024
+La mejor ruta para el paquete 573 fue:
+Ruta 546: SEQM (2024-01-02 14:02:00) -> SLLP (2024-01-02 17:16:00)  (ID: 262) | 
+
+Paquete 574 - SKBO - SABE - Wed Jan 03 23:12:42 PET 2024 - Fri Jan 05 21:12:42 PET 2024
+La mejor ruta para el paquete 574 fue:
+Ruta 105: SKBO (2024-01-04 20:46:00) -> SABE (2024-01-05 20:27:00)  (ID: 702) | 
+
+Paquete 575 - SLLP - SUAA - Wed Jan 03 05:50:05 PET 2024 - Fri Jan 05 04:50:05 PET 2024
+La mejor ruta para el paquete 575 fue:
+Ruta 414: SLLP (2024-01-04 05:08:00) -> SUAA (2024-01-04 13:06:00)  (ID: 636) | 
+
+Paquete 576 - SCEL - SBBR - Tue Jan 02 01:36:36 PET 2024 - Thu Jan 04 01:36:36 PET 2024
+La mejor ruta para el paquete 576 fue:
+Ruta 61: SCEL (2024-01-02 16:55:00) -> SBBR (2024-01-02 21:12:00)  (ID: 292) | 
+
+Paquete 577 - SPIM - SLLP - Thu Jan 04 04:24:18 PET 2024 - Sat Jan 06 03:24:18 PET 2024
+La mejor ruta para el paquete 577 fue:
+Ruta 403: SPIM (2024-01-04 14:15:00) -> SLLP (2024-01-04 14:46:00)  (ID: 604) | 
+
+Paquete 578 - SGAS - SABE - Thu Jan 04 01:12:11 PET 2024 - Sat Jan 06 00:12:11 PET 2024
+La mejor ruta para el paquete 578 fue:
+Ruta 575: SGAS (2024-01-04 10:13:00) -> SABE (2024-01-04 13:08:00)  (ID: 684) | 
+
+Paquete 579 - SLLP - SABE - Mon Jan 01 05:21:33 PET 2024 - Wed Jan 03 04:21:33 PET 2024
+La mejor ruta para el paquete 579 fue:
+Ruta 351: SLLP (2024-01-01 11:06:00) -> SABE (2024-01-01 12:30:00)  (ID: 108) | 
+
+Paquete 580 - SABE - SBBR - Mon Jan 01 12:51:56 PET 2024 - Wed Jan 03 12:51:56 PET 2024
+La mejor ruta para el paquete 580 fue:
+Ruta 386: SABE (2024-01-02 05:31:00) -> SBBR (2024-01-02 14:08:00)  (ID: 346) | 
+
+Paquete 581 - SVMI - SKBO - Tue Jan 02 08:40:02 PET 2024 - Thu Jan 04 09:40:02 PET 2024
+La mejor ruta para el paquete 581 fue:
+Ruta 232: SVMI (2024-01-03 05:22:00) -> SKBO (2024-01-03 14:33:00)  (ID: 376) | 
+
+Paquete 582 - SBBR - SABE - Tue Jan 02 06:29:19 PET 2024 - Thu Jan 04 06:29:19 PET 2024
+La mejor ruta para el paquete 582 fue:
+Ruta 221: SBBR (2024-01-02 14:24:00) -> SABE (2024-01-02 17:27:00)  (ID: 216) | 
+
+Paquete 583 - SBBR - SLLP - Wed Jan 03 15:07:53 PET 2024 - Fri Jan 05 16:07:53 PET 2024
+La mejor ruta para el paquete 583 fue:
+Ruta 249: SBBR (2024-01-03 19:42:00) -> SLLP (2024-01-04 05:43:00)  (ID: 388) | 
+
+Paquete 584 - SUAA - SABE - Mon Jan 01 07:45:44 PET 2024 - Wed Jan 03 07:45:44 PET 2024
+La mejor ruta para el paquete 584 fue:
+Ruta 204: SUAA (2024-01-01 21:18:00) -> SABE (2024-01-02 07:46:00)  (ID: 54) | 
+
+Paquete 585 - SPIM - SLLP - Wed Jan 03 10:55:57 PET 2024 - Fri Jan 05 09:55:57 PET 2024
+La mejor ruta para el paquete 585 fue:
+Ruta 379: SPIM (2024-01-03 14:15:00) -> SLLP (2024-01-03 14:46:00)  (ID: 424) | 
+
+Paquete 586 - SVMI - SCEL - Tue Jan 02 18:57:04 PET 2024 - Thu Jan 04 17:57:04 PET 2024
+La mejor ruta para el paquete 586 fue:
+Ruta 230: SVMI (2024-01-02 19:05:00) -> SCEL (2024-01-03 06:52:00)  (ID: 192) | 
+
+Paquete 587 - SVMI - SEQM - Mon Jan 01 05:35:37 PET 2024 - Wed Jan 03 06:35:37 PET 2024
+La mejor ruta para el paquete 587 fue:
+Ruta 212: SVMI (2024-01-01 18:01:00) -> SEQM (2024-01-02 12:58:00)  (ID: 8) | 
+
+Paquete 588 - SPIM - SGAS - Wed Jan 03 06:58:17 PET 2024 - Fri Jan 05 05:58:17 PET 2024
+La mejor ruta para el paquete 588 fue:
+Ruta 405: SPIM (2024-01-03 22:29:00) -> SGAS (2024-01-04 06:22:00)  (ID: 428) | 
+
+Paquete 589 - SABE - SVMI - Mon Jan 01 08:10:31 PET 2024 - Wed Jan 03 09:10:31 PET 2024
+La mejor ruta para el paquete 589 fue:
+Ruta 383: SABE (2024-01-01 09:22:00) -> SVMI (2024-01-01 22:04:00)  (ID: 164) | 
+
+Paquete 590 - SABE - SEQM - Mon Jan 01 16:15:46 PET 2024 - Wed Jan 03 18:15:46 PET 2024
+La mejor ruta para el paquete 590 fue:
+Ruta 476: SABE (2024-01-02 10:57:00) -> SEQM (2024-01-02 19:41:00)  (ID: 352) | 
+
+Paquete 591 - SGAS - SPIM - Tue Jan 02 02:53:21 PET 2024 - Thu Jan 04 03:53:21 PET 2024
+La mejor ruta para el paquete 591 fue:
+Ruta 523: SGAS (2024-01-02 09:07:00) -> SPIM (2024-01-02 17:21:00)  (ID: 314) | 
+
+Paquete 592 - SGAS - SEQM - Mon Jan 01 14:18:14 PET 2024 - Wed Jan 03 15:18:14 PET 2024
+La mejor ruta para el paquete 592 fue:
+Ruta 532: SGAS (2024-01-01 21:49:00) -> SEQM (2024-01-02 16:26:00)  (ID: 136) | 
+
+Paquete 593 - SLLP - SUAA - Tue Jan 02 14:46:44 PET 2024 - Thu Jan 04 13:46:44 PET 2024
+La mejor ruta para el paquete 593 fue:
+Ruta 391: SLLP (2024-01-03 05:08:00) -> SUAA (2024-01-03 13:06:00)  (ID: 456) | 
+
+Paquete 594 - SKBO - SGAS - Wed Jan 03 05:02:08 PET 2024 - Fri Jan 05 04:02:08 PET 2024
+La mejor ruta para el paquete 594 fue:
+Ruta 93: SKBO (2024-01-03 23:12:00) -> SGAS (2024-01-04 17:59:00)  (ID: 520) | 
+
+Paquete 595 - SUAA - SABE - Wed Jan 03 21:26:08 PET 2024 - Fri Jan 05 21:26:08 PET 2024
+La mejor ruta para el paquete 595 fue:
+Ruta 269: SUAA (2024-01-04 21:18:00) -> SABE (2024-01-05 07:46:00)  (ID: 594) | 
+
+Paquete 596 - SGAS - SKBO - Wed Jan 03 10:34:06 PET 2024 - Fri Jan 05 11:34:06 PET 2024
+La mejor ruta para el paquete 596 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 597 - SCEL - SBBR - Wed Jan 03 05:40:18 PET 2024 - Fri Jan 05 05:40:18 PET 2024
+La mejor ruta para el paquete 597 fue:
+Ruta 84: SCEL (2024-01-03 16:55:00) -> SBBR (2024-01-03 21:12:00)  (ID: 472) | 
+
+Paquete 598 - SEQM - SVMI - Tue Jan 02 15:39:11 PET 2024 - Thu Jan 04 14:39:11 PET 2024
+La mejor ruta para el paquete 598 fue:
+Ruta 562: SEQM (2024-01-02 21:16:00) -> SVMI (2024-01-02 23:56:00)  (ID: 254) | 
+
+Paquete 599 - SCEL - SPIM - Wed Jan 03 13:21:01 PET 2024 - Fri Jan 05 15:21:01 PET 2024
+La mejor ruta para el paquete 599 fue:
+Ruta 110: SCEL (2024-01-04 05:39:00) -> SPIM (2024-01-04 16:02:00)  (ID: 656) | 
+
+Paquete 600 - SKBO - SCEL - Wed Jan 03 21:46:18 PET 2024 - Fri Jan 05 19:46:18 PET 2024
+La mejor ruta para el paquete 600 fue:
+Ruta 92: SKBO (2024-01-04 14:10:00) -> SCEL (2024-01-05 05:31:00)  (ID: 698) | 
+
+Paquete 601 - SUAA - SEQM - Tue Jan 02 17:46:29 PET 2024 - Thu Jan 04 19:46:29 PET 2024
+La mejor ruta para el paquete 601 fue:
+Ruta 241: SUAA (2024-01-03 07:10:00) -> SEQM (2024-01-03 21:45:00)  (ID: 404) | 
+
+Paquete 602 - SGAS - SPIM - Tue Jan 02 21:08:46 PET 2024 - Thu Jan 04 22:08:46 PET 2024
+La mejor ruta para el paquete 602 fue:
+Ruta 548: SGAS (2024-01-03 09:07:00) -> SPIM (2024-01-03 17:21:00)  (ID: 494) | 
+
+Paquete 603 - SGAS - SUAA - Wed Jan 03 17:55:52 PET 2024 - Fri Jan 05 16:55:52 PET 2024
+La mejor ruta para el paquete 603 fue:
+Ruta 580: SGAS (2024-01-04 14:10:00) -> SUAA (2024-01-04 20:23:00)  (ID: 672) | 
+
+Paquete 604 - SGAS - SVMI - Tue Jan 02 16:56:58 PET 2024 - Thu Jan 04 16:56:58 PET 2024
+La mejor ruta para el paquete 604 fue:
+Ruta 552: SGAS (2024-01-03 12:53:00) -> SVMI (2024-01-03 16:36:00)  (ID: 488) | 
+
+Paquete 605 - SGAS - SVMI - Tue Jan 02 18:40:22 PET 2024 - Thu Jan 04 18:40:22 PET 2024
+La mejor ruta para el paquete 605 fue:
+Ruta 552: SGAS (2024-01-03 12:53:00) -> SVMI (2024-01-03 16:36:00)  (ID: 488) | 
+
+Paquete 606 - SVMI - SLLP - Tue Jan 02 01:16:19 PET 2024 - Thu Jan 04 01:16:19 PET 2024
+La mejor ruta para el paquete 606 fue:
+Ruta 228: SVMI (2024-01-02 10:31:00) -> SLLP (2024-01-02 17:25:00)  (ID: 190) | 
+
+Paquete 607 - SUAA - SCEL - Wed Jan 03 12:58:14 PET 2024 - Fri Jan 05 12:58:14 PET 2024
+La mejor ruta para el paquete 607 fue:
+Ruta 89: SUAA (2024-01-03 22:20:00) -> SCEL (2024-01-04 19:44:00)  (ID: 408) | 
+
+Paquete 608 - SEQM - SABE - Wed Jan 03 11:30:16 PET 2024 - Fri Jan 05 09:30:16 PET 2024
+La mejor ruta para el paquete 608 fue:
+Ruta 584: SEQM (2024-01-03 19:40:00) -> SABE (2024-01-03 20:31:00)  (ID: 450) | 
+
+Paquete 609 - SEQM - SPIM - Wed Jan 03 03:17:05 PET 2024 - Fri Jan 05 03:17:05 PET 2024
+La mejor ruta para el paquete 609 fue:
+Ruta 586: SEQM (2024-01-03 19:59:00) -> SPIM (2024-01-04 14:24:00)  (ID: 440) | 
+
+Paquete 610 - SKBO - SCEL - Wed Jan 03 01:40:36 PET 2024 - Thu Jan 04 23:40:36 PET 2024
+La mejor ruta para el paquete 610 fue:
+Ruta 70: SKBO (2024-01-03 14:10:00) -> SCEL (2024-01-04 05:31:00)  (ID: 518) | 
+
+Paquete 611 - SCEL - SVMI - Wed Jan 03 06:01:31 PET 2024 - Fri Jan 05 07:01:31 PET 2024
+La mejor ruta para el paquete 611 fue:
+Ruta 78: SCEL (2024-01-03 14:26:00) -> SVMI (2024-01-03 22:08:00)  (ID: 470) | 
+
+Paquete 612 - SBBR - SABE - Tue Jan 02 01:10:20 PET 2024 - Thu Jan 04 01:10:20 PET 2024
+La mejor ruta para el paquete 612 fue:
+Ruta 221: SBBR (2024-01-02 14:24:00) -> SABE (2024-01-02 17:27:00)  (ID: 216) | 
+
+Paquete 613 - SPIM - SKBO - Tue Jan 02 05:48:21 PET 2024 - Thu Jan 04 05:48:21 PET 2024
+La mejor ruta para el paquete 613 fue:
+Ruta 237: SPIM (2024-01-02 19:17:00) -> SKBO (2024-01-03 14:10:00)  (ID: 250) | 
+
+Paquete 614 - SKBO - SGAS - Tue Jan 02 01:54:24 PET 2024 - Thu Jan 04 00:54:24 PET 2024
+La mejor ruta para el paquete 614 fue:
+Ruta 71: SKBO (2024-01-02 23:12:00) -> SGAS (2024-01-03 17:59:00)  (ID: 340) | 
+
+Paquete 615 - SVMI - SEQM - Mon Jan 01 18:32:48 PET 2024 - Wed Jan 03 19:32:48 PET 2024
+La mejor ruta para el paquete 615 fue:
+Ruta 236: SVMI (2024-01-02 18:01:00) -> SEQM (2024-01-03 12:58:00)  (ID: 188) | 
+
+Paquete 616 - SBBR - SVMI - Tue Jan 02 08:48:36 PET 2024 - Thu Jan 04 09:48:36 PET 2024
+La mejor ruta para el paquete 616 fue:
+Ruta 222: SBBR (2024-01-02 17:11:00) -> SVMI (2024-01-02 22:28:00)  (ID: 200) | 
+
+Paquete 617 - SKBO - SUAA - Wed Jan 03 03:44:19 PET 2024 - Fri Jan 05 01:44:19 PET 2024
+La mejor ruta para el paquete 617 fue:
+Ruta 65: SKBO (2024-01-03 15:06:00) -> SUAA (2024-01-03 23:30:00)  (ID: 510) | 
+
+Paquete 618 - SCEL - SLLP - Tue Jan 02 12:10:41 PET 2024 - Thu Jan 04 13:10:41 PET 2024
+La mejor ruta para el paquete 618 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 619 - SEQM - SBBR - Tue Jan 02 20:01:07 PET 2024 - Thu Jan 04 18:01:07 PET 2024
+La mejor ruta para el paquete 619 fue:
+Ruta 579: SEQM (2024-01-03 19:39:00) -> SBBR (2024-01-03 23:11:00)  (ID: 436) | 
+
+Paquete 620 - SABE - SPIM - Mon Jan 01 14:05:44 PET 2024 - Wed Jan 03 16:05:44 PET 2024
+La mejor ruta para el paquete 620 fue:
+Ruta 399: SABE (2024-01-01 14:27:00) -> SPIM (2024-01-02 05:12:00)  (ID: 170) | 
+
+Paquete 621 - SVMI - SLLP - Tue Jan 02 05:00:21 PET 2024 - Thu Jan 04 05:00:21 PET 2024
+La mejor ruta para el paquete 621 fue:
+Ruta 228: SVMI (2024-01-02 10:31:00) -> SLLP (2024-01-02 17:25:00)  (ID: 190) | 
+
+Paquete 622 - SABE - SVMI - Mon Jan 01 14:43:45 PET 2024 - Wed Jan 03 15:43:45 PET 2024
+La mejor ruta para el paquete 622 fue:
+Ruta 413: SABE (2024-01-02 09:22:00) -> SVMI (2024-01-02 22:04:00)  (ID: 344) | 
+
+Paquete 623 - SPIM - SGAS - Wed Jan 03 15:18:44 PET 2024 - Fri Jan 05 14:18:44 PET 2024
+La mejor ruta para el paquete 623 fue:
+Ruta 405: SPIM (2024-01-03 22:29:00) -> SGAS (2024-01-04 06:22:00)  (ID: 428) | 
+
+Paquete 624 - SUAA - SGAS - Wed Jan 03 12:34:26 PET 2024 - Fri Jan 05 13:34:26 PET 2024
+La mejor ruta para el paquete 624 fue:
+Ruta 296: SUAA (2024-01-04 06:26:00) -> SGAS (2024-01-04 19:41:00)  (ID: 590) | 
+
+Paquete 625 - SUAA - SEQM - Mon Jan 01 16:47:30 PET 2024 - Wed Jan 03 18:47:30 PET 2024
+La mejor ruta para el paquete 625 fue:
+Ruta 217: SUAA (2024-01-02 07:10:00) -> SEQM (2024-01-02 21:45:00)  (ID: 224) | 
+
+Paquete 626 - SCEL - SUAA - Mon Jan 01 08:53:44 PET 2024 - Wed Jan 03 08:53:44 PET 2024
+La mejor ruta para el paquete 626 fue:
+Ruta 41: SCEL (2024-01-01 22:06:00) -> SUAA (2024-01-02 07:54:00)  (ID: 114) | 
+
+Paquete 627 - SCEL - SEQM - Thu Jan 04 02:10:21 PET 2024 - Sat Jan 06 04:10:21 PET 2024
+La mejor ruta para el paquete 627 fue:
+Ruta 109: SCEL (2024-01-04 12:53:00) -> SEQM (2024-01-04 16:47:00)  (ID: 658) | 
+
+Paquete 628 - SPIM - SGAS - Tue Jan 02 10:55:49 PET 2024 - Thu Jan 04 09:55:49 PET 2024
+La mejor ruta para el paquete 628 fue:
+Ruta 382: SPIM (2024-01-02 22:29:00) -> SGAS (2024-01-03 06:22:00)  (ID: 248) | 
+
+Paquete 629 - SABE - SCEL - Tue Jan 02 03:42:46 PET 2024 - Thu Jan 04 03:42:46 PET 2024
+La mejor ruta para el paquete 629 fue:
+Ruta 398: SABE (2024-01-02 16:02:00) -> SCEL (2024-01-02 19:32:00)  (ID: 356) | 
+
+Paquete 630 - SVMI - SKBO - Tue Jan 02 19:46:16 PET 2024 - Thu Jan 04 20:46:16 PET 2024
+La mejor ruta para el paquete 630 fue:
+Ruta 232: SVMI (2024-01-03 05:22:00) -> SKBO (2024-01-03 14:33:00)  (ID: 376) | 
+
+Paquete 631 - SLLP - SEQM - Mon Jan 01 11:17:32 PET 2024 - Wed Jan 03 12:17:32 PET 2024
+La mejor ruta para el paquete 631 fue:
+Ruta 359: SLLP (2024-01-01 12:59:00) -> SEQM (2024-01-01 17:09:00)  (ID: 100) | 
+
+Paquete 632 - SBBR - SVMI - Wed Jan 03 15:38:35 PET 2024 - Fri Jan 05 16:38:35 PET 2024
+La mejor ruta para el paquete 632 fue:
+Ruta 240: SBBR (2024-01-03 17:11:00) -> SVMI (2024-01-03 22:28:00)  (ID: 380) | 
+
+Paquete 633 - SVMI - SKBO - Mon Jan 01 18:49:31 PET 2024 - Wed Jan 03 19:49:31 PET 2024
+La mejor ruta para el paquete 633 fue:
+Ruta 213: SVMI (2024-01-02 05:22:00) -> SKBO (2024-01-02 14:33:00)  (ID: 196) | 
+
+Paquete 634 - SBBR - SGAS - Wed Jan 03 23:04:45 PET 2024 - Sat Jan 06 00:04:45 PET 2024
+La mejor ruta para el paquete 634 fue:
+Ruta 270: SBBR (2024-01-04 08:19:00) -> SGAS (2024-01-04 12:24:00)  (ID: 572) | 
+
+Paquete 635 - SGAS - SBBR - Mon Jan 01 13:53:14 PET 2024 - Wed Jan 03 12:53:14 PET 2024
+La mejor ruta para el paquete 635 fue:
+Ruta 499: SGAS (2024-01-01 17:05:00) -> SBBR (2024-01-02 05:43:00)  (ID: 130) | 
+
+Paquete 636 - SUAA - SGAS - Mon Jan 01 12:00:31 PET 2024 - Wed Jan 03 13:00:31 PET 2024
+La mejor ruta para el paquete 636 fue:
+Ruta 215: SUAA (2024-01-02 06:26:00) -> SGAS (2024-01-02 19:41:00)  (ID: 230) | 
+
+Paquete 637 - SVMI - SKBO - Thu Jan 04 02:14:33 PET 2024 - Sat Jan 06 03:14:33 PET 2024
+La mejor ruta para el paquete 637 fue:
+Ruta 252: SVMI (2024-01-04 05:22:00) -> SKBO (2024-01-04 14:33:00)  (ID: 556) | 
+
+Paquete 638 - SBBR - SKBO - Tue Jan 02 10:09:50 PET 2024 - Thu Jan 04 12:09:50 PET 2024
+La mejor ruta para el paquete 638 fue:
+Ruta 239: SBBR (2024-01-03 07:02:00) -> SKBO (2024-01-03 22:00:00)  (ID: 394) | 
+
+Paquete 639 - SGAS - SLLP - Wed Jan 03 17:35:54 PET 2024 - Fri Jan 05 17:35:54 PET 2024
+La mejor ruta para el paquete 639 fue:
+Ruta 571: SGAS (2024-01-04 05:37:00) -> SLLP (2024-01-04 14:14:00)  (ID: 678) | 
+
+Paquete 640 - SBBR - SUAA - Tue Jan 02 14:17:49 PET 2024 - Thu Jan 04 14:17:49 PET 2024
+La mejor ruta para el paquete 640 fue:
+Ruta 227: SBBR (2024-01-03 05:23:00) -> SUAA (2024-01-03 11:34:00)  (ID: 382) | 
+
+Paquete 641 - SABE - SGAS - Mon Jan 01 15:49:24 PET 2024 - Wed Jan 03 16:49:24 PET 2024
+La mejor ruta para el paquete 641 fue:
+Ruta 454: SABE (2024-01-02 15:33:00) -> SGAS (2024-01-02 17:46:00)  (ID: 358) | 
+
+Paquete 642 - SUAA - SPIM - Mon Jan 01 16:14:56 PET 2024 - Wed Jan 03 18:14:56 PET 2024
+La mejor ruta para el paquete 642 fue:
+Ruta 104: SUAA (2024-01-02 06:48:00) -> SPIM (2024-01-02 19:02:00)  (ID: 222) | 
+
+Paquete 643 - SEQM - SLLP - Tue Jan 02 13:50:06 PET 2024 - Thu Jan 04 12:50:06 PET 2024
+La mejor ruta para el paquete 643 fue:
+Ruta 546: SEQM (2024-01-02 14:02:00) -> SLLP (2024-01-02 17:16:00)  (ID: 262) | 
+
+Paquete 644 - SLLP - SABE - Wed Jan 03 22:56:43 PET 2024 - Fri Jan 05 21:56:43 PET 2024
+La mejor ruta para el paquete 644 fue:
+Ruta 432: SLLP (2024-01-04 11:06:00) -> SABE (2024-01-04 12:30:00)  (ID: 648) | 
+
+Paquete 645 - SEQM - SUAA - Wed Jan 03 14:28:18 PET 2024 - Fri Jan 05 12:28:18 PET 2024
+La mejor ruta para el paquete 645 fue:
+Ruta 576: SEQM (2024-01-04 10:54:00) -> SUAA (2024-01-04 14:32:00)  (ID: 618) | 
+
+Paquete 646 - SLLP - SCEL - Mon Jan 01 08:28:02 PET 2024 - Wed Jan 03 07:28:02 PET 2024
+La mejor ruta para el paquete 646 fue:
+Ruta 370: SLLP (2024-01-02 07:33:00) -> SCEL (2024-01-02 14:53:00)  (ID: 282) | 
+
+Paquete 647 - SLLP - SVMI - Wed Jan 03 12:19:59 PET 2024 - Fri Jan 05 12:19:59 PET 2024
+La mejor ruta para el paquete 647 fue:
+Ruta 425: SLLP (2024-01-03 23:07:00) -> SVMI (2024-01-04 19:49:00)  (ID: 452) | 
+
+Paquete 648 - SUAA - SPIM - Tue Jan 02 23:59:36 PET 2024 - Fri Jan 05 01:59:36 PET 2024
+La mejor ruta para el paquete 648 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 649 - SBBR - SCEL - Wed Jan 03 11:35:29 PET 2024 - Fri Jan 05 11:35:29 PET 2024
+La mejor ruta para el paquete 649 fue:
+Ruta 255: SBBR (2024-01-03 22:19:00) -> SCEL (2024-01-04 20:37:00)  (ID: 390) | 
+
+Paquete 650 - SVMI - SEQM - Mon Jan 01 09:53:27 PET 2024 - Wed Jan 03 10:53:27 PET 2024
+La mejor ruta para el paquete 650 fue:
+Ruta 212: SVMI (2024-01-01 18:01:00) -> SEQM (2024-01-02 12:58:00)  (ID: 8) | 
+
+Paquete 651 - SUAA - SCEL - Tue Jan 02 03:19:27 PET 2024 - Thu Jan 04 03:19:27 PET 2024
+La mejor ruta para el paquete 651 fue:
+Ruta 66: SUAA (2024-01-02 22:20:00) -> SCEL (2024-01-03 19:44:00)  (ID: 228) | 
+
+Paquete 652 - SVMI - SUAA - Wed Jan 03 14:42:56 PET 2024 - Fri Jan 05 13:42:56 PET 2024
+La mejor ruta para el paquete 652 fue:
+Ruta 244: SVMI (2024-01-03 19:32:00) -> SUAA (2024-01-03 22:57:00)  (ID: 364) | 
+
+Paquete 653 - SGAS - SUAA - Mon Jan 01 08:03:41 PET 2024 - Wed Jan 03 07:03:41 PET 2024
+La mejor ruta para el paquete 653 fue:
+Ruta 492: SGAS (2024-01-01 14:10:00) -> SUAA (2024-01-01 20:23:00)  (ID: 132) | 
+
+Paquete 654 - SLLP - SGAS - Mon Jan 01 23:38:31 PET 2024 - Wed Jan 03 23:38:31 PET 2024
+La mejor ruta para el paquete 654 fue:
+Ruta 388: SLLP (2024-01-02 16:19:00) -> SGAS (2024-01-03 08:25:00)  (ID: 284) | 
+
+Paquete 655 - SKBO - SLLP - Wed Jan 03 21:33:43 PET 2024 - Fri Jan 05 20:33:43 PET 2024
+La mejor ruta para el paquete 655 fue:
+Ruta 83: SKBO (2024-01-03 23:38:00) -> SLLP (2024-01-04 19:59:00)  (ID: 516) | 
+
+Paquete 656 - SEQM - SVMI - Tue Jan 02 07:00:59 PET 2024 - Thu Jan 04 06:00:59 PET 2024
+La mejor ruta para el paquete 656 fue:
+Ruta 562: SEQM (2024-01-02 21:16:00) -> SVMI (2024-01-02 23:56:00)  (ID: 254) | 
+
+Paquete 657 - SUAA - SGAS - Wed Jan 03 10:25:44 PET 2024 - Fri Jan 05 11:25:44 PET 2024
+La mejor ruta para el paquete 657 fue:
+Ruta 296: SUAA (2024-01-04 06:26:00) -> SGAS (2024-01-04 19:41:00)  (ID: 590) | 
+
+Paquete 658 - SBBR - SLLP - Mon Jan 01 03:48:39 PET 2024 - Wed Jan 03 04:48:39 PET 2024
+La mejor ruta para el paquete 658 fue:
+Ruta 206: SBBR (2024-01-01 19:42:00) -> SLLP (2024-01-02 05:43:00)  (ID: 28) | 
+
+Paquete 659 - SPIM - SBBR - Mon Jan 01 10:30:22 PET 2024 - Wed Jan 03 08:30:22 PET 2024
+La mejor ruta para el paquete 659 fue:
+Ruta 337: SPIM (2024-01-01 18:12:00) -> SBBR (2024-01-02 09:42:00)  (ID: 58) | 
+
+Paquete 660 - SCEL - SUAA - Mon Jan 01 15:33:55 PET 2024 - Wed Jan 03 15:33:55 PET 2024
+La mejor ruta para el paquete 660 fue:
+Ruta 41: SCEL (2024-01-01 22:06:00) -> SUAA (2024-01-02 07:54:00)  (ID: 114) | 
+
+Paquete 661 - SCEL - SUAA - Mon Jan 01 14:52:46 PET 2024 - Wed Jan 03 14:52:46 PET 2024
+La mejor ruta para el paquete 661 fue:
+Ruta 41: SCEL (2024-01-01 22:06:00) -> SUAA (2024-01-02 07:54:00)  (ID: 114) | 
+
+Paquete 662 - SPIM - SKBO - Wed Jan 03 21:53:00 PET 2024 - Fri Jan 05 21:53:00 PET 2024
+La mejor ruta para el paquete 662 fue:
+Ruta 278: SPIM (2024-01-04 19:17:00) -> SKBO (2024-01-05 14:10:00)  (ID: 610) | 
+
+Paquete 663 - SUAA - SLLP - Tue Jan 02 00:14:28 PET 2024 - Thu Jan 04 01:14:28 PET 2024
+La mejor ruta para el paquete 663 fue:
+Ruta 69: SUAA (2024-01-02 18:52:00) -> SLLP (2024-01-03 06:56:00)  (ID: 226) | 
+
+Paquete 664 - SCEL - SABE - Tue Jan 02 23:43:46 PET 2024 - Thu Jan 04 23:43:46 PET 2024
+La mejor ruta para el paquete 664 fue:
+Ruta 97: SCEL (2024-01-03 18:08:00) -> SABE (2024-01-03 22:40:00)  (ID: 486) | 
+
+Paquete 665 - SEQM - SPIM - Wed Jan 03 19:45:18 PET 2024 - Fri Jan 05 19:45:18 PET 2024
+La mejor ruta para el paquete 665 fue:
+Ruta 586: SEQM (2024-01-03 19:59:00) -> SPIM (2024-01-04 14:24:00)  (ID: 440) | 
+
+Paquete 666 - SGAS - SKBO - Wed Jan 03 04:29:44 PET 2024 - Fri Jan 05 05:29:44 PET 2024
+La mejor ruta para el paquete 666 fue:
+Ruta 549: SGAS (2024-01-03 18:00:00) -> SKBO (2024-01-04 16:03:00)  (ID: 502) | 
+
+Paquete 667 - SKBO - SLLP - Mon Jan 01 15:15:01 PET 2024 - Wed Jan 03 14:15:01 PET 2024
+La mejor ruta para el paquete 667 fue:
+Ruta 40: SKBO (2024-01-01 23:38:00) -> SLLP (2024-01-02 19:59:00)  (ID: 156) | 
+
+Paquete 668 - SVMI - SGAS - Tue Jan 02 20:52:37 PET 2024 - Thu Jan 04 20:52:37 PET 2024
+La mejor ruta para el paquete 668 fue:
+Ruta 238: SVMI (2024-01-03 10:22:00) -> SGAS (2024-01-03 14:58:00)  (ID: 374) | 
+
+Paquete 669 - SABE - SUAA - Mon Jan 01 11:16:37 PET 2024 - Wed Jan 03 11:16:37 PET 2024
+La mejor ruta para el paquete 669 fue:
+Ruta 378: SABE (2024-01-01 17:22:00) -> SUAA (2024-01-01 19:47:00)  (ID: 168) | 
+
+Paquete 670 - SEQM - SVMI - Mon Jan 01 11:45:45 PET 2024 - Wed Jan 03 10:45:45 PET 2024
+La mejor ruta para el paquete 670 fue:
+Ruta 540: SEQM (2024-01-01 21:16:00) -> SVMI (2024-01-01 23:56:00)  (ID: 74) | 
+
+Paquete 671 - SPIM - SVMI - Mon Jan 01 11:53:32 PET 2024 - Wed Jan 03 10:53:32 PET 2024
+La mejor ruta para el paquete 671 fue:
+Ruta 325: SPIM (2024-01-01 15:21:00) -> SVMI (2024-01-02 07:58:00)  (ID: 56) | 
+
+Paquete 672 - SCEL - SABE - Mon Jan 01 11:54:33 PET 2024 - Wed Jan 03 11:54:33 PET 2024
+La mejor ruta para el paquete 672 fue:
+Ruta 49: SCEL (2024-01-01 18:08:00) -> SABE (2024-01-01 22:40:00)  (ID: 126) | 
+
+Paquete 673 - SVMI - SABE - Wed Jan 03 00:12:40 PET 2024 - Thu Jan 04 23:12:40 PET 2024
+La mejor ruta para el paquete 673 fue:
+Ruta 243: SVMI (2024-01-03 11:07:00) -> SABE (2024-01-03 11:38:00)  (ID: 378) | 
+
+Paquete 674 - SLLP - SUAA - Thu Jan 04 03:02:57 PET 2024 - Sat Jan 06 02:02:57 PET 2024
+La mejor ruta para el paquete 674 fue:
+Ruta 414: SLLP (2024-01-04 05:08:00) -> SUAA (2024-01-04 13:06:00)  (ID: 636) | 
+
+Paquete 675 - SPIM - SKBO - Mon Jan 01 06:21:56 PET 2024 - Wed Jan 03 06:21:56 PET 2024
+La mejor ruta para el paquete 675 fue:
+Ruta 216: SPIM (2024-01-01 19:17:00) -> SKBO (2024-01-02 14:10:00)  (ID: 70) | 
+
+Paquete 676 - SEQM - SCEL - Tue Jan 02 15:04:37 PET 2024 - Thu Jan 04 13:04:37 PET 2024
+La mejor ruta para el paquete 676 fue:
+Ruta 538: SEQM (2024-01-02 16:36:00) -> SCEL (2024-01-03 09:07:00)  (ID: 264) | 
+
+Paquete 677 - SLLP - SKBO - Mon Jan 01 15:57:31 PET 2024 - Wed Jan 03 16:57:31 PET 2024
+La mejor ruta para el paquete 677 fue:
+Ruta 360: SLLP (2024-01-01 18:00:00) -> SKBO (2024-01-02 12:11:00)  (ID: 106) | 
+
+Paquete 678 - SUAA - SPIM - Wed Jan 03 02:53:14 PET 2024 - Fri Jan 05 04:53:14 PET 2024
+La mejor ruta para el paquete 678 fue:
+Ruta 126: SUAA (2024-01-03 06:48:00) -> SPIM (2024-01-03 19:02:00)  (ID: 402) | 
+
+Paquete 679 - SABE - SBBR - Wed Jan 03 10:29:15 PET 2024 - Fri Jan 05 10:29:15 PET 2024
+La mejor ruta para el paquete 679 fue:
+Ruta 443: SABE (2024-01-04 05:31:00) -> SBBR (2024-01-04 14:08:00)  (ID: 706) | 
+
+Paquete 680 - SPIM - SEQM - Thu Jan 04 04:04:24 PET 2024 - Sat Jan 06 04:04:24 PET 2024
+La mejor ruta para el paquete 680 fue:
+Ruta 421: SPIM (2024-01-04 16:11:00) -> SEQM (2024-01-05 12:31:00)  (ID: 602) | 
+
+Paquete 681 - SEQM - SVMI - Tue Jan 02 01:17:58 PET 2024 - Thu Jan 04 00:17:58 PET 2024
+La mejor ruta para el paquete 681 fue:
+Ruta 562: SEQM (2024-01-02 21:16:00) -> SVMI (2024-01-02 23:56:00)  (ID: 254) | 
+
+Paquete 682 - SEQM - SABE - Mon Jan 01 14:10:19 PET 2024 - Wed Jan 03 12:10:19 PET 2024
+La mejor ruta para el paquete 682 fue:
+Ruta 541: SEQM (2024-01-01 19:40:00) -> SABE (2024-01-01 20:31:00)  (ID: 90) | 
+
+Paquete 683 - SEQM - SPIM - Mon Jan 01 20:11:33 PET 2024 - Wed Jan 03 20:11:33 PET 2024
+La mejor ruta para el paquete 683 fue:
+Ruta 566: SEQM (2024-01-02 19:59:00) -> SPIM (2024-01-03 14:24:00)  (ID: 260) | 
+
+Paquete 684 - SLLP - SGAS - Mon Jan 01 08:02:34 PET 2024 - Wed Jan 03 08:02:34 PET 2024
+La mejor ruta para el paquete 684 fue:
+Ruta 361: SLLP (2024-01-01 16:19:00) -> SGAS (2024-01-02 08:25:00)  (ID: 104) | 
+
+Paquete 685 - SLLP - SABE - Thu Jan 04 02:25:03 PET 2024 - Sat Jan 06 01:25:03 PET 2024
+La mejor ruta para el paquete 685 fue:
+Ruta 432: SLLP (2024-01-04 11:06:00) -> SABE (2024-01-04 12:30:00)  (ID: 648) | 
+
+Paquete 686 - SLLP - SBBR - Mon Jan 01 23:42:12 PET 2024 - Wed Jan 03 22:42:12 PET 2024
+La mejor ruta para el paquete 686 fue:
+Ruta 376: SLLP (2024-01-02 11:30:00) -> SBBR (2024-01-02 21:01:00)  (ID: 274) | 
+
+Paquete 687 - SUAA - SPIM - Wed Jan 03 09:52:58 PET 2024 - Fri Jan 05 11:52:58 PET 2024
+La mejor ruta para el paquete 687 fue:
+Ruta 147: SUAA (2024-01-04 06:48:00) -> SPIM (2024-01-04 19:02:00)  (ID: 582) | 
+
+Paquete 688 - SGAS - SEQM - Wed Jan 03 23:30:30 PET 2024 - Sat Jan 06 00:30:30 PET 2024
+La mejor ruta para el paquete 688 fue:
+Ruta 591: SGAS (2024-01-04 21:49:00) -> SEQM (2024-01-05 16:26:00)  (ID: 676) | 
+
+Paquete 689 - SEQM - SABE - Thu Jan 04 03:42:21 PET 2024 - Sat Jan 06 01:42:21 PET 2024
+La mejor ruta para el paquete 689 fue:
+Ruta 600: SEQM (2024-01-04 19:40:00) -> SABE (2024-01-04 20:31:00)  (ID: 630) | 
+
+Paquete 690 - SLLP - SGAS - Wed Jan 03 18:34:19 PET 2024 - Fri Jan 05 18:34:19 PET 2024
+La mejor ruta para el paquete 690 fue:
+Ruta 437: SLLP (2024-01-04 16:19:00) -> SGAS (2024-01-05 08:25:00)  (ID: 644) | 
+
+Paquete 691 - SEQM - SVMI - Wed Jan 03 15:35:00 PET 2024 - Fri Jan 05 14:35:00 PET 2024
+La mejor ruta para el paquete 691 fue:
+Ruta 583: SEQM (2024-01-03 21:16:00) -> SVMI (2024-01-03 23:56:00)  (ID: 434) | 
+
+Paquete 692 - SVMI - SEQM - Tue Jan 02 09:12:22 PET 2024 - Thu Jan 04 10:12:22 PET 2024
+La mejor ruta para el paquete 692 fue:
+Ruta 236: SVMI (2024-01-02 18:01:00) -> SEQM (2024-01-03 12:58:00)  (ID: 188) | 
+
+Paquete 693 - SLLP - SKBO - Mon Jan 01 14:42:01 PET 2024 - Wed Jan 03 15:42:01 PET 2024
+La mejor ruta para el paquete 693 fue:
+Ruta 360: SLLP (2024-01-01 18:00:00) -> SKBO (2024-01-02 12:11:00)  (ID: 106) | 
+
+Paquete 694 - SEQM - SABE - Mon Jan 01 18:59:34 PET 2024 - Wed Jan 03 16:59:34 PET 2024
+La mejor ruta para el paquete 694 fue:
+Ruta 541: SEQM (2024-01-01 19:40:00) -> SABE (2024-01-01 20:31:00)  (ID: 90) | 
+
+Paquete 695 - SPIM - SABE - Tue Jan 02 08:53:02 PET 2024 - Thu Jan 04 06:53:02 PET 2024
+La mejor ruta para el paquete 695 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 696 - SPIM - SABE - Tue Jan 02 11:15:37 PET 2024 - Thu Jan 04 09:15:37 PET 2024
+La mejor ruta para el paquete 696 fue:
+Ruta 364: SPIM (2024-01-02 15:51:00) -> SABE (2024-01-02 18:43:00)  (ID: 252) | 
+
+Paquete 697 - SCEL - SLLP - Wed Jan 03 03:56:36 PET 2024 - Fri Jan 05 04:56:36 PET 2024
+La mejor ruta para el paquete 697 fue:
+Ruta 80: SCEL (2024-01-03 07:36:00) -> SLLP (2024-01-03 16:37:00)  (ID: 480) | 
+
+Paquete 698 - SABE - SKBO - Wed Jan 03 15:49:43 PET 2024 - Fri Jan 05 17:49:43 PET 2024
+La mejor ruta para el paquete 698 fue:
+Ruta 424: SABE (2024-01-03 17:53:00) -> SKBO (2024-01-03 18:23:00)  (ID: 540) | 
+
+Paquete 699 - SVMI - SBBR - Tue Jan 02 02:43:18 PET 2024 - Thu Jan 04 01:43:18 PET 2024
+La mejor ruta para el paquete 699 fue:
+Ruta 223: SVMI (2024-01-02 13:58:00) -> SBBR (2024-01-02 18:53:00)  (ID: 182) | 
+
