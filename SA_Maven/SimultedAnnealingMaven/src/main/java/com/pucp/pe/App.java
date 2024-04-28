@@ -1,8 +1,14 @@
 package com.pucp.pe;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeMap;
+import com.google.common.collect.TreeRangeMap;
 import com.pucp.pe.Clases.Aeropuerto;
 import com.pucp.pe.Clases.Duracion;
 import com.pucp.pe.Clases.EstadoAlmacen;
+import com.pucp.pe.Clases.EventManager;
 import com.pucp.pe.Clases.Funciones;
 import com.pucp.pe.Clases.GrafoVuelos;
 import com.pucp.pe.Clases.Paquete;
@@ -154,6 +160,17 @@ public class App {
         double flightPenalization = 200;
         double airportPenalization = 300;
 
+        EventManager manager = new EventManager();
+        manager.addEvent(Range.closed(1, 10), "Evento1");
+        manager.addEvent(Range.closed(5, 15), "Evento2");
+        manager.addEvent(Range.closed(11, 20), "Evento3");
+
+        System.out.println("Eventos completamente contenidos en el rango [3, 12]: "
+                + manager.getEventsInRange(Range.closed(3, 12)));
+        System.out.println("Eventos completamente contenidos en el rango [0, 16]: "
+                + manager.getEventsInRange(Range.closed(0, 16)));
+
+        System.out.println("Eventos en el rango [3, 12]: " + manager.getEventsInRange(Range.closed(3, 12)));
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;

@@ -227,9 +227,9 @@ public class GrafoVuelos {
         boolean continental = origen.getContinente().equals(destino.getContinente());
         int tamanho_max = 0;
         if (continental) {
-            tamanho_max = 3;
+            tamanho_max = 2;
         } else {
-            tamanho_max = 4;
+            tamanho_max = 3;
         }
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         // long startTime = System.nanoTime();
@@ -272,12 +272,13 @@ public class GrafoVuelos {
         Collections.sort(vuelosOrdenados, Comparator.comparing(Vuelo::getFecha_salida));
 
         for (Vuelo vuelo : vuelosOrdenados) {
-
-            if ((!vuelo.getPlan_vuelo().getCiudadDestino().getContinente().equals(actual.getContinente()) &&
-                    continental)) {
-                continue;
-            }
-
+            /*
+             * if ((!vuelo.getPlan_vuelo().getCiudadDestino().getContinente().equals(actual.
+             * getContinente()) &&
+             * continental)) {
+             * continue;
+             * }
+             */
             if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())
                     && !continentesVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getContinente())) {
