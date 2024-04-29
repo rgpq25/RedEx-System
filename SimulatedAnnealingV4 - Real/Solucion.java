@@ -9,6 +9,7 @@ import Clases.Aeropuerto;
 import Clases.Duracion;
 import Clases.EstadoAlmacen;
 import Clases.Funciones;
+import Clases.GrafoVuelos;
 import Clases.Paquete;
 import Clases.PlanRuta;
 import Clases.Vuelo;
@@ -37,6 +38,8 @@ public class Solucion {
 
     public double costoDePaquetesYRutasErroneas;
 
+    public GrafoVuelos grafoVuelos;
+
 
     HashMap<Integer, Vuelo> vuelos_hash;
 
@@ -49,7 +52,8 @@ public class Solucion {
             double badSolutionPenalization,
             double flightPenalization,
             double airportPenalization,
-            HashMap<Integer, Vuelo> vuelos_hash
+            HashMap<Integer, Vuelo> vuelos_hash,
+            GrafoVuelos grafoVuelos
     ) {
         this.paquetes = paquetes;
         this.rutas = rutas;
@@ -65,6 +69,8 @@ public class Solucion {
         this.vuelos_hash = vuelos_hash;
 
         this.costoDePaquetesYRutasErroneas = 0;
+
+        this.grafoVuelos = grafoVuelos;
     }
 
     public void printFlightOcupation(String filename){
@@ -116,8 +122,12 @@ public class Solucion {
             Vuelo vuelo = vuelos_hash.get(entry.getKey());
             int maxCapacity = vuelo.getPlan_vuelo().getCapacidad_maxima();
             int usedCapacity = entry.getValue();
-            double porcentajeOcupacion = (double)usedCapacity / (double)maxCapacity;
-            sum += porcentajeOcupacion;
+            
+            if(usedCapacity >= maxCapacity){
+                sum += 100000;
+            } else {
+                sum += (double)usedCapacity / (double)maxCapacity;
+            }
         }
         return sum;
     }
@@ -319,7 +329,30 @@ public class Solucion {
         return estado.verificar_capacidad_maxima();
     }
 
+
     public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
+        //We do 5 attempts to try to initialize the solution
+        for(int j = 0; j < 20; j++){
+
+            ArrayList<PlanRuta> av_rutas = grafoVuelos.generarRutasParaPaquetes(this.paquetes);
+            for (int i = 0; i < paquetes.size(); i++) {
+                this.rutas.add(av_rutas.get(i));
+                this.ocupyRouteFlights(av_rutas.get(i));
+            }
+            if(this.isAirportCapacityAvailable() == true){
+                return;
+            } else {
+                this.rutas.clear();
+                this.ocupacionVuelos.clear();
+            }
+        }
+
+        throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");
+        
+    }
+
+
+    public void initialize_Old(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
         //We do 5 attempts to try to initialize the solution
         for(int j = 0; j < 20; j++){
             for (int i = 0; i < paquetes.size(); i++) {
@@ -347,6 +380,7 @@ public class Solucion {
         
     }
 
+
     public Solucion generateNeighbour(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
 
         Solucion neighbour = new Solucion(
@@ -358,7 +392,60 @@ public class Solucion {
             this.badSolutionPenalization,
             this.flightPenalization,
             this.airportPenalization,
-            this.vuelos_hash
+            this.vuelos_hash,
+            this.grafoVuelos
+        );
+
+
+        HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
+        int[] randomPackageIndexes = new int[windowSize];
+        for (int i = 0; i < windowSize; i++) {
+            int randomIndex = (int) (Math.random() * this.paquetes.size());
+            while(indexes.get(randomIndex) != null){
+                randomIndex = (int) (Math.random() * this.paquetes.size());
+            }
+            randomPackageIndexes[i] = randomIndex;
+            indexes.put(randomPackageIndexes[i], true);
+        }
+
+        ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
+
+        //select random packages
+        for (int i = 0; i < windowSize; i++) {
+            PlanRuta oldRoute = rutas.get(randomPackageIndexes[i]);
+            neighbour.deocupyRouteFlights(oldRoute);
+
+            randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+        }
+
+        ArrayList<PlanRuta> availableRoutesPerPackage = grafoVuelos.generarRutasParaPaquetes(randomPackages);
+
+        for (int j = 0; j < windowSize; j++) {
+            neighbour.ocupyRouteFlights(availableRoutesPerPackage.get(j));
+            neighbour.rutas.set(randomPackageIndexes[j], availableRoutesPerPackage.get(j));
+        }
+
+        if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
+            return generateNeighbour(todasLasRutas, windowSize);
+        } else {
+            return neighbour;
+        }
+        
+    }
+
+    public Solucion generateNeighbour_Old(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
+
+        Solucion neighbour = new Solucion(
+            new ArrayList<>(this.paquetes),
+            new ArrayList<>(this.rutas),
+            this.aeropuertos,
+            new HashMap<Integer, Integer>(this.ocupacionVuelos),
+            this.costo,
+            this.badSolutionPenalization,
+            this.flightPenalization,
+            this.airportPenalization,
+            this.vuelos_hash,
+            this.grafoVuelos
         );
 
 

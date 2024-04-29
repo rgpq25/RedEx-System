@@ -136,15 +136,15 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 30; // MAX AIRPORTS IS 30
+        int maxAirports = 10; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
-        int neighbourCount = 1;
-        int windowSize = 20; //best = 50 MUST BE LESS THE packagesAmount
+        int neighbourCount = 20;
+        int windowSize = 300; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
@@ -189,24 +189,24 @@ public class main {
         long startTime = System.nanoTime();
         HashMap<String, ArrayList<PlanRuta>> todasLasRutas = new HashMap<String, ArrayList<PlanRuta>>();
 
-        try {
-            todasLasRutas = grafoVuelos.buscarTodasLasRutas();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     todasLasRutas = grafoVuelos.buscarTodasLasRutas();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // } catch (ExecutionException e) {
+        //     e.printStackTrace();
+        // }
 
 
-        System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
-        for (Map.Entry<String, ArrayList<PlanRuta>> entry : todasLasRutas.entrySet()) {
-            String key = entry.getKey();
-            ArrayList<PlanRuta> value = entry.getValue();
-            if (value.size() == 0) {
-                System.out.println("No route available for " + key);
-                return;
-            }
-        }
+        // System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
+        // for (Map.Entry<String, ArrayList<PlanRuta>> entry : todasLasRutas.entrySet()) {
+        //     String key = entry.getKey();
+        //     ArrayList<PlanRuta> value = entry.getValue();
+        //     if (value.size() == 0) {
+        //         System.out.println("No route available for " + key);
+        //         return;
+        //     }
+        // }
 
 
         long endTime = System.nanoTime();
@@ -225,7 +225,8 @@ public class main {
             badSolutionPenalization,
             flightPenalization,
             airportPenalization,
-            vuelos_map
+            vuelos_map,
+            grafoVuelos
         );
         current.initialize(todasLasRutas);
         printRutasTXT(current.paquetes, current.rutas, "initial.txt");

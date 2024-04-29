@@ -2,6 +2,21 @@ import csv
 import os
 from datetime import datetime
 
+
+def getAeropuertos():
+    codigos_aeropuerto = []
+    codigos_aeropuerto = [
+        "SKBO", "SEQM", "SVMI", "SBBR", "SPIM", "SLLP", "SCEL", "SABE", "SGAS", "SUAA",
+        "LATI", "EDDI", "LOWW", "EBCI", "UMMS", "LBSF", "LKPR", "LDZA", "EKCH", "EHAM",
+        "VIDP", "RKSI", "VTBS", "OMDB", "ZBAA", "RJTT", "WMKK", "WSSS", "WIII", "RPLL"
+    ]
+    return codigos_aeropuerto
+
+def isAirportInArray(codigo_aeropuerto):
+    if codigo_aeropuerto in codigos_aeropuerto:
+        return True
+
+
 def read_pack_enviado(file_path, data):
     origin_code = os.path.basename(file_path).split('_')[2].split('.')[0]
 
@@ -36,6 +51,10 @@ def read_vuelos(file_path, data):
 
             origin_code       = parts[0]
             destiny_code      = parts[1]
+
+            if not isAirportInArray(origin_code) or not isAirportInArray(destiny_code):
+                continue
+
             time_origin_city  = parts[2] + ":00"
             time_destiny_city = parts[3] + ":00"
             capacity          = parts[4]
@@ -55,6 +74,7 @@ packagesData = []
 flightsData = []
 airportsData = []
 
+codigos_aeropuerto = getAeropuertos()
 
 for file_name in os.listdir(input_directory):
     input_file = os.path.join(input_directory, file_name)
@@ -66,5 +86,5 @@ for file_name in os.listdir(input_directory):
         read_vuelos(input_file, flightsData)
         
     
-#save_to_csv(packagesData, os.path.join(output_directory,'paquetes.csv'))
+save_to_csv(packagesData, os.path.join(output_directory,'paquetes.csv'))
 save_to_csv(flightsData, os.path.join(output_directory,'vuelos.csv'))
