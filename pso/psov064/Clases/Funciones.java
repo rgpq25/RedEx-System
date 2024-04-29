@@ -57,7 +57,9 @@ public class Funciones {
             for (PlanRuta planRuta : planRutas) {
                 long tiempoPartidaRuta = planRuta.getVuelos().get(0).getFecha_salida().getTime();
                 long tiempoRecepcion = paquete.getFecha_recepcion().getTime();
-                if(tiempoRecepcion <= tiempoPartidaRuta){
+                long tiempoLlegadaRuta = planRuta.getVuelos().get(planRuta.getVuelos().size() - 1).getFecha_llegada().getTime();
+                long tiempoPlazoMaximo = paquete.getFecha_maxima_entrega().getTime();
+                if(tiempoRecepcion <= tiempoPartidaRuta && tiempoLlegadaRuta <= tiempoPlazoMaximo){
                     rutasValidas.add(planRuta);
                 }
             }

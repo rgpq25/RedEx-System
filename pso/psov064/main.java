@@ -40,13 +40,13 @@ public class main {
             
             
             //Data Generation Parameters
-            boolean generateNewData = true;
+            boolean generateNewData = false;
             int maxAirports = 30; // MAX AIRPORTS IS 30
             int packagesAmount = 1000;
             int flightsMultiplier = 2;
 
             Funciones funciones = new Funciones();
-            String inputPath = "input";
+            String inputPath = "inputGenerado";
             String generatedInputPath = "inputGenerado";
             //HashMap<String, Ubicacion> ubicacionMap = new HashMap<>();
             HashMap<String, Ubicacion> ubicacionMap = funciones.getUbicacionMap(maxAirports);
@@ -132,11 +132,11 @@ public class main {
 
             //tengo ArrayList<Paquete> paquetes, tengo HashMap<String, ArrayList<PlanRuta>> rutas
             //quiero HashMap<Integer, ArrayList<PlanRuta>>
-            startTime = System.nanoTime();
+            long startTime3 = System.nanoTime();
             HashMap<Integer, ArrayList<PlanRuta>> rutas_validas = funciones.getRutasValidasPorPaquete(paquetes, rutas);
-            endTime = System.nanoTime();
-            duration = endTime - startTime;
-            System.out.println("Tiempo de (getRutasValidasPorPaquete): " + (float) (duration / 1000000000) + " segundos");
+            long endTime3 = System.nanoTime();
+            long duration3 = endTime3 - startTime3;
+            System.out.println("Tiempo de (getRutasValidasPorPaquete): " + (float) (duration3 / 1000000000) + " segundos");
 
             //PARTE DE PSO
             //PSO pso = new PSO();
@@ -168,8 +168,12 @@ public class main {
                     //verifica la hora salida del primer vuelo
                     long tiempoRecepcion = paquetes.get(i).getFecha_recepcion().getTime();
                     long tiempoPartidaRuta = planRutas.get(bestComb[i]).getVuelos().get(0).getFecha_salida().getTime();
+                    long tiempoLlegadaRuta = planRutas.get(bestComb[i]).getVuelos().get(planRutas.get(bestComb[i]).getVuelos().size() - 1).getFecha_llegada().getTime();
                     if(tiempoRecepcion > tiempoPartidaRuta){
                         System.out.println("El paquete " + i + " se recibió después de la salida del primer vuelo");
+                    }
+                    if(tiempoLlegadaRuta > paquetes.get(i).getFecha_maxima_entrega().getTime()){
+                        System.out.println("El paquete " + i + " llega después de la fecha máxima de entrega");
                     }
                 }
                 System.out.println();

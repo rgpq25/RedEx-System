@@ -114,10 +114,10 @@ public class PSO {
         double porcentaje_tiempo = (diferencia_fecha_entrega)/diferencia_fecha_maxima;
         //Verifica que el primer vuelo no salga antes de recibir el paquete
         if (tiempoPartidaRuta < tiempoRecepcion)
-            return 1000000;
+            return 100000;
             //return Double.MAX_VALUE;
         if (porcentaje_tiempo > 1)
-            return 10;
+            return 100;
         return Math.max(0, porcentaje_tiempo);
 
     }
@@ -173,7 +173,7 @@ public class PSO {
         //iterate ocupacionVuelos
         for (Map.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
             if(entry.getValue() > vuelos_map.get(entry.getKey()).getPlan_vuelo().getCapacidad_maxima()){
-                return 1000000;
+                costoVuelos+= 100000;
                 //return Double.MAX_VALUE;
             }
             else{
@@ -216,10 +216,11 @@ public class PSO {
 
                     particle.position.set(i, particle.position.get(i) + particle.velocity.get(i).intValue());
 
-                    String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
+                    /*String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
                     String ciudadDestino = packages.get(i).getCiudadDestino().getId();
-                    String cadena = ciudadOrigen + "-" + ciudadDestino;
-                    ArrayList<PlanRuta> planRutas = rutas.get(cadena);
+                    String cadena = ciudadOrigen + "-" + ciudadDestino;*/
+                    ArrayList<PlanRuta> planRutas = rutas.get(packages.get(i).getId());
+                    
                     if(planRutas != null){
                         particle.position.set(i, Math.max(0, Math.min(particle.position.get(i), planRutas.size() - 1)));
                     }

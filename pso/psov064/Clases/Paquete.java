@@ -11,36 +11,41 @@ public class Paquete {
     private Date fecha_recepcion; // en origen 2023-01-03 09:23:41
     private Vuelo[] lista_vuelos;
 
-    /*
     public Paquete(int id, Ubicacion ciudad_almacen, PlanRuta plan_rutas, Ubicacion ciudad_origen,
-            Ubicacion ciudad_destino, Date fecha_maxima_entrega,
-            Date fecha_recepcion) {
+    Ubicacion ciudad_destino, Date fecha_maxima_entrega,
+    Date fecha_recepcion) {
         this.id = id;
         this.ciudad_almacen = ciudad_almacen;
         this.ciudad_origen = ciudad_origen;
         this.ciudad_destino = ciudad_destino;
         this.fecha_maxima_entrega = fecha_maxima_entrega;
         this.fecha_recepcion = fecha_recepcion;
-    } */
+    }
 
     public Paquete(Ubicacion ciudad_almacen,
-            Ubicacion ciudad_origen, Ubicacion ciudad_destino,
-            Date fecha_recepcion) {
+        Ubicacion ciudad_origen, Ubicacion ciudad_destino,
+        Date fecha_recepcion) {
         this.id = ContadorID.obtenerSiguienteID();
         this.ciudad_almacen = ciudad_almacen;
         this.ciudad_origen = ciudad_origen;
         this.ciudad_destino = ciudad_destino;
-        try {
-            String gmd = ciudad_destino.getZonaHoraria();
-            int diferenciaHoraria = Integer.parseInt(gmd);
-            long tiempoDiferenciaHoraria = diferenciaHoraria * 60 * 60 * 1000;
-            this.fecha_maxima_entrega = new Date(
-                    fecha_recepcion.getTime() + (2 * 24 * 60 * 60 * 1000) - tiempoDiferenciaHoraria);
-        } catch (Exception e) {
-            System.out.println("Error al calcular la fecha de entrega");
-        }
-        this.fecha_maxima_entrega = new Date();
-        this.fecha_recepcion = fecha_recepcion;
+
+
+        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+            fecha_recepcion,
+            ciudad_origen.getZonaHoraria(),
+            "UTC"
+        );
+
+        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fecha_recepcion, 2); // aqui estaria en timezone de destino
+        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
+            fecha_maxima_entrega_GMTDestino,
+            ciudad_destino.getZonaHoraria(),
+            "UTC"
+        );
+
+        this.fecha_recepcion = fecha_recepcion_GMT0;
+        this.fecha_maxima_entrega = fecha_maxima_entrega_GMT0;
     }
 
     public Paquete(Paquete _paquete) {

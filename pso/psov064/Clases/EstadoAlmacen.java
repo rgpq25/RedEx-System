@@ -219,7 +219,8 @@ public class EstadoAlmacen {
 
             if (porcentajeCapacidadMaxima > 1.0) {
                 // Penalización exponencial si el uso excede la capacidad máxima
-                costoTotal += Math.pow((porcentajeCapacidadMaxima - 1.0) * 10, 2);
+                //costoTotal += Math.pow((porcentajeCapacidadMaxima - 1.0) * 10, 2);
+                costoTotal += 100000;
             } else {
                 // Costo inversamente proporcional al uso si es menor que la capacidad máxima
                 costoTotal += porcentajeCapacidadMaxima;
