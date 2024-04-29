@@ -56,9 +56,11 @@ public class main {
         boolean stopWhenNoPackagesLeft = true;
         double temperature = 10000;
         double coolingRate = 0.01;
-        int neighbourCount = 1;
-        int windowSize = 150; 
+        int neighbourCount = 100;
+        int windowSize = 500; 
         //one of the best combinations is 1 neighbourCount and windowSize = 500
+
+        //con 10 neighbourCount y 500 windowSize -> 42914 (234 segundos)
 
         // Weight Parameters
         double badSolutionPenalization = 100;
