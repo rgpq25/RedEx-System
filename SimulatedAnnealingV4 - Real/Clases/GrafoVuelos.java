@@ -335,7 +335,6 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelosPosibles) {
             if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
-                Date fechaInicio = rutaActual.getInicio() == null ? vuelo.getFecha_salida() : rutaActual.getInicio();
                 rutaActual.getVuelos().add(vuelo);
                 aeropuertosVisitados.add(actual.getId());
                 buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
