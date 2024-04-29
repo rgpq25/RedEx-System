@@ -17,10 +17,12 @@ import Clases.Ubicacion;
 import Clases.Vuelo;
 
 public class SAImplementation {
-    private int maxAirports = 30; // MAX AIRPORTS IS 30
-    private HashMap<String, Ubicacion> ubicacionMap;
+    private ArrayList<Aeropuerto> aeropuertos;
+    private ArrayList<PlanVuelo> planVuelos;
+    private ArrayList<Paquete> paquetes;
 
     // Simmulated Annealing Parameters
+    private boolean stopWhenNoPackagesLeft;
     private double temperature = 100000;
     private double coolingRate = 0.001;
     private int neighbourCount = 1;
@@ -36,8 +38,20 @@ public class SAImplementation {
     private double sumaVuelosWeight;
     private double promedioPonderadoTiempoAeropuertoWeight;
 
-    public SAImplementation(
-        int maxAirports,
+    public SAImplementation() {}
+
+    public void setData(
+        ArrayList<Aeropuerto> aeropuertos, 
+        ArrayList<PlanVuelo> planVuelos, 
+        ArrayList<Paquete> paquetes
+    ){
+        this.aeropuertos = aeropuertos;
+        this.planVuelos = planVuelos;
+        this.paquetes = paquetes;
+    }
+
+    public void setParameters(
+        boolean stopWhenNoPackagesLeft,
         double temperature,
         double coolingRate,
         int neighbourCount,
@@ -49,7 +63,7 @@ public class SAImplementation {
         double sumaVuelosWeight, 
         double promedioPonderadoTiempoAeropuertoWeight
     ) {
-        this.maxAirports = maxAirports;
+        this.stopWhenNoPackagesLeft = stopWhenNoPackagesLeft;
         this.temperature = temperature;
         this.coolingRate = coolingRate;
         this.neighbourCount = neighbourCount;
@@ -60,15 +74,9 @@ public class SAImplementation {
         this.sumaPaquetesWeight = sumaPaquetesWeight;
         this.sumaVuelosWeight = sumaVuelosWeight;
         this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
-        this.ubicacionMap = Funciones.getUbicacionMap(maxAirports);
     }
 
-
     public void startAlgorithm(String inputPath){
-        ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
-        ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
-        ArrayList<Aeropuerto> aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
@@ -99,37 +107,31 @@ public class SAImplementation {
         startTime = System.nanoTime();
         while (temperature > 1) {
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-            //final Solucion currentFinal = current;
-            // for (int i = 0; i < neighbourCount; i++) {
-            //     neighbours.add(
-            //         current.generateNeighbour(
-            //             todasLasRutas, 
-            //             windowSize
-            //         )
-            //     );
-            // }
-            int nThreads = Runtime.getRuntime().availableProcessors();
-            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-
-            final Solucion copyCurrent = current;
-            List<Callable<Solucion>> tasks = new ArrayList<>();
             for (int i = 0; i < neighbourCount; i++) {
-                tasks.add(() -> copyCurrent.generateNeighbour(todasLasRutas, windowSize));
+                neighbours.add(
+                    current.generateNeighbour(
+                        todasLasRutas, 
+                        windowSize
+                    )
+                );
             }
-
-            try {
-                List<Future<Solucion>> futures = executor.invokeAll(tasks);
-                for (Future<Solucion> future : futures) {
-                    neighbours.add(future.get());
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            executor.shutdown();
-
+            // int nThreads = Runtime.getRuntime().availableProcessors();
+            // ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+            // final Solucion copyCurrent = current;
+            // List<Callable<Solucion>> tasks = new ArrayList<>();
+            // for (int i = 0; i < neighbourCount; i++) {
+            //     tasks.add(() -> copyCurrent.generateNeighbour(todasLasRutas, windowSize));
+            // }
+            // try {
+            //     List<Future<Solucion>> futures = executor.invokeAll(tasks);
+            //     for (Future<Solucion> future : futures) {
+            //         neighbours.add(future.get());
+            //     }
+            // } catch (InterruptedException | ExecutionException e) {
+            //     e.printStackTrace();
+            // }
+            // executor.shutdown();
          
-            
             int bestNeighbourIndex = 0;
             double bestNeighbourCost = Double.MAX_VALUE;
             double bestNeighbourRouteCost = 0;
@@ -150,14 +152,14 @@ public class SAImplementation {
 
             if (
                 costDifference < 0 || 
-                bestNeighbourRouteCost < current.costoDePaquetesYRutasErroneas ||
+                //bestNeighbourRouteCost < current.costoDePaquetesYRutasErroneas ||
                 Math.exp(-costDifference / temperature) > Math.random()
             ) {
                 current = neighbours.get(bestNeighbourIndex);
             }
 
 
-            if (current.costoDePaquetesYRutasErroneas == 0) {
+            if (current.costoDePaquetesYRutasErroneas == 0 && stopWhenNoPackagesLeft == true) {
                 break;
             }
             

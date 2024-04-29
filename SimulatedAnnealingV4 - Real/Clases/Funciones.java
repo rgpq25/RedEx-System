@@ -211,9 +211,6 @@ public class Funciones {
     public static ArrayList<PlanVuelo> leerPlanVuelos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
         ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         try {
             File file = new File(inputPath + "/vuelos.csv");
             Scanner scanner = new Scanner(file);
@@ -223,6 +220,10 @@ public class Funciones {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(",");
+
+                if(ubicacionMap.get(parts[0].trim()) == null || ubicacionMap.get(parts[1].trim()) == null){
+                    throw new Error("City " + parts[0].trim() + " or " + parts[1].trim() + " doesnt exists in current airports list.");
+                }
 
                 PlanVuelo planVuelo = new PlanVuelo();
                 planVuelo.setId(id);
@@ -241,6 +242,104 @@ public class Funciones {
             e.printStackTrace();
         }
         return vuelos_list;
+    }
+
+
+    public static ArrayList<PlanVuelo> leerRawPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath){
+        //Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
+        ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
+
+        try {
+            File file = new File(inputPath + "/planes_vuelo.v3.txt");
+            Scanner scanner = new Scanner(file);
+            //delimiter must be EOL
+            scanner.useDelimiter("\n");
+
+            int id = 1;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split("-");
+
+                PlanVuelo planVuelo = new PlanVuelo();
+                planVuelo.setId(id);
+                planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+                planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+                planVuelo.setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
+                planVuelo.setHora_ciudad_origen(parts[2].trim());
+                planVuelo.setHora_ciudad_destino(parts[3].trim());
+
+                vuelos_list.add(planVuelo);
+                id++;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return vuelos_list;
+    }
+
+    public static ArrayList<Paquete> leerRawEnvios(HashMap<String, Ubicacion> ubicacionMap, String inputPath, Date minDate, Date maxDate){
+        ArrayList<Paquete> paquetes_list = new ArrayList<Paquete>();
+        File directory = new File(inputPath);
+        File[] files = directory.listFiles();
+
+        int id = 1;
+        try {
+            for(File file : files){
+                Scanner scanner = new Scanner(file);
+                scanner.useDelimiter("\n");
+    
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    String[] parts = line.split("-");
+                    
+                    String origenCode = parts[0].trim();
+                    String fechaRecibo = parts[2].trim();   //en formato 20240103
+                    String horaRecibo = parts[3].trim() + ":00";
+                    String[] destinoWithPackageCount = parts[4].trim().split(":");
+                    String destinoCode = destinoWithPackageCount[0].trim();
+                    int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
+
+                    Ubicacion origen = ubicacionMap.get(origenCode);
+                    Ubicacion destino = ubicacionMap.get(destinoCode);
+
+                    String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" + 
+                        fechaRecibo.substring(4, 6) + "-" + 
+                        fechaRecibo.substring(6, 8);
+
+                    Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
+                    Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,origen.getZonaHoraria(),"UTC");
+
+                    if(!fecha_recepcion_GMT0.after(minDate) || !fecha_recepcion_GMT0.before(maxDate)){
+                        continue;
+                    }
+
+                    Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de destino
+                    Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino,destino.getZonaHoraria(),"UTC");
+
+                    for(int i = 0; i < cantidadPaquetes; i++){
+                        Paquete paquete = new Paquete();
+                        paquete.setId(id);
+                        paquete.setCiudadAlmacen(origen);
+                        paquete.setCiudadOrigen(origen);
+                        paquete.setCiudadDestino(destino);
+                        paquete.setFecha_recepcion(fecha_recepcion_GMT0);
+                        paquete.setFecha_maxima_entrega(fecha_maxima_entrega_GMT0);
+                        paquetes_list.add(paquete);
+                        id++;
+                    }
+                    
+                }
+                scanner.close();
+            
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+            
+        return paquetes_list;
     }
 
     public static void ordenarPaquetes(Paquete[] paquetes) {

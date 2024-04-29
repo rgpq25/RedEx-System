@@ -334,11 +334,23 @@ public class Solucion {
         //We do 5 attempts to try to initialize the solution
         for(int j = 0; j < 20; j++){
             System.out.println("Intento " + j + " de inicializacion");
-            ArrayList<PlanRuta> av_rutas = grafoVuelos.generarRutasParaPaquetes(this.paquetes);
+            //ArrayList<PlanRuta> av_rutas = grafoVuelos.generarRutasParaPaquetes(this.paquetes);
 
             for (int i = 0; i < paquetes.size(); i++) {
-                this.rutas.add(av_rutas.get(i));
-                this.ocupyRouteFlights(av_rutas.get(i));
+                ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
+                tempPaquetesArray.add(paquetes.get(i));
+                ArrayList<PlanRuta> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray);
+                PlanRuta randomRoute = tempRoutesArray.get(0);
+
+                // this.rutas.add(av_rutas.get(i));
+                // this.ocupyRouteFlights(av_rutas.get(i));
+
+                this.rutas.add(randomRoute);
+                this.ocupyRouteFlights(randomRoute);
+
+                // if(i % 100 == 0){
+                //     System.out.println("Se inicializaron " + (i+1) + " paquetes.");
+                // }
             }
             if(this.isAirportCapacityAvailable() == true){
                 return;
@@ -439,7 +451,7 @@ public class Solucion {
                     break;
                 }
 
-                if(conteo>=1000){
+                if(conteo>=50){ //antes era 1000
                     return this;
                 }
             }
