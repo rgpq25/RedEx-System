@@ -353,7 +353,7 @@ public class GrafoVuelos {
             Set<String> aeropuertosVisitados = new HashSet<>();
 
             buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(), paquete.getFecha_recepcion(),
-                    null,
+                    new PlanRuta(),
                     aeropuertosVisitados, rutas);
         }
         return rutas;
