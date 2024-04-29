@@ -320,7 +320,7 @@ public class GrafoVuelos {
     }
 
     private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
-            PlanRuta rutaActual, Set<String> aeropuertosVisitados) {
+            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental) {
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRuta nuevaRuta = new PlanRuta();
@@ -334,16 +334,33 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelosPosibles) {
             if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
-                rutaActual.getVuelos().add(vuelo);
-                aeropuertosVisitados.add(actual.getId());
-                PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
-                        vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados);
-                if (result != null) {
-                    return result; // Ruta encontrada, retornarla.
+                Date fechaInicio = rutaActual.getInicio();
+                if (fechaInicio == null) {
+                    fechaInicio = vuelo.getFecha_salida();
                 }
-                // Backtracking
-                rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
-                aeropuertosVisitados.remove(actual.getId());
+                // Calcular la diferencia de tiempo desde el inicio hasta la fecha de salida del
+                // vuelo actual
+                long duracionRuta = vuelo.getFecha_llegada().getTime() - fechaInicio.getTime();
+                long duracionRutaHoras = (duracionRuta + 3599999) / 3600000;
+                long limite;
+                if (continental) {
+                    limite = 30;
+                } else {
+                    limite = 60;
+                }
+                if (duracionRutaHoras <= limite) {
+                    rutaActual.getVuelos().add(vuelo);
+                    aeropuertosVisitados.add(actual.getId());
+                    PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
+                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental);
+                    if (result != null) {
+                        return result; // Ruta encontrada, retornarla.
+                    }
+                    // Backtracking
+                    rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
+                    aeropuertosVisitados.remove(actual.getId());
+                }
+
             }
         }
 
@@ -356,7 +373,7 @@ public class GrafoVuelos {
             Set<String> aeropuertosVisitados = new HashSet<>();
             PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
                     paquete.getFecha_recepcion(), new PlanRuta(),
-                    aeropuertosVisitados);
+                    aeropuertosVisitados, paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId()));
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
                         + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
