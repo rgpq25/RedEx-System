@@ -43,7 +43,7 @@ public class main {
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
-        String maxPackagesDate = "2024-01-03 23:59:59";
+        String maxPackagesDate = "2024-01-07 23:59:59";
 
         // Data Generation Parameters
         int maxAirports = 30; // MAX AIRPORTS IS 30
