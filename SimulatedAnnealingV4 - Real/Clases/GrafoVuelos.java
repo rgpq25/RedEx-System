@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrafoVuelos {
-    private HashMap<Ubicacion, ArrayList<Vuelo>> grafo = new HashMap<>();
+    private HashMap<Ubicacion, TreeMap<Date, Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
     private HashMap<Integer, Vuelo> vuelos_hash = new HashMap<>();
@@ -154,17 +154,19 @@ public class GrafoVuelos {
 
     // Agrega un vuelo al grafo
     public void agregarVuelo(Vuelo vuelo) {
-        if (!grafo.containsKey(vuelo.getPlan_vuelo().getCiudadOrigen())) {
-            grafo.put(vuelo.getPlan_vuelo().getCiudadOrigen(), new ArrayList<>());
+        Ubicacion ciudadOrigen = vuelo.getPlan_vuelo().getCiudadOrigen();
+        if (!this.grafo.containsKey(ciudadOrigen)) {
+            TreeMap<Date, Vuelo> nuevoMap = new TreeMap<>();
+            grafo.put(ciudadOrigen, nuevoMap);
         }
-        grafo.get(vuelo.getPlan_vuelo().getCiudadOrigen()).add(vuelo);
+        grafo.get(ciudadOrigen).put(vuelo.getFecha_salida(), vuelo);
     }
 
     // Imprime todos los vuelos en el grafo
     public void imprimirVuelos() {
-        for (HashMap.Entry<Ubicacion, ArrayList<Vuelo>> entrada : grafo.entrySet()) {
+        for (HashMap.Entry<Ubicacion, TreeMap<Date, Vuelo>> entrada : grafo.entrySet()) {
             System.out.println("Desde el aeropuerto: " + entrada.getKey());
-            for (Vuelo vuelo : entrada.getValue()) {
+            for (Vuelo vuelo : entrada.getValue().values()) {
                 System.out.println(
                         "  Vuelo a: " + vuelo.getPlan_vuelo().getCiudadDestino().getId() + ", ID: " + vuelo.getId());
             }
@@ -268,10 +270,10 @@ public class GrafoVuelos {
         }
 
         // Asegurar que los vuelos están ordenados por fecha de salida
-        ArrayList<Vuelo> vuelosOrdenados = new ArrayList<>(grafo.get(actual));
-        Collections.sort(vuelosOrdenados, Comparator.comparing(Vuelo::getFecha_salida));
+        TreeMap<Date, Vuelo> vuelosOrdenados = new TreeMap<Date, Vuelo>(grafo.get(actual));
 
-        for (Vuelo vuelo : vuelosOrdenados) {
+        for (Date fecha : vuelosOrdenados.keySet()) {
+            Vuelo vuelo = vuelosOrdenados.get(fecha);
             /*
              * if ((!vuelo.getPlan_vuelo().getCiudadDestino().getContinente().equals(actual.
              * getContinente()) &&
@@ -319,8 +321,18 @@ public class GrafoVuelos {
 
     }
 
+    public ArrayList<Vuelo> obtenerVuelosEntreFechas(Ubicacion ciudadOrigen, Date fechaInicio, Date fechaFin) {
+        if (grafo.containsKey(ciudadOrigen)) {
+            TreeMap<Date, Vuelo> vuelos = grafo.get(ciudadOrigen);
+            // Creamos una lista a partir de la colección de vuelos en el rango dado
+            ArrayList<Vuelo> listaVuelos = new ArrayList<>(vuelos.subMap(fechaInicio, true, fechaFin, true).values());
+            return listaVuelos;
+        }
+        return new ArrayList<>(); // Devolver una lista vacía en lugar de null si la ciudad no está en el grafo
+    }
+
     private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
-            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental) {
+            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete) {
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRuta nuevaRuta = new PlanRuta();
@@ -328,7 +340,8 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
-        List<Vuelo> vuelosPosibles = new ArrayList<>(grafo.get(actual));
+        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getFecha_recepcion(),
+                paquete.getFecha_maxima_entrega());
         Collections.shuffle(vuelosPosibles);
 
         for (Vuelo vuelo : vuelosPosibles) {
@@ -352,7 +365,7 @@ public class GrafoVuelos {
                     rutaActual.getVuelos().add(vuelo);
                     aeropuertosVisitados.add(actual.getId());
                     PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
-                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental);
+                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental, paquete);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
                     }
@@ -373,7 +386,8 @@ public class GrafoVuelos {
             Set<String> aeropuertosVisitados = new HashSet<>();
             PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
                     paquete.getFecha_recepcion(), new PlanRuta(),
-                    aeropuertosVisitados, paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId()));
+                    aeropuertosVisitados, paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId()),
+                    paquete);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
                         + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
