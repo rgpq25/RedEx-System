@@ -319,4 +319,44 @@ public class GrafoVuelos {
 
     }
 
+    private void buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRuta rutaActual,
+            Set<String> aeropuertosVisitados, ArrayList<PlanRuta> rutas) {
+        if (actual.getId().equals(destino.getId())) {
+            ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
+            PlanRuta nuevaRuta = new PlanRuta();
+            nuevaRuta.setVuelos(vuelosClonados);
+            rutas.add(nuevaRuta);
+            return;
+        }
+
+        List<Vuelo> vuelosPosibles = new ArrayList<>(grafo.get(actual));
+        Collections.shuffle(vuelosPosibles);
+
+        for (Vuelo vuelo : vuelosPosibles) {
+            if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
+                    !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
+                Date fechaInicio = rutaActual.getInicio() == null ? vuelo.getFecha_salida() : rutaActual.getInicio();
+                rutaActual.getVuelos().add(vuelo);
+                aeropuertosVisitados.add(actual.getId());
+                buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
+                        rutaActual, aeropuertosVisitados, rutas);
+                // Backtracking
+                rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
+                aeropuertosVisitados.remove(actual.getId());
+                break; // Romper después de explorar una ruta aleatoria
+            }
+        }
+    }
+
+    public ArrayList<PlanRuta> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
+        ArrayList<PlanRuta> rutas = new ArrayList<>();
+        for (Paquete paquete : paquetes) {
+            Set<String> aeropuertosVisitados = new HashSet<>();
+
+            buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(), paquete.getFecha_recepcion(),
+                    null,
+                    aeropuertosVisitados, rutas);
+        }
+        return rutas;
+    }
 }
