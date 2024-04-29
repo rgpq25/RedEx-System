@@ -99,9 +99,11 @@ public class SAImplementation {
             vuelos_map,
             grafoVuelos
         );
-        current.initialize(todasLasRutas);
+
+        long startTimeInitialization = System.nanoTime();
+        current.force_initialize(todasLasRutas);
         Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
-        System.out.println("Finished solution initialization");
+        System.out.println("Finished solution initialization in " + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
 
 
         startTime = System.nanoTime();

@@ -311,6 +311,11 @@ public class Funciones {
                     Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
                     Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,origen.getZonaHoraria(),"UTC");
 
+
+                    // System.out.println("Fecha recepcion: " + getFormattedDate(fecha_recepcion_GMT0));
+                    // System.out.println("Fecha minima   : " + getFormattedDate(minDate));
+                    // System.out.println("Fecha maxima   : " + getFormattedDate(maxDate));
+
                     if(!fecha_recepcion_GMT0.after(minDate) || !fecha_recepcion_GMT0.before(maxDate)){
                         continue;
                     }

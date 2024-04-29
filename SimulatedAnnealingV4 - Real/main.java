@@ -43,7 +43,7 @@ public class main {
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
-        String maxPackagesDate = "2024-01-01 23:59:59";
+        String maxPackagesDate = "2024-01-03 23:59:59";
 
         // Data Generation Parameters
         int maxAirports = 30; // MAX AIRPORTS IS 30
@@ -53,11 +53,11 @@ public class main {
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
-        boolean stopWhenNoPackagesLeft = false;
+        boolean stopWhenNoPackagesLeft = true;
         double temperature = 10000;
-        double coolingRate = 0.1;
-        int neighbourCount = 10;
-        int windowSize = 100; 
+        double coolingRate = 0.01;
+        int neighbourCount = 1;
+        int windowSize = 150; 
         //one of the best combinations is 1 neighbourCount and windowSize = 500
 
         // Weight Parameters
@@ -132,7 +132,7 @@ public class main {
             return;
         }
 
-        
+
         SAImplementation sa = new SAImplementation();
 
         sa.setData(
