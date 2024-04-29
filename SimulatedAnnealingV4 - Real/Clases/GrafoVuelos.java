@@ -319,14 +319,13 @@ public class GrafoVuelos {
 
     }
 
-    private void buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRuta rutaActual,
-            Set<String> aeropuertosVisitados, ArrayList<PlanRuta> rutas) {
+    private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
+            PlanRuta rutaActual, Set<String> aeropuertosVisitados) {
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRuta nuevaRuta = new PlanRuta();
             nuevaRuta.setVuelos(vuelosClonados);
-            rutas.add(nuevaRuta);
-            return;
+            return nuevaRuta;
         }
 
         List<Vuelo> vuelosPosibles = new ArrayList<>(grafo.get(actual));
@@ -337,25 +336,33 @@ public class GrafoVuelos {
                     !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
                 rutaActual.getVuelos().add(vuelo);
                 aeropuertosVisitados.add(actual.getId());
-                buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
-                        rutaActual, aeropuertosVisitados, rutas);
+                PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
+                        vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados);
+                if (result != null) {
+                    return result; // Ruta encontrada, retornarla.
+                }
                 // Backtracking
                 rutaActual.getVuelos().remove(rutaActual.getVuelos().size() - 1);
                 aeropuertosVisitados.remove(actual.getId());
-                break; // Romper después de explorar una ruta aleatoria
             }
         }
+
+        return null; // No se encontró ruta, retornar null.
     }
 
     public ArrayList<PlanRuta> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-
-            buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(), paquete.getFecha_recepcion(),
-                    new PlanRuta(),
-                    aeropuertosVisitados, rutas);
+            PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
+                                                            paquete.getFecha_recepcion(), new PlanRuta(),
+                                                            aeropuertosVisitados);
+            if (rutaEncontrada == null) {
+                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde " 
+                                                + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
+            }
+            rutas.add(rutaEncontrada);
         }
         return rutas;
-    }
+    }s
 }
