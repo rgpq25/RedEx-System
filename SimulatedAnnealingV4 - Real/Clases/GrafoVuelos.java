@@ -355,14 +355,14 @@ public class GrafoVuelos {
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
             PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
-                                                            paquete.getFecha_recepcion(), new PlanRuta(),
-                                                            aeropuertosVisitados);
+                    paquete.getFecha_recepcion(), new PlanRuta(),
+                    aeropuertosVisitados);
             if (rutaEncontrada == null) {
-                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde " 
-                                                + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
+                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
+                        + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
             }
             rutas.add(rutaEncontrada);
         }
         return rutas;
-    }s
+    }
 }
