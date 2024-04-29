@@ -333,8 +333,9 @@ public class Solucion {
     public void initialize(HashMap<String, ArrayList<PlanRuta>> todasLasRutas) {
         //We do 5 attempts to try to initialize the solution
         for(int j = 0; j < 20; j++){
-
+            System.out.println("Intento " + j + " de inicializacion");
             ArrayList<PlanRuta> av_rutas = grafoVuelos.generarRutasParaPaquetes(this.paquetes);
+
             for (int i = 0; i < paquetes.size(); i++) {
                 this.rutas.add(av_rutas.get(i));
                 this.ocupyRouteFlights(av_rutas.get(i));
@@ -414,17 +415,37 @@ public class Solucion {
         for (int i = 0; i < windowSize; i++) {
             PlanRuta oldRoute = rutas.get(randomPackageIndexes[i]);
             neighbour.deocupyRouteFlights(oldRoute);
-
             randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
         }
 
-        ArrayList<PlanRuta> availableRoutesPerPackage = grafoVuelos.generarRutasParaPaquetes(randomPackages);
 
+        //generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
-            neighbour.ocupyRouteFlights(availableRoutesPerPackage.get(j));
-            neighbour.rutas.set(randomPackageIndexes[j], availableRoutesPerPackage.get(j));
+            int conteo=0;
+            while (true) {
+                ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
+                tempPaquetesArray.add(randomPackages.get(j));
+
+                ArrayList<PlanRuta> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray);
+                PlanRuta randomRoute = tempRoutesArray.get(0);
+
+                //check if origin and destiny is different
+                if(
+                    neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
+                    && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
+                ){
+                    neighbour.ocupyRouteFlights(randomRoute);
+                    neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
+                    break;
+                }
+
+                if(conteo>=1000){
+                    return this;
+                }
+            }
         }
 
+        //tambien deberiamos medir si esto llega a repetirse X veces simplemente devolver la solucion actual
         if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
             return generateNeighbour(todasLasRutas, windowSize);
         } else {

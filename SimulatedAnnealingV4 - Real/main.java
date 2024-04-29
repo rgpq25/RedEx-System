@@ -20,8 +20,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 public class main {
 
@@ -136,15 +141,15 @@ public class main {
 
         // Data Generation Parameters
         boolean generateNewData = false;
-        int maxAirports = 10; // MAX AIRPORTS IS 30
-        int packagesAmount = 1000;
+        int maxAirports = 30; // MAX AIRPORTS IS 30
+        int packagesAmount = 6000;
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
         double temperature = 100000;
         double coolingRate = 0.001;
-        int neighbourCount = 20;
-        int windowSize = 300; //best = 50 MUST BE LESS THE packagesAmount
+        int neighbourCount = 1;
+        int windowSize = 500; //best = 50 MUST BE LESS THE packagesAmount
 
         // Weight Parameters
         double badSolutionPenalization = 100;
@@ -155,6 +160,7 @@ public class main {
         double sumaPaquetesWeight = 10;
         double sumaVuelosWeight = 4;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
+        
 
         String inputPath = "inputGenerado";
         String generatedInputPath = "inputGenerado";
@@ -169,7 +175,7 @@ public class main {
                     packagesAmount,
                     aeropuertos,
                     Funciones.parseDateString("2024-01-01 00:00:00"),
-                    Funciones.parseDateString("2024-01-03 23:59:59"),
+                    Funciones.parseDateString("2024-01-01 23:59:59"),
                     generatedInputPath);
 
             ArrayList<PlanVuelo> planVuelos = Funciones.generarPlanesDeVuelo(aeropuertos, flightsMultiplier,
@@ -213,6 +219,8 @@ public class main {
         long duration = endTime - startTime;
 
         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000) + " segundos");
+
+
         
 
         
@@ -235,23 +243,47 @@ public class main {
         startTime = System.nanoTime();
         while (temperature > 1) {
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+            //final Solucion currentFinal = current;
+            // for (int i = 0; i < neighbourCount; i++) {
+            //     neighbours.add(
+            //         current.generateNeighbour(
+            //             todasLasRutas, 
+            //             windowSize
+            //         )
+            //     );
+            // }
+            int nThreads = Runtime.getRuntime().availableProcessors();
+            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
+            final Solucion copyCurrent = current;
+            List<Callable<Solucion>> tasks = new ArrayList<>();
             for (int i = 0; i < neighbourCount; i++) {
-                neighbours.add(
-                    current.generateNeighbour(
-                        todasLasRutas, 
-                        windowSize
-                    )
-                );
+                tasks.add(() -> copyCurrent.generateNeighbour(todasLasRutas, windowSize));
             }
+
+            try {
+                List<Future<Solucion>> futures = executor.invokeAll(tasks);
+                for (Future<Solucion> future : futures) {
+                    neighbours.add(future.get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            executor.shutdown();
+
          
+            
             int bestNeighbourIndex = 0;
             double bestNeighbourCost = Double.MAX_VALUE;
+            double bestNeighbourRouteCost = 0;
             for (int i = 0; i < neighbours.size(); i++) {
                 Solucion neighbour = neighbours.get(i);
                 double neighbourCost = neighbour.getSolutionCost();
                 //System.out.println("Current cost: " + neighbourCost);
                 if (neighbourCost < bestNeighbourCost) {
                     bestNeighbourCost = neighbourCost;
+                    bestNeighbourRouteCost = neighbour.costoDePaquetesYRutasErroneas;
                     bestNeighbourIndex = i;
                 }
             }
@@ -263,6 +295,7 @@ public class main {
 
             if (
                 costDifference < 0 || 
+                bestNeighbourRouteCost < current.costoDePaquetesYRutasErroneas ||
                 Math.exp(-costDifference / temperature) > Math.random()
             ) {
                 current = neighbours.get(bestNeighbourIndex);
