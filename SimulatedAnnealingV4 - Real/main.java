@@ -40,7 +40,7 @@ public class main {
 
         
         // General Parameters
-        boolean useGeneratedData = false;
+        boolean useGeneratedData = true;
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
@@ -50,7 +50,7 @@ public class main {
         int maxAirports = 30; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         String startPackagesDate = "2024-01-01 00:00:00";
-        String endPackagesDate = "2024-01-01 23:59:59";
+        String endPackagesDate = "2024-01-03 23:59:59";
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
@@ -91,23 +91,33 @@ public class main {
                 aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
                 aeropuertos = new ArrayList<Aeropuerto>(aeropuertos.subList(0, maxAirports));
 
-                planVuelos = Funciones.generarPlanesDeVuelo(
-                    aeropuertos, 
-                    flightsMultiplier,
-                    generatedInputPath + "/vuelos.csv"
-                );
+                // planVuelos = Funciones.generarPlanesDeVuelo(
+                //     aeropuertos, 
+                //     flightsMultiplier,
+                //     generatedInputPath + "/vuelos.csv"
+                // );
+
+                // paquetes = Funciones.generarPaquetes(
+                //     packagesAmount,
+                //     aeropuertos,
+                //     Funciones.parseDateString(startPackagesDate),
+                //     Funciones.parseDateString(endPackagesDate),
+                //     generatedInputPath + "paquetes.csv"
+                // );
 
                 paquetes = Funciones.generarPaquetes(
                     packagesAmount,
                     aeropuertos,
                     Funciones.parseDateString(startPackagesDate),
                     Funciones.parseDateString(endPackagesDate),
-                    generatedInputPath + "paquetes.csv"
+                    pathParaExpNum
                 );
 
                 System.out.println("Se generaron " + paquetes.size() + " paquetes.");
                 System.out.println("Se generaron " + planVuelos.size() + " planes de vuelo.");
                 System.out.println("Tiempo de generacion de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");
+
+                continue;
             } else {
 
                 HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap(30);
