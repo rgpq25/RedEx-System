@@ -111,7 +111,7 @@ public class PSO {
 
         long diferencia_fecha_maxima = paquete.getFecha_maxima_entrega().getTime() - paquete.getFecha_recepcion().getTime();
         long diferencia_fecha_entrega = tiempoLlegadaRuta - tiempoRecepcion;
-        double porcentaje_tiempo = (diferencia_fecha_entrega)/diferencia_fecha_maxima;
+        double porcentaje_tiempo = (diferencia_fecha_entrega * 1.0)/diferencia_fecha_maxima;
         //Verifica que el primer vuelo no salga antes de recibir el paquete
         if (tiempoPartidaRuta < tiempoRecepcion)
             return 100000;
@@ -137,12 +137,14 @@ public class PSO {
     }
 
     static double fitness(List<Integer> position, ArrayList<Paquete> packages, HashMap<Integer, ArrayList<PlanRuta>> rutas,ArrayList<Aeropuerto> aeropuertos,
-    HashMap<Integer, Vuelo> vuelos_map ) {
+    HashMap<Integer, Vuelo> vuelos_map, boolean impresionCostos ) {
         //ArrayList<Double> costosPaquetes = new ArrayList<>();
         double totalCost = 0;
         double costoPaquetes = 0;
         double costoVuelos = 0;
         double costoAeropuertos = 0;
+        double costoMediaVuelos = 0;
+        int numVuelos = 0;
         ArrayList<PlanRuta> planRutasEscogidas = new ArrayList<>(); 
         Funciones funciones = new Funciones();
         for (int i = 0; i < position.size(); i++) {
@@ -156,8 +158,10 @@ public class PSO {
             
             double costo = calcularCosto(packages.get(i), planRutas.get(position.get(i)));
             costoPaquetes += costo;
+            numVuelos += planRutas.get(position.get(i)).getVuelos().size();
             planRutasEscogidas.add(planRutas.get(position.get(i)));
         }
+        costoMediaVuelos = numVuelos/position.size();
         
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<>();
         for (int i = 0; i < position.size(); i++) {
@@ -181,7 +185,13 @@ public class PSO {
             }
         }
         
-        totalCost = costoPaquetes*10 + costoVuelos*4 + costoAeropuertos*4;
+        if (impresionCostos) {
+            System.out.println("Costo de paquetes: " + costoPaquetes);
+            System.out.println("Costo de vuelos: " + costoVuelos);
+            System.out.println("Costo de aeropuertos: " + costoAeropuertos);
+            System.out.println("Costo de media de vuelos: " + costoMediaVuelos);
+        }
+        totalCost = costoPaquetes*10 + costoVuelos*4 + costoAeropuertos*4 + costoMediaVuelos*6;
         return totalCost;
     }
 
@@ -197,7 +207,7 @@ public class PSO {
 
         for (int iter = 0; iter < maxIterations; iter++) {
             for (Particle particle : particles) {
-                double fitnessVal = fitness(particle.position, packages, rutas,aeropuertos,vuelos_map);
+                double fitnessVal = fitness(particle.position, packages, rutas,aeropuertos,vuelos_map, false);
 
                 if (fitnessVal <= particle.bestFitness) {
                     particle.bestFitness = fitnessVal;
