@@ -103,12 +103,12 @@ public class Solucion {
                 }
                 
             }
-            if(this.isAirportCapacityAvailable() == true){
+            // if(this.isAirportCapacityAvailable() == true){
                 return;
-            } else {
-                this.rutas.clear();
-                this.ocupacionVuelos.clear();
-            }
+            // } else {
+            //     this.rutas.clear();
+            //     this.ocupacionVuelos.clear();
+            // }
         }
 
         throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");
@@ -197,7 +197,7 @@ public class Solucion {
                 //check if origin and destiny is different
                 if(
                     neighbour.isCurrentRouteValid(randomPackages.get(j), randomRoute) == true  
-                    //&& neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
+                    && neighbour.isRouteFlightsCapacityAvailable(randomRoute) == true
                 ){
                     neighbour.ocupyRouteFlights(randomRoute);
                     neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
@@ -211,11 +211,11 @@ public class Solucion {
         }
 
         //tambien deberiamos medir si esto llega a repetirse X veces simplemente devolver la solucion actual
-        if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
-            return generateNeighbour(todasLasRutas, windowSize);
-        } else {
+        // if(neighbour.isAirportCapacityAvailable() == false){    //We generate again if the airport capacity is exceeded
+        //     return generateNeighbour(todasLasRutas, windowSize);
+        // } else {
             return neighbour;
-        }
+        // }
         
     }
 
@@ -248,6 +248,11 @@ public class Solucion {
         }
         //iterate over ocupacionVuelos
         
+    }
+
+    public void printAirportHistoricOcupation(String filename){
+        this.estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos, this.aeropuertos);
+        estado.consulta_historicaTxt(filename);
     }
 
     public double getSTPaquetes(){
@@ -295,19 +300,19 @@ public class Solucion {
         Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
 
 
+        currentCost += (double)(horaLlegadaRuta.getTime() - horaRecepcionPaquete.getTime()) / (horaMaximaEntregaPaquete.getTime() - horaRecepcionPaquete.getTime());
+
         if (horaSalidaRuta.after(horaRecepcionPaquete) == false) { //inusable
-            currentCost += 100000;
+            currentCost = 100000;
         }
 
         if (horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true) { //para colapso es usable
-            currentCost += 100;
+            currentCost = 100;
         }
 
         if(horaSalidaRuta.after(horaRecepcionPaquete) == false || horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true){
             conteoSinSentido++;
         }
-
-        currentCost += (double)(horaLlegadaRuta.getTime() - horaRecepcionPaquete.getTime()) / (horaMaximaEntregaPaquete.getTime() - horaRecepcionPaquete.getTime());
 
         return new double[]{currentCost, conteoSinSentido};
     }
@@ -353,43 +358,27 @@ public class Solucion {
         System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
     }
 
-
-    public double getSolutionCost_RenzoBackup() {
+    public void printCostsInLog(){
         double cost = 0;
         double conteoSinSentido = 0;
-
         for (int i = 0; i < this.paquetes.size(); i++) {
-            Date horaSalidaRuta = this.rutas.get(i).getVuelos().get(0).getFecha_salida();
-            Date horaLlegadaRuta = this.rutas.get(i).getVuelos().get(this.rutas.get(i).getVuelos().size() - 1).getFecha_llegada();
-
-            Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
-            Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
-
-
-            if (
-                horaSalidaRuta.after(horaRecepcionPaquete) == false //inusable
-            ) {
-                cost += 100000;
-            }
-
-            if (
-                horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true //para colapso es usable
-            ) {
-                cost += 10000;
-            }
-
-            if(horaSalidaRuta.after(horaRecepcionPaquete) == false || horaLlegadaRuta.after(horaMaximaEntregaPaquete) == true){
-                conteoSinSentido++;
-            }
+            double[] costAndConteo = getCostoPaquete(i);
+            cost += costAndConteo[0];   //costo de paquetes y asignacion de rutas
+            conteoSinSentido += costAndConteo[1];
         }
+        //TODO: Imprimir costo en rutasFinal para cada paquete
 
-        this.costoDePaquetesYRutasErroneas = conteoSinSentido;
-        cost += this.getSTVuelos() * 4;
-        costo += this.getPPTAeropuerto() * 4;
-
-        return cost;
+        double costoVuelos = this.getSTVuelos();
+        double costoAeropuertos = this.getPPTAeropuerto();
+        System.out.println(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
+        Funciones.printLineInLog(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
+        System.out.println(" -> Costo de vuelos: " + (costoVuelos));
+        Funciones.printLineInLog(" -> Costo de vuelos: " + (costoVuelos));
+        System.out.println(" -> Costo de aeropuertos: " + (costoAeropuertos));
+        Funciones.printLineInLog(" -> Costo de aeropuertos: " + (costoAeropuertos));
+        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
+        Funciones.printLineInLog(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
     }
-
 
 
     public boolean isCurrentRouteValid(int i) {

@@ -119,10 +119,10 @@ public class EstadoAlmacen {
         }
     }
 
-    public void consulta_historicaTxt() {
+    public void consulta_historicaTxt(String filename) {
         try {
             // Crear un objeto PrintWriter para escribir en el archivo
-            PrintWriter writer = new PrintWriter(new File("consulta_historica.txt"));
+            PrintWriter writer = new PrintWriter(new File(filename));
 
             // Recorrer el mapa uso_historico
             for (Aeropuerto aeropuerto : uso_historico.keySet()) {

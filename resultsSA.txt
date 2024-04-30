@@ -1,0 +1,17 @@
+PARAMETROS:     ----------------------------------------------------------------------------
+ - boolean stopWhenNoPackagesLeft = false;
+ - double temperature = 1000;
+ - double coolingRate = 0.08;
+ - int neighbourCount = 10;
+ - int windowSize = 250; 
+
+
+RESULTADOS:     ----------------------------------------------------------------------------
+
+Nombre de archivo de entrada -> outputExpNum/paquetes1000_j17.csv
+Tiempo de ejecución de algoritmo: 328.0 segundos
+Final cost: 8127.290693571251 | Packages left: 0.0 | Temperature: 0.983301527910579
+ -> Costo de paquetes y su asignacion de rutas: 809.5672109677957
+ -> Costo de vuelos: 7.898398692810436
+ -> Costo de aeropuertos: 0.006247280512990884
+ -> Costo total: 8127.290693571251

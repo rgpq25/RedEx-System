@@ -1,7 +1,10 @@
 package Clases;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -308,11 +311,6 @@ public class Funciones {
 
                     Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
                     Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,origen.getZonaHoraria(),"UTC");
-
-
-                    // System.out.println("Fecha recepcion: " + getFormattedDate(fecha_recepcion_GMT0));
-                    // System.out.println("Fecha minima   : " + getFormattedDate(minDate));
-                    // System.out.println("Fecha maxima   : " + getFormattedDate(maxDate));
 
                     if(!fecha_recepcion_GMT0.after(minDate) || !fecha_recepcion_GMT0.before(maxDate)){
                         continue;
@@ -758,6 +756,17 @@ public class Funciones {
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void printLineInLog(String line){
+        try {
+            FileWriter fw = new FileWriter("finalExpNumResults.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(line + "\n");
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
         }
     }
 

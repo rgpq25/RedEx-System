@@ -23,10 +23,10 @@ public class SAImplementation {
 
     // Simmulated Annealing Parameters
     private boolean stopWhenNoPackagesLeft;
-    private double temperature = 100000;
-    private double coolingRate = 0.001;
-    private int neighbourCount = 1;
-    private int windowSize = 500; //best = 50 MUST BE LESS THE packagesAmount
+    private double temperature;
+    private double coolingRate;
+    private int neighbourCount;
+    private int windowSize; //best = 50 MUST BE LESS THE packagesAmount
 
     // Weight Parameters
     private double badSolutionPenalization;
@@ -172,15 +172,21 @@ public class SAImplementation {
             "Current cost: " + current.getSolutionCost() + 
             " | Packages left: " + current.costoDePaquetesYRutasErroneas +
             " | Temperature: " + temperature);
+
+            if(temperature < 1 && current.isAirportCapacityAvailable() == false){
+                System.out.println(" !!! Se viola la capacidad de algun aeropuerto en un instante de tiempo en solucion final");
+            }
         }
         endTime = System.nanoTime();
         duration = endTime - startTime;
 
         System.out.println("=====================================");
-        System.out.println("RESUMEN EJECUCION:");
         System.out.println("Nombre de archivo de entrada -> " + inputPath);
+        Funciones.printLineInLog("Nombre de archivo de entrada -> " + inputPath);
 
         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
+        1000000000) + " segundos");
+        Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
         1000000000) + " segundos");
 
         System.out.println(
@@ -188,8 +194,19 @@ public class SAImplementation {
             " | Packages left: " + current.costoDePaquetesYRutasErroneas +
             " | Temperature: " + temperature
         );
-        current.printCosts();
+        Funciones.printLineInLog(
+            "Final cost: " + current.getSolutionCost() + 
+            " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+            " | Temperature: " + temperature
+        );
+
+        //current.printCosts();
+        current.printCostsInLog();
+        Funciones.printLineInLog("");
+        Funciones.printLineInLog("");
+
         Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
         current.printFlightOcupation("ocupacionVuelos.txt");
+        current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
     }
 }
