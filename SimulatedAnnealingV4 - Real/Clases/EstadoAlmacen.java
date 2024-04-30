@@ -1,6 +1,8 @@
 package Clases;
 
 import java.util.Date;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -117,6 +119,28 @@ public class EstadoAlmacen {
         }
     }
 
+    public void consulta_historicaTxt() {
+        try {
+            // Crear un objeto PrintWriter para escribir en el archivo
+            PrintWriter writer = new PrintWriter(new File("consulta_historica.txt"));
+
+            // Recorrer el mapa uso_historico
+            for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+                writer.println("Aeropuerto: " + aeropuerto.getId());
+                ArrayList<Date> fechasOrdenadas = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
+                Collections.sort(fechasOrdenadas);
+                for (Date fecha : fechasOrdenadas) {
+                    writer.println("Fecha: " + fecha + " | Uso: " + uso_historico.get(aeropuerto).get(fecha));
+                }
+            }
+
+            // Cerrar el PrintWriter
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public HashMap<Aeropuerto, Integer> verificar_capacidad_en(Date fecha) {
         HashMap<Aeropuerto, Integer> capacidad_hasta = new HashMap<Aeropuerto, Integer>();
         System.out.println(fecha);
@@ -176,8 +200,8 @@ public class EstadoAlmacen {
         return ((final_ - inicio) / (1000 * 60));
     }
 
-    public HashMap<Aeropuerto, Integer> consultarPorcentajeUsoPromedioPorHora() {
-        HashMap<Aeropuerto, Integer> porcentajes_Uso_Por_hora = new HashMap<>();
+    public HashMap<Aeropuerto, Double> consultarPorcentajeUsoPromedioPorHora() {
+        HashMap<Aeropuerto, Double> porcentajes_Uso_Por_hora = new HashMap<>();
 
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             ArrayList<Date> fechasList = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
@@ -187,7 +211,7 @@ public class EstadoAlmacen {
                 long totalMinutos = calcular_minutos_entre(fechasList.get(0), fechasList.get(fechasList.size() - 1));
                 double totalUso = 0;
 
-                for (int i = 0; i < fechasList.size() - 1; i++) {
+                for (int i = 0; i < fechasList.size() - 2; i++) {
                     Date fechaActual = fechasList.get(i);
                     Date fechaSiguiente = fechasList.get(i + 1);
                     long lapso = calcular_minutos_entre(fechaActual, fechaSiguiente);
@@ -196,12 +220,12 @@ public class EstadoAlmacen {
                     totalUso += usoActual * lapso;
                 }
 
-                double promedioHoras = totalUso / totalMinutos * 60;
-                int porcentaje = (int) (promedioHoras / aeropuerto.getCapacidad_maxima() * 100);
+                double promedioHoras = (totalUso / totalMinutos) / 60;
+                Double porcentaje = (Double) (promedioHoras / aeropuerto.getCapacidad_maxima());
                 porcentajes_Uso_Por_hora.put(aeropuerto, porcentaje);
             } else {
                 // Manejar el caso donde no hay datos históricos para el aeropuerto
-                porcentajes_Uso_Por_hora.put(aeropuerto, 0); // Por ejemplo, asignar 0 como porcentaje
+                porcentajes_Uso_Por_hora.put(aeropuerto, 0.0); // Por ejemplo, asignar 0 como porcentaje
             }
         }
 
@@ -209,20 +233,17 @@ public class EstadoAlmacen {
     }
 
     public double calcularCostoTotalAlmacenamiento() {
-        HashMap<Aeropuerto, Integer> porcentajesUso = consultarPorcentajeUsoPromedioPorHora();
+        if (!verificar_capacidad_maxima()) {
+            return 10000; // Penalización por exceder la capacidad máxima
+        }
+        HashMap<Aeropuerto, Double> porcentajesUso = consultarPorcentajeUsoPromedioPorHora();
         double costoTotal = 0.0;
 
-        for (Map.Entry<Aeropuerto, Integer> entrada : porcentajesUso.entrySet()) {
+        for (Map.Entry<Aeropuerto, Double> entrada : porcentajesUso.entrySet()) {
             Aeropuerto aeropuerto = entrada.getKey();
-            int porcentajeUso = entrada.getValue();
-            double porcentajeCapacidadMaxima = porcentajeUso / 100.0; // Convertir a decimal
-
-            if (porcentajeCapacidadMaxima > 1.0) {
-                costoTotal += 100000;
-            } else {
-                // Costo inversamente proporcional al uso si es menor que la capacidad máxima
-                costoTotal += porcentajeCapacidadMaxima;
-            }
+            Double porcentajeCapacidadMaxima = entrada.getValue();
+            // Costo inversamente proporcional al uso si es menor que la capacidad máxima
+            costoTotal += porcentajeCapacidadMaxima;
         }
 
         return costoTotal;
