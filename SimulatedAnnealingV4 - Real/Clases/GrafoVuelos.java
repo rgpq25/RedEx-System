@@ -332,7 +332,8 @@ public class GrafoVuelos {
     }
 
     private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
-            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete) {
+            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
+            int tamanho_max) {
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRuta nuevaRuta = new PlanRuta();
@@ -340,6 +341,9 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
+        if (aeropuertosVisitados.size() > tamanho_max) {
+            return null;
+        }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getFecha_recepcion(),
                 paquete.getFecha_maxima_entrega());
         Collections.shuffle(vuelosPosibles);
@@ -365,7 +369,8 @@ public class GrafoVuelos {
                     rutaActual.getVuelos().add(vuelo);
                     aeropuertosVisitados.add(actual.getId());
                     PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
-                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental, paquete);
+                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental, paquete,
+                            tamanho_max);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
                     }
@@ -384,10 +389,16 @@ public class GrafoVuelos {
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
+            int tamanho_max = 0;
+            if (paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId())) {
+                tamanho_max = 2;
+            } else {
+                tamanho_max = 3;
+            }
             PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
                     paquete.getFecha_recepcion(), new PlanRuta(),
                     aeropuertosVisitados, paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId()),
-                    paquete);
+                    paquete, tamanho_max);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
                         + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
