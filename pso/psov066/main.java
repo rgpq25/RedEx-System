@@ -108,23 +108,23 @@ public class main {
 
             //long startTime = System.nanoTime();
             //HashMap<String, ArrayList<PlanRuta>> rutas = grafoVuelos.buscarTodasLasRutas();
-            HashMap<String, ArrayList<PlanRuta>> rutas = new HashMap<String, ArrayList<PlanRuta>>();
+            /*HashMap<String, ArrayList<PlanRuta>> rutas = new HashMap<String, ArrayList<PlanRuta>>();
             try {
                 rutas = grafoVuelos.buscarTodasLasRutas();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
-            }
+            }*/
 
-            System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
+            /*System.out.println("Checking if ORIGIN-DESTINATION has atleast 1 route available");
             for (Map.Entry<String, ArrayList<PlanRuta>> entry : rutas.entrySet()) {
                 String key = entry.getKey();
                 ArrayList<PlanRuta> value = entry.getValue();
                 if (value.size() == 0) {
                     System.out.println("No route available for " + key);
                 }
-            }
+            }*/
 
             /*long endTime = System.nanoTime();
             long duration = endTime - startTime;
@@ -132,11 +132,11 @@ public class main {
             System.out.println("Tiempo de ejecución de la ordenación (buscarTodasLasRutas): " + (float) (duration / 1000000000) + " segundos");*/
 
 
-            funciones.saveRutesTxt(rutas, rutasPath, 1048576);
+            //funciones.saveRutesTxt(rutas, rutasPath, 1048576);
             
-            /*HashMap<String, ArrayList<PlanRuta>> rutas = RutasFileReader.readRutasFiles(rutasPath,vuelos_map);
+            HashMap<String, ArrayList<PlanRuta>> rutas2 = RutasFileReader.readRutasFiles(rutasPath,vuelos_map);
             //iterate hashmap
-            for (Map.Entry<String, ArrayList<PlanRuta>> entry : rutas.entrySet()) {
+            for (Map.Entry<String, ArrayList<PlanRuta>> entry : rutas2.entrySet()) {
                 String key = entry.getKey();
                 ArrayList<PlanRuta> value = entry.getValue();
                 
@@ -149,14 +149,14 @@ public class main {
                 }
             }
             
-            funciones.imprimirTodasLasRutas(rutas); */
+            //funciones.imprimirTodasLasRutas(rutas2); 
             
             
 
             //tengo ArrayList<Paquete> paquetes, tengo HashMap<String, ArrayList<PlanRuta>> rutas
             //quiero HashMap<Integer, ArrayList<PlanRuta>>
-            /*long startTime3 = System.nanoTime();
-            HashMap<Integer, ArrayList<PlanRuta>> rutas_validas = funciones.getRutasValidasPorPaquete(paquetes, rutas);
+            long startTime3 = System.nanoTime();
+            HashMap<Integer, ArrayList<PlanRuta>> rutas_validas = funciones.getRutasValidasPorPaquete(paquetes, rutas2);
             long endTime3 = System.nanoTime();
             long duration3 = endTime3 - startTime3;
             System.out.println("Tiempo de (getRutasValidasPorPaquete): " + (float) (duration3 / 1000000000) + " segundos");
@@ -200,10 +200,10 @@ public class main {
                     }
                 }
                 System.out.println();
-            }*/
-            /*System.setOut(originalStdOut);
+            }
+            System.setOut(originalStdOut);
             bufferedWriterOutput.close();
-            System.out.println("Fin");*/
+            System.out.println("Fin");
         }catch (IOException e) {
             // Handle IO Exception
             e.printStackTrace();
