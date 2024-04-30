@@ -334,6 +334,10 @@ public class GrafoVuelos {
     private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
             PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
             int tamanho_max) {
+
+        if (rutaActual.getVuelos().size() > tamanho_max) {
+            return null;
+        }
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRuta nuevaRuta = new PlanRuta();
@@ -341,9 +345,6 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
-        if (rutaActual.getVuelos().size() > tamanho_max) {
-            return null;
-        }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getFecha_recepcion(),
                 paquete.getFecha_maxima_entrega());
         Collections.shuffle(vuelosPosibles);
