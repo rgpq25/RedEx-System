@@ -110,11 +110,9 @@ public class Funciones {
     public static ArrayList<Paquete> leerPaquetes(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
         ArrayList<Paquete> paquetes_list = new ArrayList<Paquete>();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         try {
-            File file = new File(inputPath + "/paquetes.csv");
+            File file = new File(inputPath);
             Scanner scanner = new Scanner(file);
             scanner.useDelimiter(",");
 

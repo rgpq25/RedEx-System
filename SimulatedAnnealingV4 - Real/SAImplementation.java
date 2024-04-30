@@ -173,9 +173,12 @@ public class SAImplementation {
             " | Packages left: " + current.costoDePaquetesYRutasErroneas +
             " | Temperature: " + temperature);
         }
-
         endTime = System.nanoTime();
         duration = endTime - startTime;
+
+        System.out.println("=====================================");
+        System.out.println("RESUMEN EJECUCION:");
+        System.out.println("Nombre de archivo de entrada -> " + inputPath);
 
         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
         1000000000) + " segundos");
