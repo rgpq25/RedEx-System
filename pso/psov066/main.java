@@ -50,12 +50,13 @@ public class main {
             String inputPath = "inputGenerado";
             String generatedInputPath = "inputGenerado";
             String rutasPath = "rutasHash";
+            String profePath = "inputProfe";
             //HashMap<String, Ubicacion> ubicacionMap = new HashMap<>();
             HashMap<String, Ubicacion> ubicacionMap = funciones.getUbicacionMap(maxAirports);
             ArrayList<Aeropuerto> aeropuertos = funciones.leerAeropuertos(inputPath,ubicacionMap);
             aeropuertos = new ArrayList<Aeropuerto>(aeropuertos.subList(0, maxAirports));
 
-            if (generateNewData == true) {
+            /*if (generateNewData == true) {
                 ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
                         packagesAmount,
                         aeropuertos,
@@ -69,7 +70,7 @@ public class main {
                 System.out.println("Se generaron " + paquetes.size() + " paquetes.");
                 System.out.println("Se generaron " + planVuelos.size() + " planes de vuelo.");
                 return;
-            }
+            }*/
 
             // Create a FileWriter to write to the file
             FileWriter fileWriterOutput = new FileWriter(filePath);
@@ -82,8 +83,8 @@ public class main {
 
             
             ArrayList<Paquete> paquetes = Funciones.leerPaquetes(inputPath, ubicacionMap);
-            ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
-            
+            //ArrayList<PlanVuelo> planVuelos = Funciones.leerPlanVuelos(inputPath, ubicacionMap);
+            ArrayList<PlanVuelo> planVuelos = Funciones.leerRawPlanesVuelo(ubicacionMap, profePath);
 
             //print each package
             /*for (Paquete paquete : paquetes) {
@@ -107,7 +108,7 @@ public class main {
 
             //long startTime = System.nanoTime();
             //HashMap<String, ArrayList<PlanRuta>> rutas = grafoVuelos.buscarTodasLasRutas();
-            /*HashMap<String, ArrayList<PlanRuta>> rutas = new HashMap<String, ArrayList<PlanRuta>>();
+            HashMap<String, ArrayList<PlanRuta>> rutas = new HashMap<String, ArrayList<PlanRuta>>();
             try {
                 rutas = grafoVuelos.buscarTodasLasRutas();
             } catch (InterruptedException e) {
@@ -123,7 +124,7 @@ public class main {
                 if (value.size() == 0) {
                     System.out.println("No route available for " + key);
                 }
-            }*/
+            }
 
             /*long endTime = System.nanoTime();
             long duration = endTime - startTime;
@@ -131,9 +132,9 @@ public class main {
             System.out.println("Tiempo de ejecución de la ordenación (buscarTodasLasRutas): " + (float) (duration / 1000000000) + " segundos");*/
 
 
-            //funciones.saveRutesTxt(rutas, rutasPath, 1048576);
+            funciones.saveRutesTxt(rutas, rutasPath, 1048576);
             
-            HashMap<String, ArrayList<PlanRuta>> rutas = RutasFileReader.readRutasFiles(rutasPath,vuelos_map);
+            /*HashMap<String, ArrayList<PlanRuta>> rutas = RutasFileReader.readRutasFiles(rutasPath,vuelos_map);
             //iterate hashmap
             for (Map.Entry<String, ArrayList<PlanRuta>> entry : rutas.entrySet()) {
                 String key = entry.getKey();
@@ -148,7 +149,7 @@ public class main {
                 }
             }
             
-            funciones.imprimirTodasLasRutas(rutas); 
+            funciones.imprimirTodasLasRutas(rutas); */
             
             
 

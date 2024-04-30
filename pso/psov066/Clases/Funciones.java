@@ -117,7 +117,40 @@ public class Funciones {
         return rutasValidasPorPaquete;
     }
 
+    public static ArrayList<PlanVuelo> leerRawPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath){
+        //Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
+        ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
 
+        try {
+            File file = new File(inputPath + "/planes_vuelo.v3.txt");
+            Scanner scanner = new Scanner(file);
+            //delimiter must be EOL
+            scanner.useDelimiter("\n");
+
+            int id = 1;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split("-");
+
+                PlanVuelo planVuelo = new PlanVuelo();
+                planVuelo.setId(id);
+                planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+                planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+                planVuelo.setCapacidad_maxima(Integer.parseInt(parts[4].trim()));
+                planVuelo.setHora_ciudad_origen(parts[2].trim());
+                planVuelo.setHora_ciudad_destino(parts[3].trim());
+
+                vuelos_list.add(planVuelo);
+                id++;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+        return vuelos_list;
+    }
+    
     public void imprimirTodasLasRutas(HashMap<String, ArrayList<PlanRuta>> todasLasRutas){
         for (Map.Entry<String, ArrayList<PlanRuta>> entry : todasLasRutas.entrySet()) {
             System.out.println("Key = " + entry.getKey());

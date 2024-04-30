@@ -1,0 +1,63 @@
+Data loaded successfully
+Vuelos generados: 9828
+Tiempo de ejecución (grafoVuelos): 0.0 segundos
+Buscando rutas
+No se encontraron rutas para RKSI-RJTT
+No se encontraron rutas para RKSI-RPLL
+No se encontraron rutas para RKSI-WSSS
+No se encontraron rutas para RKSI-WIII
+No se encontraron rutas para RKSI-WMKK
+No se encontraron rutas para VTBS-RPLL
+No se encontraron rutas para VTBS-WSSS
+No se encontraron rutas para VTBS-WIII
+No se encontraron rutas para VTBS-WMKK
+No se encontraron rutas para RJTT-RKSI
+No se encontraron rutas para EDDI-EHAM
+No se encontraron rutas para RPLL-RKSI
+No se encontraron rutas para RPLL-VTBS
+No se encontraron rutas para RPLL-VIDP
+No se encontraron rutas para VIDP-RPLL
+No se encontraron rutas para VIDP-WSSS
+No se encontraron rutas para VIDP-WIII
+No se encontraron rutas para VIDP-WMKK
+No se encontraron rutas para WSSS-RKSI
+No se encontraron rutas para WSSS-VTBS
+No se encontraron rutas para WSSS-VIDP
+No se encontraron rutas para WIII-RKSI
+No se encontraron rutas para WIII-VTBS
+No se encontraron rutas para WIII-VIDP
+No se encontraron rutas para WMKK-RKSI
+No se encontraron rutas para WMKK-VTBS
+No se encontraron rutas para WMKK-VIDP
+No se encontraron rutas para EHAM-EDDI
+Se encontraron 870 pares de origen-destino con rutas.
+Se encontraron 36183228 rutas en total.
+Checking if ORIGIN-DESTINATION has atleast 1 route available
+No route available for VIDP-WIII
+No route available for VIDP-WSSS
+No route available for WIII-VTBS
+No route available for RPLL-VIDP
+No route available for RPLL-RKSI
+No route available for RKSI-WIII
+No route available for RJTT-RKSI
+No route available for WMKK-RKSI
+No route available for WMKK-VIDP
+No route available for RPLL-VTBS
+No route available for WSSS-VIDP
+No route available for WSSS-RKSI
+No route available for VTBS-RPLL
+No route available for VIDP-WMKK
+No route available for RKSI-WSSS
+No route available for WMKK-VTBS
+No route available for EDDI-EHAM
+No route available for WIII-RKSI
+No route available for WIII-VIDP
+No route available for WSSS-VTBS
+No route available for VIDP-RPLL
+No route available for VTBS-WSSS
+No route available for RKSI-WMKK
+No route available for RKSI-RJTT
+No route available for RKSI-RPLL
+No route available for EHAM-EDDI
+No route available for VTBS-WIII
+No route available for VTBS-WMKK
