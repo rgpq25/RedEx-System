@@ -40,7 +40,7 @@ public class main {
 
         
         // General Parameters
-        boolean useGeneratedData = true;
+        boolean useGeneratedData = false;
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
@@ -147,7 +147,6 @@ public class main {
                 }
 
                 System.out.println("Se leyeron " + paquetes.size() + " paquetes.");
-                //TODO: Revisar porque la fecha sale como sale
                 System.out.println("Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
                 System.out.println("Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
                 System.out.println("Tiempo de lectura de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");

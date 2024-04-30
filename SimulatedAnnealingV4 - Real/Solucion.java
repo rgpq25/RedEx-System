@@ -299,6 +299,8 @@ public class Solucion {
         Date horaRecepcionPaquete = this.paquetes.get(i).getFecha_recepcion();
         Date horaMaximaEntregaPaquete = this.paquetes.get(i).getFecha_maxima_entrega();
 
+        int cantVuelosDePaquete = this.rutas.get(i).getVuelos().size();
+
 
         currentCost += (double)(horaLlegadaRuta.getTime() - horaRecepcionPaquete.getTime()) / (horaMaximaEntregaPaquete.getTime() - horaRecepcionPaquete.getTime());
 
@@ -314,19 +316,22 @@ public class Solucion {
             conteoSinSentido++;
         }
 
-        return new double[]{currentCost, conteoSinSentido};
+        return new double[]{currentCost, conteoSinSentido, cantVuelosDePaquete};
     }
 
 
     public double getSolutionCost() {
         double cost = 0;
         double conteoSinSentido = 0;
+        double mediaVuelos = 0;
 
         for (int i = 0; i < this.paquetes.size(); i++) {
             double[] costAndConteo = getCostoPaquete(i);
             cost += costAndConteo[0];
             conteoSinSentido += costAndConteo[1];
+            mediaVuelos += costAndConteo[2];
         }
+        mediaVuelos = mediaVuelos / this.paquetes.size();
 
         this.costoDePaquetesYRutasErroneas = conteoSinSentido;
         cost = cost * 10;
@@ -336,6 +341,7 @@ public class Solucion {
 
         cost += costoVuelos * 4;
         cost += costoAeropuertos * 4;
+        cost += mediaVuelos * 6;
 
         return cost;
     }
@@ -343,41 +349,48 @@ public class Solucion {
     public void printCosts(){
         double cost = 0;
         double conteoSinSentido = 0;
+        double mediaVuelos = 0;
         for (int i = 0; i < this.paquetes.size(); i++) {
             double[] costAndConteo = getCostoPaquete(i);
             cost += costAndConteo[0];   //costo de paquetes y asignacion de rutas
             conteoSinSentido += costAndConteo[1];
+            mediaVuelos += costAndConteo[2];
         }
-        //TODO: Imprimir costo en rutasFinal para cada paquete
+        mediaVuelos = mediaVuelos / this.paquetes.size();
 
         double costoVuelos = this.getSTVuelos();
         double costoAeropuertos = this.getPPTAeropuerto();
         System.out.println(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
+        System.out.println(" -> Costo de cantidad de vuelos por ruta: " + (mediaVuelos));
         System.out.println(" -> Costo de vuelos: " + (costoVuelos));
         System.out.println(" -> Costo de aeropuertos: " + (costoAeropuertos));
-        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
+        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4) + (mediaVuelos * 6)));
     }
 
     public void printCostsInLog(){
         double cost = 0;
         double conteoSinSentido = 0;
+        double mediaVuelos = 0;
         for (int i = 0; i < this.paquetes.size(); i++) {
             double[] costAndConteo = getCostoPaquete(i);
             cost += costAndConteo[0];   //costo de paquetes y asignacion de rutas
             conteoSinSentido += costAndConteo[1];
+            mediaVuelos += costAndConteo[2];
         }
-        //TODO: Imprimir costo en rutasFinal para cada paquete
+        mediaVuelos = mediaVuelos / this.paquetes.size();
 
         double costoVuelos = this.getSTVuelos();
         double costoAeropuertos = this.getPPTAeropuerto();
         System.out.println(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
         Funciones.printLineInLog(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
+        System.out.println(" -> Costo de cantidad de vuelos por ruta: " + (mediaVuelos));
+        Funciones.printLineInLog(" -> Costo de cantidad de vuelos por ruta: " + (mediaVuelos));
         System.out.println(" -> Costo de vuelos: " + (costoVuelos));
         Funciones.printLineInLog(" -> Costo de vuelos: " + (costoVuelos));
         System.out.println(" -> Costo de aeropuertos: " + (costoAeropuertos));
         Funciones.printLineInLog(" -> Costo de aeropuertos: " + (costoAeropuertos));
-        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
-        Funciones.printLineInLog(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
+        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4) + (mediaVuelos * 6)));
+        Funciones.printLineInLog(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4) + (mediaVuelos * 6)));
     }
 
 
