@@ -341,7 +341,7 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
-        if (aeropuertosVisitados.size() > tamanho_max) {
+        if (rutaActual.getVuelos().size() > tamanho_max) {
             return null;
         }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getFecha_recepcion(),
