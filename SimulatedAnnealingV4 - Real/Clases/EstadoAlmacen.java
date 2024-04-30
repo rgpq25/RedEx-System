@@ -163,11 +163,11 @@ public class EstadoAlmacen {
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
                 if (uso_historico.get(aeropuerto).get(fecha) > aeropuerto.getCapacidad_maxima()) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     private long calcular_minutos_entre(Date ini, Date fin) {
