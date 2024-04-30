@@ -163,11 +163,11 @@ public class EstadoAlmacen {
         for (Aeropuerto aeropuerto : uso_historico.keySet()) {
             for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
                 if (uso_historico.get(aeropuerto).get(fecha) > aeropuerto.getCapacidad_maxima()) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private long calcular_minutos_entre(Date ini, Date fin) {
@@ -209,6 +209,9 @@ public class EstadoAlmacen {
     }
 
     public double calcularCostoTotalAlmacenamiento() {
+        if (!verificar_capacidad_maxima()) {
+            return 10000; // Penalización por exceder la capacidad máxima
+        }
         HashMap<Aeropuerto, Integer> porcentajesUso = consultarPorcentajeUsoPromedioPorHora();
         double costoTotal = 0.0;
 
