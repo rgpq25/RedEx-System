@@ -38,7 +38,7 @@ public class main {
 
         // TODO: No procesar paquetes que aun no seran recibidos
 
-        String pathParaExpNum = "outputExpNum/paquetes1000_j1.csv";
+        String pathParaExpNum = "outputExpNum/paquetes1000_j30.csv";
         // General Parameters
         boolean useGeneratedData = false;
 
@@ -55,8 +55,8 @@ public class main {
 
         // SImmulated Annealing Parameters
         boolean stopWhenNoPackagesLeft = false;
-        double temperature = 1000;
-        double coolingRate = 0.1;
+        double temperature = 10000;
+        double coolingRate = 0.01;
         int neighbourCount = 2;
         int windowSize = 200; 
 

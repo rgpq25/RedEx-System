@@ -219,6 +219,7 @@ public class Solucion {
         
     }
 
+
     public void printFlightOcupation(String filename){
 
         File csvFile = new File(filename);
@@ -306,7 +307,7 @@ public class Solucion {
             conteoSinSentido++;
         }
 
-        currentCost += (double)horaLlegadaRuta.getTime() / horaMaximaEntregaPaquete.getTime();
+        currentCost += (double)(horaLlegadaRuta.getTime() - horaRecepcionPaquete.getTime()) / (horaMaximaEntregaPaquete.getTime() - horaRecepcionPaquete.getTime());
 
         return new double[]{currentCost, conteoSinSentido};
     }
@@ -325,10 +326,31 @@ public class Solucion {
         this.costoDePaquetesYRutasErroneas = conteoSinSentido;
         cost = cost * 10;
 
-        cost += this.getSTVuelos() * 4;
-        costo += this.getPPTAeropuerto() * 4;
+        double costoVuelos = this.getSTVuelos();
+        double costoAeropuertos = this.getPPTAeropuerto();
+
+        cost += costoVuelos * 4;
+        cost += costoAeropuertos * 4;
 
         return cost;
+    }
+
+    public void printCosts(){
+        double cost = 0;
+        double conteoSinSentido = 0;
+        for (int i = 0; i < this.paquetes.size(); i++) {
+            double[] costAndConteo = getCostoPaquete(i);
+            cost += costAndConteo[0];   //costo de paquetes y asignacion de rutas
+            conteoSinSentido += costAndConteo[1];
+        }
+        //TODO: Imprimir costo en rutasFinal para cada paquete
+
+        double costoVuelos = this.getSTVuelos();
+        double costoAeropuertos = this.getPPTAeropuerto();
+        System.out.println(" -> Costo de paquetes y su asignacion de rutas: " + (cost));
+        System.out.println(" -> Costo de vuelos: " + (costoVuelos));
+        System.out.println(" -> Costo de aeropuertos: " + (costoAeropuertos));
+        System.out.println(" -> Costo total: " + ((cost * 10) + (costoVuelos * 4) + (costoAeropuertos * 4)));
     }
 
 

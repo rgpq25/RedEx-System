@@ -188,6 +188,7 @@ public class SAImplementation {
             " | Packages left: " + current.costoDePaquetesYRutasErroneas +
             " | Temperature: " + temperature
         );
+        current.printCosts();
         Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
         current.printFlightOcupation("ocupacionVuelos.txt");
     }
