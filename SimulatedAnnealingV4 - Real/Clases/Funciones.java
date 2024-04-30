@@ -729,9 +729,8 @@ public class Funciones {
 
         try {
             out = new PrintWriter(csvFile);
-
+            out.println("Solucion resultado impresa en fecha " + Funciones.getFormattedDate(new Date()));
             for (int i = 0; i < paquetes.size(); i++) {
-
                 String origen_paquete = paquetes.get(i).getCiudadOrigen().getId();
                 String destino_paquete = paquetes.get(i).getCiudadDestino().getId();
                 Date fecha_recepcion = paquetes.get(i).getFecha_recepcion();
