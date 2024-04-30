@@ -439,7 +439,7 @@ public class Funciones {
 
     public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio,
             Date fechaFin, String outputPath) {
-        File csvFile = new File(outputPath + "/paquetes.csv");
+        File csvFile = new File(outputPath);
         PrintWriter out;
         try {
             out = new PrintWriter(csvFile);
@@ -469,7 +469,7 @@ public class Funciones {
 
     public static ArrayList<PlanVuelo> generarPlanesDeVuelo(ArrayList<Aeropuerto> aeropuertos,
             int repeticionesPorConexion, String outputPath) {
-        File csvFile = new File(outputPath + "/vuelos.csv");
+        File csvFile = new File(outputPath);
         PrintWriter out;
 
         try {
@@ -741,7 +741,7 @@ public class Funciones {
                 Date fecha_recepcion = paquetes.get(i).getFecha_recepcion();
                 Date fecha_maxima = paquetes.get(i).getFecha_maxima_entrega();
                 out.println(
-                        "Paquete " + i + " - " + origen_paquete + "-" + destino_paquete + "  |  "
+                        "Paquete " + (i+1) + " - " + origen_paquete + "-" + destino_paquete + "  |  "
                                 + Funciones.getFormattedDate(fecha_recepcion) + " => "
                                 + Funciones.getFormattedDate(fecha_maxima));
                 for (int j = 0; j < rutas.get(i).length(); j++) {
