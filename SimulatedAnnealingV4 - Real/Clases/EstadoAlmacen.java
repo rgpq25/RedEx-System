@@ -130,7 +130,7 @@ public class EstadoAlmacen {
                 ArrayList<Date> fechasOrdenadas = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
                 Collections.sort(fechasOrdenadas);
                 for (Date fecha : fechasOrdenadas) {
-                    writer.println("Fecha: " + fecha + " | Uso: " + uso_historico.get(aeropuerto).get(fecha));
+                    writer.println("Fecha: " + Funciones.getFormattedDate(fecha) + " | Uso: " + uso_historico.get(aeropuerto).get(fecha));
                 }
             }
 
