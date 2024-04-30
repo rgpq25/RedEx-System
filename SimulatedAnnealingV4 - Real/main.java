@@ -50,7 +50,7 @@ public class main {
         int maxAirports = 30; // MAX AIRPORTS IS 30
         int packagesAmount = 1000;
         String startPackagesDate = "2024-01-01 00:00:00";
-        String endPackagesDate = "2024-01-03 23:59:59";
+        String endPackagesDate = "2024-01-04 23:59:59";
         int flightsMultiplier = 1;
 
         // SImmulated Annealing Parameters
