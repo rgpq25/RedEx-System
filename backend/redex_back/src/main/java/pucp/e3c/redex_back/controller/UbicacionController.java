@@ -21,22 +21,22 @@ public class UbicacionController {
     @Autowired
     private UbicacionService ubicacionService;
     
-    @PostMapping("/")
+    @PostMapping(value = "/")
     public Ubicacion  register(@RequestBody Ubicacion ubicacion) {
         return ubicacionService.register(ubicacion);
     }
 
-    @GetMapping("/")
+    @GetMapping(value = "/")
     public List<Ubicacion> getAll() {
         return ubicacionService.getAll();
     }
     
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}")
     public Ubicacion get(@PathVariable("id") String id) {
         return ubicacionService.get(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") String id) {
         ubicacionService.delete(id);
     }

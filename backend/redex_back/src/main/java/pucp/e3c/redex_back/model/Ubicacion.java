@@ -1,5 +1,6 @@
 package pucp.e3c.redex_back.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -8,14 +9,21 @@ import jakarta.persistence.Table;
 @Table(name = "ubicacion")
 public class Ubicacion {
     @Id
+    @Column(length = 8)
     String id;
+
+    @Column(length = 64)
     String continente;
+    @Column(length = 64)
     String pais;
+    @Column(length = 64)
     String ciudad;
+    @Column(length = 64)
     String ciudad_abreviada;
+    @Column(length = 8)
     String zona_horaria;
 
-    
+
     public String getId() {
         return id;
     }
