@@ -40,15 +40,15 @@ public class main {
 
         
         // General Parameters
-        boolean useGeneratedData = false;
+        boolean useGeneratedData = true;
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
-        String maxPackagesDate = "2024-01-03 23:59:59";
+        String maxPackagesDate = "2024-01-10 23:59:59";
 
         // Data Generation Parameters
         int maxAirports = 30; // MAX AIRPORTS IS 30
-        int packagesAmount = 1000;
+        int packagesAmount = 1500;
         String startPackagesDate = "2024-01-01 00:00:00";
         String endPackagesDate = "2024-01-04 23:59:59";
         int flightsMultiplier = 1;
@@ -57,7 +57,7 @@ public class main {
         boolean stopWhenNoPackagesLeft = false;
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 10;
+        int neighbourCount = 5;
         int windowSize = 250; 
 
 
@@ -82,7 +82,7 @@ public class main {
         
 
         for(int i = 0; i<30; i++){
-            String pathParaExpNum = "outputExpNum/paquetes1000_j" + (i+1) + ".csv";
+            String pathParaExpNum = "outputExpNum/paquetes1500_j" + (i+1) + ".csv";
         
 
             long startTime = System.nanoTime();
@@ -111,6 +111,7 @@ public class main {
                     Funciones.parseDateString(startPackagesDate),
                     Funciones.parseDateString(endPackagesDate),
                     pathParaExpNum
+                    // "/CAMBIAR AQUI"
                 );
 
                 System.out.println("Se generaron " + paquetes.size() + " paquetes.");
@@ -124,13 +125,13 @@ public class main {
                 aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
 
                 planVuelos = Funciones.leerRawPlanesVuelo(ubicacionMap, "rawData");
-                // paquetes = Funciones.leerRawEnvios(
-                //     ubicacionMap, 
-                //     "rawData/envios", 
-                //     Funciones.parseDateString(minPackagesDate), 
-                //     Funciones.parseDateString(maxPackagesDate)
-                // );
-                paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
+                paquetes = Funciones.leerRawEnvios(
+                    ubicacionMap, 
+                    "rawData/envios", 
+                    Funciones.parseDateString(minPackagesDate), 
+                    Funciones.parseDateString(maxPackagesDate)
+                );
+                //paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
                 
                 Date minDate = Funciones.parseDateString("2026-01-01 00:00:00");
                 Date maxDate = Funciones.parseDateString("2021-01-01 00:00:00");
@@ -184,7 +185,7 @@ public class main {
                 promedioPonderadoTiempoAeropuertoWeight
             );
 
-            sa.startAlgorithm(pathParaExpNum);
+            sa.startAlgorithm("hi");
 
         }
     }
