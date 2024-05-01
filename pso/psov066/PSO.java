@@ -226,7 +226,7 @@ public class PSO {
 
         for (int iter = 0; iter < maxIterations; iter++) {
             for (Particle particle : particles) {
-                double fitnessVal = fitness(particle.position, ArrayGestor, packages, rutas, aeropuertos, vuelos_map,
+                double fitnessVal = fitness(particle.position, packages, rutas, aeropuertos, vuelos_map,
                         false);
 
                 if (fitnessVal <= particle.bestFitness) {
@@ -255,18 +255,6 @@ public class PSO {
 
                     if (planRutas != null) {
                         particle.position.set(i, Math.max(0, Math.min(particle.position.get(i), planRutas.size() - 1)));
-
-                        int NuevaPosicion = gestorRutas.get(i).avanzar(particle.position, particle.velocity);
-                        Integer maxima = gestorRutas.get(i).consultarMaximo();
-                        if (maxima != null && maxima < Nuevaposicion) {
-                            // rebotar particula
-                        }
-                        Integer minima = gestorRutas.get(i).consultarMinimo();
-                        if (minima != null && minima > Nuevaposicion) {
-                            // rebotar particula
-                        }
-                        PlanRuta ruta = gestorRutas.get(i).consultarRutaActual(posicion);
-
                     } else {
                         particle.position.set(i, 0);
                     }
