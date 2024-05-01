@@ -24,15 +24,19 @@ public class PlanRuta {
 
     private void updateCodigo() {
         StringBuilder sb = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm"); // Formato para las fechas
 
-        // Iterar sobre cada vuelo y añadir su ID al StringBuilder.
         for (Vuelo v : vuelos) {
-            String idVuelo = String.valueOf(v.getId()); // Asumiendo que el ID es numérico y el método getId() lo
-                                                        // obtiene.
-            sb.append(idVuelo).append("-");
+            String ciudadOrigen = v.getPlan_vuelo().getHora_ciudad_origen();
+            String fechaPartida = sdf.format(v.getFecha_salida());
+            String ciudadDestino = v.getPlan_vuelo().getHora_ciudad_destino();
+            String fechaLlegada = sdf.format(v.getFecha_llegada());
+
+            sb.append(ciudadOrigen).append("-").append(fechaPartida).append("-")
+                    .append(ciudadDestino).append("-").append(fechaLlegada).append(";");
         }
         if (sb.length() > 0) {
-            sb.setLength(sb.length() - 1); // Elimina el último guión.
+            sb.setLength(sb.length() - 1); // Elimina el último punto y coma
         }
         this.codigo = sb.toString();
     }
@@ -79,11 +83,9 @@ public class PlanRuta {
 
     public String toString() {
         StringBuilder descripcion = new StringBuilder("Ruta " + id + ": ");
-        /*
-         * if(vuelos.isEmpty()) {
-         * return descripcion.append("Ruta "+ this.id + "vacía").toString();
-         * }
-         */
+        /*if(vuelos.isEmpty()) {
+            return descripcion.append("Ruta "+ this.id + "vacía").toString();
+        }*/
         for (Vuelo vuelo : vuelos) {
             descripcion
                     .append(vuelo.getPlan_vuelo().getCiudadOrigen().getId())
