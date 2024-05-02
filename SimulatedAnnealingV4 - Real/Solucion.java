@@ -22,6 +22,7 @@ public class Solucion {
     public HashMap<Integer, Integer> ocupacionVuelos;
     public EstadoAlmacen estado;
 
+    
     public double costo;
     public double badSolutionPenalization;
     public double flightPenalization;
@@ -151,7 +152,7 @@ public class Solucion {
 
 
 
-    public Solucion generateNeighbour(HashMap<String, ArrayList<PlanRuta>> todasLasRutas, int windowSize) {
+    public Solucion generateNeighbour(int windowSize) {
 
         Solucion neighbour = new Solucion(
             new ArrayList<>(this.paquetes),

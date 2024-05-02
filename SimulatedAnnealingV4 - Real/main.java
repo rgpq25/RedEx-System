@@ -40,11 +40,11 @@ public class main {
 
         
         // General Parameters
-        boolean useGeneratedData = true;
+        boolean useGeneratedData = false;
 
         // Raw Data parameters
         String minPackagesDate = "2024-01-01 00:00:00";
-        String maxPackagesDate = "2024-01-10 23:59:59";
+        String maxPackagesDate = "2024-01-04 23:59:59";
 
         // Data Generation Parameters
         int maxAirports = 30; // MAX AIRPORTS IS 30
@@ -53,12 +53,14 @@ public class main {
         String endPackagesDate = "2024-01-04 23:59:59";
         int flightsMultiplier = 1;
 
-        // SImmulated Annealing Parameters
-        boolean stopWhenNoPackagesLeft = false;
+        // Simmulated Annealing Parameters
+
+        
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 5;
+        int neighbourCount = 10;
         int windowSize = 250; 
+        boolean stopWhenNoPackagesLeft = false;
 
 
         // Weight Parameters
@@ -82,7 +84,7 @@ public class main {
         
 
         for(int i = 0; i<30; i++){
-            String pathParaExpNum = "outputExpNum/paquetes1500_j" + (i+1) + ".csv";
+            String pathParaExpNum = "outputExpNum/paquetes500_j" + (i+1) + ".csv";
         
 
             long startTime = System.nanoTime();
@@ -131,7 +133,7 @@ public class main {
                     Funciones.parseDateString(minPackagesDate), 
                     Funciones.parseDateString(maxPackagesDate)
                 );
-                //paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
+                // paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
                 
                 Date minDate = Funciones.parseDateString("2026-01-01 00:00:00");
                 Date maxDate = Funciones.parseDateString("2021-01-01 00:00:00");
@@ -185,7 +187,7 @@ public class main {
                 promedioPonderadoTiempoAeropuertoWeight
             );
 
-            sa.startAlgorithm("hi");
+            sa.startAlgorithm(pathParaExpNum);
 
         }
     }

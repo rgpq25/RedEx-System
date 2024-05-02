@@ -105,56 +105,33 @@ public class SAImplementation {
         Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
         System.out.println("Finished solution initialization in " + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
 
-
+        
         startTime = System.nanoTime();
+
+
         while (temperature > 1) {
             ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
             for (int i = 0; i < neighbourCount; i++) {
                 neighbours.add(
-                    current.generateNeighbour(
-                        todasLasRutas, 
-                        windowSize
-                    )
+                    current.generateNeighbour(windowSize)
                 );
             }
-            // int nThreads = Runtime.getRuntime().availableProcessors();
-            // ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-            // final Solucion copyCurrent = current;
-            // List<Callable<Solucion>> tasks = new ArrayList<>();
-            // for (int i = 0; i < neighbourCount; i++) {
-            //     tasks.add(() -> copyCurrent.generateNeighbour(todasLasRutas, windowSize));
-            // }
-            // try {
-            //     List<Future<Solucion>> futures = executor.invokeAll(tasks);
-            //     for (Future<Solucion> future : futures) {
-            //         neighbours.add(future.get());
-            //     }
-            // } catch (InterruptedException | ExecutionException e) {
-            //     e.printStackTrace();
-            // }
-            // executor.shutdown();
-         
+
             int bestNeighbourIndex = 0;
             double bestNeighbourCost = Double.MAX_VALUE;
-            double bestNeighbourRouteCost = 0;
             for (int i = 0; i < neighbours.size(); i++) {
                 Solucion neighbour = neighbours.get(i);
                 double neighbourCost = neighbour.getSolutionCost();
                 if (neighbourCost < bestNeighbourCost) {
                     bestNeighbourCost = neighbourCost;
-                    bestNeighbourRouteCost = neighbour.costoDePaquetesYRutasErroneas;
                     bestNeighbourIndex = i;
                 }
             }
-         
-            double currentCost = current.getSolutionCost();
-            double newCost = bestNeighbourCost;
-            double costDifference = newCost - currentCost;
-            
+    
+            double costDifference = bestNeighbourCost - current.getSolutionCost();        
 
             if (
                 costDifference < 0 || 
-                //bestNeighbourRouteCost < current.costoDePaquetesYRutasErroneas ||
                 Math.exp(-costDifference / temperature) > Math.random()
             ) {
                 current = neighbours.get(bestNeighbourIndex);
@@ -165,18 +142,17 @@ public class SAImplementation {
                 break;
             }
             
-            // Cool down the system
+            
             temperature *= 1 - coolingRate;
             
             System.out.println(
-            "Current cost: " + current.getSolutionCost() + 
-            " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-            " | Temperature: " + temperature);
-
-            if(temperature < 1 && current.isAirportCapacityAvailable() == false){
-                System.out.println(" !!! Se viola la capacidad de algun aeropuerto en un instante de tiempo en solucion final");
-            }
+                "Current cost: " + current.getSolutionCost() + 
+                " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                " | Temperature: " + temperature
+            );
         }
+
+
         endTime = System.nanoTime();
         duration = endTime - startTime;
 
