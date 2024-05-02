@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Visualizator from "../simulation/_components/visualizator";
 import CurrentStateBox from "./_components/current-state-box";
 import { PackageStatusName, PackageStatusVariant } from "@/lib/types";
 import { PackageRouteTable } from "./_components/package-route-table";
+import Map from "@/components/map/map";
 
 //TODO: packageId is stored under params.packageId
 
@@ -20,7 +20,7 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
     });
 
     return (
-        <main className="px-10 py-5 flex flex-row gap-5">
+        <main className="px-10 py-5 flex flex-row gap-5 border flex-1 overflow-hidden">
             <section className="w-[400px]">
                 <h2>Paquete</h2>
                 <h1 className="text-5xl">{packageData.id}</h1>
@@ -41,7 +41,7 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 
             </section>
 
-            <Visualizator className="" />
+            <Map className="max-h-full" />
         </main>
     );
 }
