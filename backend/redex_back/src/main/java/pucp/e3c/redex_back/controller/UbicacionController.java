@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,12 @@ public class UbicacionController {
     public Ubicacion  register(@RequestBody Ubicacion ubicacion) {
         return ubicacionService.register(ubicacion);
     }
+
+    @PutMapping(value = "/")
+    public Ubicacion  update(@RequestBody Ubicacion ubicacion) {
+        return ubicacionService.update(ubicacion);
+    }
+
 
     @GetMapping(value = "/")
     public List<Ubicacion> getAll() {

@@ -23,7 +23,6 @@ public class Ubicacion {
     @Column(length = 8)
     String zona_horaria;
 
-
     public String getId() {
         return id;
     }

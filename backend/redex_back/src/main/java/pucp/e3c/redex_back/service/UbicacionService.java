@@ -30,4 +30,8 @@ public class UbicacionService {
     public void delete(String id) {
         ubicacionRepository.deleteById(id);
     }
+
+    public Ubicacion update(Ubicacion ubicacion) {
+        return ubicacionRepository.save(ubicacion);
+    }
 }
