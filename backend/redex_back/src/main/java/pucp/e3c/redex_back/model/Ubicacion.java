@@ -10,18 +10,18 @@ import jakarta.persistence.Table;
 public class Ubicacion {
     @Id
     @Column(length = 8)
-    String id;
+    private String id;
 
     @Column(length = 64)
-    String continente;
+    private String continente;
     @Column(length = 64)
-    String pais;
+    private String pais;
     @Column(length = 64)
-    String ciudad;
+    private String ciudad;
     @Column(length = 64)
-    String ciudad_abreviada;
+    private String ciudad_abreviada;
     @Column(length = 8)
-    String zona_horaria;
+    private String zona_horaria;
 
     public String getId() {
         return id;
