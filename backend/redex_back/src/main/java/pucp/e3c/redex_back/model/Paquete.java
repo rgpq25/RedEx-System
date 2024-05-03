@@ -25,54 +25,70 @@ public class Paquete {
     @JoinColumn(name = "id_aeropuerto_actual", referencedColumnName = "id")
     private Aeropuerto aeropuertoActual;
 
-    private boolean en_aeropuerto;
+    private boolean enAeropuerto;
     private boolean entregado;
-    private Date fecha_de_entrega;
+    private Date fechaDeEntrega;
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_envio", referencedColumnName = "id")
     private Envio envio;
-    
+
     public Integer getId() {
         return id;
     }
+
     public void setId(Integer id) {
         this.id = id;
     }
+
     public String getCoordenadaActual() {
         return coordenadaActual;
     }
+
     public void setCoordenadaActual(String coordenadaActual) {
         this.coordenadaActual = coordenadaActual;
     }
+
     public Aeropuerto getAeropuertoActual() {
         return aeropuertoActual;
     }
+
     public void setAeropuertoActual(Aeropuerto aeropuertoActual) {
         this.aeropuertoActual = aeropuertoActual;
     }
-    public boolean isEn_aeropuerto() {
-        return en_aeropuerto;
+
+    public boolean isEnAeropuerto() {
+        return enAeropuerto;
     }
-    public void setEn_aeropuerto(boolean en_aeropuerto) {
-        this.en_aeropuerto = en_aeropuerto;
+
+    public void setEnAeropuerto(boolean enAeropuerto) {
+        this.enAeropuerto = enAeropuerto;
     }
+
     public boolean isEntregado() {
         return entregado;
     }
+
     public void setEntregado(boolean entregado) {
         this.entregado = entregado;
     }
-    public Date getFecha_de_entrega() {
-        return fecha_de_entrega;
+
+    public Date getFechaDeEntrega() {
+        return fechaDeEntrega;
     }
-    public void setFecha_de_entrega(Date fecha_de_entrega) {
-        this.fecha_de_entrega = fecha_de_entrega;
+
+    public void setFechaDeEntrega(Date fechaDeEntrega) {
+        this.fechaDeEntrega = fechaDeEntrega;
     }
+
     public Envio getEnvio() {
         return envio;
     }
+
     public void setEnvio(Envio envio) {
         this.envio = envio;
     }
+    
+   
     
 }

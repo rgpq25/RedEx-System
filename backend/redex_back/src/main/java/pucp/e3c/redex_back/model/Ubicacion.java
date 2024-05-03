@@ -19,10 +19,9 @@ public class Ubicacion {
     @Column(length = 64)
     private String ciudad;
     @Column(length = 64)
-    private String ciudad_abreviada;
+    private String ciudadAbreviada;
     @Column(length = 8)
-    private String zona_horaria;
-
+    private String zonaHoraria;
     public String getId() {
         return id;
     }
@@ -47,18 +46,20 @@ public class Ubicacion {
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
-    public String getCiudad_abreviada() {
-        return ciudad_abreviada;
+    public String getCiudadAbreviada() {
+        return ciudadAbreviada;
     }
-    public void setCiudad_abreviada(String ciudad_abreviada) {
-        this.ciudad_abreviada = ciudad_abreviada;
+    public void setCiudadAbreviada(String ciudadAbreviada) {
+        this.ciudadAbreviada = ciudadAbreviada;
     }
-    public String getZona_horaria() {
-        return zona_horaria;
+    public String getZonaHoraria() {
+        return zonaHoraria;
     }
-    public void setZona_horaria(String zona_horaria) {
-        this.zona_horaria = zona_horaria;
+    public void setZonaHoraria(String zonaHoraria) {
+        this.zonaHoraria = zonaHoraria;
     }
+
+    
 
     
 }

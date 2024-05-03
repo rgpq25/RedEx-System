@@ -19,18 +19,18 @@ public class Envio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ubicacion_origen")
-    private Ubicacion ubicacion_origen;
+    @JoinColumn(name = "id_ubicacionOrigen")
+    private Ubicacion ubicacionOrigen;
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ubicacion_destino")
-    private Ubicacion ubicacion_destino;
-    private Date fecha_recepcion;
-    private Date fecha_limite_entrega;
+    @JoinColumn(name = "id_ubicacionDestino")
+    private Ubicacion ubicacionDestino;
+    private Date fechaRecepcion;
+    private Date fechaLimiteEntrega;
     @Column(length = 16)
     private String estado;
-    private Integer cantidad_paquetes;
+    private Integer cantidadPaquetes;
     @Column(length = 32)
-    private String codigo_seguridad;
+    private String codigoSeguridad;
     //TO DO id emisor
     //TO DO id receptor
     public Integer getId() {
@@ -39,29 +39,29 @@ public class Envio {
     public void setId(Integer id) {
         this.id = id;
     }
-    public Ubicacion getUbicacion_origen() {
-        return ubicacion_origen;
+    public Ubicacion getUbicacionOrigen() {
+        return ubicacionOrigen;
     }
-    public void setUbicacion_origen(Ubicacion ubicacion_origen) {
-        this.ubicacion_origen = ubicacion_origen;
+    public void setUbicacionOrigen(Ubicacion ubicacionOrigen) {
+        this.ubicacionOrigen = ubicacionOrigen;
     }
-    public Ubicacion getUbicacion_destino() {
-        return ubicacion_destino;
+    public Ubicacion getUbicacionDestino() {
+        return ubicacionDestino;
     }
-    public void setUbicacion_destino(Ubicacion ubicacion_destino) {
-        this.ubicacion_destino = ubicacion_destino;
+    public void setUbicacionDestino(Ubicacion ubicacionDestino) {
+        this.ubicacionDestino = ubicacionDestino;
     }
-    public Date getFecha_recepcion() {
-        return fecha_recepcion;
+    public Date getFechaRecepcion() {
+        return fechaRecepcion;
     }
-    public void setFecha_recepcion(Date fecha_recepcion) {
-        this.fecha_recepcion = fecha_recepcion;
+    public void setFechaRecepcion(Date fechaRecepcion) {
+        this.fechaRecepcion = fechaRecepcion;
     }
-    public Date getFecha_limite_entrega() {
-        return fecha_limite_entrega;
+    public Date getFechaLimiteEntrega() {
+        return fechaLimiteEntrega;
     }
-    public void setFecha_limite_entrega(Date fecha_limite_entrega) {
-        this.fecha_limite_entrega = fecha_limite_entrega;
+    public void setFechaLimiteEntrega(Date fechaLimiteEntrega) {
+        this.fechaLimiteEntrega = fechaLimiteEntrega;
     }
     public String getEstado() {
         return estado;
@@ -69,17 +69,17 @@ public class Envio {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    public Integer getCantidad_paquetes() {
-        return cantidad_paquetes;
+    public Integer getCantidadPaquetes() {
+        return cantidadPaquetes;
     }
-    public void setCantidad_paquetes(Integer cantidad_paquetes) {
-        this.cantidad_paquetes = cantidad_paquetes;
+    public void setCantidadPaquetes(Integer cantidadPaquetes) {
+        this.cantidadPaquetes = cantidadPaquetes;
     }
-    public String getCodigo_seguridad() {
-        return codigo_seguridad;
+    public String getCodigoSeguridad() {
+        return codigoSeguridad;
     }
-    public void setCodigo_seguridad(String codigo_seguridad) {
-        this.codigo_seguridad = codigo_seguridad;
+    public void setCodigoSeguridad(String codigoSeguridad) {
+        this.codigoSeguridad = codigoSeguridad;
     }
     
 }

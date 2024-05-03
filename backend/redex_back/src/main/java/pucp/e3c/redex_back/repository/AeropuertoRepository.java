@@ -8,5 +8,6 @@ import pucp.e3c.redex_back.model.Ubicacion;
 
 @Repository
 public interface AeropuertoRepository extends JpaRepository<Aeropuerto, Integer>{
-    public Aeropuerto findByUbicacion(Ubicacion ubicacion);
+    //public Aeropuerto findByUbicacion(Ubicacion ubicacion);
+    public Aeropuerto findByUbicacionId(String id);
 }

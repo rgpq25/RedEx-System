@@ -16,8 +16,8 @@ public class AeropuertoService {
     @Autowired
     private AeropuertoRepository aeropuertoRepository; //Inyecta la dependencia
 
-    @Autowired
-    private UbicacionRepository ubicacionRepository;
+    /*@Autowired
+    private UbicacionRepository ubicacionRepository;*/
 
     public Aeropuerto register(Aeropuerto aeropuerto) {
         return aeropuertoRepository.save(aeropuerto);
@@ -41,7 +41,8 @@ public class AeropuertoService {
     }
 
     public Aeropuerto findByUbicacion(String idUbicacion) {
-        Optional<Ubicacion> optional_ubicacion = ubicacionRepository.findById(idUbicacion);
-        return aeropuertoRepository.findByUbicacion(optional_ubicacion.get());
+        //Optional<Ubicacion> optional_ubicacion = ubicacionRepository.findById(idUbicacion);
+        //return aeropuertoRepository.findByUbicacion(optional_ubicacion.get());
+        return aeropuertoRepository.findByUbicacionId(idUbicacion);
     }
 }
