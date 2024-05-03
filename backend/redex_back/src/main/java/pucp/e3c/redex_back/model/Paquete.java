@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,10 +27,18 @@ public class Paquete {
     private boolean enAeropuerto;
     private boolean entregado;
     private Date fechaDeEntrega;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_envio", referencedColumnName = "id")
     private Envio envio;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
+    Simulacion simulacionActual;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_plan_ruta", referencedColumnName = "id")
+    PlanRuta planRutaActual;
 
     public Integer getId() {
         return id;
@@ -88,7 +95,5 @@ public class Paquete {
     public void setEnvio(Envio envio) {
         this.envio = envio;
     }
-    
-   
-    
+
 }
