@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,12 +37,12 @@ public class EstadoPaqueteController {
     }
 
     @GetMapping(value = "/{id}")
-    public EstadoPaquete get(Integer id) {
+    public EstadoPaquete get(@PathVariable("id") Integer id) {
         return estadoPaqueteService.get(id);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void delete(Integer id) {
+    public void delete(@PathVariable("id") Integer id) {
         estadoPaqueteService.delete(id);
     }
     

@@ -8,7 +8,7 @@ import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Paquete;
 
 @Repository
-public interface PaqueteRepository extends JpaRepository<Paquete, String>{
-    public List<Paquete> findByAeropuertoActual(Aeropuerto aeropuertoActual);
+public interface PaqueteRepository extends JpaRepository<Paquete, Integer>{
+    public List<Paquete> findByAeropuertoActualId(Integer id);
     public List<Paquete> findByEnvioId(Integer id);
 }

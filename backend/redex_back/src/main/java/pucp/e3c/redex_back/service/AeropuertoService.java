@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
-import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.repository.AeropuertoRepository;
-import pucp.e3c.redex_back.repository.UbicacionRepository;
+
 
 @Component
 public class AeropuertoService {
