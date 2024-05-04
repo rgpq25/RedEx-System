@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.PaqueteXEstadoPaquete;
 import pucp.e3c.redex_back.repository.PaqueteXEstadoPaqueteRepository;
 
-@Component
+@Service
 public class PaqueteXEstadoPaqueteService {
     @Autowired
     private PaqueteXEstadoPaqueteRepository paqueteXEstadoPaqueteRepository; //Inyecta la dependencia

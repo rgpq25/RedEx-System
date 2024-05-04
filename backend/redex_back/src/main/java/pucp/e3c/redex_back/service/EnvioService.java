@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.repository.EnvioRepository;
 
-import org.springframework.stereotype.Component;
 
-@Component
+@Service
 public class EnvioService {
     @Autowired
     private EnvioRepository envioRepository; //Inyecta la dependencia

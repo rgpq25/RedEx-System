@@ -3,12 +3,12 @@ package pucp.e3c.redex_back.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.repository.SimulacionRepository;
 
-@Component
+@Service
 public class SimulacionService {
     @Autowired
     private SimulacionRepository simulacionRepository;

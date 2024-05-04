@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.repository.AeropuertoRepository;
 
 
-@Component
+@Service
 public class AeropuertoService {
     @Autowired
     private AeropuertoRepository aeropuertoRepository; //Inyecta la dependencia

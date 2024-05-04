@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.PlanRuta;
 import pucp.e3c.redex_back.model.Vuelo;
 import pucp.e3c.redex_back.repository.PlanRutaRepository;
 import pucp.e3c.redex_back.repository.VueloRepository;
 
-@Component
+@Service
 public class PlanRutaService {
     @Autowired
     private PlanRutaRepository planRutaRepository;

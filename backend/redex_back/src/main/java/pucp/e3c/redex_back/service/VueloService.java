@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.PlanVuelo;
 import pucp.e3c.redex_back.model.Ubicacion;
@@ -13,7 +14,7 @@ import pucp.e3c.redex_back.model.Vuelo;
 import pucp.e3c.redex_back.repository.PlanVueloRepository;
 import pucp.e3c.redex_back.repository.VueloRepository;
 
-@Component
+@Service
 public class VueloService {
     @Autowired
     private VueloRepository vueloRepository;
