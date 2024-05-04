@@ -84,6 +84,23 @@ const CustomLine = forwardRef(
 	}
 );
 
+const Line = ({
+	coordinates = [
+		[0, 0],
+		[0, 0],
+	],
+	...restProps
+}) => {
+	const { projection } = useMapContext();
+	const [x1, y1] = projection(coordinates[0]);
+	const [x2, y2] = projection(coordinates[1]);
+	return (
+		<>
+			<line x1={x1} y1={y1} x2={x2} y2={y2} {...restProps} />
+		</>
+	);
+};
+
 function Map({ className }: { className: string }) {
 	const [content, setContent] = useState<string>("");
 	const zoom = useAnimation(1.3);
@@ -117,6 +134,13 @@ function Map({ className }: { className: string }) {
 	) {
 		//given the origin and
 	}
+
+	useEffect(()=>{
+		const date = new Date();
+		console.log(date);
+
+		
+	},[]);
 
 	return (
 		<>
@@ -196,7 +220,7 @@ function Map({ className }: { className: string }) {
 								{ originCoordinate, destinationCoordinate },
 								idx
 							) => (
-								<CustomLine
+								<Line
 									key={idx}
 									coordinates={[
 										originCoordinate as [number, number],
@@ -205,8 +229,10 @@ function Map({ className }: { className: string }) {
 											number
 										],
 									]}
-									strokeWidth={3}
-									stroke="#FF0000"
+									className="border-dashed stroke-[#FF0000] transition-all duration-75 ease-in-out"
+									style={{
+										strokeDasharray: "5, 5",
+									}}
 								/>
 							)
 						)}
