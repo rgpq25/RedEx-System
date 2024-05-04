@@ -12,6 +12,4 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
 
     public ArrayList<Paquete> findByEnvioId(Integer id);
 
-    public ArrayList<Paquete> findByIdPlanRuta(Integer id);
-
 }
