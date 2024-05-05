@@ -11,7 +11,13 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { Operacion, Aeropuerto, Envio, Vuelo } from "@/lib/types";
-import { H3, Large, Muted } from "@/components/ui/typography";
+import { Large, Muted, Small } from "@/components/ui/typography";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { CalendarIcon, Check, Eraser, ListFilter } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SidebarProps {
     envios?: Envio[];
@@ -46,6 +52,9 @@ export default function Sidebar({ envios, aeropuertos, vuelos, className, ...pro
 }
 
 function Envios({ envios }: { envios: Envio[] | undefined }) {
+    const [filteredEnvios, setFilteredEnvios] = useState<Envio[] | undefined>(envios);
+    const [receptionDateStart, setReceptionDateStart] = useState<Date | undefined>(undefined);
+    const [receptionDateEnd, setReceptionDateEnd] = useState<Date | undefined>(undefined);
     const [search, setSearch] = useState<string>("");
 
     return (
@@ -56,7 +65,91 @@ function Envios({ envios }: { envios: Envio[] | undefined }) {
                 <p>No hay envíos disponibles</p>
             ) : (
                 <>
-                    <Input placeholder='Buscar envío...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <section className='flex flex-row justify-between gap-4 w-full'>
+                        <Input placeholder='Buscar envío...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant='secondary'>
+                                    <ListFilter className='mr-2 h-4 w-4' /> Filtros
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align='start' className='w-fit flex flex-col gap-4'>
+                                <Small>Fecha de registro:</Small>
+                                <section className='flex flex-col gap-2'>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[280px] justify-start text-left font-normal",
+                                                    !receptionDateStart && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className='mr-2 h-4 w-4' />
+                                                {receptionDateStart ? format(receptionDateStart, "PPP") : <span>Fecha de inicio</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className='w-auto p-0'>
+                                            <Calendar
+                                                mode='single'
+                                                selected={receptionDateStart}
+                                                onSelect={setReceptionDateStart}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[280px] justify-start text-left font-normal",
+                                                    !receptionDateEnd && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className='mr-2 h-4 w-4' />
+                                                {receptionDateEnd ? format(receptionDateEnd, "PPP") : <span>Fecha de fin</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className='w-auto p-0'>
+                                            <Calendar
+                                                mode='single'
+                                                selected={receptionDateEnd}
+                                                onSelect={setReceptionDateEnd}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </section>
+                                <Separator />
+                                <Small>Rango de capacidad:</Small>
+                                <Input type='number' placeholder='Cantidad minima' defaultValue={0} />
+                                <Input type='number' placeholder='Cantidad maxima' defaultValue={1000} />
+                                <section className='flex flex-row justify-end gap-4'>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Check className='mr-2 h-4 w-4' />
+                                        Aplicar filtros
+                                    </Button>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Eraser className='mr-2 h-4 w-4' />
+                                        Limpiar filtros
+                                    </Button>
+                                </section>
+                            </PopoverContent>
+                        </Popover>
+                    </section>
                     <ScrollArea className='h-screen'>
                         <section className='flex flex-col gap-4'>
                             {envios.filter((envio) => envio.id.toString().includes(search)).length === 0 ? (
@@ -99,11 +192,74 @@ function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined })
                 <p>No hay aeropuertos disponibles</p>
             ) : (
                 <>
-                    <Input
-                        placeholder='Buscar aeropuerto...'
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                    <section className='flex flex-row justify-between gap-4 w-full'>
+                        <Input placeholder='Buscar aeropuerto...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant='secondary'>
+                                    <ListFilter className='mr-2 h-4 w-4' /> Filtros
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align='start' className='w-fit flex flex-col gap-4'>
+                                <Small>Rango de capacidad:</Small>
+                                <Input type='number' placeholder='Cantidad minima' defaultValue={0} />
+                                <Input type='number' placeholder='Cantidad maxima' defaultValue={1000} />
+                                <Separator />
+                                <Small>Zona horaria:</Small>
+                                <Select>
+                                    <SelectTrigger className='w-full'>
+                                        <SelectValue placeholder='Zona horaria' />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value='-10'>GMT-10</SelectItem>
+                                        <SelectItem value='-9'>GMT-9</SelectItem>
+                                        <SelectItem value='-8'>GMT-8</SelectItem>
+                                        <SelectItem value='-7'>GMT-7</SelectItem>
+                                        <SelectItem value='-6'>GMT-6</SelectItem>
+                                        <SelectItem value='-5'>GMT-5</SelectItem>
+                                        <SelectItem value='-4'>GMT-4</SelectItem>
+                                        <SelectItem value='-3'>GMT-3</SelectItem>
+                                        <SelectItem value='-2'>GMT-2</SelectItem>
+                                        <SelectItem value='-1'>GMT-1</SelectItem>
+                                        <SelectItem value='0'>GMT</SelectItem>
+                                        <SelectItem value='1'>GMT+1</SelectItem>
+                                        <SelectItem value='2'>GMT+2</SelectItem>
+                                        <SelectItem value='3'>GMT+3</SelectItem>
+                                        <SelectItem value='4'>GMT+4</SelectItem>
+                                        <SelectItem value='5'>GMT+5</SelectItem>
+                                        <SelectItem value='6'>GMT+6</SelectItem>
+                                        <SelectItem value='7'>GMT+7</SelectItem>
+                                        <SelectItem value='8'>GMT+8</SelectItem>
+                                        <SelectItem value='9'>GMT+9</SelectItem>
+                                        <SelectItem value='10'>GMT+10</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Separator />
+                                <section className='flex flex-row justify-end gap-4'>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Check className='mr-2 h-4 w-4' />
+                                        Aplicar filtros
+                                    </Button>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Eraser className='mr-2 h-4 w-4' />
+                                        Limpiar filtros
+                                    </Button>
+                                </section>
+                            </PopoverContent>
+                        </Popover>
+                    </section>
                     <ScrollArea className='h-screen'>
                         <section className='flex flex-col gap-4'>
                             {aeropuertos.filter((aeropuerto) =>
@@ -124,6 +280,7 @@ function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined })
                                             </CardHeader>
                                             <CardContent>
                                                 <Muted>Capacidad: {aeropuerto.capacidad_maxima}</Muted>
+                                                <Muted>Zona horaria: {aeropuerto.ubicacion.zona_horaria}</Muted>
                                             </CardContent>
                                         </Card>
                                     ))
@@ -137,6 +294,9 @@ function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined })
 }
 
 function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
+    const [filteredVuelos, setFilteredVuelos] = useState<Vuelo[] | undefined>(vuelos);
+    const [flyDateStart, setFlyDateStart] = useState<Date | undefined>(undefined);
+    const [flyDateEnd, setFlyDateEnd] = useState<Date | undefined>(undefined);
     const [search, setSearch] = useState<string>("");
 
     return (
@@ -147,7 +307,82 @@ function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
                 <p>No hay vuelos disponibles</p>
             ) : (
                 <>
-                    <Input placeholder='Buscar vuelo...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <section className='flex flex-row justify-between gap-4 w-full'>
+                        <Input placeholder='Buscar vuelo...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant='secondary'>
+                                    <ListFilter className='mr-2 h-4 w-4' /> Filtros
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align='start' className='w-fit flex flex-col gap-4'>
+                                <Small>Fecha de salida de vuelo:</Small>
+                                <section className='flex flex-col gap-2'>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[280px] justify-start text-left font-normal",
+                                                    !flyDateStart && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className='mr-2 h-4 w-4' />
+                                                {flyDateStart ? format(flyDateStart, "PPP") : <span>Fecha de inicio</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className='w-auto p-0'>
+                                            <Calendar mode='single' selected={flyDateStart} onSelect={setFlyDateStart} initialFocus />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[280px] justify-start text-left font-normal",
+                                                    !flyDateEnd && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className='mr-2 h-4 w-4' />
+                                                {flyDateEnd ? format(flyDateEnd, "PPP") : <span>Fecha de fin</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className='w-auto p-0'>
+                                            <Calendar mode='single' selected={flyDateEnd} onSelect={setFlyDateEnd} initialFocus />
+                                        </PopoverContent>
+                                    </Popover>
+                                </section>
+                                <Separator />
+                                <Small>Rango de capacidad:</Small>
+                                <Input type='number' placeholder='Cantidad minima' defaultValue={0} />
+                                <Input type='number' placeholder='Cantidad maxima' defaultValue={1000} />
+                                <Separator />
+                                <section className='flex flex-row justify-end gap-4'>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Check className='mr-2 h-4 w-4' />
+                                        Aplicar filtros
+                                    </Button>
+                                    <Button
+                                        size='sm'
+                                        variant='secondary'
+                                        onSelect={(e) => {
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <Eraser className='mr-2 h-4 w-4' />
+                                        Limpiar filtros
+                                    </Button>
+                                </section>
+                            </PopoverContent>
+                        </Popover>
+                    </section>
                     <ScrollArea className='h-screen'>
                         <section className='flex flex-col gap-4'>
                             {vuelos.filter((vuelo) => vuelo.id.toString().includes(search)).length === 0 ? (
