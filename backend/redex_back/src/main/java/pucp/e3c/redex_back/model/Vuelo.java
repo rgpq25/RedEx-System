@@ -1,6 +1,6 @@
 package pucp.e3c.redex_back.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,7 +38,7 @@ public class Vuelo {
     }
 
     public Vuelo(PlanVuelo planVuelo, Date fechaSalida, Date fechaLlegada) {
-        this.id = 0;
+        this.id = ContadorID.obtenerSiguienteID();
         this.planVuelo = planVuelo;
         this.capacidadUtilizada = 0;
         this.fechaSalida = fechaSalida;
