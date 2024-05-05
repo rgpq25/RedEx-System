@@ -16,3 +16,30 @@ Final cost: 156.5536835773683 | Packages left: 0.0 | Temperature: 0.987164819654
  -> Costo total: 156.5536835773683
 
 
+Tiempo de ejecucion de algoritmo: 29.0 segundos
+Final cost: 411.65341501571714 | Packages left: 0.0 | Temperature: 0.9871648196540229
+ -> Costo de paquetes y su asignacion de rutas: 39.51365623840523
+ -> Costo de cantidad de vuelos por ruta: 2.5
+ -> Costo de vuelos: 0.37888480392156826
+ -> Costo de aeropuertos: 3.283539946344528E-4
+ -> Costo total: 411.65341501571714
+
+
+Tiempo de ejecucion de algoritmo: 0.0 segundos
+Final cost: 420.16160736925775 | Packages left: 0.0 | Temperature: 1000.0
+ -> Costo de paquetes y su asignacion de rutas: 40.44234534269253
+ -> Costo de cantidad de vuelos por ruta: 2.38
+ -> Costo de vuelos: 0.36408905228758137
+ -> Costo de aeropuertos: 4.4943329552548614E-4
+ -> Costo total: 420.16160736925775
+
+
+Tiempo de ejecucion de algoritmo: 0.0 segundos
+Final cost: 424.4528230665587 | Packages left: 0.0 | Temperature: 1000.0
+ -> Costo de paquetes y su asignacion de rutas: 40.793232987493596
+ -> Costo de cantidad de vuelos por ruta: 2.5
+ -> Costo de vuelos: 0.3797099673202609
+ -> Costo de aeropuertos: 4.1333058543532874E-4
+ -> Costo total: 424.4528230665587
+
+

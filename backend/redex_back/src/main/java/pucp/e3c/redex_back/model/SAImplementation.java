@@ -69,7 +69,7 @@ public class SAImplementation {
                 this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
         }
 
-        public void startAlgorithm() {
+        public ArrayList<PlanRutaNT> startAlgorithm() {
                 GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
@@ -163,5 +163,6 @@ public class SAImplementation {
                 Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                 current.printFlightOcupation("ocupacionVuelos.txt");
                 current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+                return current.rutas;
         }
 }

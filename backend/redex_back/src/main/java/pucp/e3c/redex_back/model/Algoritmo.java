@@ -5,26 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Algoritmo {
-    public static void procesarPaquetes() {
-        // Simmulated Annealing Parameters
+
+    public static ArrayList<PlanRutaNT> loopPrincipal() {
         ArrayList<Paquete> paquetes = new ArrayList<>();
-        double temperature = 1000;
-        double coolingRate = 0.08;
-        int neighbourCount = 10;
-        int windowSize = 20;
-        boolean stopWhenNoPackagesLeft = false;
-
-        // Weight Parameters
-        double badSolutionPenalization = 100;
-        double flightPenalization = 200;
-        double airportPenalization = 300;
-
-        // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
-        // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
-        double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = 4;
-        double promedioPonderadoTiempoAeropuertoWeight = 4;
-
+        ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         String inputPath = "src\\main\\resources\\dataFija";
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
@@ -37,7 +21,7 @@ public class Algoritmo {
         String startPackagesDate = "2024-01-01 00:00:00";
         String endPackagesDate = "2024-01-04 23:59:59";
         paquetes = Funciones.generarPaquetes(
-                20,
+                100,
                 aeropuertos,
                 Funciones.parseDateString(startPackagesDate),
                 Funciones.parseDateString(endPackagesDate));
@@ -56,12 +40,49 @@ public class Algoritmo {
 
         if (paquetes.size() == 0) {
             System.out.println("ERROR: No hay paquetes para procesar.");
-            return;
+            return null;
         }
         if (planVuelos.size() == 0) {
             System.out.println("ERROR: No hay planes de vuelo para procesar.");
-            return;
+            return null;
         }
+
+        // recorrer los paquetes por cada 50
+        int tamanhoPaquetes = 50;
+        for (int i = 0; i < paquetes.size(); i += tamanhoPaquetes) {
+            ArrayList<Paquete> paquetesTemp = new ArrayList<>();
+            for (int j = i; j < i + tamanhoPaquetes; j++) {
+                if (j < paquetes.size()) {
+                    paquetesTemp.add(paquetes.get(j));
+                }
+            }
+            ArrayList<PlanRutaNT> planRutasActual = procesarPaquetes(paquetesTemp, aeropuertos, planVuelos,
+                    tamanhoPaquetes);
+            // System.out.println("PlanRutas: " + planRutas.size());
+            planRutas.addAll(planRutasActual);
+        }
+        return planRutas;
+    }
+
+    public static ArrayList<PlanRutaNT> procesarPaquetes(ArrayList<Paquete> paquetes,
+            ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes) {
+        // Simmulated Annealing Parameters
+        double temperature = 1000;
+        double coolingRate = 0.08;
+        int neighbourCount = 10;
+        int windowSize = tamanhoPaquetes;
+        boolean stopWhenNoPackagesLeft = true;
+
+        // Weight Parameters
+        double badSolutionPenalization = 100;
+        double flightPenalization = 200;
+        double airportPenalization = 300;
+
+        // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
+        // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
+        double sumaPaquetesWeight = 10;
+        double sumaVuelosWeight = 4;
+        double promedioPonderadoTiempoAeropuertoWeight = 4;
 
         SAImplementation sa = new SAImplementation();
 
@@ -83,7 +104,6 @@ public class Algoritmo {
                 sumaVuelosWeight,
                 promedioPonderadoTiempoAeropuertoWeight);
 
-        sa.startAlgorithm();
-
+        return sa.startAlgorithm();
     }
 }
