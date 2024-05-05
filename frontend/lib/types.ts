@@ -69,8 +69,8 @@ export type PlanVuelo = {
 export type Vuelo = {
     id: number;
     plan_vuelo: PlanVuelo;
-    fecha_origen: string;
-    fecha_destino: string;
+    fecha_origen: Date;
+    fecha_destino: Date;
     coordenadas_actual : Coordenadas;
     tiempo_estimado: number;
     capacidad_utilizada: number;
@@ -81,8 +81,8 @@ export type PlanRuta = {
     id: number;
     ubicacion_origen: Ubicacion;
     ubicacion_destino: Ubicacion;
-    fecha_inicio: string;
-    fecha_fin: string;
+    fecha_inicio: Date;
+    fecha_fin: Date;
     vuelos: Vuelo[];
 }
 
@@ -98,8 +98,8 @@ export type Envio = {
     id: number;
     ubicacion_origen: Ubicacion;
     ubicacion_destino: Ubicacion;
-    fecha_recepcion: string;
-    fecha_limite_entrega: string;
+    fecha_recepcion: Date;
+    fecha_limite_entrega: Date;
     estado: string;
     cantidad_paquetes: number;
     codigo_seguridad: string;
