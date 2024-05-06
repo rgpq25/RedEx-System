@@ -25,6 +25,7 @@ public class Paquete {
 
     private boolean enAeropuerto;
     private boolean entregado;
+    @Column(nullable = true)
     private Date fechaDeEntrega;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -32,11 +33,11 @@ public class Paquete {
     private Envio envio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
+    @JoinColumn(name = "id_simulacion", referencedColumnName = "id", nullable = true)
     Simulacion simulacionActual;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_plan_ruta", referencedColumnName = "id")
+    @JoinColumn(name = "id_plan_ruta", referencedColumnName = "id", nullable = true)
     PlanRuta planRutaActual;
 
     /*

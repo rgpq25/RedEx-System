@@ -12,8 +12,8 @@ import pucp.e3c.redex_back.repository.PaqueteRepository;
 @Service
 public class PaqueteService {
     @Autowired
-    private PaqueteRepository paqueteRepository; //Inyecta la dependencia
-    
+    private PaqueteRepository paqueteRepository; // Inyecta la dependencia
+
     public Paquete register(Paquete paquete) {
         return paqueteRepository.save(paquete);
     }
@@ -43,5 +43,8 @@ public class PaqueteService {
         return paqueteRepository.findByEnvioId(id);
     }
 
+    public List<Paquete> findBySimulacionId(Integer id) {
+        return paqueteRepository.findBySimulacionActualId(id);
+    }
 
 }

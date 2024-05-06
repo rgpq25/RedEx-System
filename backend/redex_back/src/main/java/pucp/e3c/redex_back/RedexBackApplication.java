@@ -11,7 +11,6 @@ import pucp.e3c.redex_back.model.Algoritmo;
 public class RedexBackApplication {
 
 	public static void main(String[] args) {
-		//Algoritmo.loopPrincipal();
 		SpringApplication.run(RedexBackApplication.class, args);
 	}
 
