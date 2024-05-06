@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import { VuelosTable } from './_components/vuelos-table'; // Ruta correcta al componente de la tabla
+import { FlightTable } from './flight-table';
 
-function VuelosModalPage() {
-    const [isOpen, setIsOpen] = useState(true); // Controla si el diálogo está abierto
+function FlightModal() {
+    const [isOpen, setIsOpen] = useState(true);
 
     return (
         <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -20,7 +20,7 @@ function VuelosModalPage() {
                         <div>Destino: Roma, Italia <span className="text-green-500">■</span><span className="text-red-500">■</span></div>
                         <div>Capacidad actual: 230/250  <span className="text-red-400">Ocupado</span></div>
                     </div>
-                    <VuelosTable />
+                    <FlightTable />
                     <AlertDialog.Action asChild>
                         <button onClick={() => setIsOpen(false)}>Cerrar</button>
                     </AlertDialog.Action>
@@ -31,4 +31,4 @@ function VuelosModalPage() {
 }
 
 
-export default VuelosModalPage;
+export default FlightModal;

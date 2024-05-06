@@ -36,22 +36,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { RowVuelosType } from "@/lib/types";
+import { RowAlmacenType } from "@/lib/types";
 import Chip from "@/components/ui/chip";
 
 
 
-const data: RowVuelosType[] = [
-    { id: '11M289', packets: 1, origin: 'Beijing, China', destination: 'Lima - Peru'},
-    { id: '12N391', packets: 2, origin: 'Roma, Italia', destination: 'Lima, Peru' },
-    { id: '13O402', packets: 3, origin: 'Cairo, Egipto', destination: 'Puno - Peru'},
-    { id: '14P513', packets: 1, origin: 'Mumbai, India', destination: 'Tokio, Japon'},
-    { id: '16R735', packets: 1, origin: 'Lima, Peru', destination: 'Frankfurt, Alemania'},
-    { id: '7A2401', packets: 1, origin: 'Sidney, Australia', destination: 'Amsterdam, Países Bajos'},
-    { id: '1H5410', packets: 2, origin: 'Estanbul, Turquia', destination: 'Lima, Peru'},
+const data: RowAlmacenType[] = [
+    { id: '11M289', packets: 1, origin: 'Beijing, China', destination: 'Lima - Peru', statusAlmacen: 'Entregado' , statusVariant: "green"},
+    { id: '12N391', packets: 2, origin: 'Roma, Italia', destination: 'Lima, Peru', statusAlmacen: 'En almacen destino' , statusVariant: "purple" },
+    { id: '13O402', packets: 3, origin: 'Cairo, Egipto', destination: 'Puno - Peru', statusAlmacen: 'En espera' , statusVariant: "yellow" },
+    { id: '14P513', packets: 1, origin: 'Mumbai, India', destination: 'Tokio, Japon', statusAlmacen: 'En espera' , statusVariant: "yellow" },
+    { id: '16R735', packets: 1, origin: 'Lima, Peru', destination: 'Frankfurt, Alemania', statusAlmacen: 'En almacen origen' , statusVariant: "gray" },
+    { id: '7A2401', packets: 1, origin: 'Sidney, Australia', destination: 'Amsterdam, Países Bajos', statusAlmacen: 'En espera' , statusVariant: "yellow"},
+    { id: '1H5410', packets: 2, origin: 'Estanbul, Turquia', destination: 'Lima, Peru', statusAlmacen: 'En almacen destino' , statusVariant: "purple"},
 ];
 
-export const columns: ColumnDef<RowVuelosType>[] = [
+export const columns: ColumnDef<RowAlmacenType>[] = [
     {
         accessorKey: "id",
         header: "Envío",
@@ -121,9 +121,20 @@ export const columns: ColumnDef<RowVuelosType>[] = [
             <div className="">{row.getValue("destination")}</div>
         ),
     },
+    {
+        accessorKey: "statusAlmacen",
+        header: "Estado",
+        cell: ({ row }) => (
+            <div className="">
+                <Chip color={row.original.statusVariant}>
+                    {row.getValue("statusAlmacen")}
+                </Chip>
+            </div>
+        ),
+    },
 ];
 
-export function VuelosTable() {
+export function AirportTable() {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);

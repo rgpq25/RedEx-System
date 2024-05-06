@@ -11,6 +11,7 @@ import AirportMarker from "./airport-marker";
 import { Vuelo } from "@/lib/types";
 import { aeropuertos, ubicaciones, vuelos } from "@/lib/sample";
 import useMapZoom from "../hooks/useMapZoom";
+import AirportModal from "./airport-modal";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -43,6 +44,7 @@ function Map({
 	className,
 }: MapProps) {
 	const [content, setContent] = useState<string>("");
+	const [isModalAirportOpen, setIsModalAirportOpen] = useState(false);
 
 	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
 		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
@@ -64,6 +66,7 @@ function Map({
 
 	return (
 		<>
+			<AirportModal isOpen={isModalAirportOpen} setIsOpen={setIsModalAirportOpen}/>
 			<Tooltip
 				id="my-tooltip"
 				className="border border-white z-[100]"
