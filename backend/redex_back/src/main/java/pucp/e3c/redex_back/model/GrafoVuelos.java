@@ -119,7 +119,7 @@ public class GrafoVuelos {
                 }
                 //Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
                 Vuelo vuelo = new Vuelo();
-                vuelo.fillData2(plan, fin, fechaLlegada);
+                vuelo.fillData2(plan, fechaPartida, fechaLlegada);
                 vuelos.add(vuelo);
             }
             // Avanza al día siguiente.

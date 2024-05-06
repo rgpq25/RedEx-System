@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+/* 
 @Component
 @EnableAsync
 public class AlgoritmoRunner implements ApplicationRunner {
@@ -16,3 +17,4 @@ public class AlgoritmoRunner implements ApplicationRunner {
         Algoritmo.loopPrincipal();
     }
 }
+*/
