@@ -114,7 +114,7 @@ type Position = {
 // 	);
 // };
 
-function Map({ className }: { className: string }) {
+function Map({ className }: { className?: string }) {
 	const [content, setContent] = useState<string>("");
 	const [currentTime, setCurrentTime] = useState<Date>(new Date());
 

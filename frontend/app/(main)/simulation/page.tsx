@@ -21,9 +21,9 @@ function SimulationPage() {
     return (
         <main className="px-10 py-5">
             <h1>Visualizador de simulación</h1>
-            <section className="relative">
-                <Map />
-                <Sidebar envios={envios} vuelos={vuelos} aeropuertos={aeropuertos} className="absolute index-2 top-4 left-4 bottom-4" />
+            <section className="relative h-[800px] overflow-hidden">
+                <Map className="h-full w-full"/>
+                <Sidebar envios={envios} vuelos={vuelos} aeropuertos={aeropuertos} className="absolute top-4 left-4 bottom-4" />
             </section>
             <section className="flex flex-col 2xl:flex-row 2xl:gap-10 gap-4  w-full mt-3">
                 <div className="flex flex-col 2xl:w-[600px]">

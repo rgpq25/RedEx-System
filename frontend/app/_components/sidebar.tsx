@@ -31,7 +31,7 @@ export default function Sidebar({ envios, aeropuertos, vuelos, className, ...pro
     const [selectedOperation, setSelectedOperation] = useState<Operacion>(Operacion.Envios);
 
     return (
-        <Card className={cn("flex w-96 flex-col max-h-full items-center", className)}>
+        <Card className={cn("flex w-96 flex-col items-center overflow-hidden", className)}>
             <CardHeader>
                 <Tabs value={selectedOperation} onValueChange={(e) => setSelectedOperation(e as Operacion)} className='w-full '>
                     <TabsList>
@@ -41,7 +41,7 @@ export default function Sidebar({ envios, aeropuertos, vuelos, className, ...pro
                     </TabsList>
                 </Tabs>
             </CardHeader>
-            <CardContent className='w-full min-h-full flex flex-col items-center gap-6 *:w-full'>
+            <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
                 <Separator />
                 {selectedOperation === Operacion.Envios && <Envios envios={envios} />}
                 {selectedOperation === Operacion.Aeropuertos && <Aeropuertos aeropuertos={aeropuertos} />}
