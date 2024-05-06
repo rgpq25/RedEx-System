@@ -1,23 +1,54 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+
+import { CalendarIcon, Check, Eraser, ListFilter } from "lucide-react";
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardFooter, 
+    CardHeader, 
+    CardTitle 
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+    Tabs, 
+    TabsContent, 
+    TabsList, 
+    TabsTrigger 
+} from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, 
+    PopoverContent, 
+    PopoverTrigger 
+} from "@/components/ui/popover";
+import { 
+    Select, 
+    SelectContent, 
+    SelectItem, 
+    SelectTrigger, 
+    SelectValue 
+} from "@/components/ui/select";
+import { 
+    Large, 
+    Muted, 
+    Small 
+} from "@/components/ui/typography";
 import { useState } from "react";
 
-import { cn } from "@/lib/utils";
-
-import { Operacion, Aeropuerto, Envio, Vuelo } from "@/lib/types";
-import { Large, Muted, Small } from "@/components/ui/typography";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { CalendarIcon, Check, Eraser, ListFilter } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+    Operacion, 
+    Aeropuerto, 
+    Envio, 
+    Vuelo 
+} from "@/lib/types";
+import { formatDateShort } from "@/lib/date";
 
 interface SidebarProps {
     envios?: Envio[];
@@ -163,7 +194,7 @@ function Envios({ envios }: { envios: Envio[] | undefined }) {
                                                 <Large>{envio.id}</Large>
                                             </CardHeader>
                                             <CardContent>
-                                                <Muted>Fecha de recepción: {envio.fecha_recepcion.toDateString()}</Muted>
+                                                <Muted>Fecha de recepción: {formatDateShort(envio.fecha_recepcion)}</Muted>
                                                 <Muted>Cantidad: {envio.cantidad_paquetes}</Muted>
                                                 <span className='flex flex-wrap *:flex-grow'>
                                                     <Muted>Origen: {envio.ubicacion_origen.ciudad_abreviada}</Muted>
@@ -400,8 +431,8 @@ function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
                                                     <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudad_abreviada}</Muted>
                                                     <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudad_abreviada}</Muted>
                                                 </span>
-                                                <Muted>Fecha origen: {vuelo.fecha_origen.toDateString()}</Muted>
-                                                <Muted>Fecha destino: {vuelo.fecha_destino.toDateString()}</Muted>
+                                                <Muted>Fecha origen: {formatDateShort(vuelo.fecha_origen)}</Muted>
+                                                <Muted>Fecha destino: {formatDateShort(vuelo.fecha_destino)}</Muted>
                                                 <Muted>Capacidad: {vuelo.capacidad_utilizada}</Muted>
                                             </CardContent>
                                         </Card>
