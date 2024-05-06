@@ -123,96 +123,6 @@ const aeropuertos: Aeropuerto[] = [
         ubicacion: ubicaciones[6],
         capacidad_maxima: 700
     },
-    {
-        id: 8,
-        ubicacion: ubicaciones[0],
-        capacidad_maxima: 800
-    },
-    {
-        id: 9,
-        ubicacion: ubicaciones[1],
-        capacidad_maxima: 900
-    },
-    {
-        id: 10,
-        ubicacion: ubicaciones[2],
-        capacidad_maxima: 1000
-    },
-    {
-        id: 11,
-        ubicacion: ubicaciones[3],
-        capacidad_maxima: 1100
-    },
-    {
-        id: 12,
-        ubicacion: ubicaciones[4],
-        capacidad_maxima: 1200
-    },
-    {
-        id: 13,
-        ubicacion: ubicaciones[5],
-        capacidad_maxima: 1300
-    },
-    {
-        id: 14,
-        ubicacion: ubicaciones[6],
-        capacidad_maxima: 1400
-    },
-    {
-        id: 15,
-        ubicacion: ubicaciones[0],
-        capacidad_maxima: 1500
-    },
-    {
-        id: 16,
-        ubicacion: ubicaciones[1],
-        capacidad_maxima: 1600
-    },
-    {
-        id: 17,
-        ubicacion: ubicaciones[2],
-        capacidad_maxima: 1700
-    },
-    {
-        id: 18,
-        ubicacion: ubicaciones[3],
-        capacidad_maxima: 1800
-    },
-    {
-        id: 19,
-        ubicacion: ubicaciones[4],
-        capacidad_maxima: 1900
-    },
-    {
-        id: 20,
-        ubicacion: ubicaciones[5],
-        capacidad_maxima: 2000
-    },
-    {
-        id: 21,
-        ubicacion: ubicaciones[6],
-        capacidad_maxima: 2100
-    },
-    {
-        id: 22,
-        ubicacion: ubicaciones[0],
-        capacidad_maxima: 2200
-    },
-    {
-        id: 23,
-        ubicacion: ubicaciones[1],
-        capacidad_maxima: 2300
-    },
-    {
-        id: 24,
-        ubicacion: ubicaciones[2],
-        capacidad_maxima: 2400
-    },
-    {
-        id: 25,
-        ubicacion: ubicaciones[3],
-        capacidad_maxima: 2500
-    }
 ];
 
 const vuelos: Vuelo[] = [
@@ -226,8 +136,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 100
         },
-        fecha_origen: new Date("2022-10-10"),
-        fecha_destino: new Date("2022-10-10"),        
+        fecha_origen: new Date("2024-05-04T00:00:03"),
+        fecha_destino: new Date("2024-05-08T00:00:03"),        
         coordenadas_actual: {
             latitud: 40.7128,
             longitud: -74.0060
@@ -246,8 +156,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 200
         },
-        fecha_origen: new Date("2022-10-10"),
-        fecha_destino: new Date("2022-10-10"),
+        fecha_origen: new Date("2024-05-04T00:00:03"),
+        fecha_destino: new Date("2024-05-07T00:00:03"),
         coordenadas_actual: {
             latitud: 41.8781,
             longitud: -87.6298
@@ -266,8 +176,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 300
         },
-        fecha_origen: new Date("2022-10-10"),
-        fecha_destino: new Date("2022-10-10"),
+        fecha_origen: new Date("2024-05-04T00:00:03"),
+        fecha_destino: new Date("2024-05-07T00:00:03"),
         coordenadas_actual: {
             latitud: 33.4484,
             longitud: -112.0740
@@ -283,8 +193,8 @@ const envios: Envio[] = [
         id: 1,
         ubicacion_origen: ubicaciones[0],
         ubicacion_destino: ubicaciones[1],
-        fecha_recepcion: new Date("2022-10-10"),
-        fecha_limite_entrega: new Date("2022-10-10"),
+        fecha_recepcion: new Date("2024-05-04T00:00:03"),
+        fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
         estado: "En camino",
         cantidad_paquetes: 50,
         codigo_seguridad: "123456"
@@ -293,8 +203,8 @@ const envios: Envio[] = [
         id: 2,
         ubicacion_origen: ubicaciones[2],
         ubicacion_destino: ubicaciones[3],
-        fecha_recepcion: new Date("2022-10-10"),
-        fecha_limite_entrega: new Date("2022-10-10"),
+        fecha_recepcion: new Date("2024-05-04T00:00:03"),
+        fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
         estado: "En camino",
         cantidad_paquetes: 100,
         codigo_seguridad: "654321"
@@ -303,8 +213,8 @@ const envios: Envio[] = [
         id: 3,
         ubicacion_origen: ubicaciones[4],
         ubicacion_destino: ubicaciones[5],
-        fecha_recepcion: new Date("2022-10-10"),
-        fecha_limite_entrega: new Date("2022-10-10"),
+        fecha_recepcion: new Date("2024-05-04T00:00:03"),
+        fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
         estado: "En camino",
         cantidad_paquetes: 150,
         codigo_seguridad: "987654"

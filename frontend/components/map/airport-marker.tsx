@@ -1,3 +1,18 @@
+import { Marker } from "react-simple-maps";
+
+function AirportMarker({ coordinates, onClick }: { coordinates: [number, number]; onClick: (coordinates: [number, number]) => void }) {
+	return (
+		<Marker coordinates={coordinates}>
+			{/* <circle
+				r={1}
+				className="fill-yellow-500"
+			/> */}
+			<Airport onClick={()=>onClick(coordinates)} />
+		</Marker>
+	);
+}
+export default AirportMarker;
+
 function Airport({ onClick }: { onClick: () => void }) {
 	const transformation = "scale(0.02) translate(-250, -250)";
 
@@ -71,4 +86,3 @@ function Airport({ onClick }: { onClick: () => void }) {
 		</>
 	);
 }
-export default Airport;

@@ -1,121 +1,73 @@
-import { Flight } from "@/lib/types/flight";
+"use client";
+import { calculateAngle, getFlightPosition, getTrayectory } from "@/lib/map-utils";
+import { Vuelo } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Marker, useMapContext } from "react-simple-maps";
+import { Marker } from "react-simple-maps";
 
 function PlaneMarker({
-	flight,
+	vuelo,
 	currentTime,
-    onClick
+	onClick,
 }: {
-	flight: Flight;
+	vuelo: Vuelo;
 	currentTime: Date;
-    onClick: (coords: [number, number]) => void;
+	onClick: (vuelo: Vuelo) => void;
 }) {
+	const [showRoute, setShowRoute] = useState(false);
+
 	const coordinates = getFlightPosition(
-		flight.originTime,
-		flight.originCoordinate as [number, number],
-		flight.destinationTime,
-		flight.destinationCoordinate as [number, number],
+		vuelo.fecha_origen,
+		[
+			vuelo.plan_vuelo.ubicacion_origen.coordenadas.longitud,
+			vuelo.plan_vuelo.ubicacion_origen.coordenadas.latitud,
+		] as [number, number],
+		vuelo.fecha_destino,
+		[
+			vuelo.plan_vuelo.ubicacion_destino.coordenadas.longitud,
+			vuelo.plan_vuelo.ubicacion_destino.coordenadas.latitud,
+		] as [number, number],
 		currentTime
 	);
 
-	const dotPositions = getDotPositions();
+	const dotPositions = getTrayectory(vuelo);
 
 	return (
 		<>
 			{dotPositions.map((dotPosition, idx) => (
-				<Marker key={idx} coordinates={dotPosition as [number, number]}>
-					<circle
-						r={1}
-						className="fill-mainRed"
-						// onClick={() => {
-						// 	zoomIn(coordinates as [number, number]);
-						// }}
-					/>
+				<Marker
+					key={idx}
+					coordinates={dotPosition as [number, number]}
+					className={cn(
+						"transition-opacity duration-75 ease-in",
+						showRoute === true ? "opacity-100" : "opacity-0"
+					)}
+				>
+					<circle r={1} className="fill-red-600" />
 				</Marker>
 			))}
 			<Marker coordinates={coordinates as [number, number]}>
-				<circle
-					r={1}
-					className="fill-green-500"
-					// onClick={() => {
-					// 	zoomIn(coordinates as [number, number]);
-					// }}
-				/>
-
 				<Plane
 					originCoordinate={
-						flight.originCoordinate as [number, number]
+						[
+							vuelo.plan_vuelo.ubicacion_origen.coordenadas.longitud,
+							vuelo.plan_vuelo.ubicacion_origen.coordenadas.latitud,
+						] as [number, number]
 					}
 					destinationCoordinate={
-						flight.destinationCoordinate as [number, number]
+						[
+							vuelo.plan_vuelo.ubicacion_destino.coordenadas.longitud,
+							vuelo.plan_vuelo.ubicacion_destino.coordenadas.latitud,
+						] as [number, number]
 					}
-					capacity={flight.capacity}
-					onClick={() => {
-						onClick(coordinates as [number, number]);
-					}}
+					capacity={vuelo.capacidad_utilizada}
+					onClick={() => onClick(vuelo)}
+					showRoute={() => setShowRoute(true)}
+					hideRoute={() => setShowRoute(false)}
 				/>
 			</Marker>
 		</>
 	);
-
-	function getDotPositions() {
-		const dotPositions = [];
-        const steps = 50;
-		//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array
-		for (let i = 0; i < steps; i++) {
-			const x =
-				flight.originCoordinate[0] +
-				((flight.destinationCoordinate[0] -
-					flight.originCoordinate[0]) *
-					i) /
-					steps;
-			const y =
-				flight.originCoordinate[1] +
-				((flight.destinationCoordinate[1] -
-					flight.originCoordinate[1]) *
-					i) /
-					steps;
-			dotPositions.push([x, y]);
-		}
-		return dotPositions;
-	}
-
-	function getFlightPosition(
-		departureTime: Date,
-		departurePosition: [number, number],
-		arrivalTime: Date,
-		arrivalPosition: [number, number],
-		currentTime: Date
-	) {
-		// If the current time is before the departure time, return the departure position
-		if (currentTime < departureTime) {
-			return departurePosition;
-		}
-
-		// If the current time is after the arrival time, return the arrival position
-		if (currentTime > arrivalTime) {
-			return arrivalPosition;
-		}
-
-		const { projection } = useMapContext();
-		// const [x1, y1] = projection(departurePosition);
-		// const [x2, y2] = projection(arrivalPosition);
-		const [x1, y1] = departurePosition;
-		const [x2, y2] = arrivalPosition;
-
-		// Calculate the position based on the time
-		const totalDuration = arrivalTime.getTime() - departureTime.getTime();
-		const elapsed = currentTime.getTime() - departureTime.getTime();
-
-		const deltaX = x2 - x1;
-		const deltaY = y2 - y1;
-
-		const currentX = x1 + deltaX * (elapsed / totalDuration);
-		const currentY = y1 + deltaY * (elapsed / totalDuration);
-
-		return [currentX, currentY];
-	}
 }
 export default PlaneMarker;
 
@@ -124,15 +76,17 @@ function Plane({
 	capacity,
 	originCoordinate,
 	destinationCoordinate,
+	showRoute,
+	hideRoute,
 }: {
 	onClick: () => void;
 	capacity: number;
 	originCoordinate: [number, number];
 	destinationCoordinate: [number, number];
+	showRoute: () => void;
+	hideRoute: () => void;
 }) {
-	const [rotation, setRotation] = useState(
-		calculateAngle(originCoordinate, destinationCoordinate)
-	);
+	const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
 	const [color, setColor] = useState(mapCapacity(capacity));
 
 	function mapCapacity(_capacity: number) {
@@ -141,22 +95,6 @@ function Plane({
 		} else if (_capacity >= 30 && _capacity < 60) {
 			return "#D3D800";
 		} else return "#FF0000";
-	}
-
-	function calculateAngle(
-		coord1: [number, number],
-		coord2: [number, number]
-	) {
-		const { projection } = useMapContext();
-		const [x1, y1] = projection(coord1);
-		const [x2, y2] = projection(coord2);
-
-		const deltaX = x2 - x1;
-		const deltaY = y2 - y1;
-		const radians = Math.atan2(deltaY, deltaX);
-		const degrees = radians * (180 / Math.PI);
-
-		return degrees + 45;
 	}
 
 	return (
@@ -197,6 +135,8 @@ function Plane({
 				// strokeWidth={1}
 				className="fill-transparent"
 				onClick={onClick}
+				onMouseEnter={showRoute}
+				onMouseLeave={hideRoute}
 			/>
 		</>
 	);
