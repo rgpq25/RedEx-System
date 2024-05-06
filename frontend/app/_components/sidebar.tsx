@@ -55,10 +55,13 @@ interface SidebarProps {
     aeropuertos?: Aeropuerto[];
     vuelos?: Vuelo[];
     className?: string;
+    onClickEnvio: (envio: Envio) => void;
+    onClickAeropuerto: (aeropuerto: Aeropuerto) => void;
+    onClickVuelo: (vuelo: Vuelo) => void;
     props?: any;
 }
 
-export default function Sidebar({ envios, aeropuertos, vuelos, className, ...props }: SidebarProps) {
+export default function Sidebar({ envios, aeropuertos, vuelos, className, onClickEnvio, onClickAeropuerto, onClickVuelo, ...props }: SidebarProps) {
     const [selectedOperation, setSelectedOperation] = useState<Operacion>(Operacion.Envios);
 
     return (
@@ -74,15 +77,15 @@ export default function Sidebar({ envios, aeropuertos, vuelos, className, ...pro
             </CardHeader>
             <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
                 <Separator />
-                {selectedOperation === Operacion.Envios && <Envios envios={envios} />}
-                {selectedOperation === Operacion.Aeropuertos && <Aeropuertos aeropuertos={aeropuertos} />}
-                {selectedOperation === Operacion.Vuelos && <Vuelos vuelos={vuelos} />}
+                {selectedOperation === Operacion.Envios && <Envios envios={envios} onClick={onClickEnvio}/>}
+                {selectedOperation === Operacion.Aeropuertos && <Aeropuertos aeropuertos={aeropuertos} onClick={onClickAeropuerto}/>}
+                {selectedOperation === Operacion.Vuelos && <Vuelos vuelos={vuelos} onClick={onClickVuelo}/>}
             </CardContent>
         </Card>
     );
 }
 
-function Envios({ envios }: { envios: Envio[] | undefined }) {
+function Envios({ envios, onClick }: { envios: Envio[] | undefined; onClick: (envio: Envio) => void}) {
     const [filteredEnvios, setFilteredEnvios] = useState<Envio[] | undefined>(envios);
     const [receptionDateStart, setReceptionDateStart] = useState<Date | undefined>(undefined);
     const [receptionDateEnd, setReceptionDateEnd] = useState<Date | undefined>(undefined);
@@ -189,7 +192,7 @@ function Envios({ envios }: { envios: Envio[] | undefined }) {
                                 envios
                                     .filter((envio) => envio.id.toString().includes(search))
                                     .map((envio) => (
-                                        <Card key={envio.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'>
+                                        <Card key={envio.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer' onClick={()=>onClick(envio)}>
                                             <CardHeader>
                                                 <Large>{envio.id}</Large>
                                             </CardHeader>
@@ -212,7 +215,7 @@ function Envios({ envios }: { envios: Envio[] | undefined }) {
     );
 }
 
-function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined }) {
+function Aeropuertos({ aeropuertos, onClick }: { aeropuertos: Aeropuerto[] | undefined; onClick: (aeropuerto: Aeropuerto) => void }) {
     const [search, setSearch] = useState<string>("");
 
     return (
@@ -303,7 +306,7 @@ function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined })
                                         aeropuerto.ubicacion.ciudad_abreviada.toLowerCase().includes(search.toLowerCase())
                                     )
                                     .map((aeropuerto) => (
-                                        <Card key={aeropuerto.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'>
+                                        <Card key={aeropuerto.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer' onClick={()=>onClick(aeropuerto)}>
                                             <CardHeader>
                                                 <Large>
                                                     {aeropuerto.ubicacion.ciudad_abreviada} ({aeropuerto.ubicacion.ciudad})
@@ -324,7 +327,7 @@ function Aeropuertos({ aeropuertos }: { aeropuertos: Aeropuerto[] | undefined })
     );
 }
 
-function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
+function Vuelos({ vuelos, onClick }: { vuelos: Vuelo[] | undefined; onClick: (vuelo: Vuelo) => void }) {
     const [filteredVuelos, setFilteredVuelos] = useState<Vuelo[] | undefined>(vuelos);
     const [flyDateStart, setFlyDateStart] = useState<Date | undefined>(undefined);
     const [flyDateEnd, setFlyDateEnd] = useState<Date | undefined>(undefined);
@@ -422,7 +425,7 @@ function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
                                 vuelos
                                     .filter((vuelo) => vuelo.id.toString().includes(search))
                                     .map((vuelo) => (
-                                        <Card key={vuelo.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'>
+                                        <Card key={vuelo.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer' onClick={()=>onClick(vuelo)}>
                                             <CardHeader>
                                                 <Large>{vuelo.id}</Large>
                                             </CardHeader>
