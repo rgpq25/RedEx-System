@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { FlightTable } from './flight-table';
 
-function FlightModal() {
-    const [isOpen, setIsOpen] = useState(true);
+interface FlightModalProps {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+}
+
+function FlightModal({ isOpen, setIsOpen } : FlightModalProps) {
 
     return (
         <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>

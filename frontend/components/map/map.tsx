@@ -8,10 +8,11 @@ import useAnimation, { AnimationObject } from "../hooks/useAnimation";
 import Chip from "../ui/chip";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
-import { Vuelo } from "@/lib/types";
+import { Aeropuerto, Vuelo } from "@/lib/types";
 import { aeropuertos, ubicaciones, vuelos } from "@/lib/sample";
 import useMapZoom from "../hooks/useMapZoom";
 import AirportModal from "./airport-modal";
+import FlightModal from "./flight-modal";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -44,7 +45,8 @@ function Map({
 	className,
 }: MapProps) {
 	const [content, setContent] = useState<string>("");
-	const [isModalAirportOpen, setIsModalAirportOpen] = useState(false);
+	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
+	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
 	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
 		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
@@ -66,7 +68,14 @@ function Map({
 
 	return (
 		<>
-			<AirportModal isOpen={isModalAirportOpen} setIsOpen={setIsModalAirportOpen}/>
+			<FlightModal
+				isOpen={currentAirportModal !== undefined}
+				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
+			/>
+			<AirportModal
+				isOpen={currentFlightModal !== undefined}
+				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
+			/>
 			<Tooltip
 				id="my-tooltip"
 				className="border border-white z-[100]"
@@ -115,7 +124,10 @@ function Map({
 									currentTime={currentTime}
 									vuelo={vuelo}
 									key={idx}
-									onClick={(vuelo: Vuelo) => lockInFlight(vuelo)}
+									onClick={(vuelo: Vuelo) => {
+										setCurrentFlightModal(vuelo);
+										lockInFlight(vuelo)
+									}}
 								/>
 							);
 						})}
@@ -126,7 +138,10 @@ function Map({
 							return (
 								<AirportMarker
 									key={idx}
-									onClick={zoomIn}
+									onClick={(coordinates: [number,number]) => {
+										setCurrentAirportModal(aeropuerto);
+										zoomIn(coordinates);
+									}}
 									coordinates={[longitud, latitud] as [number, number]}
 								/>
 							);
