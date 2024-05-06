@@ -163,7 +163,7 @@ function Envios({ envios }: { envios: Envio[] | undefined }) {
                                                 <Large>{envio.id}</Large>
                                             </CardHeader>
                                             <CardContent>
-                                                <Muted>Fecha de recepción: {envio.fecha_recepcion}</Muted>
+                                                <Muted>Fecha de recepción: {envio.fecha_recepcion.toDateString()}</Muted>
                                                 <Muted>Cantidad: {envio.cantidad_paquetes}</Muted>
                                                 <span className='flex flex-wrap *:flex-grow'>
                                                     <Muted>Origen: {envio.ubicacion_origen.ciudad_abreviada}</Muted>
@@ -400,8 +400,8 @@ function Vuelos({ vuelos }: { vuelos: Vuelo[] | undefined }) {
                                                     <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudad_abreviada}</Muted>
                                                     <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudad_abreviada}</Muted>
                                                 </span>
-                                                <Muted>Fecha origen: {vuelo.fecha_origen}</Muted>
-                                                <Muted>Fecha destino: {vuelo.fecha_destino}</Muted>
+                                                <Muted>Fecha origen: {vuelo.fecha_origen.toDateString()}</Muted>
+                                                <Muted>Fecha destino: {vuelo.fecha_destino.toDateString()}</Muted>
                                                 <Muted>Capacidad: {vuelo.capacidad_utilizada}</Muted>
                                             </CardContent>
                                         </Card>
