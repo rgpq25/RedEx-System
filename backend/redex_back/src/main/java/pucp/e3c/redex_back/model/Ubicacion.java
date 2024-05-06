@@ -23,6 +23,9 @@ public class Ubicacion {
     @Column(length = 8)
     private String zonaHoraria;
 
+    private Integer latitud;
+    private Integer longitud;
+
     public Ubicacion() {
     }
     /*public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
@@ -94,4 +97,21 @@ public class Ubicacion {
         this.zonaHoraria = zonaHoraria;
     }
 
+    public Integer getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(Integer latitud) {
+        this.latitud = latitud;
+    }
+
+    public Integer getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(Integer longitud) {
+        this.longitud = longitud;
+    }
+
+    
 }
