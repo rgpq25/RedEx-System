@@ -8,8 +8,11 @@ import { useState } from "react";
 import { PackageTable } from "./_components/package-table";
 import Visualizator from "./_components/visualizator";
 import InfoNotation1 from "./_components/info-notation1";
+import Sidebar from "@/app/_components/sidebar";
 
 type TabType = "weekly" | "colapse";
+
+import { vuelos, aeropuertos, envios } from "@/lib/sample";
 
 function SimulationPage() {
     const [tab, setTab] = useState<TabType>("weekly");
@@ -57,7 +60,9 @@ function SimulationPage() {
 
                 <PackageTable />
             </section>
+            <Sidebar envios={envios} vuelos={vuelos} aeropuertos={aeropuertos} />
         </main>
     );
 }
+
 export default SimulationPage;
