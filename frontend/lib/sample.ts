@@ -226,8 +226,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 100
         },
-        fecha_origen: "2022-10-10",
-        fecha_destino: "2022-10-10",
+        fecha_origen: new Date("2022-10-10"),
+        fecha_destino: new Date("2022-10-10"),        
         coordenadas_actual: {
             latitud: 40.7128,
             longitud: -74.0060
@@ -246,8 +246,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 200
         },
-        fecha_origen: "2022-10-10",
-        fecha_destino: "2022-10-10",
+        fecha_origen: new Date("2022-10-10"),
+        fecha_destino: new Date("2022-10-10"),
         coordenadas_actual: {
             latitud: 41.8781,
             longitud: -87.6298
@@ -266,8 +266,8 @@ const vuelos: Vuelo[] = [
             hora_ciudad_destino: "12:00",
             capacidad_maxima: 300
         },
-        fecha_origen: "2022-10-10",
-        fecha_destino: "2022-10-10",
+        fecha_origen: new Date("2022-10-10"),
+        fecha_destino: new Date("2022-10-10"),
         coordenadas_actual: {
             latitud: 33.4484,
             longitud: -112.0740
@@ -283,8 +283,8 @@ const envios: Envio[] = [
         id: 1,
         ubicacion_origen: ubicaciones[0],
         ubicacion_destino: ubicaciones[1],
-        fecha_recepcion: "2022-10-10",
-        fecha_limite_entrega: "2022-10-10",
+        fecha_recepcion: new Date("2022-10-10"),
+        fecha_limite_entrega: new Date("2022-10-10"),
         estado: "En camino",
         cantidad_paquetes: 50,
         codigo_seguridad: "123456"
@@ -293,8 +293,8 @@ const envios: Envio[] = [
         id: 2,
         ubicacion_origen: ubicaciones[2],
         ubicacion_destino: ubicaciones[3],
-        fecha_recepcion: "2022-10-10",
-        fecha_limite_entrega: "2022-10-10",
+        fecha_recepcion: new Date("2022-10-10"),
+        fecha_limite_entrega: new Date("2022-10-10"),
         estado: "En camino",
         cantidad_paquetes: 100,
         codigo_seguridad: "654321"
@@ -303,8 +303,8 @@ const envios: Envio[] = [
         id: 3,
         ubicacion_origen: ubicaciones[4],
         ubicacion_destino: ubicaciones[5],
-        fecha_recepcion: "2022-10-10",
-        fecha_limite_entrega: "2022-10-10",
+        fecha_recepcion: new Date("2022-10-10"),
+        fecha_limite_entrega: new Date("2022-10-10"),
         estado: "En camino",
         cantidad_paquetes: 150,
         codigo_seguridad: "987654"
