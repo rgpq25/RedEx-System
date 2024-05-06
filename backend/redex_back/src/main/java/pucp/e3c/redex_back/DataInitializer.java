@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import pucp.e3c.redex_back.model.Aeropuerto;
+import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanVuelo;
@@ -92,6 +93,17 @@ public class DataInitializer {
             paquete.setSimulacionActual(simulacion);
             paqueteService.register(paquete);
         }
+
+        /*
+         * ArrayList<Aeropuerto> aeropuertos_ = (ArrayList<Aeropuerto>)
+         * aeropuertoService.getAll();
+         * ArrayList<PlanVuelo> planVuelos_ = (ArrayList<PlanVuelo>)
+         * planVueloService.getAll();
+         * ArrayList<Paquete> paquetes_ = (ArrayList<Paquete>)
+         * paqueteService.findBySimulacionId(simulacion.getId());
+         * 
+         * Algoritmo.loopPrincipal(aeropuertos_, planVuelos_, paquetes_);
+         */
 
     }
 }

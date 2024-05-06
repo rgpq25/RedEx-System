@@ -5,20 +5,16 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.PlanVueloService;
 
 public class Algoritmo {
-    @Autowired
-    private static PlanVueloService planVueloService;
-    private static AeropuertoService aeropuertoService;
 
-    public static ArrayList<PlanRutaNT> loopPrincipal() {
-        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
-        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
+    public static ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos,
+            ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes) {
 
-        ArrayList<Paquete> paquetes = new ArrayList<>();
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
         if (paquetes.size() == 0) {

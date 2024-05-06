@@ -1,5 +1,6 @@
 package pucp.e3c.redex_back.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pucp.e3c.redex_back.model.Aeropuerto;
+import pucp.e3c.redex_back.model.Algoritmo;
+import pucp.e3c.redex_back.model.Paquete;
+import pucp.e3c.redex_back.model.PlanRutaNT;
+import pucp.e3c.redex_back.model.PlanVuelo;
+import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
+import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 
 @RestController
@@ -22,6 +32,15 @@ import pucp.e3c.redex_back.service.SimulacionService;
 public class SimulacionController {
     @Autowired
     SimulacionService simulacionService;
+
+    @Autowired
+    private PlanVueloService planVueloService;
+
+    @Autowired
+    private AeropuertoService aeropuertoService;
+
+    @Autowired
+    private PaqueteService paqueteService;
 
     @PostMapping("/")
     public ResponseEntity<Simulacion> register(@RequestBody Simulacion simulacion) {
@@ -59,4 +78,14 @@ public class SimulacionController {
         List<Simulacion> simulacions = simulacionService.getAll();
         return new ResponseEntity<>(simulacions, HttpStatus.OK);
     }
+
+    @GetMapping("/runAlgorithm/{id}")
+    public ResponseEntity<ArrayList<PlanRutaNT>> correrSimulacion(@PathVariable("id") int id) {
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
+        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
+        ArrayList<PlanRutaNT> respuestaAlgoritmo = Algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes);
+        return new ResponseEntity<>(respuestaAlgoritmo, HttpStatus.OK);
+    }
+
 }
