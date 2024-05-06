@@ -40,7 +40,7 @@ public class Envio {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
+    /*public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
         this.ubicacionOrigen = origen;
         this.ubicacionDestino = destino;
         this.fechaRecepcion = fechaRecepcion;
@@ -48,6 +48,16 @@ public class Envio {
         this.estado = "En proceso";
         this.cantidadPaquetes = 1;
         this.codigoSeguridad = "123456";
+    }*/
+
+    public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
+        this.setUbicacionOrigen(origen);
+        this.setUbicacionDestino(destino);
+        this.setFechaRecepcion(fechaRecepcion);
+        this.setFechaLimiteEntrega(fecha_maxima_entrega);
+        this.setEstado("En proceso");
+        this.setCantidadPaquetes(1);
+        this.setCodigoSeguridad("123456");
     }
 
     // TO DO id emisor

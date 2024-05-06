@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class Algoritmo {
 
     public static ArrayList<PlanRutaNT> loopPrincipal() {
+        
         ArrayList<Paquete> paquetes = new ArrayList<>();
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         String inputPath = "src\\main\\resources\\dataFija";

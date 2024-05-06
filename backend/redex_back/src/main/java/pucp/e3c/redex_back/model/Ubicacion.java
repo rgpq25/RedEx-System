@@ -23,7 +23,9 @@ public class Ubicacion {
     @Column(length = 8)
     private String zonaHoraria;
 
-    public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
+    public Ubicacion() {
+    }
+    /*public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
             String zonaHoraria) {
         this.id = id;
         this.continente = continente;
@@ -31,7 +33,18 @@ public class Ubicacion {
         this.ciudad = ciudad;
         this.ciudadAbreviada = ciudadAbreviada;
         this.zonaHoraria = zonaHoraria;
+    }*/
+
+    public void fillData(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
+            String zonaHoraria){
+        this.setId(id);
+        this.setContinente(continente);
+        this.setPais(pais);
+        this.setCiudad(ciudad);
+        this.setCiudadAbreviada(ciudadAbreviada);
+        this.setZonaHoraria(zonaHoraria);
     }
+
 
     public String getId() {
         return id;

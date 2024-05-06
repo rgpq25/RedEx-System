@@ -33,7 +33,7 @@ public class PlanVuelo {
 
     private int capacidadMaxima;
 
-    public PlanVuelo(int id, Ubicacion ciudadOrigen, Ubicacion ciudadDestino, String horaCiudadOrigen,
+    /*public PlanVuelo(int id, Ubicacion ciudadOrigen, Ubicacion ciudadDestino, String horaCiudadOrigen,
             String horaCiudadDestino, int capacidadMaxima) {
         this.id = id;
         this.ciudadOrigen = ciudadOrigen;
@@ -41,9 +41,28 @@ public class PlanVuelo {
         this.horaCiudadOrigen = horaCiudadOrigen;
         this.horaCiudadDestino = horaCiudadDestino;
         this.capacidadMaxima = capacidadMaxima;
+    }*/
+
+    public void fillData(int id, Ubicacion ciudadOrigen, Ubicacion ciudadDestino, String horaCiudadOrigen,
+            String horaCiudadDestino, int capacidadMaxima) {
+        this.setId(id);
+        this.setCiudadOrigen(ciudadOrigen);
+        this.setCiudadDestino(ciudadDestino);
+        this.setHoraCiudadOrigen(horaCiudadOrigen);
+        this.setHoraCiudadDestino(horaCiudadDestino);
+        this.setCapacidadMaxima(capacidadMaxima);
     }
 
-    public PlanVuelo(PlanVuelo _plan_vuelo) {
+    /*public PlanVuelo(PlanVuelo _plan_vuelo) {
+        this.id = _plan_vuelo.id;
+        this.ciudadOrigen = _plan_vuelo.ciudadOrigen;
+        this.ciudadDestino = _plan_vuelo.ciudadDestino;
+        this.horaCiudadOrigen = _plan_vuelo.horaCiudadOrigen;
+        this.horaCiudadDestino = _plan_vuelo.horaCiudadDestino;
+        this.capacidadMaxima = _plan_vuelo.capacidadMaxima;
+    }*/
+
+    public void fillData2(PlanVuelo _plan_vuelo) {
         this.id = _plan_vuelo.id;
         this.ciudadOrigen = _plan_vuelo.ciudadOrigen;
         this.ciudadDestino = _plan_vuelo.ciudadDestino;

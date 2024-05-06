@@ -117,8 +117,9 @@ public class GrafoVuelos {
                     calLlegada.add(Calendar.HOUR_OF_DAY, 24);
                     fechaLlegada = calLlegada.getTime();
                 }
-                Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
-
+                //Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
+                Vuelo vuelo = new Vuelo();
+                vuelo.fillData2(plan, fin, fechaLlegada);
                 vuelos.add(vuelo);
             }
             // Avanza al día siguiente.

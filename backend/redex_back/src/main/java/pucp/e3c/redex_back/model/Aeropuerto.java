@@ -22,6 +22,9 @@ public class Aeropuerto {
 
     private Integer capacidadMaxima;
 
+    public Aeropuerto() {
+    }
+
     public Integer getId() {
         return id;
     }
