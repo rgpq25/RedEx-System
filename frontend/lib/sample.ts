@@ -123,6 +123,96 @@ const aeropuertos: Aeropuerto[] = [
         ubicacion: ubicaciones[6],
         capacidad_maxima: 700
     },
+    {
+        id: 8,
+        ubicacion: ubicaciones[0],
+        capacidad_maxima: 800
+    },
+    {
+        id: 9,
+        ubicacion: ubicaciones[1],
+        capacidad_maxima: 900
+    },
+    {
+        id: 10,
+        ubicacion: ubicaciones[2],
+        capacidad_maxima: 1000
+    },
+    {
+        id: 11,
+        ubicacion: ubicaciones[3],
+        capacidad_maxima: 1100
+    },
+    {
+        id: 12,
+        ubicacion: ubicaciones[4],
+        capacidad_maxima: 1200
+    },
+    {
+        id: 13,
+        ubicacion: ubicaciones[5],
+        capacidad_maxima: 1300
+    },
+    {
+        id: 14,
+        ubicacion: ubicaciones[6],
+        capacidad_maxima: 1400
+    },
+    {
+        id: 15,
+        ubicacion: ubicaciones[0],
+        capacidad_maxima: 1500
+    },
+    {
+        id: 16,
+        ubicacion: ubicaciones[1],
+        capacidad_maxima: 1600
+    },
+    {
+        id: 17,
+        ubicacion: ubicaciones[2],
+        capacidad_maxima: 1700
+    },
+    {
+        id: 18,
+        ubicacion: ubicaciones[3],
+        capacidad_maxima: 1800
+    },
+    {
+        id: 19,
+        ubicacion: ubicaciones[4],
+        capacidad_maxima: 1900
+    },
+    {
+        id: 20,
+        ubicacion: ubicaciones[5],
+        capacidad_maxima: 2000
+    },
+    {
+        id: 21,
+        ubicacion: ubicaciones[6],
+        capacidad_maxima: 2100
+    },
+    {
+        id: 22,
+        ubicacion: ubicaciones[0],
+        capacidad_maxima: 2200
+    },
+    {
+        id: 23,
+        ubicacion: ubicaciones[1],
+        capacidad_maxima: 2300
+    },
+    {
+        id: 24,
+        ubicacion: ubicaciones[2],
+        capacidad_maxima: 2400
+    },
+    {
+        id: 25,
+        ubicacion: ubicaciones[3],
+        capacidad_maxima: 2500
+    }
 ];
 
 const vuelos: Vuelo[] = [
