@@ -26,7 +26,7 @@ export default function Home() {
                                 }),
                                 "mt-3 text-xl py-6"
                             )}
-                            href={"/security-code"}
+                            href={"/modal-vuelo"}
                         >
                             Empieza ya{" "}
                         </Link>
