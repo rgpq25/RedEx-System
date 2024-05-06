@@ -49,4 +49,21 @@ public class PlanRuta {
         return descripcion.toString();
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
+    }
+
+    
 }

@@ -126,4 +126,14 @@ public class Envio {
         this.codigoSeguridad = codigoSeguridad;
     }
 
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
+    }
+
+    
+
 }

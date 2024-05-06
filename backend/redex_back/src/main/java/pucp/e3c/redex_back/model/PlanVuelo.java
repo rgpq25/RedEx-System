@@ -133,4 +133,6 @@ public class PlanVuelo {
                 + ", ciudadOrigen=" + ciudadOrigen.getId() + ", horaCiudadDestino=" + horaCiudadDestino
                 + ", horaCiudadOrigen=" + horaCiudadOrigen + ", id=" + id + "]";
     }
+
+    
 }

@@ -24,7 +24,7 @@ public class Aeropuerto {
 
     public Aeropuerto() {
     }
-
+    
     public Integer getId() {
         return id;
     }
