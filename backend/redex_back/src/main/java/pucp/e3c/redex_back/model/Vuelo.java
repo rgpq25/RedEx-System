@@ -86,6 +86,17 @@ public class Vuelo {
     public int getId() {
         return id;
     }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
+    }
 
     public PlanVuelo getPlanVuelo() {
         return planVuelo;
@@ -132,4 +143,5 @@ public class Vuelo {
                 + planVuelo.getCiudadDestino().getId() + " - " + fechaSalida + " " + fechaLlegada;
     }
 
+    
 }

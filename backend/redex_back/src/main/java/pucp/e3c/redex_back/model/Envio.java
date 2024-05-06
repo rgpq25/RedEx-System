@@ -136,4 +136,12 @@ public class Envio {
                 + fechaLimiteEntrega;
     }
 
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
+    }
+
 }

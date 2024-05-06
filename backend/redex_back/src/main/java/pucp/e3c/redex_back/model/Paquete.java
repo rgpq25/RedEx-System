@@ -18,8 +18,7 @@ public class Paquete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 64)
-    private String coordenadaActual;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_aeropuerto_actual", referencedColumnName = "id")
     private Aeropuerto aeropuertoActual;
@@ -70,7 +69,6 @@ public class Paquete {
     public void fillData(Aeropuerto aeropuertoActual, Ubicacion origen, Ubicacion destino, Date fechaRecepcion) {
         this.id = ContadorID.obtenerSiguienteIDPaquet();
         this.aeropuertoActual = aeropuertoActual;
-        this.coordenadaActual = origen.getId();
         this.enAeropuerto = true;
         this.entregado = false;
 
@@ -105,14 +103,6 @@ public class Paquete {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getCoordenadaActual() {
-        return coordenadaActual;
-    }
-
-    public void setCoordenadaActual(String coordenadaActual) {
-        this.coordenadaActual = coordenadaActual;
     }
 
     public Aeropuerto getAeropuertoActual() {
@@ -158,4 +148,21 @@ public class Paquete {
     public String toString() {
         return "Paquete: id" + id + " - " + envio.toString();
     }
+
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
+    }
+
+    public PlanRuta getPlanRutaActual() {
+        return planRutaActual;
+    }
+
+    public void setPlanRutaActual(PlanRuta planRutaActual) {
+        this.planRutaActual = planRutaActual;
+    }
+
 }
