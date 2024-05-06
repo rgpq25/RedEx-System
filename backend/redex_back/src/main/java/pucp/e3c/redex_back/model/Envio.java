@@ -40,15 +40,18 @@ public class Envio {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    /*public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
-        this.ubicacionOrigen = origen;
-        this.ubicacionDestino = destino;
-        this.fechaRecepcion = fechaRecepcion;
-        this.fechaLimiteEntrega = fecha_maxima_entrega;
-        this.estado = "En proceso";
-        this.cantidadPaquetes = 1;
-        this.codigoSeguridad = "123456";
-    }*/
+    /*
+     * public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date
+     * fecha_maxima_entrega) {
+     * this.ubicacionOrigen = origen;
+     * this.ubicacionDestino = destino;
+     * this.fechaRecepcion = fechaRecepcion;
+     * this.fechaLimiteEntrega = fecha_maxima_entrega;
+     * this.estado = "En proceso";
+     * this.cantidadPaquetes = 1;
+     * this.codigoSeguridad = "123456";
+     * }
+     */
 
     public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
         this.setUbicacionOrigen(origen);
@@ -124,6 +127,13 @@ public class Envio {
 
     public void setCodigoSeguridad(String codigoSeguridad) {
         this.codigoSeguridad = codigoSeguridad;
+    }
+
+    public String toString() {
+        return "Envio: idEnvio: " + id + " - desde:  " + this.ubicacionOrigen.getId() + " hasta: "
+                + this.ubicacionDestino.getId() + " - fechaRecepcion: "
+                + fechaRecepcion + " - fechaLimiteEntrega: "
+                + fechaLimiteEntrega;
     }
 
 }

@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Funciones {
-    
+
     public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
@@ -75,165 +75,165 @@ public class Funciones {
         }
     }
 
-    
     public static HashMap<String, Ubicacion> getUbicacionMap() {
         int maxAirports = 40;
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
         Ubicacion ubicacion = new Ubicacion();
-        if (maxAirports >= 1){
+        if (maxAirports >= 1) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SKBO", "America del Sur", "Colombia", "Bogota", "bogo", "GMT-5");
+            ubicacion.fillData("SKBO", "America del Sur", "Colombia", "Bogota", "bogo", "GMT-5", 4.7110, -74.0721);
             ubicacionMap.put("SKBO", ubicacion);
         }
-        if (maxAirports >= 2){
+        if (maxAirports >= 2) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SEQM", "America del Sur", "Ecuador", "Quito", "quit", "GMT-5");
+            ubicacion.fillData("SEQM", "America del Sur", "Ecuador", "Quito", "quit", "GMT-5", -0.1807, -78.4678);
             ubicacionMap.put("SEQM", ubicacion);
         }
-        if (maxAirports >= 3){
+        if (maxAirports >= 3) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SVMI", "America del Sur", "Venezuela", "Caracas", "cara", "GMT-4");
+            ubicacion.fillData("SVMI", "America del Sur", "Venezuela", "Caracas", "cara", "GMT-4", 10.4806, -66.9036);
             ubicacionMap.put("SVMI", ubicacion);
         }
-        if (maxAirports >= 4){
+        if (maxAirports >= 4) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SBBR", "America del Sur", "Brasil", "Brasilia", "bras", "GMT-3");
+            ubicacion.fillData("SBBR", "America del Sur", "Brasil", "Brasilia", "bras", "GMT-3", -15.7942, -47.8822);
             ubicacionMap.put("SBBR", ubicacion);
         }
-        if (maxAirports >= 5){
+        if (maxAirports >= 5) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SPIM", "America del Sur", "Perú", "Lima", "lima", "GMT-5");
+            ubicacion.fillData("SPIM", "America del Sur", "Perú", "Lima", "lima", "GMT-5", -12.0464, -77.0428);
             ubicacionMap.put("SPIM", ubicacion);
         }
-        if (maxAirports >= 6){
+        if (maxAirports >= 6) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SLLP", "America del Sur", "Bolivia", "La Paz", "lapa", "GMT-4");
+            ubicacion.fillData("SLLP", "America del Sur", "Bolivia", "La Paz", "lapa", "GMT-4", -16.5000, -68.1500);
             ubicacionMap.put("SLLP", ubicacion);
         }
-        if (maxAirports >= 7){
+        if (maxAirports >= 7) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SCEL", "America del Sur", "Chile", "Santiago de Chile", "sant", "GMT-3");
+            ubicacion.fillData("SCEL", "America del Sur", "Chile", "Santiago de Chile", "sant", "GMT-3", -33.4489,
+                    -70.6693);
             ubicacionMap.put("SCEL", ubicacion);
         }
-        if (maxAirports >= 8){
+        if (maxAirports >= 8) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SABE", "America del Sur", "Argentina", "Buenos Aires", "buen", "GMT-3");
+            ubicacion.fillData("SABE", "America del Sur", "Argentina", "Buenos Aires", "buen", "GMT-3", -34.6037,
+                    -58.3816);
             ubicacionMap.put("SABE", ubicacion);
         }
-        if (maxAirports >= 9){
+        if (maxAirports >= 9) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SGAS", "America del Sur", "Paraguay", "Asunción", "asun", "GMT-4");
+            ubicacion.fillData("SGAS", "America del Sur", "Paraguay", "Asunción", "asun", "GMT-4", -25.2637, -57.5759);
             ubicacionMap.put("SGAS", ubicacion);
         }
-        if (maxAirports >= 10){
+        if (maxAirports >= 10) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("SUAA", "America del Sur", "Uruguay", "Montevideo", "mont", "GMT-3");
+            ubicacion.fillData("SUAA", "America del Sur", "Uruguay", "Montevideo", "mont", "GMT-3", -34.9011, -56.1645);
             ubicacionMap.put("SUAA", ubicacion);
         }
-        if (maxAirports >= 11){
+        if (maxAirports >= 11) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("LATI", "Europa", "Albania", "Tirana", "tira", "GMT+2");
+            ubicacion.fillData("LATI", "Europa", "Albania", "Tirana", "tira", "GMT+2", 41.3275, 19.8189);
             ubicacionMap.put("LATI", ubicacion);
         }
-        if (maxAirports >= 12){
+        if (maxAirports >= 12) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("EDDI", "Europa", "Alemania", "Berlin", "berl", "GMT+2");
+            ubicacion.fillData("EDDI", "Europa", "Alemania", "Berlin", "berl", "GMT+2", 52.5200, 13.4050);
             ubicacionMap.put("EDDI", ubicacion);
         }
-        if (maxAirports >= 13){
+        if (maxAirports >= 13) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("LOWW", "Europa", "Austria", "Viena", "vien", "GMT+2");
+            ubicacion.fillData("LOWW", "Europa", "Austria", "Viena", "vien", "GMT+2", 48.2082, 16.3738);
             ubicacionMap.put("LOWW", ubicacion);
         }
-        if (maxAirports >= 14){
+        if (maxAirports >= 14) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("EBCI", "Europa", "Belgica", "Bruselas", "brus", "GMT+2");
+            ubicacion.fillData("EBCI", "Europa", "Belgica", "Bruselas", "brus", "GMT+2", 50.8503, 4.3517);
             ubicacionMap.put("EBCI", ubicacion);
         }
-        if (maxAirports >= 15){
+        if (maxAirports >= 15) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("UMMS", "Europa", "Bielorrusia", "Minsk", "mins", "GMT+3");
+            ubicacion.fillData("UMMS", "Europa", "Bielorrusia", "Minsk", "mins", "GMT+3", 53.9006, 27.5590);
             ubicacionMap.put("UMMS", ubicacion);
         }
-        if (maxAirports >= 16){
+        if (maxAirports >= 16) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("LBSF", "Europa", "Bulgaria", "Sofia", "sofi", "GMT+3");
+            ubicacion.fillData("LBSF", "Europa", "Bulgaria", "Sofia", "sofi", "GMT+3", 42.6977, 23.3219);
             ubicacionMap.put("LBSF", ubicacion);
         }
-        if (maxAirports >= 17){
+        if (maxAirports >= 17) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("LKPR", "Europa", "Checa", "Praga", "prag", "GMT+2");
+            ubicacion.fillData("LKPR", "Europa", "Checa", "Praga", "prag", "GMT+2", 50.0755, 14.4378);
             ubicacionMap.put("LKPR", ubicacion);
         }
-        if (maxAirports >= 18){
+        if (maxAirports >= 18) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("LDZA", "Europa", "Croacia", "Zagreb", "zagr", "GMT+2");
+            ubicacion.fillData("LDZA", "Europa", "Croacia", "Zagreb", "zagr", "GMT+2", 45.8150, 15.9819);
             ubicacionMap.put("LDZA", ubicacion);
         }
-        if (maxAirports >= 19){
+        if (maxAirports >= 19) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("EKCH", "Europa", "Dinamarca", "Copenhague", "cope", "GMT+2");
+            ubicacion.fillData("EKCH", "Europa", "Dinamarca", "Copenhague", "cope", "GMT+2", 55.6761, 12.5683);
             ubicacionMap.put("EKCH", ubicacion);
         }
-        if (maxAirports >= 20){
+        if (maxAirports >= 20) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("EHAM", "Europa", "Holanda", "Amsterdam", "amst", "GMT+2");
+            ubicacion.fillData("EHAM", "Europa", "Holanda", "Amsterdam", "amst", "GMT+2", 52.3676, 4.9041);
             ubicacionMap.put("EHAM", ubicacion);
         }
-        if (maxAirports >= 21){
+        if (maxAirports >= 21) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("VIDP", "Asia", "India", "Delhi", "delh", "GMT+5");
+            ubicacion.fillData("VIDP", "Asia", "India", "Delhi", "delh", "GMT+5", 28.7041, 77.1025);
             ubicacionMap.put("VIDP", ubicacion);
         }
-        if (maxAirports >= 22){
+        if (maxAirports >= 22) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("RKSI", "Asia", "Corea del Sur", "Seul", "seul", "GMT+9");
+            ubicacion.fillData("RKSI", "Asia", "Corea del Sur", "Seul", "seul", "GMT+9", 37.5665, 126.9780);
             ubicacionMap.put("RKSI", ubicacion);
         }
-        if (maxAirports >= 23){
+        if (maxAirports >= 23) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("VTBS", "Asia", "Tailandia", "Bangkok", "bang", "GMT+7");
+            ubicacion.fillData("VTBS", "Asia", "Tailandia", "Bangkok", "bang", "GMT+7", 13.7563, 100.5018);
             ubicacionMap.put("VTBS", ubicacion);
         }
-        if (maxAirports >= 24){
+        if (maxAirports >= 24) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("OMDB", "Asia", "Emiratos A.U", "Dubai", "emir", "GMT+4");
+            ubicacion.fillData("OMDB", "Asia", "Emiratos A.U", "Dubai", "emir", "GMT+4", 25.276987, 55.296249);
             ubicacionMap.put("OMDB", ubicacion);
         }
-        if (maxAirports >= 25){
+        if (maxAirports >= 25) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("ZBAA", "Asia", "China", "Beijing", "beij", "GMT+8");
+            ubicacion.fillData("ZBAA", "Asia", "China", "Beijing", "beij", "GMT+8", 39.9042, 116.4074);
             ubicacionMap.put("ZBAA", ubicacion);
         }
-        if (maxAirports >= 26){
+        if (maxAirports >= 26) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("RJTT", "Asia", "Japon", "Tokyo", "toky", "GMT+9");
+            ubicacion.fillData("RJTT", "Asia", "Japon", "Tokyo", "toky", "GMT+9", 35.6895, 139.6917);
             ubicacionMap.put("RJTT", ubicacion);
         }
-        if (maxAirports >= 27){
+        if (maxAirports >= 27) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("WMKK", "Asia", "Malasia", "Kuala Lumpur", "kual", "GMT+8");
+            ubicacion.fillData("WMKK", "Asia", "Malasia", "Kuala Lumpur", "kual", "GMT+8", 3.1390, 101.6869);
             ubicacionMap.put("WMKK", ubicacion);
         }
-        if (maxAirports >= 28){
+        if (maxAirports >= 28) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("WSSS", "Asia", "Singapur", "Singapore", "sing", "GMT+8");
+            ubicacion.fillData("WSSS", "Asia", "Singapur", "Singapore", "sing", "GMT+8", 1.3521, 103.8198);
             ubicacionMap.put("WSSS", ubicacion);
         }
-        if (maxAirports >= 29){
+        if (maxAirports >= 29) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("WIII", "Asia", "Indonesia", "Jakarta", "jaka", "GMT+7");
+            ubicacion.fillData("WIII", "Asia", "Indonesia", "Jakarta", "jaka", "GMT+7", -6.2088, 106.8456);
             ubicacionMap.put("WIII", ubicacion);
         }
-        if (maxAirports >= 30){
+        if (maxAirports >= 30) {
             ubicacion = new Ubicacion();
-            ubicacion.fillData("RPLL", "Asia", "Filipinas", "Manila", "mani", "GMT+8");
+            ubicacion.fillData("RPLL", "Asia", "Filipinas", "Manila", "mani", "GMT+8", 14.5995, 120.9842);
             ubicacionMap.put("RPLL", ubicacion);
         }
 
         return ubicacionMap;
     }
-    
 
     public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
         ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();

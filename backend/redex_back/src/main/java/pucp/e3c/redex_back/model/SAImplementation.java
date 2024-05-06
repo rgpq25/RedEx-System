@@ -13,6 +13,8 @@ public class SAImplementation {
         private ArrayList<Aeropuerto> aeropuertos;
         private ArrayList<PlanVuelo> planVuelos;
         private ArrayList<Paquete> paquetes;
+        private HashMap<Integer, Integer> ocupacionInicial;
+        private GrafoVuelos grafoVuelos;
 
         // Simmulated Annealing Parameters
         private boolean stopWhenNoPackagesLeft;
@@ -38,10 +40,12 @@ public class SAImplementation {
         public void setData(
                         ArrayList<Aeropuerto> aeropuertos,
                         ArrayList<PlanVuelo> planVuelos,
-                        ArrayList<Paquete> paquetes) {
+                        ArrayList<Paquete> paquetes,
+                        HashMap<Integer, Integer> ocupacionInicial) {
                 this.aeropuertos = aeropuertos;
                 this.planVuelos = planVuelos;
                 this.paquetes = paquetes;
+                this.ocupacionInicial = ocupacionInicial;
         }
 
         public void setParameters(
@@ -69,8 +73,7 @@ public class SAImplementation {
                 this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
         }
 
-        public ArrayList<PlanRutaNT> startAlgorithm() {
-                GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
+        public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos) {
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
                 long startTime = System.nanoTime();
@@ -84,7 +87,7 @@ public class SAImplementation {
                                 paquetes,
                                 new ArrayList<PlanRutaNT>(),
                                 aeropuertos,
-                                new HashMap<Integer, Integer>(),
+                                ocupacionInicial,
                                 0,
                                 badSolutionPenalization,
                                 flightPenalization,
@@ -163,6 +166,8 @@ public class SAImplementation {
                 Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                 current.printFlightOcupation("ocupacionVuelos.txt");
                 current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
-                return current.rutas;
+                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(current.ocupacionVuelos, current.estado,
+                                current.rutas);
+                return respuestaAlgoritmo;
         }
 }

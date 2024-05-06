@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,28 +25,35 @@ public class Ubicacion {
     @Column(length = 8)
     private String zonaHoraria;
 
+    private double latitud;
+    private double longitud;
+
     public Ubicacion() {
     }
-    /*public Ubicacion(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
-            String zonaHoraria) {
-        this.id = id;
-        this.continente = continente;
-        this.pais = pais;
-        this.ciudad = ciudad;
-        this.ciudadAbreviada = ciudadAbreviada;
-        this.zonaHoraria = zonaHoraria;
-    }*/
+    /*
+     * public Ubicacion(String id, String continente, String pais, String ciudad,
+     * String ciudadAbreviada,
+     * String zonaHoraria) {
+     * this.id = id;
+     * this.continente = continente;
+     * this.pais = pais;
+     * this.ciudad = ciudad;
+     * this.ciudadAbreviada = ciudadAbreviada;
+     * this.zonaHoraria = zonaHoraria;
+     * }
+     */
 
     public void fillData(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
-            String zonaHoraria){
+            String zonaHoraria, double latitud, double logitud) {
         this.setId(id);
         this.setContinente(continente);
         this.setPais(pais);
         this.setCiudad(ciudad);
         this.setCiudadAbreviada(ciudadAbreviada);
         this.setZonaHoraria(zonaHoraria);
+        this.setLatitud(latitud);
+        this.setLongitud(logitud);
     }
-
 
     public String getId() {
         return id;
@@ -94,4 +103,34 @@ public class Ubicacion {
         this.zonaHoraria = zonaHoraria;
     }
 
+    public double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
+    }
+
+    public double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Ubicacion ubicacion = (Ubicacion) o;
+        return Objects.equals(id, ubicacion.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

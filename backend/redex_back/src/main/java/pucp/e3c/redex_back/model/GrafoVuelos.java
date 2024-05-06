@@ -92,7 +92,6 @@ public class GrafoVuelos {
 
     private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date inicio, Date fin) {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
-
         // Inicializa el calendario para la fecha de inicio.
         Calendar cal = Calendar.getInstance();
         cal.setTime(inicio);
@@ -117,15 +116,14 @@ public class GrafoVuelos {
                     calLlegada.add(Calendar.HOUR_OF_DAY, 24);
                     fechaLlegada = calLlegada.getTime();
                 }
-                //Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
+                // Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
                 Vuelo vuelo = new Vuelo();
-                vuelo.fillData2(plan, fin, fechaLlegada);
+                vuelo.fillData2(plan, fechaPartida, fechaLlegada);
                 vuelos.add(vuelo);
             }
             // Avanza al día siguiente.
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
-
         return vuelos;
     }
 
@@ -311,16 +309,11 @@ public class GrafoVuelos {
     }
 
     private PlanRutaNT buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
-            PlanRutaNT rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
-            int tamanho_max) {
+            PlanRutaNT rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete) {
 
-        if (rutaActual.getVuelos().size() > tamanho_max) {
-            return null;
-        }
         if (actual.getId().equals(destino.getId())) {
-            ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
             PlanRutaNT nuevaRuta = new PlanRutaNT();
-            nuevaRuta.setVuelos(vuelosClonados);
+            nuevaRuta.setVuelos(rutaActual.getVuelos());
             return nuevaRuta;
         }
 
@@ -349,8 +342,7 @@ public class GrafoVuelos {
                     rutaActual.getVuelos().add(vuelo);
                     aeropuertosVisitados.add(actual.getId());
                     PlanRutaNT result = buscarRutaAleatoriaDFS(vuelo.getPlanVuelo().getCiudadDestino(), destino,
-                            vuelo.getFechaLlegada(), rutaActual, aeropuertosVisitados, continental, paquete,
-                            tamanho_max);
+                            vuelo.getFechaLlegada(), rutaActual, aeropuertosVisitados, continental, paquete);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
                     }
@@ -369,24 +361,17 @@ public class GrafoVuelos {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-            int tamanho_max = 0;
-            if (paquete.getEnvio().getUbicacionOrigen().getId()
-                    .equals(paquete.getEnvio().getUbicacionDestino().getId())) {
-                tamanho_max = 2;
-            } else {
-                tamanho_max = 3;
-            }
             PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getEnvio().getUbicacionOrigen(),
                     paquete.getEnvio().getUbicacionDestino(),
                     paquete.getEnvio().getFechaRecepcion(), new PlanRutaNT(),
                     aeropuertosVisitados,
                     paquete.getEnvio().getUbicacionOrigen().getId()
                             .equals(paquete.getEnvio().getUbicacionDestino().getId()),
-                    paquete, tamanho_max);
+                    paquete);
             if (rutaEncontrada == null) {
-                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
-                        + paquete.getEnvio().getUbicacionOrigen().getId() + " a "
-                        + paquete.getEnvio().getUbicacionDestino().getId());
+                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "
+                        + paquete.toString());
+
             }
             rutas.add(rutaEncontrada);
         }

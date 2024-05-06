@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import pucp.e3c.redex_back.service.PlanVueloService;
+
 public class Algoritmo {
+    @Autowired
+    private static PlanVueloService planVueloService;
 
     public static ArrayList<PlanRutaNT> loopPrincipal() {
-        
+
         ArrayList<Paquete> paquetes = new ArrayList<>();
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         String inputPath = "src\\main\\resources\\dataFija";
@@ -50,6 +56,9 @@ public class Algoritmo {
 
         // recorrer los paquetes por cada 50
         int tamanhoPaquetes = 50;
+        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
+        GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
+
         for (int i = 0; i < paquetes.size(); i += tamanhoPaquetes) {
             ArrayList<Paquete> paquetesTemp = new ArrayList<>();
             for (int j = i; j < i + tamanhoPaquetes; j++) {
@@ -57,16 +66,18 @@ public class Algoritmo {
                     paquetesTemp.add(paquetes.get(j));
                 }
             }
-            ArrayList<PlanRutaNT> planRutasActual = procesarPaquetes(paquetesTemp, aeropuertos, planVuelos,
-                    tamanhoPaquetes);
+            RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
+                    aeropuertos, planVuelos,
+                    tamanhoPaquetes, i);
             // System.out.println("PlanRutas: " + planRutas.size());
-            planRutas.addAll(planRutasActual);
+            planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }
         return planRutas;
     }
 
-    public static ArrayList<PlanRutaNT> procesarPaquetes(ArrayList<Paquete> paquetes,
-            ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes) {
+    public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
+            HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes,
+            ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion) {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
@@ -90,7 +101,7 @@ public class Algoritmo {
         sa.setData(
                 aeropuertos,
                 planVuelos,
-                paquetes);
+                paquetes, ocupacionVuelos);
 
         sa.setParameters(
                 stopWhenNoPackagesLeft,
@@ -105,6 +116,6 @@ public class Algoritmo {
                 sumaVuelosWeight,
                 promedioPonderadoTiempoAeropuertoWeight);
 
-        return sa.startAlgorithm();
+        return sa.startAlgorithm(grafoVuelos);
     }
 }
