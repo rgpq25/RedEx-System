@@ -27,7 +27,7 @@ function CardInfo({ shipment }: { shipment: any }) {
 			<Button
 				onClick={() => setVisible(true)}
 				className={cn(
-					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200",
+					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[100]",
 					visible ? "opacity-0" : "opacity-100"
 				)}
 			>
@@ -36,7 +36,8 @@ function CardInfo({ shipment }: { shipment: any }) {
 			</Button>
 			<Card
 				className={cn(
-					"w-[450px] flex flex-col absolute top-5 bottom-5 left-5 transition-all duration-300 ease-in-out",
+					"w-[450px] flex flex-col absolute top-5 bottom-5 left-5 shadow-xl z-[100]",
+					"transition-all duration-300 ease-in-out",
 					visible ? "left-5" : "-left-[470px]"
 				)}
 			>
@@ -49,14 +50,17 @@ function CardInfo({ shipment }: { shipment: any }) {
 					<div className="flex gap-3 w-full items-center">
 						<p className="">Viendo</p>
 						<Select>
-							<SelectTrigger className="w-full h-[38px]">
-								<SelectValue placeholder="Paquete" />
+							<SelectTrigger className="w-full h-[38px] z-[120]">
+								<SelectValue placeholder="Paquete" className="z-[120]"/>
 							</SelectTrigger>
-							<SelectContent>
+							<SelectContent className="z-[120]">
 								<SelectItem value="light">Paquete 1</SelectItem>
 								<SelectItem value="dark">Paquete 2</SelectItem>
 								<SelectItem value="system">
 									Paquete 3
+								</SelectItem>
+								<SelectItem value="all">
+									Todos
 								</SelectItem>
 							</SelectContent>
 						</Select>

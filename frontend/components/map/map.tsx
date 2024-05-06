@@ -9,55 +9,86 @@ import {
 	Marker,
 	Annotation,
 	ZoomableGroup,
+	Line,
 	useMapContext,
 } from "react-simple-maps";
-
 import { Tooltip } from "react-tooltip";
-import Plane from "./plane";
 import useAnimation from "../hooks/useAnimation";
 import Airport from "./airport";
+import Chip from "../ui/chip";
+import { Flight } from "@/lib/types/flight";
+import PlaneMarker from "./plane-marker";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-const planes = [
+const flights: Flight[] = [
+	// {
+	// 	rotation: 0,
+	// 	originCoordinate: [-65, -34.6037],
+	// 	destinationCoordinate: [26, 0],
+	// 	originTime: new Date("2024-05-04T00:00:03"),
+	// 	destinationTime: new Date("2024-05-05T22:17:00"),
+	// 	capacity: 98,
+	// },
+	// {
+	// 	rotation: 0,
+	// 	originCoordinate: [-100, 40],
+	// 	destinationCoordinate: [26, 50],
+	// 	originTime: new Date("2024-05-04T00:00:03"),
+	// 	destinationTime: new Date("2024-05-05T22:17:00"),
+	// 	capacity: 98,
+	// },
 	{
-		rotation: 0,
-		coordinates: [-58.3816, -34.6037],
-		originCoordinate: [-58.3816, -54.6037],
-		destinationCoordinate: [-60, -100], //TODO: Check logic, by placing actual markers on coordinate
-		capacity: 98,
-	},
-	{
-		rotation: 0,
-		coordinates: [2.3522, 48.8566],
-		originCoordinate: [-58.3816, -34.6037],
-		destinationCoordinate: [20, 48.8566],
-		capacity: 30,
-	},
-	{
-		rotation: -45,
-		coordinates: [10, 10],
-		originCoordinate: [59, 0],
-		destinationCoordinate: [0, 0],
-		capacity: 2,
-	},
-	{
-		rotation: 0,
-		coordinates: [0, 0],
 		originCoordinate: [0, 0],
-		destinationCoordinate: [10, 10],
+		destinationCoordinate: [50, 50],
+		originTime: new Date(),
+		destinationTime: new Date("2024-05-05T22:17:00"),
 		capacity: 0,
 	},
 ];
 
 const airports = [
 	{
-		coordinates: [-65, -34.6037],
+		coordinates: [0, 0],
 	},
+	// {
+	// 	coordinates: [26, 0],
+	// },
 	{
-		coordinates: [26, 0],
+		coordinates: [50, 50],
 	},
+	// {
+	// 	coordinates: [-100, 40],
+	// },
+	// {
+	// 	coordinates: [5, 5],
+	// },
+	// {
+	// 	coordinates: [10, 10],
+	// },
+	// {
+	// 	coordinates: [15, 15],
+	// },
+	// {
+	// 	coordinates: [20, 20],
+	// },
+
+	// {
+	// 	coordinates: [25, 25],
+	// },
+	// {
+	// 	coordinates: [30, 30],
+	// },
+	// {
+	// 	coordinates: [35, 35],
+	// },
+	// {
+	// 	coordinates: [40, 40],
+	// },
+	// {
+	// 	coordinates: [45, 45],
+	// },
 ];
 
 //define props for coordinates and zoom
@@ -66,43 +97,27 @@ type Position = {
 	zoom: number;
 };
 
-const CustomLine = forwardRef(
-	(
-		{
-			coordinates = [
-				[0, 0],
-				[0, 0],
-			],
-			...restProps
-		},
-		ref
-	) => {
-		const { projection } = useMapContext();
-		const [x1, y1] = projection(coordinates[0]);
-		const [x2, y2] = projection(coordinates[1]);
-		return <line x1={x1} y1={y1} x2={x2} y2={y2} {...restProps} />;
-	}
-);
-
-const Line = ({
-	coordinates = [
-		[0, 0],
-		[0, 0],
-	],
-	...restProps
-}) => {
-	const { projection } = useMapContext();
-	const [x1, y1] = projection(coordinates[0]);
-	const [x2, y2] = projection(coordinates[1]);
-	return (
-		<>
-			<line x1={x1} y1={y1} x2={x2} y2={y2} {...restProps} />
-		</>
-	);
-};
+// const Line = ({
+// 	coordinates = [
+// 		[0, 0],
+// 		[0, 0],
+// 	],
+// 	...restProps
+// }) => {
+// 	const { projection } = useMapContext();
+// 	const [x1, y1] = projection(coordinates[0]);
+// 	const [x2, y2] = projection(coordinates[1]);
+// 	return (
+// 		<>
+// 			<line x1={x1} y1={y1} x2={x2} y2={y2} {...restProps} />
+// 		</>
+// 	);
+// };
 
 function Map({ className }: { className: string }) {
 	const [content, setContent] = useState<string>("");
+	const [currentTime, setCurrentTime] = useState<Date>(new Date());
+
 	const zoom = useAnimation(1.3);
 	const coordinatesX = useAnimation(0);
 	const coordinatesY = useAnimation(0);
@@ -111,6 +126,8 @@ function Map({ className }: { className: string }) {
 		zoom.setValue(3, 1000);
 		coordinatesX.setValue(coordinates[0], 1000);
 		coordinatesY.setValue(coordinates[1], 1000);
+
+		console.log("hello")
 	}
 
 	function handleMoveEnd(position: Position) {
@@ -125,39 +142,82 @@ function Map({ className }: { className: string }) {
 		coordinatesY.cancelAnimation();
 	}
 
-	function getCurrentPositionByTime(
-		originTime: Date,
-		destinationTime: Date,
-		currentTime: Date,
-		originCoordinate: [number, number],
-		destinationCoordinate: [number, number]
-	) {
-		//given the origin and
-	}
+	// function getFlightPosition(
+	// 	departureTime: Date,
+	// 	departurePosition: [number, number],
+	// 	arrivalTime: Date,
+	// 	arrivalPosition: [number, number],
+	// 	currentTime: Date
+	// ) {
+	// 	// If the current time is before the departure time, return the departure position
+	// 	if (currentTime < departureTime) {
+	// 		return departurePosition;
+	// 	}
 
-	useEffect(()=>{
-		const date = new Date();
-		console.log(date);
+	// 	// If the current time is after the arrival time, return the arrival position
+	// 	if (currentTime > arrivalTime) {
+	// 		return arrivalPosition;
+	// 	}
 
-		
-	},[]);
+	// 	const { projection } = useMapContext();
+	// 	const [x1, y1] = projection(departurePosition);
+	// 	const [x2, y2] = projection(arrivalPosition);
+
+	// 	// Calculate the position based on the time
+	// 	const totalDuration = arrivalTime.getTime() - departureTime.getTime();
+	// 	const elapsed = currentTime.getTime() - departureTime.getTime();
+
+	// 	const deltaX = x2 - x1;
+	// 	const deltaY = y2 - y1;
+
+	// 	const currentX =
+	// 		x1 + deltaX * (elapsed / totalDuration);
+	// 	const currentY =
+	// 		y1 + deltaY * (elapsed / totalDuration);
+
+	// 	console.log(currentX, currentY)
+
+	// 	return [currentX, currentY];
+	// }
+
+	useEffect(() => {
+		const startTime = new Date().getTime();
+		const interval = setInterval(() => {
+			const currentTime = new Date().getTime();
+			const elapsedTime = (currentTime - startTime) * 500;
+			setCurrentTime(new Date(startTime + elapsedTime));
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
+	}, []);
 
 	return (
 		<>
 			<Tooltip
 				id="my-tooltip"
-				className="border border-white"
+				className="border border-white z-[100]"
 				classNameArrow="border-b-[1px] border-r-[1px] border-white"
 			>
 				{content}
 			</Tooltip>
 			<div
 				className={cn(
-					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden ",
+					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden relative",
 					className
 				)}
 			>
-				<ComposableMap data-tip="" className="h-full w-full">
+				<Chip
+					color="blue"
+					className="absolute top-8 right-8 text-2xl h-[40px] w-[130px] px-4  rounded-xl"
+				>
+					{currentTime.toLocaleTimeString()}
+				</Chip>
+				<ComposableMap
+					className="h-full w-full"
+					projection={"geoEqualEarth"}
+				>
 					<ZoomableGroup
 						zoom={zoom.value}
 						center={[coordinatesX.value, coordinatesY.value]}
@@ -178,64 +238,61 @@ function Map({ className }: { className: string }) {
 										onMouseLeave={() => {
 											setContent("");
 										}}
-										className="hover:fill-mainRed transition-all duration-75 ease-in-out"
+										className="hover:fill-mainRed transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
 									/>
 								))
 							}
 						</Geographies>
-						{planes.map(
-							({ rotation, coordinates, capacity }, idx) => (
-								<Marker
+						{flights.map((flight, idx) => {
+							return (
+								<PlaneMarker
+									currentTime={currentTime}
+									flight={flight}
 									key={idx}
-									coordinates={
-										coordinates as [number, number]
-									}
-								>
-									<Plane
-										rotationAngle={rotation}
-										capacity={capacity}
-										onClick={() => {
-											zoomIn(
-												coordinates as [number, number]
-											);
-										}}
-									/>
-								</Marker>
-							)
-						)}
+									onClick={zoomIn}
+								/>
+							);
+						})}
 						{airports.map(({ coordinates }, idx) => (
 							<Marker
 								key={idx}
 								coordinates={coordinates as [number, number]}
 							>
-								<Airport
+								{/* <circle
+									r={1}
+									className="fill-yellow-500"
+									// onClick={() => {
+									// 	zoomIn(coordinates as [number, number]);
+									// }}
+								/> */}
+								 <Airport
 									onClick={() => {
 										zoomIn(coordinates as [number, number]);
 									}}
 								/>
 							</Marker>
 						))}
-						{planes.map(
+						{/* {flights.map(
 							(
 								{ originCoordinate, destinationCoordinate },
 								idx
 							) => (
 								<Line
 									key={idx}
-									coordinates={[
-										originCoordinate as [number, number],
+									from={originCoordinate as [number, number]}
+									to={
 										destinationCoordinate as [
 											number,
 											number
-										],
-									]}
-									className="border-dashed stroke-[#FF0000] transition-all duration-75 ease-in-out"
-									style={{
-										strokeDasharray: "5, 5",
-									}}
+										]
+									}
+									className="border-dashed stroke-[#FF0000] stroke-[1px]"
+									// style={{
+									// 	strokeDasharray: "5, 5",
+									// }}
 								/>
 							)
-						)}
+						)} */}
 					</ZoomableGroup>
 				</ComposableMap>
 			</div>
