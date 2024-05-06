@@ -5,7 +5,17 @@ export type PackageStatusName =
     | "En almacen destino"
     | "Entregado";
 
+
+export type AlmacenStatusName =
+    | "En almacen origen"
+    | "Volando"
+    | "En espera"
+    | "En almacen destino"
+    | "Entregado";
+
 export type PackageStatusVariant = "gray" | "blue" | "yellow" | "purple" | "green";
+
+export type AlmacenStatusVariant = "gray" | "blue" | "yellow" | "purple" | "green";
 
 export type RowPackageType = {
     id: string;
@@ -15,6 +25,23 @@ export type RowPackageType = {
     statusName: PackageStatusName;
     statusVariant: PackageStatusVariant;
 };
+
+export type RowAlmacenType = {
+    id: string;
+    packets: number;
+    origin: string;
+    destination: string;
+    statusAlmacen: AlmacenStatusName;
+    statusVariant: AlmacenStatusVariant;
+};
+
+export type RowVuelosType = {
+    id: string;
+    packets: number;
+    origin: string;
+    destination: string;
+};
+
 
 export type RowPackageRouteType = {
     id: string;
