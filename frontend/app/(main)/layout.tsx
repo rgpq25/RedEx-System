@@ -27,9 +27,9 @@ export default function SimulationLayout({
             setRole("admin");
             setIsLoading(false);
         }
-        if (role === "operator") {
+        if (role === "operario") {
             setRole("operator");
-            router.push("/manage-packages");
+            router.push("/dashboard");
             setIsLoading(false);
         }
         if(role === "user") {
