@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,8 @@ import pucp.e3c.redex_back.service.SimulacionService;
 @RestController
 @RequestMapping("back/simulacion")
 public class SimulacionController {
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Autowired
     SimulacionService simulacionService;
 
@@ -41,6 +44,10 @@ public class SimulacionController {
 
     @Autowired
     private PaqueteService paqueteService;
+
+    public SimulacionController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @PostMapping("/")
     public ResponseEntity<Simulacion> register(@RequestBody Simulacion simulacion) {
@@ -80,12 +87,13 @@ public class SimulacionController {
     }
 
     @GetMapping("/runAlgorithm/{id}")
-    public ResponseEntity<ArrayList<PlanRutaNT>> correrSimulacion(@PathVariable("id") int id) {
+    public void correrSimulacion(@PathVariable("id") int id) {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        ArrayList<PlanRutaNT> respuestaAlgoritmo = Algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes);
-        return new ResponseEntity<>(respuestaAlgoritmo, HttpStatus.OK);
+        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        ArrayList<PlanRutaNT> respuestaAlgoritmo = algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes);
+        // Guardar las rutas
     }
 
 }

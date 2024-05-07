@@ -1,18 +1,19 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import pucp.e3c.redex_back.service.AeropuertoService;
-import pucp.e3c.redex_back.service.PlanVueloService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class Algoritmo {
 
-    public static ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos,
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public Algoritmo(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
+    public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos,
             ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes) {
 
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
@@ -41,6 +42,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i);
+            messagingTemplate.convertAndSend("/tema/mensajes", respuestaAlgoritmo);
             // System.out.println("PlanRutas: " + planRutas.size());
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }
