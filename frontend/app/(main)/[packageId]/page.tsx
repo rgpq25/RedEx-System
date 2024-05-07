@@ -6,9 +6,21 @@ import { PackageRouteTable } from "./_components/package-route-table";
 import Map from "@/components/map/map";
 import CardInfo from "./_components/card-info";
 import useMapZoom from "@/components/hooks/useMapZoom";
+import MainContainer from "../_components/main-container";
+import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
+import PlaneLegend from "@/app/_components/plane-legend";
 
-//TODO: packageId is stored under params.packageId
 
+const breadcrumbItems: BreadcrumbItem[] = [
+	{
+		label: "Acceso",
+		link: "/security-code"
+	},
+	{
+		label: "Envío en tiempo real",
+		link: "/[packageId]"
+	}
+]
 
 function TrackingPage({ params }: { params: { packageId: string } }) {
 	const [shipment, setShipment] = useState({
@@ -22,25 +34,24 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 		},
 	});
 
-    const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = useMapZoom();
+	const attributes = useMapZoom();
+	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
 	return (
-		<main className="px-10 py-5 flex flex-row border flex-1 overflow-hidden">
-			<div className="w-full h-full flex flex-row gap-5 relative overflow-hidden">
+		<MainContainer>
+			<BreadcrumbCustom items={breadcrumbItems} />
+			<div className="flex flex-row justify-between items-center">
+				<div className="flex flex-row gap-4 items-center ">
+					<h1 className="text-4xl font-bold font-poppins">Envío en tiempo real</h1>
+				</div>
+				<PlaneLegend />
+			</div>
+			<div className="w-full h-full flex flex-row gap-5 relative overflow-hidden mt-[10px]">
 				<CardInfo shipment={shipment} />
 
-				<Map
-					className="max-h-full"
-					currentTime={currentTime}
-					zoom={zoom}
-					centerLongitude={centerLongitude}
-					centerLatitude={centerLatitude}
-					lockInFlight={lockInFlight}
-					unlockFlight={unlockFlight}
-					zoomIn={zoomIn}
-				/>
+				<Map className="max-h-full" attributes={attributes} />
 			</div>
-		</main>
+		</MainContainer>
 	);
 }
 export default TrackingPage;

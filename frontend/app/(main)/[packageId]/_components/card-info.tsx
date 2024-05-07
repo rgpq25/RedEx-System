@@ -36,7 +36,7 @@ function CardInfo({ shipment }: { shipment: any }) {
 			</Button>
 			<Card
 				className={cn(
-					"w-[450px] flex flex-col absolute top-5 bottom-5 left-5 shadow-xl z-[100]",
+					"w-[450px] flex flex-col absolute top-5 bottom-5 left-5 z-[100]",
 					"transition-all duration-300 ease-in-out",
 					visible ? "left-5" : "-left-[470px]"
 				)}
@@ -85,12 +85,12 @@ function CardInfo({ shipment }: { shipment: any }) {
 								destino final:
 							</span>
 						</p>
-						<h2 className="text-3xl tracking-wide font-poppins">
+						<h2 className="text-3xl font-semibold tracking-wide font-poppins">
 							27 de marzo - 14:40
 						</h2>
 					</div>
 
-					<h2 className="text-4xl text-center mt-4">
+					<h2 className="text-4xl font-semibold font-poppins text-center mt-4">
 						Ruta de paquete
 					</h2>
 

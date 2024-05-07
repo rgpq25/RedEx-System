@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -11,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export function ModalIntro({ isOpen, setIsModalOpen }: { isOpen: boolean; setIsModalOpen: (value: boolean) => void }) {
 	return (
@@ -47,10 +49,10 @@ export function ModalIntro({ isOpen, setIsModalOpen }: { isOpen: boolean; setIsM
 					</div>
 				</div>
 				<DialogFooter className="flex flex-row items-center">
-					<Button type="submit" variant={"outline"} className="w-[100px]">
+					<Link href="/security-code" className={cn(buttonVariants({variant: "outline"}), "w-[100px]")}>
 						Cancelar
-					</Button>
-					<Button type="submit" className="w-[100px]">
+					</Link>
+					<Button className="w-[100px]" onClick={()=>setIsModalOpen(false)}>
 						Iniciar
 					</Button>
 				</DialogFooter>

@@ -6,15 +6,21 @@ import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-cus
 import { aeropuertos, envios, vuelos } from "@/lib/sample";
 import { Aeropuerto, Envio, Vuelo } from "@/lib/types";
 import { Clock } from "lucide-react";
-import PlaneLegend from "./_components/plane-legend";
+import CurrentTime from "@/app/_components/current-time";
+import PlaneLegend from "@/app/_components/plane-legend";
+import MainContainer from "../../_components/main-container";
 
 const breadcrumbItems: BreadcrumbItem[] = [
+    {
+		label: "Acceso",
+		link: "/security-code"
+	},
 	{
 		label: "Dashboard",
 		link: "/dashboard",
 	},
 	{
-		label: "Operaciones dia a dia",
+		label: "Operaciones día a día",
 		link: "/dashboard/daily-operations",
 	},
 ];
@@ -25,21 +31,14 @@ function DailyOperationsPage() {
 	const { centerLatitude, centerLongitude, currentTime, lockInFlight, unlockFlight, zoom, zoomIn } = attributes;
 
 	return (
-		<main className="flex-1 min-h-[800px] pt-5 px-10 pb-10 flex flex-col">
+		<MainContainer>
 			<BreadcrumbCustom items={breadcrumbItems} />
 			<div className="flex flex-row justify-between items-center">
 				<div className="flex flex-row gap-4 items-center ">
-				    <h1 className="text-4xl font-bold font-poppins">Operaciones dia a dia</h1>
-    				<div className="flex flex-row gap-1 border rounded-3xl border-blue-700 w-[200px] text-blue-700 stroke-blue-700 p-1">
-    					<Clock />
-    					<p>
-    						{attributes.currentTime.toLocaleDateString() +
-    							" " +
-    							attributes.currentTime.toLocaleTimeString()}
-    					</p>
-    				</div>
+					<h1 className="text-4xl font-bold font-poppins">Operaciones día a día</h1>
+					<CurrentTime currentTime={currentTime} />
 				</div>
-                <PlaneLegend/>
+				<PlaneLegend />
 			</div>
 			<section className="relative mt-[10px] flex-1 flex overflow-hidden">
 				<Sidebar
@@ -62,7 +61,7 @@ function DailyOperationsPage() {
 				/>
 				<Map attributes={attributes} className="h-full w-full" />
 			</section>
-		</main>
+		</MainContainer>
 	);
 }
 export default DailyOperationsPage;

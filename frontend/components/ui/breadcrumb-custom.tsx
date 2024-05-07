@@ -14,8 +14,7 @@ export type BreadcrumbItem = {
 };
 
 function BreadcrumbCustom({ items }: { items: BreadcrumbItem[] }) {
-
-    if(items.length < 2 ) throw new Error("Breadcrumb must have atleast 2 items")
+	if (items.length < 2) throw new Error("Breadcrumb must have atleast 2 items");
 
 	return (
 		<Breadcrumb>
@@ -30,11 +29,14 @@ function BreadcrumbCustom({ items }: { items: BreadcrumbItem[] }) {
 					.filter((item: BreadcrumbItem, idx) => idx !== 0 && idx !== items.length - 1)
 					.map((item: BreadcrumbItem, idx: number) => {
 						return (
-							<BreadcrumbItem key={idx}>
-								<BreadcrumbLink>
-									<Link href={item.link}>{item.label}</Link>
-								</BreadcrumbLink>
-							</BreadcrumbItem>
+							<>
+								<BreadcrumbItem key={idx}>
+									<BreadcrumbLink>
+										<Link href={item.link}>{item.label}</Link>
+									</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator key={idx + 100}/>
+							</>
 						);
 					})}
 				<BreadcrumbItem>
