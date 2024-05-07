@@ -100,20 +100,22 @@ export type PlanRuta = {
 };
 
 export type Paquete = {
-	id: number;
-	aeropuerto_actual: Aeropuerto;
-	entregado: boolean;
-	envio: Envio;
-	fecha_entrega: string;
-};
+    id: number;
+    aeropuerto_actual: Aeropuerto;
+    entregado: boolean;
+    envio: Envio;
+    fecha_entrega: string;
+    plan_ruta: PlanRuta;
+}
 
 export type Envio = {
-	id: number;
-	ubicacion_origen: Ubicacion;
-	ubicacion_destino: Ubicacion;
-	fecha_recepcion: Date;
-	fecha_limite_entrega: Date;
-	estado: string;
-	cantidad_paquetes: number;
-	codigo_seguridad: string;
-};
+    id: number;
+    ubicacion_origen: Ubicacion;
+    ubicacion_destino: Ubicacion;
+    fecha_recepcion: Date;
+    fecha_limite_entrega: Date;
+    estado: string;
+    cantidad_paquetes: number;
+    codigo_seguridad: string;
+    paquetes?: Paquete[];
+}
