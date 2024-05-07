@@ -19,13 +19,13 @@ function PlaneMarker({
 	const coordinates = getFlightPosition(
 		vuelo.fecha_origen,
 		[
-			vuelo.plan_vuelo.ubicacion_origen.coordenadas.longitud,
-			vuelo.plan_vuelo.ubicacion_origen.coordenadas.latitud,
+			vuelo.plan_vuelo.ubicacion_origen.longitud,
+			vuelo.plan_vuelo.ubicacion_origen.latitud,
 		] as [number, number],
 		vuelo.fecha_destino,
 		[
-			vuelo.plan_vuelo.ubicacion_destino.coordenadas.longitud,
-			vuelo.plan_vuelo.ubicacion_destino.coordenadas.latitud,
+			vuelo.plan_vuelo.ubicacion_destino.longitud,
+			vuelo.plan_vuelo.ubicacion_destino.latitud,
 		] as [number, number],
 		currentTime
 	);
@@ -50,14 +50,14 @@ function PlaneMarker({
 				<Plane
 					originCoordinate={
 						[
-							vuelo.plan_vuelo.ubicacion_origen.coordenadas.longitud,
-							vuelo.plan_vuelo.ubicacion_origen.coordenadas.latitud,
+							vuelo.plan_vuelo.ubicacion_origen.longitud,
+							vuelo.plan_vuelo.ubicacion_origen.latitud,
 						] as [number, number]
 					}
 					destinationCoordinate={
 						[
-							vuelo.plan_vuelo.ubicacion_destino.coordenadas.longitud,
-							vuelo.plan_vuelo.ubicacion_destino.coordenadas.latitud,
+							vuelo.plan_vuelo.ubicacion_destino.longitud,
+							vuelo.plan_vuelo.ubicacion_destino.latitud,
 						] as [number, number]
 					}
 					capacity={vuelo.capacidad_utilizada}

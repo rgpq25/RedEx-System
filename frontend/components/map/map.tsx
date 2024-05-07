@@ -49,11 +49,13 @@ function Map({ attributes, className }: MapProps) {
 	const [content, setContent] = useState<string>("");
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
 	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
+	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 
 	const { isLoading } = useApi(
-		"localhost:8080/back/aeropuerto/",
-		(data) => {
-			console.log(data);
+		"http://localhost:8080/back/aeropuerto/",
+		(data: Aeropuerto[]) => {
+			console.log(data)
+			setAirports(data);
 		},
 		(error) => {
 			console.log(error);
@@ -141,9 +143,9 @@ function Map({ attributes, className }: MapProps) {
 								/>
 							);
 						})}
-						{aeropuertos.map((aeropuerto, idx) => {
-							const latitud = aeropuerto.ubicacion.coordenadas.latitud;
-							const longitud = aeropuerto.ubicacion.coordenadas.longitud;
+						{airports.map((aeropuerto, idx) => {
+							const latitud = aeropuerto.ubicacion.latitud;
+							const longitud = aeropuerto.ubicacion.longitud;
 
 							return (
 								<AirportMarker

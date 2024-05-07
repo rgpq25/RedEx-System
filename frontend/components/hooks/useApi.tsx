@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { useEffect, useState } from "react";
 
 const useApi = (url: string, successCallback: (data: any) => void, errorCallback: (error: any) => void) => {

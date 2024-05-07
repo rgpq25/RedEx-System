@@ -51,8 +51,8 @@ function SimulationPage() {
 							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
 						}}
 						onClickAeropuerto={(aeropuerto) => {
-							const longitude = aeropuerto.ubicacion.coordenadas.longitud;
-							const latitude = aeropuerto.ubicacion.coordenadas.latitud;
+							const longitude = aeropuerto.ubicacion.longitud;
+							const latitude = aeropuerto.ubicacion.latitud;
 							unlockFlight();
 							zoomIn([longitude, latitude] as [number, number]);
 						}}
