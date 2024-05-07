@@ -23,6 +23,7 @@
     "@tanstack/react-table": "^8.15.3",
     "@types/react-simple-maps": "^3.0.4",
     "@types/react-tooltip": "^4.2.4",
+    "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",

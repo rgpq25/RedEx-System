@@ -13,6 +13,7 @@ import { aeropuertos, ubicaciones, vuelos } from "@/lib/sample";
 import useMapZoom from "../hooks/useMapZoom";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
+import useApi from "../hooks/useApi";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -44,13 +45,23 @@ function Map({
 	unlockFlight,
 	className,
 }: MapProps) {
+	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
+		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
+	}
+
 	const [content, setContent] = useState<string>("");
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
 	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
-	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
-		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
-	}
+	const { isLoading } = useApi(
+		"localhost:8080/back/aeropuerto/",
+		(data) => {
+			console.log(data);
+		},
+		(error) => {
+			console.log(error);
+		}
+	);
 
 	function handleMoveEnd(position: Position) {
 		zoom.setValueNoAnimation(position.zoom);
@@ -113,7 +124,7 @@ function Map({
 										onMouseLeave={() => {
 											setContent("");
 										}}
-										className="hover:fill-mainRed transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
+										className="hover:fill-gray-900 transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
 									/>
 								))
 							}
@@ -126,7 +137,7 @@ function Map({
 									key={idx}
 									onClick={(vuelo: Vuelo) => {
 										setCurrentFlightModal(vuelo);
-										lockInFlight(vuelo)
+										lockInFlight(vuelo);
 									}}
 								/>
 							);
@@ -138,11 +149,11 @@ function Map({
 							return (
 								<AirportMarker
 									key={idx}
-									onClick={(coordinates: [number,number]) => {
+									coordinates={[longitud, latitud] as [number, number]}
+									onClick={(coordinates: [number, number]) => {
 										setCurrentAirportModal(aeropuerto);
 										zoomIn(coordinates);
 									}}
-									coordinates={[longitud, latitud] as [number, number]}
 								/>
 							);
 						})}
