@@ -12,10 +12,9 @@ import pucp.e3c.redex_back.model.Mensaje;
 @RestController
 @RequestMapping("/api")
 public class WebSocketController {
-    
+
     private final SimpMessagingTemplate messagingTemplate;
 
-    @Autowired
     public WebSocketController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }

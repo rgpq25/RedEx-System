@@ -94,16 +94,5 @@ public class DataInitializer {
             paqueteService.register(paquete);
         }
 
-        /*
-         * ArrayList<Aeropuerto> aeropuertos_ = (ArrayList<Aeropuerto>)
-         * aeropuertoService.getAll();
-         * ArrayList<PlanVuelo> planVuelos_ = (ArrayList<PlanVuelo>)
-         * planVueloService.getAll();
-         * ArrayList<Paquete> paquetes_ = (ArrayList<Paquete>)
-         * paqueteService.findBySimulacionId(simulacion.getId());
-         * 
-         * Algoritmo.loopPrincipal(aeropuertos_, planVuelos_, paquetes_);
-         */
-
     }
 }
