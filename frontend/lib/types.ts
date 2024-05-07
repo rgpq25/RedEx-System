@@ -119,6 +119,7 @@ export type Paquete = {
     entregado: boolean;
     envio: Envio;
     fecha_entrega: string;
+    plan_ruta: PlanRuta;
 }
 
 export type Envio = {
@@ -130,4 +131,5 @@ export type Envio = {
     estado: string;
     cantidad_paquetes: number;
     codigo_seguridad: string;
+    paquetes?: Paquete[];
 }
