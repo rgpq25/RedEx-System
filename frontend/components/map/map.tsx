@@ -14,6 +14,8 @@ import useMapZoom from "../hooks/useMapZoom";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 import useApi from "../hooks/useApi";
+import { Button } from "../ui/button";
+import { Settings } from "lucide-react";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -25,26 +27,21 @@ type Position = {
 };
 
 interface MapProps {
-	currentTime: Date;
-	zoom: AnimationObject;
-	centerLongitude: AnimationObject;
-	centerLatitude: AnimationObject;
-	zoomIn: (coordinates: [number, number]) => void;
-	lockInFlight: (vuelo: Vuelo) => void;
-	unlockFlight: () => void;
+	attributes: {
+		currentTime: Date;
+		zoom: AnimationObject;
+		centerLongitude: AnimationObject;
+		centerLatitude: AnimationObject;
+		zoomIn: (coordinates: [number, number]) => void;
+		lockInFlight: (vuelo: Vuelo) => void;
+		unlockFlight: () => void;
+	};
 	className?: string;
 }
 
-function Map({
-	currentTime,
-	zoom,
-	centerLongitude,
-	centerLatitude,
-	zoomIn,
-	lockInFlight,
-	unlockFlight,
-	className,
-}: MapProps) {
+function Map({ attributes, className }: MapProps) {
+	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+
 	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
 		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
 	}
@@ -80,12 +77,14 @@ function Map({
 	return (
 		<>
 			<FlightModal
-				isOpen={currentAirportModal !== undefined}
-				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
-			/>
-			<AirportModal
 				isOpen={currentFlightModal !== undefined}
 				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
+				vuelo={currentFlightModal}
+			/>
+			<AirportModal
+				isOpen={currentAirportModal !== undefined}
+				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
+				aeropuerto={currentAirportModal}
 			/>
 			<Tooltip
 				id="my-tooltip"
@@ -96,14 +95,14 @@ function Map({
 			</Tooltip>
 			<div
 				className={cn(
-					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden relative",
+					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden",
 					className
 				)}
 			>
-				<Chip color="blue" className="absolute top-8 right-8 text-2xl h-[40px] w-[130px] px-4  rounded-xl">
-					{currentTime.toLocaleTimeString()}
-				</Chip>
-				<ComposableMap className="h-full w-full" projection={"geoEqualEarth"}>
+				{/* <Button size="icon" className="absolute top-4 right-4">
+					<Settings className="w-5 h-5"/>
+				</Button> */}
+				<ComposableMap className="" projection={"geoEqualEarth"} min={-5}>
 					<ZoomableGroup
 						zoom={zoom.value}
 						center={[centerLongitude.value, centerLatitude.value]}

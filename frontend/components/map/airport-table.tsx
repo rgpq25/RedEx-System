@@ -212,7 +212,7 @@ export function AirportTable() {
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="bg-red-200 text-black">
+                                        <TableHead key={header.id} className="bg-mainRed/20 text-black">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -258,7 +258,7 @@ export function AirportTable() {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-end space-x-2 pt-4">
                 {/* <div className="flex-1 text-sm text-muted-foreground">
                     {table.getFilteredSelectedRowModel().rows.length} de{" "}
                     {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.

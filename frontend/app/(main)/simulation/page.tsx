@@ -23,24 +23,16 @@ function SimulationPage() {
 	const [tab, setTab] = useState<TabType>("weekly");
 	const [isModalOpen, setIsModalOpen] = useState(true);
 
-	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = useMapZoom();
+	const attributes = useMapZoom();
+	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
 	return (
 		<>
-			<ModalIntro isOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+			<ModalIntro isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 			<main className="px-10 py-5">
 				<h1>Visualizador de simulación</h1>
 				<section className="relative h-[800px] overflow-hidden">
-					<Map
-						currentTime={currentTime}
-						zoom={zoom}
-						centerLongitude={centerLongitude}
-						centerLatitude={centerLatitude}
-						zoomIn={zoomIn}
-						lockInFlight={lockInFlight}
-	                    unlockFlight={unlockFlight}
-						className="h-full w-full"
-					/>
+					<Map attributes={attributes} className="h-full w-full" />
 					<Sidebar
 						envios={envios}
 						vuelos={vuelos}
@@ -52,7 +44,7 @@ function SimulationPage() {
 						onClickAeropuerto={(aeropuerto) => {
 							const longitude = aeropuerto.ubicacion.coordenadas.longitud;
 							const latitude = aeropuerto.ubicacion.coordenadas.latitud;
-	                        unlockFlight();
+							unlockFlight();
 							zoomIn([longitude, latitude] as [number, number]);
 						}}
 						onClickVuelo={(vuelo) => {
@@ -65,7 +57,7 @@ function SimulationPage() {
 						<div className="flex items-center ">
 							<Settings className="stroke-[1.9px]" />
 							<h2 className="ml-1 mr-4">Configuracion</h2>
-	
+
 							<Tabs defaultValue="weekly" value={tab} onValueChange={(e) => setTab(e as TabType)}>
 								<TabsList>
 									<TabsTrigger value="weekly">Pronostico futuro</TabsTrigger>
@@ -73,9 +65,9 @@ function SimulationPage() {
 								</TabsList>
 							</Tabs>
 						</div>
-	
+
 						<InfoNotation1 />
-	
+
 						<div className="flex  items-end gap-1 mt-3">
 							<div className="flex-1">
 								<Label>Entrada de datos Excel</Label>
@@ -83,12 +75,12 @@ function SimulationPage() {
 							</div>
 							<Button>Subir archivo</Button>
 						</div>
-	
+
 						<Button className="mx-auto mt-6" size="lg">
 							Empezar simulación
 						</Button>
 					</div>
-	
+
 					{/* <PackageTable /> */}
 				</section>
 			</main>

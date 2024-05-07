@@ -23,13 +23,13 @@ export default function SimulationLayout({
         }
 
         if (role === "admin") {
-            router.push("/simulation");
+            //router.push("/simulation");
             setRole("admin");
             setIsLoading(false);
         }
         if (role === "operario") {
-            setRole("operator");
-            router.push("/dashboard");
+            setRole("operario");
+            //router.push("/dashboard");
             setIsLoading(false);
         }
         if(role === "user") {

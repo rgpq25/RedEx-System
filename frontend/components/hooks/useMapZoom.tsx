@@ -4,7 +4,7 @@ import { Vuelo } from "@/lib/types";
 import { getFlightPosition } from "@/lib/map-utils";
 
 const useMapZoom = (
-	initialZoom = 1.3,
+	initialZoom = 1,
 	initialLongitude = 0,
 	initialLatitude = 0
 ): {
@@ -50,20 +50,20 @@ const useMapZoom = (
 				[destLongitude, destLatitude] as [number, number],
 				currentTime
 			);
-			zoom.setValueNoAnimation(5);
+			zoom.setValueNoAnimation(2);
 			centerLongitude.setValueNoAnimation(coordinates[0]);
 			centerLatitude.setValueNoAnimation(coordinates[1]);
 		}
 	}, [currentTime, currentlyLocked]);
 
 	function zoomIn(coordinates: [number, number], duration = 1000) {
-		zoom.setValue(5, duration);
+		zoom.setValue(2, duration);
 		centerLongitude.setValue(coordinates[0], duration);
 		centerLatitude.setValue(coordinates[1], duration);
 	}
 
 	function zoomInNoAnimation(coordinates: [number, number]) {
-		zoom.setValueNoAnimation(5);
+		zoom.setValueNoAnimation(2);
 		centerLongitude.setValueNoAnimation(coordinates[0]);
 		centerLatitude.setValueNoAnimation(coordinates[1]);
 	}

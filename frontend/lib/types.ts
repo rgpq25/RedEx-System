@@ -52,7 +52,7 @@ export type RowPackageRouteType = {
     isCurrent: boolean;
 }
 
-export type RoleType = "admin" | "operator" | "user" | null;
+export type RoleType = "admin" | "operario" | "user" | null;
 
 export enum Operacion {
     Envios = "Envios",

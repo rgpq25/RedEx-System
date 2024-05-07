@@ -1,38 +1,35 @@
 "use client";
-import React, { useState } from 'react';
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import { FlightTable } from './flight-table';
+import React, { useState } from "react";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { FlightTable } from "./flight-table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Vuelo } from "@/lib/types";
+import Chip from "../ui/chip";
 
 interface FlightModalProps {
-    isOpen: boolean;
-    setIsOpen: (isOpen: boolean) => void;
+	isOpen: boolean;
+	setIsOpen: (isOpen: boolean) => void;
+	vuelo: Vuelo | undefined;
 }
 
-function FlightModal({ isOpen, setIsOpen } : FlightModalProps) {
-
-    return (
-        <AlertDialog.Root open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialog.Trigger asChild>
-                <button onClick={() => setIsOpen(true)}>Abrir información de almacén</button>
-            </AlertDialog.Trigger>
-            <AlertDialog.Portal>
-                <AlertDialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-                <AlertDialog.Content className="fixed p-5 bg-white rounded-lg shadow-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <h2 className="text-3xl font-semibold mb-4">Información de vuelo</h2>
-                    <div className="text-lg mb-4">
-                        <div>Origen: Lima, Perú <span className="text-red-500">■</span><span className="text-red-500">■</span></div> 
-                        <div>Destino: Roma, Italia <span className="text-green-500">■</span><span className="text-red-500">■</span></div>
-                        <div>Capacidad actual: 230/250  <span className="text-red-400">Ocupado</span></div>
-                    </div>
-                    <FlightTable />
-                    <AlertDialog.Action asChild>
-                        <button onClick={() => setIsOpen(false)}>Cerrar</button>
-                    </AlertDialog.Action>
-                </AlertDialog.Content>
-            </AlertDialog.Portal>
-        </AlertDialog.Root>
-    );
+function FlightModal({ isOpen, setIsOpen, vuelo }: FlightModalProps) {
+	return (
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogContent className="w-[900px] min-w-[900px]">
+				<DialogHeader>
+					<DialogTitle className="text-2xl">Información de vuelo</DialogTitle>
+				</DialogHeader>
+				<div>
+					<p>Origen - Destino: Lima, Perú - Roma, Italia</p>
+					<div className="flex flex-row items-center gap-1">
+						<p>Capacidad actual: 230/250</p>
+						<Chip color="red">Ocupado</Chip>
+					</div>
+				</div>
+				<FlightTable />
+			</DialogContent>
+		</Dialog>
+	);
 }
-
 
 export default FlightModal;

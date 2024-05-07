@@ -1,36 +1,37 @@
 "use client";
 import React, { useState } from "react";
-import * as AlertDialog from "@/components/ui/alert-dialog";
 import { AirportTable } from "./airport-table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Aeropuerto } from "@/lib/types";
+import Chip from "../ui/chip";
 
 interface AirportModalProps {
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
+	aeropuerto: Aeropuerto | undefined;
 }
 
-function AirportModal({ isOpen, setIsOpen }: AirportModalProps) {
+function AirportModal({ isOpen, setIsOpen, aeropuerto }: AirportModalProps) {
 	return (
-		<AlertDialog.AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-			<AlertDialog.AlertDialogTrigger asChild>
-				<button onClick={() => setIsOpen(true)}>Abrir información de almacén</button>
-			</AlertDialog.AlertDialogTrigger>
-			<AlertDialog.AlertDialogContent className="fixed p-5 bg-white rounded-lg shadow-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-				<h2 className="text-3xl font-semibold mb-4">Información de almacén</h2>
-				<div className="text-lg mb-4">
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogContent className="w-[900px] min-w-[900px]">
+				<DialogHeader>
+					<DialogTitle className="text-2xl">Información de aeropuerto</DialogTitle>
+				</DialogHeader>
+				<div className="text-black">
 					<div>
-						Ubicación: Lima, Perú <span className="text-red-500">■</span>
-						<span className="text-red-500">■</span>
+						<p>Ubicación: Lima, Perú</p>
 					</div>
-					<div>
-						Capacidad actual: 36/100 <span className="text-green-500">Bueno</span>
+					<div className="flex flex-row items-center gap-1">
+						
+							<p>Capacidad actual: 36/100 </p>
+							<Chip color="green" >Bueno</Chip>
+						
 					</div>
 				</div>
 				<AirportTable />
-				<AlertDialog.AlertDialogFooter>
-					<button onClick={() => setIsOpen(false)}>Cerrar</button>
-				</AlertDialog.AlertDialogFooter>
-			</AlertDialog.AlertDialogContent>
-		</AlertDialog.AlertDialog>
+			</DialogContent>
+		</Dialog>
 	);
 }
 

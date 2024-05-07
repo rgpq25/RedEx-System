@@ -93,7 +93,7 @@ function Plane({
 		if (_capacity >= 0 && _capacity < 30) {
 			return "#61DC00";
 		} else if (_capacity >= 30 && _capacity < 60) {
-			return "#D3D800";
+			return "#EAB308";
 		} else return "#FF0000";
 	}
 

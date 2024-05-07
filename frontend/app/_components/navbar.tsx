@@ -59,7 +59,7 @@ function Navbar({
                     </Link>
                 </div>
             )}
-            {role === "operator" && (
+            {role === "operario" && (
                 <div className="flex-1 flex items-center gap-3 justify-end">
                     <p className="text-base">Has iniciado sesión como operador</p>
                     <Link
