@@ -1,10 +1,21 @@
 let stompClient = null;
 
+
 const onConnectSocket = () => {
+    const mensajeMostrar = { nombre: 'Usuario', contenido: 'Hola' }
+    const mensajeError = { nombre: 'Usuario', contenido: 'Error' }
     stompClient.subscribe('/tema/mensajes', (mensaje) => {
-        mostrarMensaje(JSON.parse(mensaje.body));
+        //mostrarMensaje(JSON.parse(mensaje.body));
+        if(mensaje.body){
+            mostrarMensaje(mensajeMostrar);
+        }
+        else{
+            mostrarMensaje(mensajeError);
+        }
+        
     });
 };
+
 
 const onWebSocketClose = () => {
     if (stompClient !== null) {
