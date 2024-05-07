@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,9 @@ public class Aeropuerto {
 
     private Integer capacidadMaxima;
 
+    public Aeropuerto() {
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -46,5 +51,18 @@ public class Aeropuerto {
         this.capacidadMaxima = capacidadMaxima;
     }
 
-    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Aeropuerto that = (Aeropuerto) o;
+        return Objects.equals(ubicacion, that.ubicacion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ubicacion);
+    }
 }

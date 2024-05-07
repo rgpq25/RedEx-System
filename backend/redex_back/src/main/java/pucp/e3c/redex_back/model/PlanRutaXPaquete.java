@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "plan_rutaxvuelo")
+@Table(name = "plan_rutaxpaquete")
 public class PlanRutaXPaquete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,9 +48,14 @@ public class PlanRutaXPaquete {
         this.paquete = paquete;
     }
 
-    public PlanRutaXPaquete(Integer id, PlanRuta planRuta, Paquete paquete, int indiceDeOrden) {
+    /*public PlanRutaXPaquete(Integer id, PlanRuta planRuta, Paquete paquete, int indiceDeOrden) {
         this.id = id;
         this.planRuta = planRuta;
         this.paquete = paquete;
+    }*/
+    public void fillData(Integer id, PlanRuta planRuta, Paquete paquete) {
+        this.setId(id);
+        this.setPlanRuta(planRuta);
+        this.setPaquete(paquete);
     }
 }

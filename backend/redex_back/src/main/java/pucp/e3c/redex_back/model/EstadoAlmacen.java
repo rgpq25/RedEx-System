@@ -23,6 +23,10 @@ public class EstadoAlmacen {
         uso_historico = new HashMap<Aeropuerto, TreeMap<Date, Integer>>();
     }
 
+    public EstadoAlmacen(EstadoAlmacen estado) {
+        uso_historico = estado.getUso_historico();
+    }
+
     public HashMap<Aeropuerto, TreeMap<Date, Integer>> getUso_historico() {
         return uso_historico;
     }

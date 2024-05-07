@@ -53,4 +53,19 @@ public class Simulacion {
         this.estado = estado;
     }
 
+    public Date getFechaActual() {
+        return fechaActual;
+    }
+
+    public void setFechaActual(Date fechaActual) {
+        this.fechaActual = fechaActual;
+    }
+
+    public void fillData() {
+        fechaInicio = new Date();
+        fechaActual = new Date();
+        fechaFin = new Date();
+        estado = 0;
+    }
+
 }

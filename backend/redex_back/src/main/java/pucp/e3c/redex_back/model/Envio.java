@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,11 +19,11 @@ public class Envio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_ubicacionOrigen")
     private Ubicacion ubicacionOrigen;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_ubicacionDestino")
     private Ubicacion ubicacionDestino;
 
@@ -40,14 +39,27 @@ public class Envio {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
-        this.ubicacionOrigen = origen;
-        this.ubicacionDestino = destino;
-        this.fechaRecepcion = fechaRecepcion;
-        this.fechaLimiteEntrega = fecha_maxima_entrega;
-        this.estado = "En proceso";
-        this.cantidadPaquetes = 1;
-        this.codigoSeguridad = "123456";
+    /*
+     * public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date
+     * fecha_maxima_entrega) {
+     * this.ubicacionOrigen = origen;
+     * this.ubicacionDestino = destino;
+     * this.fechaRecepcion = fechaRecepcion;
+     * this.fechaLimiteEntrega = fecha_maxima_entrega;
+     * this.estado = "En proceso";
+     * this.cantidadPaquetes = 1;
+     * this.codigoSeguridad = "123456";
+     * }
+     */
+
+    public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
+        this.setUbicacionOrigen(origen);
+        this.setUbicacionDestino(destino);
+        this.setFechaRecepcion(fechaRecepcion);
+        this.setFechaLimiteEntrega(fecha_maxima_entrega);
+        this.setEstado("En proceso");
+        this.setCantidadPaquetes(1);
+        this.setCodigoSeguridad("123456");
     }
 
     // TO DO id emisor
@@ -114,6 +126,21 @@ public class Envio {
 
     public void setCodigoSeguridad(String codigoSeguridad) {
         this.codigoSeguridad = codigoSeguridad;
+    }
+
+    public String toString() {
+        return "Envio: idEnvio: " + id + " - desde:  " + this.ubicacionOrigen.getId() + " hasta: "
+                + this.ubicacionDestino.getId() + " - fechaRecepcion: "
+                + fechaRecepcion + " - fechaLimiteEntrega: "
+                + fechaLimiteEntrega;
+    }
+
+    public Simulacion getSimulacionActual() {
+        return simulacionActual;
+    }
+
+    public void setSimulacionActual(Simulacion simulacionActual) {
+        this.simulacionActual = simulacionActual;
     }
 
 }

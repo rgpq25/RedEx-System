@@ -1,10 +1,12 @@
 package pucp.e3c.redex_back.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,14 +16,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pucp.e3c.redex_back.model.Aeropuerto;
+import pucp.e3c.redex_back.model.Algoritmo;
+import pucp.e3c.redex_back.model.Paquete;
+import pucp.e3c.redex_back.model.PlanRutaNT;
+import pucp.e3c.redex_back.model.PlanVuelo;
+import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
+import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 
 @RestController
 @RequestMapping("back/simulacion")
 public class SimulacionController {
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Autowired
     SimulacionService simulacionService;
+
+    @Autowired
+    private PlanVueloService planVueloService;
+
+    @Autowired
+    private AeropuertoService aeropuertoService;
+
+    @Autowired
+    private PaqueteService paqueteService;
+
+    public SimulacionController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @PostMapping("/")
     public ResponseEntity<Simulacion> register(@RequestBody Simulacion simulacion) {
@@ -59,4 +85,15 @@ public class SimulacionController {
         List<Simulacion> simulacions = simulacionService.getAll();
         return new ResponseEntity<>(simulacions, HttpStatus.OK);
     }
+
+    @GetMapping("/runAlgorithm/{id}")
+    public void correrSimulacion(@PathVariable("id") int id) {
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
+        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
+        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        ArrayList<PlanRutaNT> respuestaAlgoritmo = algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes);
+        // Guardar las rutas
+    }
+
 }
