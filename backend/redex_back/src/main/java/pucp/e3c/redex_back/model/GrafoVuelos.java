@@ -1,16 +1,7 @@
-package Clases;
+package pucp.e3c.redex_back.model;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -76,14 +67,14 @@ public class GrafoVuelos {
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
         // Encuentra el paquete con la fecha de recepción más temprana
         Optional<Paquete> minRecepcionPaquete = paquetes.stream()
-                .min(Comparator.comparing(p -> p.getFecha_recepcion()));
+                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
 
         // Encuentra el paquete con la fecha de entrega máxima más tardía
         Optional<Paquete> maxEntregaPaquete = paquetes.stream()
-                .max(Comparator.comparing(p -> p.getFecha_maxima_entrega()));
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
 
-        Date inicio = minRecepcionPaquete.map(p -> p.getFecha_recepcion()).orElse(new Date());
-        Date fin = maxEntregaPaquete.map(p -> p.getFecha_maxima_entrega()).orElse(new Date());
+        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
+        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         fecha_inicio = inicio;
 
@@ -113,12 +104,12 @@ public class GrafoVuelos {
             for (PlanVuelo plan : planesVuelo) {
                 // Usa la función hora_local_a_fecha_generica para configurar la hora de partida
                 // en GMT+0.
-                Date fechaPartida = hora_local_a_fecha_generica(cal.getTime(), plan.getHora_ciudad_origen(),
+                Date fechaPartida = hora_local_a_fecha_generica(cal.getTime(), plan.getHoraCiudadOrigen(),
                         Funciones.stringGmt2Int(plan.getCiudadOrigen().getZonaHoraria()));
 
                 // Clona 'cal' para configurar la hora de llegada.
                 Calendar calLlegada = (Calendar) cal.clone();
-                Date fechaLlegada = hora_local_a_fecha_generica(calLlegada.getTime(), plan.getHora_ciudad_destino(),
+                Date fechaLlegada = hora_local_a_fecha_generica(calLlegada.getTime(), plan.getHoraCiudadDestino(),
                         Funciones.stringGmt2Int(plan.getCiudadDestino().getZonaHoraria()));
                 calLlegada.setTime(fechaLlegada);
                 // Ajusta la fecha de llegada si es necesario.
@@ -126,33 +117,9 @@ public class GrafoVuelos {
                     calLlegada.add(Calendar.HOUR_OF_DAY, 24);
                     fechaLlegada = calLlegada.getTime();
                 }
-                /*
-                 * if (!plan.es_continental()) {
-                 * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
-                 * 60 * 60); // Duración en
-                 * // horas
-                 * if (duracion < 12 || duracion > 24) {
-                 * System.out.println("Caso no contemplado: " + plan.toString());
-                 * continue;
-                 * }
-                 * }
-                 * if (plan.es_continental()) {
-                 * long duracion = (fechaLlegada.getTime() - fechaPartida.getTime()) / (1000 *
-                 * 60 * 60); // Duración en
-                 * // horas
-                 * if (duracion < 0 || duracion > 12) {
-                 * System.out.println("Caso no contemplado: " + plan.toString());
-                 * continue;
-                 * }
-                 * }
-                 */
-                // Añade el vuelo a la lista con la fecha y hora en GMT+0.
-                //
                 Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
-                // System.out.println("Plan Vuelo: " + plan.toString() + ", Vuelo generado " +
-                // vuelo.toString());
 
-                vuelos.add(new Vuelo(plan, fechaPartida, fechaLlegada));
+                vuelos.add(vuelo);
             }
             // Avanza al día siguiente.
             cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -163,29 +130,31 @@ public class GrafoVuelos {
 
     // Agrega un vuelo al grafo
     public void agregarVuelo(Vuelo vuelo) {
-        Ubicacion ciudadOrigen = vuelo.getPlan_vuelo().getCiudadOrigen();
+        Ubicacion ciudadOrigen = vuelo.getPlanVuelo().getCiudadOrigen();
         if (!this.grafo.containsKey(ciudadOrigen)) {
             TreeMap<Date, Vuelo> nuevoMap = new TreeMap<>();
             grafo.put(ciudadOrigen, nuevoMap);
         }
-        grafo.get(ciudadOrigen).put(vuelo.getFecha_salida(), vuelo);
+        grafo.get(ciudadOrigen).put(vuelo.getFechaSalida(), vuelo);
     }
 
     // Imprime todos los vuelos en el grafo
     public void imprimirVuelos() {
         for (HashMap.Entry<Ubicacion, TreeMap<Date, Vuelo>> entrada : grafo.entrySet()) {
             System.out.println("Desde el aeropuerto: " + entrada.getKey());
-            for (Vuelo vuelo : entrada.getValue().values()) {
+            for (HashMap.Entry<Date, Vuelo> vueloEntry : entrada.getValue().entrySet()) {
+                Vuelo vuelo = vueloEntry.getValue();
                 System.out.println(
-                        "  Vuelo a: " + vuelo.getPlan_vuelo().getCiudadDestino().getId() + ", ID: " + vuelo.getId());
+                        "  Vuelo a: " + vuelo.getPlanVuelo().getCiudadDestino().getId() + ", ID: " + vuelo.getId());
             }
         }
     }
 
-    public HashMap<String, ArrayList<PlanRuta>> buscarTodasLasRutas() throws InterruptedException, ExecutionException {
+    public HashMap<String, ArrayList<PlanRutaNT>> buscarTodasLasRutas()
+            throws InterruptedException, ExecutionException {
         ContadorID.reiniciar();
         System.out.println("Buscando rutas");
-        HashMap<String, ArrayList<PlanRuta>> rutasTotal = new HashMap<>();
+        HashMap<String, ArrayList<PlanRutaNT>> rutasTotal = new HashMap<>();
         AtomicInteger totalRutas = new AtomicInteger(0); // Usar AtomicInteger para manejar la suma en un entorno
                                                          // multihilo
         AtomicInteger total = new AtomicInteger(0);
@@ -193,17 +162,17 @@ public class GrafoVuelos {
                                                                    // disponibles
         ExecutorService executor = Executors.newFixedThreadPool(nThreads); // Crear un pool de hilos
 
-        ArrayList<Future<HashMap<String, ArrayList<PlanRuta>>>> futures = new ArrayList<>();
+        List<Future<HashMap<String, ArrayList<PlanRutaNT>>>> futures = new ArrayList<>();
 
         for (Ubicacion origen : grafo.keySet()) {
             for (Ubicacion destino : grafo.keySet()) {
                 if (!origen.equals(destino)) {
                     // Envío de la tarea de búsqueda de rutas para ejecución en paralelo
-                    Future<HashMap<String, ArrayList<PlanRuta>>> future = executor.submit(() -> {
-                        ArrayList<PlanRuta> rutas = buscarRutas(origen, destino, fecha_inicio);
+                    Future<HashMap<String, ArrayList<PlanRutaNT>>> future = executor.submit(() -> {
+                        ArrayList<PlanRutaNT> rutas = buscarRutas(origen, destino, fecha_inicio);
                         total.getAndAdd(1);
                         // System.out.print(total.get() + " ");
-                        HashMap<String, ArrayList<PlanRuta>> result = new HashMap<>();
+                        HashMap<String, ArrayList<PlanRutaNT>> result = new HashMap<>();
                         String claveOrigenDestino = origen.getId() + "-" + destino.getId();
                         result.put(claveOrigenDestino, rutas);
                         return result;
@@ -214,8 +183,8 @@ public class GrafoVuelos {
         }
 
         // Recuperar y combinar los resultados de todas las tareas futuras
-        for (Future<HashMap<String, ArrayList<PlanRuta>>> future : futures) {
-            HashMap<String, ArrayList<PlanRuta>> resultadoParcial = future.get();
+        for (Future<HashMap<String, ArrayList<PlanRutaNT>>> future : futures) {
+            HashMap<String, ArrayList<PlanRutaNT>> resultadoParcial = future.get();
             resultadoParcial.forEach((clave, listaRutas) -> {
                 rutasTotal.putIfAbsent(clave, new ArrayList<>());
                 rutasTotal.get(clave).addAll(listaRutas);
@@ -234,7 +203,7 @@ public class GrafoVuelos {
 
     // Busca rutas de un origen a un destino comenzando en una fecha y hora
     // específicas
-    public ArrayList<PlanRuta> buscarRutas(Ubicacion origen, Ubicacion destino, Date fechaHoraInicio) {
+    public ArrayList<PlanRutaNT> buscarRutas(Ubicacion origen, Ubicacion destino, Date fechaHoraInicio) {
         boolean continental = origen.getContinente().equals(destino.getContinente());
         int tamanho_max = 0;
         if (continental) {
@@ -242,10 +211,9 @@ public class GrafoVuelos {
         } else {
             tamanho_max = 3;
         }
-        ArrayList<PlanRuta> rutas = new ArrayList<>();
+        ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         // long startTime = System.nanoTime();
-        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<String>(), new HashSet<String>(),
-                rutas,
+        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRutaNT(), new HashSet<>(), new HashSet<>(), rutas,
                 continental,
                 tamanho_max);
         if (rutas.size() == 0) {
@@ -263,13 +231,13 @@ public class GrafoVuelos {
     }
 
     // Método DFS para encontrar rutas
-    private void buscarRutasDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRuta rutaActual,
-            Set<String> aeropuertosVisitados, Set<String> continentesVisitados, ArrayList<PlanRuta> rutas,
+    private void buscarRutasDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual, PlanRutaNT rutaActual,
+            Set<String> aeropuertosVisitados, Set<String> continentesVisitados, ArrayList<PlanRutaNT> rutas,
             boolean continental, int tamanho_max) {
         if (actual.getId().equals(destino.getId())) {
             // Clonar la lista de vuelos para la nueva ruta
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
-            PlanRuta nuevaRuta = new PlanRuta();
+            PlanRutaNT nuevaRuta = new PlanRutaNT();
             nuevaRuta.setVuelos(vuelosClonados);
             rutas.add(nuevaRuta);
             return;
@@ -285,23 +253,23 @@ public class GrafoVuelos {
         for (Date fecha : vuelosOrdenados.keySet()) {
             Vuelo vuelo = vuelosOrdenados.get(fecha);
             /*
-             * if ((!vuelo.getPlan_vuelo().getCiudadDestino().getContinente().equals(actual.
+             * if ((!vuelo.getPlanVuelo().getCiudadDestino().getContinente().equals(actual.
              * getContinente()) &&
              * continental)) {
              * continue;
              * }
              */
-            if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
-                    !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())
-                    && !continentesVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getContinente())) {
+            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+                    !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())
+                    && !continentesVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getContinente())) {
                 // Establecer fechaInicio si es la primera adición de vuelo a la ruta
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
-                    fechaInicio = vuelo.getFecha_salida();
+                    fechaInicio = vuelo.getFechaSalida();
                 }
                 // Calcular la diferencia de tiempo desde el inicio hasta la fecha de salida del
                 // vuelo actual
-                long duracionRuta = vuelo.getFecha_llegada().getTime() - fechaInicio.getTime();
+                long duracionRuta = vuelo.getFechaLlegada().getTime() - fechaInicio.getTime();
                 long duracionRutaHoras = (duracionRuta + 3599999) / 3600000;
                 long limite;
                 if (continental) {
@@ -313,7 +281,7 @@ public class GrafoVuelos {
                     rutaActual.getVuelos().add(vuelo);
                     aeropuertosVisitados.add(actual.getId());
                     continentesVisitados.add(actual.getContinente());
-                    buscarRutasDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino, vuelo.getFecha_llegada(),
+                    buscarRutasDFS(vuelo.getPlanVuelo().getCiudadDestino(), destino, vuelo.getFechaLlegada(),
                             rutaActual, aeropuertosVisitados, continentesVisitados, rutas, continental,
                             tamanho_max);
                     // Backtracking
@@ -341,8 +309,8 @@ public class GrafoVuelos {
         return new ArrayList<>(); // Devolver una lista vacía en lugar de null si la ciudad no está en el grafo
     }
 
-    private PlanRuta buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
-            PlanRuta rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
+    private PlanRutaNT buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
+            PlanRutaNT rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
             int tamanho_max) {
 
         if (rutaActual.getVuelos().size() > tamanho_max) {
@@ -350,25 +318,25 @@ public class GrafoVuelos {
         }
         if (actual.getId().equals(destino.getId())) {
             ArrayList<Vuelo> vuelosClonados = new ArrayList<>(rutaActual.getVuelos());
-            PlanRuta nuevaRuta = new PlanRuta();
+            PlanRutaNT nuevaRuta = new PlanRutaNT();
             nuevaRuta.setVuelos(vuelosClonados);
             return nuevaRuta;
         }
 
-        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getFecha_recepcion(),
-                paquete.getFecha_maxima_entrega());
+        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, paquete.getEnvio().getFechaRecepcion(),
+                paquete.getEnvio().getFechaLimiteEntrega());
         Collections.shuffle(vuelosPosibles);
 
         for (Vuelo vuelo : vuelosPosibles) {
-            if (fechaHoraActual.before(vuelo.getFecha_salida()) &&
-                    !aeropuertosVisitados.contains(vuelo.getPlan_vuelo().getCiudadDestino().getId())) {
+            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+                    !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
-                    fechaInicio = vuelo.getFecha_salida();
+                    fechaInicio = vuelo.getFechaSalida();
                 }
                 // Calcular la diferencia de tiempo desde el inicio hasta la fecha de salida del
                 // vuelo actual
-                long duracionRuta = vuelo.getFecha_llegada().getTime() - fechaInicio.getTime();
+                long duracionRuta = vuelo.getFechaLlegada().getTime() - fechaInicio.getTime();
                 long duracionRutaHoras = (duracionRuta + 3599999) / 3600000;
                 long limite;
                 if (continental) {
@@ -379,8 +347,8 @@ public class GrafoVuelos {
                 if (duracionRutaHoras <= limite) {
                     rutaActual.getVuelos().add(vuelo);
                     aeropuertosVisitados.add(actual.getId());
-                    PlanRuta result = buscarRutaAleatoriaDFS(vuelo.getPlan_vuelo().getCiudadDestino(), destino,
-                            vuelo.getFecha_llegada(), rutaActual, aeropuertosVisitados, continental, paquete,
+                    PlanRutaNT result = buscarRutaAleatoriaDFS(vuelo.getPlanVuelo().getCiudadDestino(), destino,
+                            vuelo.getFechaLlegada(), rutaActual, aeropuertosVisitados, continental, paquete,
                             tamanho_max);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
@@ -396,23 +364,28 @@ public class GrafoVuelos {
         return null; // No se encontró ruta, retornar null.
     }
 
-    public ArrayList<PlanRuta> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
-        ArrayList<PlanRuta> rutas = new ArrayList<>();
+    public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
+        ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
             int tamanho_max = 0;
-            if (paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId())) {
+            if (paquete.getEnvio().getUbicacionOrigen().getId()
+                    .equals(paquete.getEnvio().getUbicacionDestino().getId())) {
                 tamanho_max = 2;
             } else {
                 tamanho_max = 3;
             }
-            PlanRuta rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getCiudadOrigen(), paquete.getCiudadDestino(),
-                    paquete.getFecha_recepcion(), new PlanRuta(),
-                    aeropuertosVisitados, paquete.getCiudadOrigen().getId().equals(paquete.getCiudadDestino().getId()),
+            PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getEnvio().getUbicacionOrigen(),
+                    paquete.getEnvio().getUbicacionDestino(),
+                    paquete.getEnvio().getFechaRecepcion(), new PlanRutaNT(),
+                    aeropuertosVisitados,
+                    paquete.getEnvio().getUbicacionOrigen().getId()
+                            .equals(paquete.getEnvio().getUbicacionDestino().getId()),
                     paquete, tamanho_max);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete desde "
-                        + paquete.getCiudadOrigen().getId() + " a " + paquete.getCiudadDestino().getId());
+                        + paquete.getEnvio().getUbicacionOrigen().getId() + " a "
+                        + paquete.getEnvio().getUbicacionDestino().getId());
             }
             rutas.add(rutaEncontrada);
         }

@@ -1,0 +1,122 @@
+package pucp.e3c.redex_back.model;
+
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "paquete")
+public class Paquete {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(length = 64)
+    private String coordenadaActual;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_aeropuerto_actual", referencedColumnName = "id")
+    private Aeropuerto aeropuertoActual;
+
+    private boolean enAeropuerto;
+    private boolean entregado;
+    private Date fechaDeEntrega;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_envio", referencedColumnName = "id")
+    private Envio envio;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
+    Simulacion simulacionActual;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_plan_ruta", referencedColumnName = "id")
+    PlanRuta planRutaActual;
+
+    public Paquete(Aeropuerto aeropuertoActual, Ubicacion origen, Ubicacion destino, Date fechaRecepcion) {
+        this.id = ContadorID.obtenerSiguienteIDPaquet();
+        this.aeropuertoActual = aeropuertoActual;
+        this.coordenadaActual = origen.getId();
+        this.enAeropuerto = true;
+        this.entregado = false;
+
+        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+                fechaRecepcion,
+                origen.getZonaHoraria(),
+                "UTC");
+        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, 2);
+        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
+                fecha_maxima_entrega_GMTDestino,
+                destino.getZonaHoraria(),
+                "UTC");
+
+        this.fechaDeEntrega = null;
+        this.envio = new Envio(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        this.simulacionActual = null;
+        this.planRutaActual = null;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getCoordenadaActual() {
+        return coordenadaActual;
+    }
+
+    public void setCoordenadaActual(String coordenadaActual) {
+        this.coordenadaActual = coordenadaActual;
+    }
+
+    public Aeropuerto getAeropuertoActual() {
+        return aeropuertoActual;
+    }
+
+    public void setAeropuertoActual(Aeropuerto aeropuertoActual) {
+        this.aeropuertoActual = aeropuertoActual;
+    }
+
+    public boolean isEnAeropuerto() {
+        return enAeropuerto;
+    }
+
+    public void setEnAeropuerto(boolean enAeropuerto) {
+        this.enAeropuerto = enAeropuerto;
+    }
+
+    public boolean isEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(boolean entregado) {
+        this.entregado = entregado;
+    }
+
+    public Date getFechaDeEntrega() {
+        return fechaDeEntrega;
+    }
+
+    public void setFechaDeEntrega(Date fechaDeEntrega) {
+        this.fechaDeEntrega = fechaDeEntrega;
+    }
+
+    public Envio getEnvio() {
+        return envio;
+    }
+
+    public void setEnvio(Envio envio) {
+        this.envio = envio;
+    }
+
+}
