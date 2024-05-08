@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DialogReception } from "./_components/dialogReception";
 
 const twStyle = "w-5 h-5";
 
@@ -32,7 +33,7 @@ function ManagePackagesPage() {
                                 <FileUp className={twStyle} />
                                 <p>Carga de envíos</p>
                             </Button>
-                            <DialogReception />
+                            <DialogReception twStyle={twStyle} />
                             <Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/daily-operations"}>
                                 <Plane className={twStyle} />
                                 <p>Ver operaciones día a día</p>
@@ -42,36 +43,6 @@ function ManagePackagesPage() {
                 </section>
             </main>
         </>
-    );
-}
-
-function DialogReception() {
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button className='col-span-2'>
-                    <CopyCheck className={twStyle} />
-                    <p>Registrar recepcion de envío</p>
-                </Button>
-            </DialogTrigger>
-            <DialogContent hasCloseButton={false} disableOutsideEventsToClose>
-                <DialogHeader>
-                    <DialogTitle>Ingrese el código de monitoreo del envío</DialogTitle>
-                </DialogHeader>
-                <div className='space-y-1'>
-                    <Label htmlFor='tracking-code'>Código de monitoreo</Label>
-                    <Input placeholder='Ej. A43HDS5' />
-                </div>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant='outline'>Cancelar</Button>
-                    </DialogClose>
-                    <Link className={cn(buttonVariants())} href={"/dashboard/reception-package"}>
-                        Ingresar
-                    </Link>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     );
 }
 
