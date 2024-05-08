@@ -200,8 +200,8 @@ function Envios({ envios, onClick }: { envios: Envio[] | undefined; onClick: (en
                                                 <Muted>Fecha de recepción: {formatDateShort(envio.fecha_recepcion)}</Muted>
                                                 <Muted>Cantidad: {envio.cantidad_paquetes}</Muted>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {envio.ubicacion_origen.ciudad_abreviada}</Muted>
-                                                    <Muted>Destino: {envio.ubicacion_destino.ciudad_abreviada}</Muted>
+                                                    <Muted>Origen: {envio.ubicacion_origen.ciudadAbreviada}</Muted>
+                                                    <Muted>Destino: {envio.ubicacion_destino.ciudadAbreviada}</Muted>
                                                 </span>
                                             </CardContent>
                                         </Card>
@@ -297,24 +297,24 @@ function Aeropuertos({ aeropuertos, onClick }: { aeropuertos: Aeropuerto[] | und
                     <ScrollArea className='h-screen'>
                         <section className='flex flex-col gap-4'>
                             {aeropuertos.filter((aeropuerto) =>
-                                aeropuerto.ubicacion.ciudad_abreviada.toLowerCase().includes(search.toLowerCase())
+                                aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase())
                             ).length === 0 ? (
                                 <p>No se encontraron resultados</p>
                             ) : (
                                 aeropuertos
                                     .filter((aeropuerto) =>
-                                        aeropuerto.ubicacion.ciudad_abreviada.toLowerCase().includes(search.toLowerCase())
+                                        aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase())
                                     )
                                     .map((aeropuerto) => (
                                         <Card key={aeropuerto.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer' onClick={()=>onClick(aeropuerto)}>
                                             <CardHeader>
                                                 <Large>
-                                                    {aeropuerto.ubicacion.ciudad_abreviada} ({aeropuerto.ubicacion.ciudad})
+                                                    {aeropuerto.ubicacion.ciudadAbreviada} ({aeropuerto.ubicacion.ciudad})
                                                 </Large>
                                             </CardHeader>
                                             <CardContent>
                                                 <Muted>Capacidad: {aeropuerto.capacidad_maxima}</Muted>
-                                                <Muted>Zona horaria: {aeropuerto.ubicacion.zona_horaria}</Muted>
+                                                <Muted>Zona horaria: {aeropuerto.ubicacion.zonaHoraria}</Muted>
                                             </CardContent>
                                         </Card>
                                     ))
@@ -431,8 +431,8 @@ function Vuelos({ vuelos, onClick }: { vuelos: Vuelo[] | undefined; onClick: (vu
                                             </CardHeader>
                                             <CardContent>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudad_abreviada}</Muted>
-                                                    <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudad_abreviada}</Muted>
+                                                    <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudadAbreviada}</Muted>
+                                                    <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudadAbreviada}</Muted>
                                                 </span>
                                                 <Muted>Fecha origen: {formatDateShort(vuelo.fecha_origen)}</Muted>
                                                 <Muted>Fecha destino: {formatDateShort(vuelo.fecha_destino)}</Muted>
