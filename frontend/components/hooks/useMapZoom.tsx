@@ -16,6 +16,7 @@ const useMapZoom = (
 	lockInFlight: (vuelo: Vuelo) => void;
 	unlockFlight: () => void;
 } => {
+	const zoomFactor = 4;
 	const [currentTime, setCurrentTime] = useState<Date>(new Date());
 	const [currentlyLocked, setCurrentlyLocked] = useState<Vuelo | undefined>(undefined);
 
@@ -50,20 +51,20 @@ const useMapZoom = (
 				[destLongitude, destLatitude] as [number, number],
 				currentTime
 			);
-			zoom.setValueNoAnimation(3);
+			zoom.setValueNoAnimation(zoomFactor);
 			centerLongitude.setValueNoAnimation(coordinates[0]);
 			centerLatitude.setValueNoAnimation(coordinates[1]);
 		}
 	}, [currentTime, currentlyLocked]);
 
 	function zoomIn(coordinates: [number, number], duration = 1000) {
-		zoom.setValue(3, duration);
+		zoom.setValue(zoomFactor, duration);
 		centerLongitude.setValue(coordinates[0], duration);
 		centerLatitude.setValue(coordinates[1], duration);
 	}
 
 	function zoomInNoAnimation(coordinates: [number, number]) {
-		zoom.setValueNoAnimation(3);
+		zoom.setValueNoAnimation(zoomFactor);
 		centerLongitude.setValueNoAnimation(coordinates[0]);
 		centerLatitude.setValueNoAnimation(coordinates[1]);
 	}

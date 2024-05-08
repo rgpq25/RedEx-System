@@ -1,7 +1,7 @@
-import axios from "axios";
-
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
+//TODO: Cant catch connection errors
 
 function useApi(
 	method: "GET" | "POST" | "PUT" | "DELETE",
@@ -15,19 +15,24 @@ function useApi(
 		async function fetchApi() {
 			try {
 				setIsLoading(true);
-				const response = await axios({
+				const response: AxiosResponse = await axios({
 					method: method,
 					url: url,
 				});
+
 				setIsLoading(false);
 				successCallback(response.data);
-			} catch (error) {
-				console.log(error);
-				errorCallback(error);
+			} catch (error: any) {
+				setIsLoading(false);
+				errorCallback(error.message);
 			}
 		}
 
-		fetchApi();
+		try {
+			fetchApi();
+		} catch (error) {
+			console.log("Error en el fetchApi")
+		}
 	}, []);
 
 	return {

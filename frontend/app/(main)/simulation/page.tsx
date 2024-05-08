@@ -22,6 +22,19 @@ import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../_components/main-container";
 import useApi from "@/components/hooks/useApi";
+import { toast } from "sonner";
+import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
+
+const breadcrumbItems: BreadcrumbItem[] = [
+	{
+		label: "Acceso",
+		link: "/security-code",
+	},
+	{
+		label: "Simulación",
+		link: "/simulation",
+	},
+];
 
 function SimulationPage() {
 	const [tab, setTab] = useState<TabType>("weekly");
@@ -41,6 +54,7 @@ function SimulationPage() {
 		},
 		(error) => {
 			console.log(error);
+			toast.error("Error al cargar aeropuertos");
 		}
 	);
 
@@ -48,13 +62,15 @@ function SimulationPage() {
 		<>
 			<ModalIntro isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 			<MainContainer>
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-4">
-						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulacion</h1>
+				<BreadcrumbCustom items={breadcrumbItems} />
+				<div className="flex flex-row justify-between items-center">
+					<div className="flex flex-row gap-4 items-center ">
+						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
 					<PlaneLegend />
 				</div>
+
 				<section className="relative flex-1 mt-[10px] overflow-hidden">
 					<Map attributes={attributes} className="h-full w-full" airports={airports} />
 					<Sidebar

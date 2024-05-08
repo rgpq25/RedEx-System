@@ -80,15 +80,12 @@ function Map({ attributes, airports, className }: MapProps) {
 				{content}
 			</Tooltip>
 			<div
-				className={cn(
-					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden",
-					className
-				)}
+				className={cn("border rounded-xl flex justify-center items-center flex-1  overflow-hidden", className)}
 			>
 				{/* <Button size="icon" className="absolute top-4 right-4">
 					<Settings className="w-5 h-5"/>
 				</Button> */}
-				<ComposableMap className="w-full h-full" projection={"geoEqualEarth"} min={-5}>
+				<ComposableMap className="" projection={"geoEqualEarth"} min={-5}>
 					<ZoomableGroup
 						zoom={zoom.value}
 						center={[centerLongitude.value, centerLatitude.value]}
@@ -109,7 +106,7 @@ function Map({ attributes, airports, className }: MapProps) {
 										onMouseLeave={() => {
 											setContent("");
 										}}
-										className="hover:fill-gray-900 transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
+										className="hover:fill-gray-600 fill-slate-400 transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
 									/>
 								))
 							}
@@ -117,9 +114,9 @@ function Map({ attributes, airports, className }: MapProps) {
 						{vuelos.map((vuelo, idx) => {
 							return (
 								<PlaneMarker
+									key={idx}
 									currentTime={currentTime}
 									vuelo={vuelo}
-									key={idx}
 									onClick={(vuelo: Vuelo) => {
 										setCurrentFlightModal(vuelo);
 										lockInFlight(vuelo);
@@ -133,7 +130,9 @@ function Map({ attributes, airports, className }: MapProps) {
 
 							return (
 								<AirportMarker
+									currentZoom={zoom.value}
 									key={idx}
+									aeropuerto={aeropuerto}
 									coordinates={[longitud, latitud] as [number, number]}
 									onClick={(coordinates: [number, number]) => {
 										setCurrentAirportModal(aeropuerto);

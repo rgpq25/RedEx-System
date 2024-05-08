@@ -5,28 +5,20 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Marker } from "react-simple-maps";
 
-function PlaneMarker({
-	vuelo,
-	currentTime,
-	onClick,
-}: {
+interface PlaneMarkerProps {
 	vuelo: Vuelo;
 	currentTime: Date;
 	onClick: (vuelo: Vuelo) => void;
-}) {
-	const [showRoute, setShowRoute] = useState(false);
+}
+
+function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
+	const [isHovering, setIsHovering] = useState(false);
 
 	const coordinates = getFlightPosition(
 		vuelo.fecha_origen,
-		[
-			vuelo.plan_vuelo.ubicacion_origen.longitud,
-			vuelo.plan_vuelo.ubicacion_origen.latitud,
-		] as [number, number],
+		[vuelo.plan_vuelo.ubicacion_origen.longitud, vuelo.plan_vuelo.ubicacion_origen.latitud] as [number, number],
 		vuelo.fecha_destino,
-		[
-			vuelo.plan_vuelo.ubicacion_destino.longitud,
-			vuelo.plan_vuelo.ubicacion_destino.latitud,
-		] as [number, number],
+		[vuelo.plan_vuelo.ubicacion_destino.longitud, vuelo.plan_vuelo.ubicacion_destino.latitud] as [number, number],
 		currentTime
 	);
 
@@ -40,31 +32,45 @@ function PlaneMarker({
 					coordinates={dotPosition as [number, number]}
 					className={cn(
 						"transition-opacity duration-75 ease-in",
-						showRoute === true ? "opacity-100" : "opacity-0"
+						isHovering === true ? "opacity-100" : "opacity-0"
 					)}
 				>
 					<circle r={1} className="fill-red-600" />
 				</Marker>
 			))}
-			<Marker coordinates={coordinates as [number, number]}>
+			<Marker
+				coordinates={coordinates as [number, number]}
+				onClick={() => onClick(vuelo)}
+				onMouseEnter={() => {
+					setIsHovering(true);
+				}}
+				onMouseLeave={() => {
+					setIsHovering(false);
+				}}
+			>
 				<Plane
+					capacity={vuelo.capacidad_utilizada}
 					originCoordinate={
-						[
-							vuelo.plan_vuelo.ubicacion_origen.longitud,
-							vuelo.plan_vuelo.ubicacion_origen.latitud,
-						] as [number, number]
+						[vuelo.plan_vuelo.ubicacion_origen.longitud, vuelo.plan_vuelo.ubicacion_origen.latitud] as [
+							number,
+							number
+						]
 					}
 					destinationCoordinate={
-						[
-							vuelo.plan_vuelo.ubicacion_destino.longitud,
-							vuelo.plan_vuelo.ubicacion_destino.latitud,
-						] as [number, number]
+						[vuelo.plan_vuelo.ubicacion_destino.longitud, vuelo.plan_vuelo.ubicacion_destino.latitud] as [
+							number,
+							number
+						]
 					}
-					capacity={vuelo.capacidad_utilizada}
-					onClick={() => onClick(vuelo)}
-					showRoute={() => setShowRoute(true)}
-					hideRoute={() => setShowRoute(false)}
 				/>
+				{isHovering && (
+					<>
+						<rect x={-10} y={-18.4} width="20" height="9" fill="black" stroke="white" strokeWidth="1" rx={2} ry={2}/>
+						<text textAnchor="middle" y={-12} x={0.5} className="text-[5px] font-poppins fill-white bg-black">
+							{vuelo.capacidad_utilizada / vuelo.plan_vuelo.capacidad_maxima * 100}%
+						</text>
+					</>
+				)}
 			</Marker>
 		</>
 	);
@@ -72,19 +78,13 @@ function PlaneMarker({
 export default PlaneMarker;
 
 function Plane({
-	onClick,
 	capacity,
 	originCoordinate,
 	destinationCoordinate,
-	showRoute,
-	hideRoute,
 }: {
-	onClick: () => void;
 	capacity: number;
 	originCoordinate: [number, number];
 	destinationCoordinate: [number, number];
-	showRoute: () => void;
-	hideRoute: () => void;
 }) {
 	const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
 	const [color, setColor] = useState(mapCapacity(capacity));
@@ -116,7 +116,6 @@ function Plane({
 					rotate: rotation.toString() + "deg",
 					zIndex: "2",
 				}}
-				//onClick={onClick}
 			>
 				<path
 					className="st0 stroke-white stroke-[4px]"
@@ -129,15 +128,7 @@ function Plane({
 					transform="scale(0.1)"
 				/>
 			</g>
-			<circle
-				r={12}
-				// stroke="#fff"
-				// strokeWidth={1}
-				className="fill-transparent"
-				onClick={onClick}
-				onMouseEnter={showRoute}
-				onMouseLeave={hideRoute}
-			/>
+			<circle r={12} className="fill-transparent" />
 		</>
 	);
 }

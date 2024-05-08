@@ -7,6 +7,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "./breadcrumb";
+import { Fragment } from "react";
 
 export type BreadcrumbItem = {
 	label: string;
@@ -20,7 +21,7 @@ function BreadcrumbCustom({ items }: { items: BreadcrumbItem[] }) {
 		<Breadcrumb>
 			<BreadcrumbList>
 				<BreadcrumbItem>
-					<BreadcrumbLink>
+					<BreadcrumbLink asChild>
 						<Link href={items[0].link}>{items[0].label}</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
@@ -29,14 +30,14 @@ function BreadcrumbCustom({ items }: { items: BreadcrumbItem[] }) {
 					.filter((item: BreadcrumbItem, idx) => idx !== 0 && idx !== items.length - 1)
 					.map((item: BreadcrumbItem, idx: number) => {
 						return (
-							<>
-								<BreadcrumbItem key={idx}>
-									<BreadcrumbLink>
+							<Fragment key={item.link}>
+								<BreadcrumbItem>
+									<BreadcrumbLink asChild>
 										<Link href={item.link}>{item.label}</Link>
 									</BreadcrumbLink>
 								</BreadcrumbItem>
-								<BreadcrumbSeparator key={idx + 100}/>
-							</>
+								<BreadcrumbSeparator/>
+							</Fragment>
 						);
 					})}
 				<BreadcrumbItem>
