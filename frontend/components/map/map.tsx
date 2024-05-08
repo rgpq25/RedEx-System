@@ -15,7 +15,7 @@ import FlightModal from "./flight-modal";
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-//define props for coordinates and zoom
+
 type Position = {
 	coordinates: [number, number];
 	zoom: number;
@@ -34,6 +34,7 @@ interface MapProps {
 	airports: Aeropuerto[];
 	className?: string;
 }
+
 
 function Map({ attributes, airports, className }: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
