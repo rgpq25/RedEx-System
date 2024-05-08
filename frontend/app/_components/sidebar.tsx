@@ -200,8 +200,8 @@ function Envios({ envios, onClick }: { envios: Envio[] | undefined; onClick: (en
                                                 <Muted>Fecha de recepción: {formatDateShort(envio.fecha_recepcion)}</Muted>
                                                 <Muted>Cantidad: {envio.cantidad_paquetes}</Muted>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {envio.ubicacion_origen.ciudadAbreviada}</Muted>
-                                                    <Muted>Destino: {envio.ubicacion_destino.ciudadAbreviada}</Muted>
+                                                    <Muted>Origen: {envio.ubicacion_origen.ciudad}</Muted>
+                                                    <Muted>Destino: {envio.ubicacion_destino.ciudad}</Muted>
                                                 </span>
                                             </CardContent>
                                         </Card>
@@ -309,7 +309,7 @@ function Aeropuertos({ aeropuertos, onClick }: { aeropuertos: Aeropuerto[] | und
                                         <Card key={aeropuerto.id} className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer' onClick={()=>onClick(aeropuerto)}>
                                             <CardHeader>
                                                 <Large>
-                                                    {aeropuerto.ubicacion.ciudadAbreviada} ({aeropuerto.ubicacion.ciudad})
+                                                    {aeropuerto.ubicacion.ciudad} ({aeropuerto.ubicacion.ciudadAbreviada.toUpperCase()})
                                                 </Large>
                                             </CardHeader>
                                             <CardContent>
@@ -431,8 +431,8 @@ function Vuelos({ vuelos, onClick }: { vuelos: Vuelo[] | undefined; onClick: (vu
                                             </CardHeader>
                                             <CardContent>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudadAbreviada}</Muted>
-                                                    <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudadAbreviada}</Muted>
+                                                    <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudad}</Muted>
+                                                    <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudad}</Muted>
                                                 </span>
                                                 <Muted>Fecha origen: {formatDateShort(vuelo.fecha_origen)}</Muted>
                                                 <Muted>Fecha destino: {formatDateShort(vuelo.fecha_destino)}</Muted>
