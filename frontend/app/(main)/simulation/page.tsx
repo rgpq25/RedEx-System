@@ -13,7 +13,7 @@ import Map from "@/components/map/map";
 
 type TabType = "weekly" | "colapse";
 
-import { vuelos, aeropuertos, envios } from "@/lib/sample";
+import { vuelos, envios } from "@/lib/sample";
 import { Aeropuerto, Envio } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { getFlightPosition } from "@/lib/map-utils";
@@ -76,7 +76,7 @@ function SimulationPage() {
 					<Sidebar
 						envios={envios}
 						vuelos={vuelos}
-						aeropuertos={aeropuertos}
+						aeropuertos={airports}
 						className="absolute top-4 left-4 bottom-4"
 						onClickEnvio={(envio: Envio) => {
 							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");

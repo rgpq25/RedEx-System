@@ -54,14 +54,14 @@ export type Coordenadas = {
 };
 
 export type Ubicacion = {
-	id: number;
+	id: string;
 	latitud: number;
 	longitud: number;
 	continente: string;
 	pais: string;
 	ciudad: string;
-	ciudad_abreviada: string;
-	zona_horaria: string;
+	ciudadAbreviada: string;
+	zonaHoraria: string;
 };
 
 export type Aeropuerto = {
