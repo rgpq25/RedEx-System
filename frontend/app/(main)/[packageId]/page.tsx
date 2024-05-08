@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import CurrentStateBox from "./_components/current-state-box";
-import { PackageStatusName, PackageStatusVariant } from "@/lib/types";
+import { Aeropuerto, PackageStatusName, PackageStatusVariant } from "@/lib/types";
 import { PackageRouteTable } from "./_components/package-route-table";
 import Map from "@/components/map/map";
 import CardInfo from "./_components/card-info";
@@ -9,18 +9,18 @@ import useMapZoom from "@/components/hooks/useMapZoom";
 import MainContainer from "../_components/main-container";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import PlaneLegend from "@/app/_components/plane-legend";
-
+import useApi from "@/components/hooks/useApi";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
 		label: "Acceso",
-		link: "/security-code"
+		link: "/security-code",
 	},
 	{
 		label: "Envío en tiempo real",
-		link: "/[packageId]"
-	}
-]
+		link: "/[packageId]",
+	},
+];
 
 function TrackingPage({ params }: { params: { packageId: string } }) {
 	const [shipment, setShipment] = useState({
@@ -37,6 +37,21 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 	const attributes = useMapZoom();
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
+
+	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+
+	const { isLoading } = useApi(
+		"GET",
+		"http://localhost:8080/back/aeropuerto/",
+		(data: Aeropuerto[]) => {
+			console.log(data);
+			setAirports(data);
+		},
+		(error) => {
+			console.log(error);
+		}
+	);
+
 	return (
 		<MainContainer>
 			<BreadcrumbCustom items={breadcrumbItems} />
@@ -49,7 +64,7 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 			<div className="w-full h-full flex flex-row gap-5 relative overflow-hidden mt-[10px]">
 				<CardInfo shipment={shipment} />
 
-				<Map className="max-h-full" attributes={attributes} />
+				<Map className="max-h-full" attributes={attributes} airports={airports}/>
 			</div>
 		</MainContainer>
 	);

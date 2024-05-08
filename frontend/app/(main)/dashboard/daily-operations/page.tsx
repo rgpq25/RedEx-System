@@ -9,11 +9,13 @@ import { Clock } from "lucide-react";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
+import { useState } from "react";
+import useApi from "@/components/hooks/useApi";
 
 const breadcrumbItems: BreadcrumbItem[] = [
-    {
+	{
 		label: "Acceso",
-		link: "/security-code"
+		link: "/security-code",
 	},
 	{
 		label: "Dashboard",
@@ -29,6 +31,20 @@ function DailyOperationsPage() {
 	const attributes = useMapZoom();
 
 	const { centerLatitude, centerLongitude, currentTime, lockInFlight, unlockFlight, zoom, zoomIn } = attributes;
+
+	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+
+	const { isLoading } = useApi(
+		"GET",
+		"http://localhost:8080/back/aeropuerto/",
+		(data: Aeropuerto[]) => {
+			console.log(data);
+			setAirports(data);
+		},
+		(error) => {
+			console.log(error);
+		}
+	);
 
 	return (
 		<MainContainer>
@@ -59,7 +75,7 @@ function DailyOperationsPage() {
 						lockInFlight(vuelo);
 					}}
 				/>
-				<Map attributes={attributes} className="h-full w-full" />
+				<Map attributes={attributes} className="h-full w-full" airports={airports} />
 			</section>
 		</MainContainer>
 	);

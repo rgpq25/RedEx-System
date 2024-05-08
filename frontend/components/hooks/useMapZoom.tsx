@@ -50,20 +50,20 @@ const useMapZoom = (
 				[destLongitude, destLatitude] as [number, number],
 				currentTime
 			);
-			zoom.setValueNoAnimation(2);
+			zoom.setValueNoAnimation(3);
 			centerLongitude.setValueNoAnimation(coordinates[0]);
 			centerLatitude.setValueNoAnimation(coordinates[1]);
 		}
 	}, [currentTime, currentlyLocked]);
 
 	function zoomIn(coordinates: [number, number], duration = 1000) {
-		zoom.setValue(2, duration);
+		zoom.setValue(3, duration);
 		centerLongitude.setValue(coordinates[0], duration);
 		centerLatitude.setValue(coordinates[1], duration);
 	}
 
 	function zoomInNoAnimation(coordinates: [number, number]) {
-		zoom.setValueNoAnimation(2);
+		zoom.setValueNoAnimation(3);
 		centerLongitude.setValueNoAnimation(coordinates[0]);
 		centerLatitude.setValueNoAnimation(coordinates[1]);
 	}

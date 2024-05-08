@@ -1,21 +1,16 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { Tooltip } from "react-tooltip";
-import useAnimation, { AnimationObject } from "../hooks/useAnimation";
-import Chip from "../ui/chip";
+import { AnimationObject } from "../hooks/useAnimation";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
 import { Aeropuerto, Vuelo } from "@/lib/types";
-import { aeropuertos, ubicaciones, vuelos } from "@/lib/sample";
-import useMapZoom from "../hooks/useMapZoom";
+import { vuelos } from "@/lib/sample";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
-import useApi from "../hooks/useApi";
-import { Button } from "../ui/button";
-import { Settings } from "lucide-react";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -36,10 +31,11 @@ interface MapProps {
 		lockInFlight: (vuelo: Vuelo) => void;
 		unlockFlight: () => void;
 	};
+	airports: Aeropuerto[];
 	className?: string;
 }
 
-function Map({ attributes, className }: MapProps) {
+function Map({ attributes, airports, className }: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
 	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
@@ -49,18 +45,6 @@ function Map({ attributes, className }: MapProps) {
 	const [content, setContent] = useState<string>("");
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
 	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
-	const [airports, setAirports] = useState<Aeropuerto[]>([]);
-
-	const { isLoading } = useApi(
-		"http://localhost:8080/back/aeropuerto/",
-		(data: Aeropuerto[]) => {
-			console.log(data)
-			setAirports(data);
-		},
-		(error) => {
-			console.log(error);
-		}
-	);
 
 	function handleMoveEnd(position: Position) {
 		zoom.setValueNoAnimation(position.zoom);
@@ -104,7 +88,7 @@ function Map({ attributes, className }: MapProps) {
 				{/* <Button size="icon" className="absolute top-4 right-4">
 					<Settings className="w-5 h-5"/>
 				</Button> */}
-				<ComposableMap className="" projection={"geoEqualEarth"} min={-5}>
+				<ComposableMap className="w-full h-full" projection={"geoEqualEarth"} min={-5}>
 					<ZoomableGroup
 						zoom={zoom.value}
 						center={[centerLongitude.value, centerLatitude.value]}

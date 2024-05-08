@@ -14,13 +14,14 @@ import Map from "@/components/map/map";
 type TabType = "weekly" | "colapse";
 
 import { vuelos, aeropuertos, envios } from "@/lib/sample";
-import { Envio } from "@/lib/types";
+import { Aeropuerto, Envio } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { getFlightPosition } from "@/lib/map-utils";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../_components/main-container";
+import useApi from "@/components/hooks/useApi";
 
 function SimulationPage() {
 	const [tab, setTab] = useState<TabType>("weekly");
@@ -29,6 +30,20 @@ function SimulationPage() {
 	const attributes = useMapZoom();
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
+	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+
+	const { isLoading } = useApi(
+		"GET",
+		"http://localhost:8080/back/aeropuerto/",
+		(data: Aeropuerto[]) => {
+			console.log(data);
+			setAirports(data);
+		},
+		(error) => {
+			console.log(error);
+		}
+	);
+
 	return (
 		<>
 			<ModalIntro isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
@@ -36,12 +51,12 @@ function SimulationPage() {
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-4">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulacion</h1>
-						<CurrentTime currentTime={currentTime}/>
+						<CurrentTime currentTime={currentTime} />
 					</div>
-					<PlaneLegend/>
+					<PlaneLegend />
 				</div>
 				<section className="relative flex-1 mt-[10px] overflow-hidden">
-					<Map attributes={attributes} className="h-full w-full" />
+					<Map attributes={attributes} className="h-full w-full" airports={airports} />
 					<Sidebar
 						envios={envios}
 						vuelos={vuelos}
@@ -61,7 +76,7 @@ function SimulationPage() {
 						}}
 					/>
 				</section>
-				</MainContainer>
+			</MainContainer>
 		</>
 	);
 }
