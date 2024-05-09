@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -17,32 +17,47 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Envio, Paquete, Aeropuerto, Ubicacion, Vuelo } from "@/lib/types";
 import { api } from "@/lib/api";
+import { formatDateLong } from "@/lib/date";
+import { format } from "date-fns";
 
 export default function ReceptionPackage() {
     const params = useParams<{ packageId: string }>();
-    const [envio, setEnvio] = useState<Envio | undefined>(undefined);
+    const [envio, setEnvio] = useState<Envio>();
+
+    const getEnvio = useCallback(async () => {
+        await api(
+            "GET",
+            `${process.env.NEXT_PUBLIC_API}/back/envio/${params.packageId}`,
+            (data: Envio) => {
+                setEnvio(data);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    }, [params.packageId]);
+    const getPaquetesEnvio = useCallback(async () => {
+        await api(
+            "GET",
+            `${process.env.NEXT_PUBLIC_API}/back/paquete/envio/${params.packageId}`,
+            (data: Paquete[]) => {
+                setEnvio((prev) => (prev ? { ...prev, paquetes: data } : prev));
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    }, [params.packageId]);
 
     useEffect(() => {
-        const getEnvio = async () => {
-            await api(
-                "GET",
-                `${process.env.NEXT_PUBLIC_API}/back/envio/${params.packageId}`,
-                (data: Envio) => {
-                    setEnvio(data);
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
-        };
-
         getEnvio();
-    }, [params.packageId]);
+        getPaquetesEnvio();
+    }, [getEnvio, getPaquetesEnvio]);
 
     return (
         <div className='flex flex-col mx-auto gap-8 w-11/12 h-full p-8'>
             {envio === undefined ? (
-                <section className="w-10/12 h-full grid grid-cols-1 lg:grid-cols-2 gap-4 m-auto">
+                <section className='w-10/12 h-full grid grid-cols-1 lg:grid-cols-2 gap-4 m-auto'>
                     <Skeleton />
                     <Skeleton />
                     <Skeleton />
@@ -51,7 +66,7 @@ export default function ReceptionPackage() {
             ) : (
                 <>
                     <section className='grid grid-cols-1 lg:grid-cols-2 flex-wrap gap-4 m-auto *:bg-muted *:max-h-fit'>
-                        <Card>
+                        {/* <Card>
                             <CardHeader>
                                 <CardTitle>Información personal (emisor)</CardTitle>
                             </CardHeader>
@@ -88,7 +103,7 @@ export default function ReceptionPackage() {
                                     <Input disabled type='name' />
                                 </div>
                             </CardContent>
-                        </Card>
+                        </Card> */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Información del envío</CardTitle>
@@ -96,27 +111,27 @@ export default function ReceptionPackage() {
                             <CardContent className='*:*:space-y-1 grid grid-cols-1 lg:grid-cols-2 gap-2 items-center'>
                                 <div>
                                     <Label>Código de envío</Label>
-                                    <Input disabled type='name' />
+                                    <Input disabled type='name' defaultValue={envio.id}/>
                                 </div>
                                 <div>
                                     <Label>Cantidad de paquetes</Label>
-                                    <Input disabled type='number' />
+                                    <Input disabled type='number' defaultValue={envio.cantidadPaquetes}/>
                                 </div>
                                 <div>
                                     <Label>Estado del envío</Label>
-                                    <Input disabled type='name' />
+                                    <Input disabled type='name' defaultValue={envio.estado}/>
                                 </div>
                                 <div>
                                     <Label>Fecha de recepción</Label>
-                                    <Input disabled type='date' />
+                                    <Input disabled type='date' defaultValue={format(envio.fechaRecepcion, "yyyy-MM-dd")}/>
                                 </div>
                                 <div>
                                     <Label>Ciudad de origen</Label>
-                                    <Input disabled type='name' />
+                                    <Input disabled type='name' defaultValue={envio.ubicacionOrigen.ciudad}/>
                                 </div>
                                 <div>
                                     <Label>Ciudad de destino</Label>
-                                    <Input disabled type='name' />
+                                    <Input disabled type='name' defaultValue={envio.ubicacionDestino.ciudad}/>
                                 </div>
                             </CardContent>
                         </Card>
@@ -139,16 +154,16 @@ export default function ReceptionPackage() {
                                 </Select>
                                 <ScrollArea>
                                     {envio.paquetes?.map((paquete: Paquete) =>
-                                        paquete.plan_ruta.vuelos.map((vuelo: Vuelo) => (
+                                        paquete.plan_ruta?.vuelos.map((vuelo: Vuelo) => (
                                             <Card key={vuelo.id}>
                                                 <CardContent className='flex flex-wrap gap-4 justify-between *:flex *:flex-col'>
                                                     <div>
                                                         <Large>Origen</Large>
-                                                        <Muted>{vuelo.plan_vuelo.ubicacion_origen}</Muted>
+                                                        <Muted>{vuelo.planVuelo.ubicacionOrigen.ciudad}</Muted>
                                                     </div>
                                                     <div>
                                                         <Large>Destino</Large>
-                                                        <Muted>{vuelo.plan_vuelo.ubicacion_destino}</Muted>
+                                                        <Muted>{vuelo.planVuelo.ubicacionDestino.ciudad}</Muted>
                                                     </div>
                                                 </CardContent>
                                             </Card>
