@@ -69,14 +69,14 @@ export default function Sidebar({ envios, aeropuertos, vuelos, onClickEnvio, onC
             <Button
 				onClick={() => setVisible(true)}
 				className={cn(
-					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[50]",
+					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[20]",
 					visible ? "opacity-0" : "opacity-100"
 				)}
 			>
 				<p>Ver información</p>
                 <ChevronsRight/>
 			</Button>
-            <Card className={cn("flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-5 bottom-5 left-5 z-[100]", visible ? "left-5" : "-left-[404px]")}>
+            <Card className={cn("flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-5 bottom-5 left-5 z-[20]", visible ? "left-5" : "-left-[404px]")}>
                 <CardHeader className="w-full">
                     <div className="w-full flex flex-row justify-between items-center">
                         <Tabs value={selectedOperation} onValueChange={(e) => setSelectedOperation(e as Operacion)} className=''>
