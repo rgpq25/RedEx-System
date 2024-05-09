@@ -14,7 +14,7 @@ import Map from "@/components/map/map";
 type TabType = "weekly" | "colapse";
 
 import { vuelos, envios } from "@/lib/sample";
-import { Aeropuerto, Envio } from "@/lib/types";
+import { Aeropuerto, Envio, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { getFlightPosition } from "@/lib/map-utils";
 import { ModalIntro } from "./_components/modal-intro";
@@ -37,13 +37,13 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 function SimulationPage() {
-	const [tab, setTab] = useState<TabType>("weekly");
-	const [isModalOpen, setIsModalOpen] = useState(true);
-
 	const attributes = useMapZoom();
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
+	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
+	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -72,7 +72,15 @@ function SimulationPage() {
 				</div>
 
 				<section className="relative flex-1 mt-[10px] overflow-hidden">
-					<Map attributes={attributes} className="h-full w-full" airports={airports} />
+					<Map
+						currentAirportModal={currentAirportModal}
+						currentFlightModal={currentFlightModal}
+						setCurrentAirportModal={setCurrentAirportModal}
+						setCurrentFlightModal={setCurrentFlightModal}
+						attributes={attributes}
+						className="h-full w-full"
+						airports={airports}
+					/>
 					<Sidebar
 						envios={envios}
 						vuelos={vuelos}
@@ -80,14 +88,19 @@ function SimulationPage() {
 						onClickEnvio={(envio: Envio) => {
 							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
 						}}
-						onClickAeropuerto={(aeropuerto) => {
-							const longitude = aeropuerto.ubicacion.longitud;
-							const latitude = aeropuerto.ubicacion.latitud;
-							unlockFlight();
-							zoomIn([longitude, latitude] as [number, number]);
+						onClicksAeropuerto={{
+							onClickLocation: (aeropuerto: Aeropuerto) => {
+								unlockFlight();
+								zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [number, number]);
+								
+							},
+							onClickInfo: (aeropuerto: Aeropuerto) => {
+								setCurrentAirportModal(aeropuerto);
+							},
 						}}
 						onClickVuelo={(vuelo) => {
 							lockInFlight(vuelo);
+							setCurrentFlightModal(vuelo);
 						}}
 					/>
 				</section>

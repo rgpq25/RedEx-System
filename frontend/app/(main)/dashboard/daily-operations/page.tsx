@@ -30,10 +30,11 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function DailyOperationsPage() {
 	const attributes = useMapZoom();
-
 	const { centerLatitude, centerLongitude, currentTime, lockInFlight, unlockFlight, zoom, zoomIn } = attributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
+	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -63,20 +64,32 @@ function DailyOperationsPage() {
 					envios={envios}
 					vuelos={vuelos}
 					onClickEnvio={(envio: Envio) => {
-						console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
-						toast.error("Pendiente de implementar")
+						toast.error("Pendiente de implementar");
 					}}
-					onClickAeropuerto={(aeropuerto: Aeropuerto) => {
-						const longitude = aeropuerto.ubicacion.longitud;
-						const latitude = aeropuerto.ubicacion.latitud;
-						unlockFlight();
-						zoomIn([longitude, latitude] as [number, number]);
+					onClicksAeropuerto={{
+						onClickLocation: (aeropuerto: Aeropuerto) => {
+							unlockFlight();
+							zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [number, number]);
+							
+						},
+						onClickInfo: (aeropuerto: Aeropuerto) => {
+							setCurrentAirportModal(aeropuerto);
+						},
 					}}
 					onClickVuelo={(vuelo: Vuelo) => {
 						lockInFlight(vuelo);
+						setCurrentFlightModal(vuelo);
 					}}
 				/>
-				<Map attributes={attributes} className="h-full w-full" airports={airports} />
+				<Map
+					currentAirportModal={currentAirportModal}
+					currentFlightModal={currentFlightModal}
+					setCurrentAirportModal={setCurrentAirportModal}
+					setCurrentFlightModal={setCurrentFlightModal}
+					attributes={attributes}
+					className="h-full w-full"
+					airports={airports}
+				/>
 			</section>
 		</MainContainer>
 	);

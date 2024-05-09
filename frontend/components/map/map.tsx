@@ -15,13 +15,16 @@ import FlightModal from "./flight-modal";
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-
 type Position = {
 	coordinates: [number, number];
 	zoom: number;
 };
 
 interface MapProps {
+	currentAirportModal: Aeropuerto | undefined;
+	currentFlightModal: Vuelo | undefined;
+	setCurrentAirportModal: (aeropuerto: Aeropuerto | undefined) => void;
+	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
 	attributes: {
 		currentTime: Date;
 		zoom: AnimationObject;
@@ -35,8 +38,15 @@ interface MapProps {
 	className?: string;
 }
 
-
-function Map({ attributes, airports, className }: MapProps) {
+function Map({
+	currentAirportModal,
+	currentFlightModal,
+	setCurrentAirportModal,
+	setCurrentFlightModal,
+	attributes,
+	airports,
+	className,
+}: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
 	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
@@ -44,8 +54,6 @@ function Map({ attributes, airports, className }: MapProps) {
 	}
 
 	const [content, setContent] = useState<string>("");
-	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
-	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
 	function handleMoveEnd(position: Position) {
 		zoom.setValueNoAnimation(position.zoom);
