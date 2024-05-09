@@ -131,7 +131,6 @@ function Map({ attributes, airports, className }: MapProps) {
 
 							return (
 								<AirportMarker
-									currentZoom={zoom.value}
 									key={idx}
 									aeropuerto={aeropuerto}
 									coordinates={[longitud, latitud] as [number, number]}

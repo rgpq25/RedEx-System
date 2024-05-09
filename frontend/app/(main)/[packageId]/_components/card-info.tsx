@@ -66,7 +66,7 @@ function CardInfo({ shipment }: { shipment: any }) {
 						</Select>
 					</div>
 					<ChevronsLeft
-                        className="absolute top-2 right-3 cursor-pointer w-10 h-10 p-2"
+                        className="absolute top-2 right-3 cursor-pointer w-10 h-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out"
 						onClick={() => {
 							console.log("Clckng");
 							setVisible(false);

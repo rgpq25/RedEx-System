@@ -2,36 +2,41 @@
 import { Aeropuerto } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Marker } from "react-simple-maps";
+import { Marker, useZoomPanContext } from "react-simple-maps";
 
 function AirportMarker({
-	currentZoom,
 	aeropuerto,
 	coordinates,
 	onClick,
 }: {
-	currentZoom: number;
 	aeropuerto: Aeropuerto;
 	coordinates: [number, number];
 	onClick: (coordinates: [number, number]) => void;
 }) {
 	//TODO: Aqui se deberia mostrar la capacidad actual, pero no se tiene la informacion
-
 	const [isHovering, setIsHovering] = useState(false);
+
+	function handleMouseEnter() {
+		setIsHovering(true);
+	}
+
+	function handleMouseLeave() {
+		setIsHovering(false);
+	}
 
 	return (
 		<>
 			<Marker
 				coordinates={coordinates}
-				onMouseEnter={() => {
-					setIsHovering(true);
-				}}
-				onMouseLeave={() => {
-					setIsHovering(false);
-				}}
+				className="cursor-pointer"
 			>
-				<Airport3 currentZoom={currentZoom} onClick={() => onClick(coordinates)} />
-				{isHovering && (
+				<Airport3
+					aeropuerto={aeropuerto}
+					handleMouseEnter={handleMouseEnter}
+					handleMouseLeave={handleMouseLeave}
+					onClick={() => onClick(coordinates)}
+				/>
+				{/* {isHovering && (
 					<>
 						<rect
 							x={-10}
@@ -50,26 +55,69 @@ function AirportMarker({
 							x={0.5}
 							className="text-[5px] font-poppins fill-white bg-black"
 						>
-							{aeropuerto.capacidad_maxima}%
+							{aeropuerto.capacidadMaxima}
 						</text>
 					</>
-				)}
-				<text
-					textAnchor="middle"
-					y={currentZoom > 4 ? 1.2 : 2.3}
-					fontSize={currentZoom > 4 ? 3 - 0.3 * currentZoom : 3}
-					className={cn(
-						"font-poppins font-semibold transition-all duration-200",
-						currentZoom > 3 ? "fill-black" : "fill-transparent"
-					)}
-				>
-					{aeropuerto.ubicacion.id}
-				</text>
+				)} */}
 			</Marker>
 		</>
 	);
 }
 export default AirportMarker;
+
+function Airport3({
+	aeropuerto,
+	handleMouseEnter,
+	handleMouseLeave,
+	onClick,
+}: {
+	aeropuerto: Aeropuerto;
+	handleMouseEnter: () => void;
+	handleMouseLeave: () => void;
+	onClick: () => void;
+}) {
+	const ctx = useZoomPanContext();
+
+	const zoomForText = 2;
+
+	return (
+		<>
+			<g
+				fill="none"
+				stroke="#B31412"
+				strokeWidth="0.4"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				transform={"scale(" + 0.5 * (1 / ctx.k) + ") translate(-12, -22.6)"}
+			>
+				<path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" className="fill-[#EA4335]" />
+				<circle cx="12" cy="10" r="3" className="fill-[#B31412] stroke-[#B31412]" />
+			</g>
+			<text
+				textAnchor="middle"
+				y={6 * (1 / ctx.k)}
+				fontSize={6 * (1 / ctx.k)}
+				className={cn(
+					"font-poppins font-semibold transition-colors duration-200",
+					ctx.k > zoomForText ? "fill-black" : "fill-transparent"
+				)}
+			>
+				{aeropuerto.ubicacion.id}
+			</text>
+			<rect
+				width={ctx.k > zoomForText ? 17 : 10}
+				height={ctx.k > zoomForText ? 20 : 11.5}
+				className="fill-transparent"
+				transform={
+					"scale(" + 1 * (1 / ctx.k) + ") " + "translate(" + (ctx.k > zoomForText ? -8.5 : -5) + ", -11.2)"
+				}
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+				onClick={onClick}
+			/>
+		</>
+	);
+}
 
 function Airport({ onClick }: { onClick: () => void }) {
 	const transformation = "scale(0.02) translate(-250, -250)";
@@ -238,32 +286,6 @@ function Airport2({ onClick }: { onClick: () => void }) {
 				transform={transformation}
 			/>
 			{/* <circle r={1} className="fill-red-500" /> */}
-		</>
-	);
-}
-
-function Airport3({ currentZoom, onClick }: { currentZoom: number; onClick: () => void }) {
-	return (
-		<>
-			<g
-				fill="none"
-				stroke="#B31412"
-				strokeWidth="0.4"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				transform={"scale(" + (0.3 - (0.01)*currentZoom) + ") translate(-12, -24)"}
-			>
-				<path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" className="fill-[#EA4335]" />
-				<circle cx="12" cy="10" r="3" className="fill-[#B31412] stroke-[#B31412]" />
-			</g>
-			<circle r={7} className="fill-transparent" onClick={onClick} />
-			{/* <text textAnchor="middle" y={15} style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}>
-				{'a'}
-			</text> */}
-			{/* <circle
-				r={0.2}
-				className="fill-red-500"
-			/> */}
 		</>
 	);
 }

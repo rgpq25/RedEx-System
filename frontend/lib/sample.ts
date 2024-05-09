@@ -77,46 +77,46 @@ const aeropuertos: Aeropuerto[] = [
 	{
 		id: 1,
 		ubicacion: ubicaciones[0],
-		capacidad_maxima: 100,
+		capacidadMaxima: 100,
 	},
 	{
 		id: 2,
 		ubicacion: ubicaciones[1],
-		capacidad_maxima: 200,
+		capacidadMaxima: 200,
 	},
 	{
 		id: 3,
 		ubicacion: ubicaciones[2],
-		capacidad_maxima: 300,
+		capacidadMaxima: 300,
 	},
 	{
 		id: 4,
 		ubicacion: ubicaciones[3],
-		capacidad_maxima: 400,
+		capacidadMaxima: 400,
 	},
 	{
 		id: 5,
 		ubicacion: ubicaciones[4],
-		capacidad_maxima: 500,
+		capacidadMaxima: 500,
 	},
 	{
 		id: 6,
 		ubicacion: ubicaciones[5],
-		capacidad_maxima: 600,
+		capacidadMaxima: 600,
 	},
 	{
 		id: 7,
 		ubicacion: ubicaciones[6],
-		capacidad_maxima: 700,
+		capacidadMaxima: 700,
 	},
 ];
 
 const vuelos: Vuelo[] = [
 	{
 		id: 1,
-		plan_vuelo: {
+		planVuelo: {
 			id: 1,
-			ubicacion_origen: {
+			ubicacionOrigen: {
 				id: "SLLP",
 				continente: "America del Sur",
 				pais: "Bolivia",
@@ -126,7 +126,7 @@ const vuelos: Vuelo[] = [
 				latitud: -16.5,
 				longitud: -68.15,
 			},
-			ubicacion_destino: {
+			ubicacionDestino: {
 				id: "RJTT",
 				continente: "Asia",
 				pais: "Japon",
@@ -136,25 +136,21 @@ const vuelos: Vuelo[] = [
 				latitud: 35.6895,
 				longitud: 139.6917,
 			},
-			hora_ciudad_origen: "10:00",
-			hora_ciudad_destino: "12:00",
-			capacidad_maxima: 100,
+			horaCiudadOrigen: "10:00",
+			horaCiudadDestino: "12:00",
+			capacidadMaxima: 100,
 		},
-		fecha_origen: new Date("2024-05-04T00:00:03"),
-		fecha_destino: new Date("2024-05-10T00:00:03"),
-		coordenadas_actual: {
-			latitud: 40.7128,
-			longitud: -74.006,
-		},
-		tiempo_estimado: 2,
-		capacidad_utilizada: 50,
+		fechaOrigen: new Date("2024-05-04T00:00:03"),
+		fechaDestino: new Date("2024-05-10T00:00:03"),
+		tiempoEstimado: 2,
+		capacidadUtilizada: 50,
 		estado: "En vuelo",
 	},
 	{
 		id: 2,
-		plan_vuelo: {
+		planVuelo: {
 			id: 2,
-			ubicacion_origen: {
+			ubicacionOrigen: {
 				id: "RKSI",
 				continente: "Asia",
 				pais: "Corea del Sur",
@@ -164,7 +160,7 @@ const vuelos: Vuelo[] = [
 				latitud: 37.5665,
 				longitud: 126.978,
 			},
-			ubicacion_destino: {
+			ubicacionDestino: {
 				id: "SKBO",
 				continente: "America del Sur",
 				pais: "Colombia",
@@ -174,25 +170,21 @@ const vuelos: Vuelo[] = [
 				latitud: 4.711,
 				longitud: -74.0721,
 			},
-			hora_ciudad_origen: "10:00",
-			hora_ciudad_destino: "12:00",
-			capacidad_maxima: 200,
+			horaCiudadOrigen: "10:00",
+			horaCiudadDestino: "12:00",
+			capacidadMaxima: 200,
 		},
-		fecha_origen: new Date("2024-05-04T00:00:03"),
-		fecha_destino: new Date("2024-05-10T00:03:03"),
-		coordenadas_actual: {
-			latitud: 41.8781,
-			longitud: -87.6298,
-		},
-		tiempo_estimado: 2,
-		capacidad_utilizada: 100,
+		fechaOrigen: new Date("2024-05-04T00:00:03"),
+		fechaDestino: new Date("2024-05-10T00:03:03"),
+		tiempoEstimado: 2,
+		capacidadUtilizada: 100,
 		estado: "En vuelo",
 	},
 	{
 		id: 3,
-		plan_vuelo: {
+		planVuelo: {
 			id: 3,
-			ubicacion_origen: {
+			ubicacionOrigen: {
 				id: "EHAM",
 				continente: "Europa",
 				pais: "Holanda",
@@ -202,7 +194,7 @@ const vuelos: Vuelo[] = [
 				latitud: 52.3676,
 				longitud: 4.9041,
 			},
-			ubicacion_destino: {
+			ubicacionDestino: {
 				id: "SGAS",
 				continente: "America del Sur",
 				pais: "Paraguay",
@@ -212,18 +204,14 @@ const vuelos: Vuelo[] = [
 				latitud: -25.2637,
 				longitud: -57.5759,
 			},
-			hora_ciudad_origen: "10:00",
-			hora_ciudad_destino: "12:00",
-			capacidad_maxima: 300,
+			horaCiudadOrigen: "10:00",
+			horaCiudadDestino: "12:00",
+			capacidadMaxima: 300,
 		},
-		fecha_origen: new Date("2024-05-04T00:00:03"),
-		fecha_destino: new Date("2024-05-10T00:15:03"),
-		coordenadas_actual: {
-			latitud: 33.4484,
-			longitud: -112.074,
-		},
-		tiempo_estimado: 2,
-		capacidad_utilizada: 150,
+		fechaOrigen: new Date("2024-05-04T00:00:03"),
+		fechaDestino: new Date("2024-05-10T00:15:03"),
+		tiempoEstimado: 2,
+		capacidadUtilizada: 150,
 		estado: "En vuelo",
 	},
 ];
@@ -231,33 +219,36 @@ const vuelos: Vuelo[] = [
 const envios: Envio[] = [
 	{
 		id: 1,
-		ubicacion_origen: ubicaciones[0],
-		ubicacion_destino: ubicaciones[1],
-		fecha_recepcion: new Date("2024-05-04T00:00:03"),
-		fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
+		ubicacionOrigen: ubicaciones[0],
+		ubicacionDestino: ubicaciones[1],
+		fechaRecepcion: new Date("2024-05-04T00:00:03"),
+		fechaLimiteEntrega: new Date("2024-05-07T00:00:03"),
 		estado: "En camino",
-		cantidad_paquetes: 50,
-		codigo_seguridad: "123456",
+		cantidadPaquetes: 50,
+		codigoSeguridad: "123456",
+		tiempoEntregaEstimada: "3 días",
 	},
 	{
 		id: 2,
-		ubicacion_origen: ubicaciones[2],
-		ubicacion_destino: ubicaciones[3],
-		fecha_recepcion: new Date("2024-05-04T00:00:03"),
-		fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
+		ubicacionOrigen: ubicaciones[2],
+		ubicacionDestino: ubicaciones[3],
+		fechaRecepcion: new Date("2024-05-04T00:00:03"),
+		fechaLimiteEntrega: new Date("2024-05-07T00:00:03"),
 		estado: "En camino",
-		cantidad_paquetes: 100,
-		codigo_seguridad: "654321",
+		cantidadPaquetes: 100,
+		codigoSeguridad: "654321",
+		tiempoEntregaEstimada: "3 días",
 	},
 	{
 		id: 3,
-		ubicacion_origen: ubicaciones[4],
-		ubicacion_destino: ubicaciones[5],
-		fecha_recepcion: new Date("2024-05-04T00:00:03"),
-		fecha_limite_entrega: new Date("2024-05-07T00:00:03"),
+		ubicacionOrigen: ubicaciones[4],
+		ubicacionDestino: ubicaciones[5],
+		fechaRecepcion: new Date("2024-05-04T00:00:03"),
+		fechaLimiteEntrega: new Date("2024-05-07T00:00:03"),
 		estado: "En camino",
-		cantidad_paquetes: 150,
-		codigo_seguridad: "987654",
+		cantidadPaquetes: 150,
+		codigoSeguridad: "987654",
+		tiempoEntregaEstimada: "3 días",
 	},
 ];
 

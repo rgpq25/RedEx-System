@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
-import { CalendarIcon, Check, Eraser, ListFilter } from "lucide-react";
+import { CalendarIcon, Check, ChevronsLeft, ChevronsRight, Eraser, ListFilter } from "lucide-react";
 import { 
     Card, 
     CardContent, 
@@ -54,34 +54,54 @@ interface SidebarProps {
     envios?: Envio[];
     aeropuertos?: Aeropuerto[];
     vuelos?: Vuelo[];
-    className?: string;
     onClickEnvio: (envio: Envio) => void;
     onClickAeropuerto: (aeropuerto: Aeropuerto) => void;
     onClickVuelo: (vuelo: Vuelo) => void;
     props?: any;
 }
 
-export default function Sidebar({ envios, aeropuertos, vuelos, className, onClickEnvio, onClickAeropuerto, onClickVuelo, ...props }: SidebarProps) {
+export default function Sidebar({ envios, aeropuertos, vuelos, onClickEnvio, onClickAeropuerto, onClickVuelo, ...props }: SidebarProps) {
     const [selectedOperation, setSelectedOperation] = useState<Operacion>(Operacion.Envios);
+    const [visible, setVisible] = useState<boolean>(true);
 
     return (
-        <Card className={cn("flex w-96 flex-col items-center overflow-hidden", className)}>
-            <CardHeader>
-                <Tabs value={selectedOperation} onValueChange={(e) => setSelectedOperation(e as Operacion)} className='w-full '>
-                    <TabsList>
-                        <TabsTrigger value='Envios'>Envios</TabsTrigger>
-                        <TabsTrigger value='Aeropuertos'>Aeropuertos</TabsTrigger>
-                        <TabsTrigger value='Vuelos'>Vuelos</TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </CardHeader>
-            <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
-                <Separator />
-                {selectedOperation === Operacion.Envios && <Envios envios={envios} onClick={onClickEnvio}/>}
-                {selectedOperation === Operacion.Aeropuertos && <Aeropuertos aeropuertos={aeropuertos} onClick={onClickAeropuerto}/>}
-                {selectedOperation === Operacion.Vuelos && <Vuelos vuelos={vuelos} onClick={onClickVuelo}/>}
-            </CardContent>
-        </Card>
+        <>
+            <Button
+				onClick={() => setVisible(true)}
+				className={cn(
+					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[50]",
+					visible ? "opacity-0" : "opacity-100"
+				)}
+			>
+				<p>Ver información</p>
+                <ChevronsRight/>
+			</Button>
+            <Card className={cn("flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-5 bottom-5 left-5 z-[100]", visible ? "left-5" : "-left-[404px]")}>
+                <CardHeader className="w-full">
+                    <div className="w-full flex flex-row justify-between items-center">
+                        <Tabs value={selectedOperation} onValueChange={(e) => setSelectedOperation(e as Operacion)} className=''>
+                            <TabsList>
+                                <TabsTrigger value='Envios'>Envios</TabsTrigger>
+                                <TabsTrigger value='Aeropuertos'>Aeropuertos</TabsTrigger>
+                                <TabsTrigger value='Vuelos'>Vuelos</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                        <ChevronsLeft
+                            className="cursor-pointer h-10 w-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out"
+                            onClick={() =>setVisible(false)}
+                        >
+                            Cerrar
+                        </ChevronsLeft>
+                    </div>
+                </CardHeader>
+                <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
+                    <Separator />
+                    {selectedOperation === Operacion.Envios && <Envios envios={envios} onClick={onClickEnvio}/>}
+                    {selectedOperation === Operacion.Aeropuertos && <Aeropuertos aeropuertos={aeropuertos} onClick={onClickAeropuerto}/>}
+                    {selectedOperation === Operacion.Vuelos && <Vuelos vuelos={vuelos} onClick={onClickVuelo}/>}
+                </CardContent>
+            </Card>
+        </>
     );
 }
 
@@ -197,11 +217,11 @@ function Envios({ envios, onClick }: { envios: Envio[] | undefined; onClick: (en
                                                 <Large>{envio.id}</Large>
                                             </CardHeader>
                                             <CardContent>
-                                                <Muted>Fecha de recepción: {formatDateShort(envio.fecha_recepcion)}</Muted>
-                                                <Muted>Cantidad: {envio.cantidad_paquetes}</Muted>
+                                                <Muted>Fecha de recepción: {formatDateShort(envio.fechaRecepcion)}</Muted>
+                                                <Muted>Cantidad: {envio.cantidadPaquetes}</Muted>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {envio.ubicacion_origen.ciudad}</Muted>
-                                                    <Muted>Destino: {envio.ubicacion_destino.ciudad}</Muted>
+                                                    <Muted>Origen: {envio.ubicacionOrigen.ciudad}</Muted>
+                                                    <Muted>Destino: {envio.ubicacionDestino.ciudad}</Muted>
                                                 </span>
                                             </CardContent>
                                         </Card>
@@ -313,7 +333,7 @@ function Aeropuertos({ aeropuertos, onClick }: { aeropuertos: Aeropuerto[] | und
                                                 </Large>
                                             </CardHeader>
                                             <CardContent>
-                                                <Muted>Capacidad: {aeropuerto.capacidad_maxima}</Muted>
+                                                <Muted>Capacidad: {aeropuerto.capacidadMaxima}</Muted>
                                                 <Muted>Zona horaria: {aeropuerto.ubicacion.zonaHoraria}</Muted>
                                             </CardContent>
                                         </Card>
@@ -431,12 +451,12 @@ function Vuelos({ vuelos, onClick }: { vuelos: Vuelo[] | undefined; onClick: (vu
                                             </CardHeader>
                                             <CardContent>
                                                 <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {vuelo.plan_vuelo.ubicacion_origen.ciudad}</Muted>
-                                                    <Muted>Destino: {vuelo.plan_vuelo.ubicacion_destino.ciudad}</Muted>
+                                                    <Muted>Origen: {vuelo.planVuelo.ubicacionOrigen.ciudad}</Muted>
+                                                    <Muted>Destino: {vuelo.planVuelo.ubicacionDestino.ciudad}</Muted>
                                                 </span>
-                                                <Muted>Fecha origen: {formatDateShort(vuelo.fecha_origen)}</Muted>
-                                                <Muted>Fecha destino: {formatDateShort(vuelo.fecha_destino)}</Muted>
-                                                <Muted>Capacidad: {vuelo.capacidad_utilizada}</Muted>
+                                                <Muted>Fecha origen: {formatDateShort(vuelo.fechaOrigen)}</Muted>
+                                                <Muted>Fecha destino: {formatDateShort(vuelo.fechaDestino)}</Muted>
+                                                <Muted>Capacidad: {vuelo.capacidadUtilizada}</Muted>
                                             </CardContent>
                                         </Card>
                                     ))

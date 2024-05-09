@@ -15,10 +15,10 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	const [isHovering, setIsHovering] = useState(false);
 
 	const coordinates = getFlightPosition(
-		vuelo.fecha_origen,
-		[vuelo.plan_vuelo.ubicacion_origen.longitud, vuelo.plan_vuelo.ubicacion_origen.latitud] as [number, number],
-		vuelo.fecha_destino,
-		[vuelo.plan_vuelo.ubicacion_destino.longitud, vuelo.plan_vuelo.ubicacion_destino.latitud] as [number, number],
+		vuelo.fechaOrigen,
+		[vuelo.planVuelo.ubicacionOrigen.longitud, vuelo.planVuelo.ubicacionOrigen.latitud] as [number, number],
+		vuelo.fechaDestino,
+		[vuelo.planVuelo.ubicacionDestino.longitud, vuelo.planVuelo.ubicacionDestino.latitud] as [number, number],
 		currentTime
 	);
 
@@ -49,15 +49,15 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				}}
 			>
 				<Plane
-					capacity={vuelo.capacidad_utilizada}
+					capacity={vuelo.capacidadUtilizada}
 					originCoordinate={
-						[vuelo.plan_vuelo.ubicacion_origen.longitud, vuelo.plan_vuelo.ubicacion_origen.latitud] as [
+						[vuelo.planVuelo.ubicacionOrigen.longitud, vuelo.planVuelo.ubicacionOrigen.latitud] as [
 							number,
 							number
 						]
 					}
 					destinationCoordinate={
-						[vuelo.plan_vuelo.ubicacion_destino.longitud, vuelo.plan_vuelo.ubicacion_destino.latitud] as [
+						[vuelo.planVuelo.ubicacionDestino.longitud, vuelo.planVuelo.ubicacionDestino.latitud] as [
 							number,
 							number
 						]
@@ -67,7 +67,7 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 					<>
 						<rect x={-10} y={-18.4} width="20" height="9" fill="black" stroke="white" strokeWidth="1" rx={2} ry={2}/>
 						<text textAnchor="middle" y={-12} x={0.5} className="text-[5px] font-poppins fill-white bg-black">
-							{vuelo.capacidad_utilizada / vuelo.plan_vuelo.capacidad_maxima * 100}%
+							{vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima * 100}%
 						</text>
 					</>
 				)}

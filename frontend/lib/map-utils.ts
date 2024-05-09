@@ -55,12 +55,12 @@ export function getTrayectory(vuelo: Vuelo) {
 	const steps = 50;
 
 	const originCoordinate = [
-		vuelo.plan_vuelo.ubicacion_origen.longitud,
-		vuelo.plan_vuelo.ubicacion_origen.latitud,
+		vuelo.planVuelo.ubicacionOrigen.longitud,
+		vuelo.planVuelo.ubicacionOrigen.latitud,
 	] as [number, number];
 	const destinationCoordinate = [
-		vuelo.plan_vuelo.ubicacion_destino.longitud,
-		vuelo.plan_vuelo.ubicacion_destino.latitud,
+		vuelo.planVuelo.ubicacionDestino.longitud,
+		vuelo.planVuelo.ubicacionDestino.latitud,
 	] as [number, number];
 	
 	//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array

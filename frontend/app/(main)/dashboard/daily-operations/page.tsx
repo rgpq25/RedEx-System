@@ -3,7 +3,7 @@ import Sidebar from "@/app/_components/sidebar";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import Map from "@/components/map/map";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
-import { aeropuertos, envios, vuelos } from "@/lib/sample";
+import { envios, vuelos } from "@/lib/sample";
 import { Aeropuerto, Envio, Vuelo } from "@/lib/types";
 import { Clock } from "lucide-react";
 import CurrentTime from "@/app/_components/current-time";
@@ -11,6 +11,7 @@ import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
 import { useState } from "react";
 import useApi from "@/components/hooks/useApi";
+import { toast } from "sonner";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -58,12 +59,12 @@ function DailyOperationsPage() {
 			</div>
 			<section className="relative mt-[10px] flex-1 flex overflow-hidden">
 				<Sidebar
-					aeropuertos={aeropuertos}
+					aeropuertos={airports}
 					envios={envios}
 					vuelos={vuelos}
-					className="absolute top-4 left-4 bottom-4 z-20"
 					onClickEnvio={(envio: Envio) => {
 						console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
+						toast.error("Pendiente de implementar")
 					}}
 					onClickAeropuerto={(aeropuerto: Aeropuerto) => {
 						const longitude = aeropuerto.ubicacion.longitud;

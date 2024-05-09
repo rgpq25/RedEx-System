@@ -77,7 +77,6 @@ function SimulationPage() {
 						envios={envios}
 						vuelos={vuelos}
 						aeropuertos={airports}
-						className="absolute top-4 left-4 bottom-4"
 						onClickEnvio={(envio: Envio) => {
 							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
 						}}
