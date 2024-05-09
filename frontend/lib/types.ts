@@ -67,37 +67,36 @@ export type Ubicacion = {
 export type Aeropuerto = {
 	id: number;
 	ubicacion: Ubicacion;
-	capacidad_maxima: number;
+	capacidadMaxima: number;
 };
 
 export type PlanVuelo = {
 	id: number;
-	ubicacion_origen: Ubicacion;
-	ubicacion_destino: Ubicacion;
-	hora_ciudad_origen: string;
-	hora_ciudad_destino: string;
-	capacidad_maxima: number;
+	ubicacionOrigen: Ubicacion;
+	ubicacionDestino: Ubicacion;
+	horaCiudadOrigen: string;
+	horaCiudadDestino: string;
+	capacidadMaxima: number;
 };
 
 export type Vuelo = {
 	id: number;
-	plan_vuelo: PlanVuelo;
-	fecha_origen: Date;
-	fecha_destino: Date;
-	coordenadas_actual: Coordenadas;
-	tiempo_estimado: number;
-	capacidad_utilizada: number;
+	planVuelo: PlanVuelo;
+	fechaOrigen: Date;
+	fechaDestino: Date;
+	tiempoEstimado: number;
+	capacidadUtilizada: number;
 	estado: string;
 };
 
+
 export type PlanRuta = {
 	id: number;
-	ubicacion_origen: Ubicacion;
-	ubicacion_destino: Ubicacion;
-	fecha_inicio: Date;
-	fecha_fin: Date;
+	estado: string;
+	paquete: Paquete;
 	vuelos: Vuelo[];
 };
+
 
 export type Paquete = {
     id: number;
@@ -110,12 +109,13 @@ export type Paquete = {
 
 export type Envio = {
     id: number;
-    ubicacion_origen: Ubicacion;
-    ubicacion_destino: Ubicacion;
-    fecha_recepcion: Date;
-    fecha_limite_entrega: Date;
+    ubicacionOrigen: Ubicacion;
+    ubicacionDestino: Ubicacion;
+    fechaRecepcion: Date;
+	tiempoEntregaEstimada: string;
+    fechaLimiteEntrega: Date;
     estado: string;
-    cantidad_paquetes: number;
-    codigo_seguridad: string;
+    cantidadPaquetes: number;
+    codigoSeguridad: string;
     paquetes?: Paquete[];
 }
