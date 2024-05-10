@@ -94,7 +94,7 @@ function Map({
 				{/* <Button size="icon" className="absolute top-4 right-4">
 					<Settings className="w-5 h-5"/>
 				</Button> */}
-				<ComposableMap className="" projection={"geoEqualEarth"} min={-5}>
+				<ComposableMap className="" projection={"geoMercator"} min={-5}>
 					<ZoomableGroup
 						zoom={zoom.value}
 						center={[centerLongitude.value, centerLatitude.value]}
