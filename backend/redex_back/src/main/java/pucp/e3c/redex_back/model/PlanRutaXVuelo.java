@@ -50,7 +50,10 @@ public class PlanRutaXVuelo {
         this.vuelo = vuelo;
     }
 
-    public PlanRutaXVuelo(Integer id, PlanRuta planRuta, Vuelo vuelo, int indiceDeOrden) {
+    public PlanRutaXVuelo() {
+    }
+
+    public void fillData(Integer id, PlanRuta planRuta, Vuelo vuelo, int indiceDeOrden) {
         this.id = id;
         this.planRuta = planRuta;
         this.vuelo = vuelo;

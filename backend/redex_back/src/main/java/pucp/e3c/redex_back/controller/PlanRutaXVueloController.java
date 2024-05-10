@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.PlanRutaXVuelo;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("back/plan_vueloXpaquete")
+@RequestMapping("back/plan_ruta_vuelo")
 public class PlanRutaXVueloController {
     @Autowired
     PlanRutaXVueloService planRutaXVueloService;
