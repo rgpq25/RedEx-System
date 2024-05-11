@@ -28,7 +28,7 @@ public class Algoritmo {
         }
 
         // recorrer los paquetes por cada 50
-        int tamanhoPaquetes = 50;
+        int tamanhoPaquetes = 5000;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
 
@@ -56,7 +56,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 10;
-        int windowSize = tamanhoPaquetes;
+        int windowSize = tamanhoPaquetes / 5;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters

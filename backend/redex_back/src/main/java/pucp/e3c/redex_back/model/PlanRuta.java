@@ -8,10 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,8 +22,11 @@ public class PlanRuta {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
-
     Simulacion simulacionActual;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_paquete", referencedColumnName = "id")
+    Paquete paquete;
 
     public PlanRuta() {
         this.id = 0;
@@ -65,5 +66,4 @@ public class PlanRuta {
         this.simulacionActual = simulacionActual;
     }
 
-    
 }
