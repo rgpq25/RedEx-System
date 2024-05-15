@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import pucp.e3c.redex_back.model.PlanRuta;
+import java.util.Optional;
 
 public interface PlanRutaRepository extends JpaRepository<PlanRuta, Integer> {
-    public PlanRuta findById(int id);
+    public Optional<PlanRuta> findById(int id);
 }

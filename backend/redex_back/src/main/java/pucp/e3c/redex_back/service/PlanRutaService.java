@@ -3,10 +3,12 @@ package pucp.e3c.redex_back.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.PlanRuta;
 import pucp.e3c.redex_back.model.Vuelo;
 import pucp.e3c.redex_back.repository.PlanRutaRepository;
@@ -29,7 +31,8 @@ public class PlanRutaService {
     }
 
     public PlanRuta get(int id) {
-        return planRutaRepository.findById(id);
+        Optional<PlanRuta> optional_planRuta = planRutaRepository.findById(id);
+        return optional_planRuta.get();
     }
 
     public List<PlanRuta> getAll() {

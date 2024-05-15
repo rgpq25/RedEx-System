@@ -47,4 +47,8 @@ public class PaqueteService {
         return paqueteRepository.findBySimulacionActualId(id);
     }
 
+    public Paquete findByPlanRutaId(Integer id) {
+        return paqueteRepository.findByPlanRutaActualId(id);
+    }
+
 }
