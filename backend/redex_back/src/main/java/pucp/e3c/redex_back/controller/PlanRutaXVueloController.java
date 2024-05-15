@@ -62,7 +62,7 @@ public class PlanRutaXVueloController {
 
     @GetMapping("/plan_ruta/{id}")
     public ResponseEntity<List<PlanRutaXVuelo>> getByPlanRuta(@PathVariable("id") int id) {
-        List<PlanRutaXVuelo> planRutaXVuelos = planRutaXVueloService.findByPlanRuta(id);
+        List<PlanRutaXVuelo> planRutaXVuelos = planRutaXVueloService.findByPlanRutaId(id);
         return new ResponseEntity<>(planRutaXVuelos, HttpStatus.OK);
     }
 

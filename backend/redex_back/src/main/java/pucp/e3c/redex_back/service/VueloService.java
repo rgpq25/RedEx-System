@@ -77,7 +77,7 @@ public class VueloService {
         return vueloRepository.findValidos(origen.getId(), fechaInicio, fechaFin);
     }
 
-    /*public ArrayList<Vuelo> findValidosAeropuertoSimulacion(Ubicacion origen, Ubicacion destino, Date fechaInicio, Date fechaFin) {
-        return vueloRepository.findValidosAeropuertoSimulacion(origen.getId(), destino.getId(), fechaInicio, fechaFin);
-    }*/
+    public ArrayList<Vuelo> findVuelosValidosAeropuertoSimulacion(Integer idSimulacion,String idUbicacion) {
+        return vueloRepository.findValidosAeropuertoSimulacion(idSimulacion,idUbicacion);
+    }
 }

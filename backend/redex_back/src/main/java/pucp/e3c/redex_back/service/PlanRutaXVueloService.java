@@ -55,7 +55,7 @@ public class PlanRutaXVueloService {
         return vuelos;
     }
 
-    public List<PlanRutaXVuelo> findByPlanRuta(int idPlan) {
+    public List<PlanRutaXVuelo> findByPlanRutaId(int idPlan) {
         return planRutaXVueloRepository.findByPlanRutaId(idPlan);
     }
 
@@ -66,5 +66,9 @@ public class PlanRutaXVueloService {
             planRutaRepository.findById(planRutaXVuelo.getPlanRuta().getId()).ifPresent(planesRuta::add);
         }
         return planesRuta;
+    }
+
+    public List<PlanRutaXVuelo> findByVueloId(Integer id) {
+        return planRutaXVueloRepository.findByVueloId(id);
     }
 }
