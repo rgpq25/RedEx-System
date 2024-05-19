@@ -85,6 +85,7 @@ public class VueloController {
         if (vuelo != null) {
             List<PlanRuta> planesRuta = planRutaXVueloService.findPlanesRutaByVuelo(vuelo.getId());
             List<Paquete> paquetes = new ArrayList<Paquete>();
+            if(planesRuta == null) return null;
             for (PlanRuta planRuta : planesRuta) {
                 Paquete paquete = paqueteService.findByPlanRutaId(planRuta.getId());
                 if (paquete != null) {

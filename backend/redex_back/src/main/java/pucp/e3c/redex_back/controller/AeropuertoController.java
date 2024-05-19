@@ -98,8 +98,9 @@ public class AeropuertoController {
     @GetMapping(value = "/{idAeropuerto}/paquetesfromsimulation/{idSimulacion}")
     public ArrayList<Paquete> getPaquetesFromSimulation(@PathVariable("idAeropuerto") Integer idAeropuerto, @PathVariable("idSimulacion") Integer idSimulacion){
         Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
-        //ArrayList<Vuelo> vuelos = vueloService.findVuelosValidosAeropuertoSimulacion(idSimulacion, aeropuerto.getUbicacion().getId());
+        if(aeropuerto == null) return null;
         Simulacion simulacion = simulacionService.get(idSimulacion);
+        if(simulacion == null) return null;
 
         Date fechaSimulacion = getFechaCorte(simulacion);
         
@@ -134,12 +135,13 @@ public class AeropuertoController {
                 }
             }
         }
-        
+        if(planRutasMap.isEmpty()){
+            ArrayList<Paquete> paquetesEnAeropuerto = paqueteService.findPaquetesWithoutPlanRutaSimulacion(aeropuerto.getUbicacion().getId(), idSimulacion, fechaSimulacion);
+            return paquetesEnAeropuerto;
+        }
         //iterate hashmap planRutasMap
         HashMap<Integer,PlanRuta> planRutasValidasMap = new HashMap<>();
-        if(planRutasMap.isEmpty()){
-            return null;
-        }
+        
         for(Integer idPlanRuta : planRutasMap.keySet()){
             //itero sobre los posibles planes ruta
             List<Vuelo> vuelosPlanRuta = planRutaXVueloService.findVuelosByPlanRutaOrdenadosIndice(idPlanRuta);            
@@ -148,32 +150,27 @@ public class AeropuertoController {
             for (int i = 0; i < vuelosPlanRuta.size(); i++) {
                 //itero sobre los vuelos de un plan ruta
                 Vuelo vuelo = vuelosPlanRuta.get(i);
+                if(vuelo == null) continue;
                 //check if vuelo is in vuelosDestino
-                if(vuelosDestino.contains(vuelo)){
+                if(vuelosDestino!= null && vuelosDestino.contains(vuelo)){
                     //check if vuelo is the last one
                     if(i == lastIndex){
                         //check if fechaSimulacion is greater than fechaLlegada by more than 5 minutes
                         if(isAfterByMoreThanFiveMinutes(fechaSimulacion, vuelo.getFechaLlegada())){
                             planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
-                            break;
                         }
-                        else{
-                            break;
-                        }
+                        break;
                         
                     }
                     else{
                         //check if next vuelo is in vuelosOrigen
-                        if(vuelosOrigen.contains(vuelosPlanRuta.get(i+1))){
+                        if(vuelosOrigen!= null && vuelosPlanRuta.get(i+1) !=null && vuelosOrigen.contains(vuelosPlanRuta.get(i+1))){
                             planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
-                            break;
                         }
-                        else{
-                            break;
-                        }
+                        break;
                     }
                 }
-                else if(vuelosOrigen.contains(vuelo)){
+                else if(vuelosOrigen!= null && vuelosOrigen.contains(vuelo)){
                     //check if vuelo is the first one
                     if(i == 0){
                         planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
@@ -181,16 +178,17 @@ public class AeropuertoController {
                     }
                     else{
                         //check if previous vuelo is in vuelosDestino
-                        if(vuelosDestino.contains(vuelosPlanRuta.get(i-1))){
+                        if(vuelosDestino!=null && vuelosPlanRuta.get(i-1) != null && vuelosDestino.contains(vuelosPlanRuta.get(i-1))){
                             planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
-                            break;
                         }
-                        else{
-                            break;
-                        }
+                        break;
                     }
                 }                
             }
+        }
+        if(planRutasValidasMap.isEmpty()){
+            ArrayList<Paquete> paquetesEnAeropuerto = paqueteService.findPaquetesWithoutPlanRutaSimulacion(aeropuerto.getUbicacion().getId(), idSimulacion, fechaSimulacion);
+            return paquetesEnAeropuerto;
         }
 
         ArrayList<Paquete> paquetes = new ArrayList<>();
