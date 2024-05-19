@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import pucp.e3c.redex_back.model.Paquete;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Repository
 public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
     public ArrayList<Paquete> findByAeropuertoActualId(Integer id);

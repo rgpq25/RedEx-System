@@ -2,13 +2,17 @@ package pucp.e3c.redex_back.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import pucp.e3c.redex_back.model.Vuelo;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
+@Repository
 public interface VueloRepository extends JpaRepository<Vuelo, Integer> {
     public Optional<Vuelo> findById(Integer id);
 
