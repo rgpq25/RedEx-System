@@ -55,6 +55,21 @@ public class PlanRutaXVueloService {
         return vuelos;
     }
 
+    public List<Vuelo> findVuelosByPlanRutaOrdenadosIndice(int planRutaId) {
+        List<PlanRutaXVuelo> planRutaXVuelos = planRutaXVueloRepository.findByPlanRutaId(planRutaId);
+        if(planRutaXVuelos == null || planRutaXVuelos.isEmpty()){
+            return null;
+        }
+        //order by indiceDeOrden asc
+        planRutaXVuelos.sort((pr1, pr2) -> pr1.getIndiceDeOrden() - pr2.getIndiceDeOrden());
+        List<Vuelo> vuelos = new ArrayList<Vuelo>();
+        for (PlanRutaXVuelo planRutaXVuelo : planRutaXVuelos) {
+            vueloRepository.findById(planRutaXVuelo.getVuelo().getId()).ifPresent(vuelos::add);
+        }
+        //Collections.sort(vuelos, (vuelo1, vuelo2) -> vuelo1.getFechaSalida().compareTo(vuelo2.getFechaSalida()));       
+        return vuelos;
+    }
+
     public List<PlanRutaXVuelo> findByPlanRutaId(int idPlan) {
         return planRutaXVueloRepository.findByPlanRutaId(idPlan);
     }

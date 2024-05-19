@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +51,10 @@ public class PaqueteService {
 
     public Paquete findByPlanRutaId(Integer id) {
         return paqueteRepository.findByPlanRutaActualId(id);
+    }
+
+    public ArrayList<Paquete> findPaquetesWithoutPlanRutaSimulacion(String idUbicacionOrigen, Integer idSimulacion, Date fechaCorte){
+        return paqueteRepository.findPaquetesWithoutPlanRutaSimulacion(idUbicacionOrigen, idSimulacion, fechaCorte);
     }
 
 }

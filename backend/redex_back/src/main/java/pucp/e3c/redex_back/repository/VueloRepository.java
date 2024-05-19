@@ -20,4 +20,10 @@ public interface VueloRepository extends JpaRepository<Vuelo, Integer> {
     @Query("SELECT v FROM Vuelo v WHERE (v.planVuelo.ciudadOrigen.id = :idUbicacion OR v.planVuelo.ciudadDestino.id = :idUbicacion) AND v.simulacionActual.id = :idSimulacion")
     public ArrayList<Vuelo> findValidosAeropuertoSimulacion(Integer idSimulacion,String idUbicacion);
 
+    @Query("SELECT v FROM Vuelo v WHERE v.simulacionActual.id = :idSimulacion AND v.planVuelo.ciudadDestino.id = :idUbicacion AND v.fechaLlegada < :fechaCorte")
+    public ArrayList<Vuelo> findVuelosDestinoAeropuertoSimulacionFechaCorte(Integer idSimulacion, String idUbicacion, Date fechaCorte);
+
+    @Query("SELECT v FROM Vuelo v WHERE v.simulacionActual.id = :idSimulacion AND v.planVuelo.ciudadOrigen.id = :idUbicacion AND v.fechaSalida > :fechaCorte")
+    public ArrayList<Vuelo> findVuelosOrigenAeropuertoSimulacionFechaCorte(Integer idSimulacion, String idUbicacion, Date fechaCorte);
+
 }

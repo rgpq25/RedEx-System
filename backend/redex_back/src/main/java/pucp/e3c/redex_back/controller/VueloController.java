@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
+import java.util.Date;
 
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRuta;
@@ -70,6 +71,13 @@ public class VueloController {
         List<Vuelo> vuelos = vueloService.getAll();
         return new ResponseEntity<>(vuelos, HttpStatus.OK);
     }
+
+    /*@GetMapping("/destino/{idSimulacion}/{idUbicacion}")
+    public ArrayList<Vuelo> pruebaFindVuelosDestinoAeropuertoSimulacionFecha(@PathVariable("idSimulacion") Integer idSimulacion,
+    @PathVariable("idUbicacion") String idUbicacion) {
+        Date fechaCorte = new Date();
+        return vueloService.findVuelosDestinoAeropuertoSimulacionFecha(idSimulacion, idUbicacion, fechaCorte);
+    }*/
 
     @GetMapping("/{id}/paquetes")
     public List<Paquete> getPaquetes(@PathVariable("id") int id) {

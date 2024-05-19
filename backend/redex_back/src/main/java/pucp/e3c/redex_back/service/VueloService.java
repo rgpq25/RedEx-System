@@ -80,4 +80,12 @@ public class VueloService {
     public ArrayList<Vuelo> findVuelosValidosAeropuertoSimulacion(Integer idSimulacion,String idUbicacion) {
         return vueloRepository.findValidosAeropuertoSimulacion(idSimulacion,idUbicacion);
     }
+
+    public ArrayList<Vuelo> findVuelosDestinoAeropuertoSimulacionFecha(Integer idSimulacion, String idUbicacion, Date fechaCorte) {
+        return vueloRepository.findVuelosDestinoAeropuertoSimulacionFechaCorte(idSimulacion, idUbicacion, fechaCorte);
+    }
+
+    public ArrayList<Vuelo> findVuelosOrigenAeropuertoSimulacionFecha(Integer idSimulacion, String idUbicacion, Date fechaCorte) {
+        return vueloRepository.findVuelosOrigenAeropuertoSimulacionFechaCorte(idSimulacion, idUbicacion, fechaCorte);
+    }
 }
