@@ -108,9 +108,12 @@ public class AeropuertoController {
         ArrayList<Vuelo> vuelosOrigen = vueloService.findVuelosOrigenAeropuertoSimulacionFecha(idSimulacion, aeropuerto.getUbicacion().getId(), fechaSimulacion);
 
         HashMap<Integer,PlanRuta> planRutasMap = new HashMap<>();
+        HashMap<Integer,Vuelo> vuelosDestinoMap = new HashMap<>();
+        HashMap<Integer,Vuelo> vuelosOrigenMap = new HashMap<>();
 
         if(vuelosDestino != null){
             for(Vuelo vuelo : vuelosDestino){
+                vuelosDestinoMap.put(vuelo.getId(), vuelo);
                 List<PlanRuta> planRutas = planRutaXVueloService.findPlanesRutaByVuelo(vuelo.getId());
                 if(planRutas == null) continue;
                 for(PlanRuta planRuta : planRutas){
@@ -124,6 +127,7 @@ public class AeropuertoController {
         }
         if(vuelosOrigen != null){
             for(Vuelo vuelo : vuelosOrigen){
+                vuelosOrigenMap.put(vuelo.getId(), vuelo);
                 List<PlanRuta> planRutas = planRutaXVueloService.findPlanesRutaByVuelo(vuelo.getId());
                 if(planRutas == null) continue;
                 for(PlanRuta planRuta : planRutas){
@@ -151,8 +155,8 @@ public class AeropuertoController {
                 //itero sobre los vuelos de un plan ruta
                 Vuelo vuelo = vuelosPlanRuta.get(i);
                 if(vuelo == null) continue;
-                //check if vuelo is in vuelosDestino
-                if(vuelosDestino!= null && vuelosDestino.contains(vuelo)){
+
+                if(vuelosDestino!= null && vuelosDestinoMap.containsKey(vuelo.getId())){
                     //check if vuelo is the last one
                     if(i == lastIndex){
                         //check if fechaSimulacion is greater than fechaLlegada by more than 5 minutes
@@ -164,13 +168,13 @@ public class AeropuertoController {
                     }
                     else{
                         //check if next vuelo is in vuelosOrigen
-                        if(vuelosOrigen!= null && vuelosPlanRuta.get(i+1) !=null && vuelosOrigen.contains(vuelosPlanRuta.get(i+1))){
+                        if(vuelosOrigen!= null && vuelosPlanRuta.get(i+1) !=null && vuelosOrigenMap.containsKey(vuelosPlanRuta.get(i+1).getId())){
                             planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
                         }
                         break;
                     }
                 }
-                else if(vuelosOrigen!= null && vuelosOrigen.contains(vuelo)){
+                else if(vuelosOrigen!= null && vuelosOrigenMap.containsKey(vuelo.getId())){
                     //check if vuelo is the first one
                     if(i == 0){
                         planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
@@ -178,7 +182,7 @@ public class AeropuertoController {
                     }
                     else{
                         //check if previous vuelo is in vuelosDestino
-                        if(vuelosDestino!=null && vuelosPlanRuta.get(i-1) != null && vuelosDestino.contains(vuelosPlanRuta.get(i-1))){
+                        if(vuelosDestino!=null && vuelosPlanRuta.get(i-1) != null && vuelosDestinoMap.containsKey(vuelosPlanRuta.get(i-1).getId())){
                             planRutasValidasMap.put(idPlanRuta, planRutasMap.get(idPlanRuta));
                         }
                         break;
