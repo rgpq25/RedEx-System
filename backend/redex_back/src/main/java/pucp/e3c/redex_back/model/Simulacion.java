@@ -15,57 +15,93 @@ public class Simulacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer Id;
 
-    Date fechaInicio;
-    Date fechaActual;
-    Date fechaFin;
+    Date fechaInicioSim;
+    Date fechaFinSim;
+    Date fechaInicioSistema;
+    double multiplicadorTiempo;
     int estado;
     // String resultado;
+
+    
+
+    public void fillData() {
+        fechaInicioSim = new Date();
+        fechaFinSim = new Date();
+        fechaInicioSistema = new Date();
+        multiplicadorTiempo = 1;
+        estado = 0;
+    }
+
+
 
     public Integer getId() {
         return Id;
     }
 
+
+
     public void setId(Integer id) {
         Id = id;
     }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
+
+
+    public Date getFechaInicioSim() {
+        return fechaInicioSim;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
+
+
+    public void setFechaInicioSim(Date fechaInicioSim) {
+        this.fechaInicioSim = fechaInicioSim;
     }
 
-    public Date getFechaFin() {
-        return fechaFin;
+
+
+    public Date getFechaFinSim() {
+        return fechaFinSim;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+
+
+    public void setFechaFinSim(Date fechaFinSim) {
+        this.fechaFinSim = fechaFinSim;
     }
+
+
+
+    public Date getFechaInicioSistema() {
+        return fechaInicioSistema;
+    }
+
+
+
+    public void setFechaInicioSistema(Date fechaInicioSistema) {
+        this.fechaInicioSistema = fechaInicioSistema;
+    }
+
+
+
+    public double getMultiplicadorTiempo() {
+        return multiplicadorTiempo;
+    }
+
+
+
+    public void setMultiplicadorTiempo(double multiplicadorTiempo) {
+        this.multiplicadorTiempo = multiplicadorTiempo;
+    }
+
+
 
     public int getEstado() {
         return estado;
     }
 
+
+
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public Date getFechaActual() {
-        return fechaActual;
-    }
-
-    public void setFechaActual(Date fechaActual) {
-        this.fechaActual = fechaActual;
-    }
-
-    public void fillData() {
-        fechaInicio = new Date();
-        fechaActual = new Date();
-        fechaFin = new Date();
-        estado = 0;
     }
 
 }

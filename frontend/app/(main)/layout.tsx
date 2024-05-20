@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../_components/navbar";
 import { useRouter } from "next/navigation";
 import { RoleType } from "@/lib/types";
+import { Toaster } from "sonner";
 
 export default function SimulationLayout({
     children,
@@ -23,13 +24,13 @@ export default function SimulationLayout({
         }
 
         if (role === "admin") {
-            router.push("/simulation");
+            //router.push("/simulation");
             setRole("admin");
             setIsLoading(false);
         }
-        if (role === "operator") {
-            setRole("operator");
-            router.push("/manage-packages");
+        if (role === "operario") {
+            setRole("operario");
+            //router.push("/dashboard");
             setIsLoading(false);
         }
         if(role === "user") {
@@ -39,9 +40,12 @@ export default function SimulationLayout({
     }, []);
 
     return (
-        <div className="overflow-x-hidden h-dvh w-dvw flex flex-col">
-            <Navbar role={role}/>
-            {isLoading ? <p>Loading...</p> : children}
-        </div>
+        <>
+            <div className="overflow-x-hidden h-dvh w-dvw flex flex-col">
+                <Navbar role={role}/>
+                {isLoading ? <p>Loading...</p> : children}
+            </div>
+            <Toaster richColors/>
+        </>
     );
 }

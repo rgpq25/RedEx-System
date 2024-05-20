@@ -4,60 +4,109 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info, Settings } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PackageTable } from "./_components/package-table";
 import Visualizator from "./_components/visualizator";
 import InfoNotation1 from "./_components/info-notation1";
+import Sidebar from "@/app/_components/sidebar";
+import Map from "@/components/map/map";
 
 type TabType = "weekly" | "colapse";
 
+import { vuelos, envios } from "@/lib/sample";
+import { Aeropuerto, Envio, Vuelo } from "@/lib/types";
+import useMapZoom from "@/components/hooks/useMapZoom";
+import { getFlightPosition } from "@/lib/map-utils";
+import { ModalIntro } from "./_components/modal-intro";
+import CurrentTime from "@/app/_components/current-time";
+import PlaneLegend from "@/app/_components/plane-legend";
+import MainContainer from "../_components/main-container";
+import useApi from "@/components/hooks/useApi";
+import { toast } from "sonner";
+import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
+
+const breadcrumbItems: BreadcrumbItem[] = [
+	{
+		label: "Acceso",
+		link: "/security-code",
+	},
+	{
+		label: "Simulación",
+		link: "/simulation",
+	},
+];
+
 function SimulationPage() {
-    const [tab, setTab] = useState<TabType>("weekly");
+	const attributes = useMapZoom();
+	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
-    return (
-        <main className="px-10 py-5">
-            <h1>Visualizador de simulación</h1>
-            <Visualizator className="mt-2" />
-            <section className="flex flex-col 2xl:flex-row 2xl:gap-10 gap-4  w-full mt-3">
-                <div className="flex flex-col 2xl:w-[600px]">
-                    <div className="flex items-center ">
-                        <Settings className="stroke-[1.9px]" />
-                        <h2 className="ml-1 mr-4">Configuracion</h2>
+	const [isModalOpen, setIsModalOpen] = useState(true);
+	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
+	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
-                        <Tabs
-                            defaultValue="weekly"
-                            value={tab}
-                            onValueChange={(e) => setTab(e as TabType)}
-                        >
-                            <TabsList>
-                                <TabsTrigger value="weekly">
-                                    Pronostico futuro
-                                </TabsTrigger>
-                                <TabsTrigger value="colapse">
-                                    Hasta colapso
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
+	const { isLoading } = useApi(
+		"GET",
+		"http://localhost:8080/back/aeropuerto/",
+		(data: Aeropuerto[]) => {
+			console.log(data);
+			setAirports(data);
+		},
+		(error) => {
+			console.log(error);
+			toast.error("Error al cargar aeropuertos");
+		}
+	);
 
-                    <InfoNotation1 />
+	return (
+		<>
+			<ModalIntro isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+			<MainContainer>
+				<BreadcrumbCustom items={breadcrumbItems} />
+				<div className="flex flex-row justify-between items-center">
+					<div className="flex flex-row gap-4 items-center ">
+						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
+						<CurrentTime currentTime={currentTime} />
+					</div>
+					<PlaneLegend />
+				</div>
 
-                    <div className="flex  items-end gap-1 mt-3">
-                        <div className="flex-1">
-                            <Label>Entrada de datos Excel</Label>
-                            <Input type="text" />
-                        </div>
-                        <Button>Subir archivo</Button>
-                    </div>
-
-                    <Button className="mx-auto mt-6" size="lg">
-                        Empezar simulación
-                    </Button>
-                </div>
-
-                <PackageTable />
-            </section>
-        </main>
-    );
+				<section className="relative flex-1 mt-[10px] overflow-hidden">
+					<Map
+						currentAirportModal={currentAirportModal}
+						currentFlightModal={currentFlightModal}
+						setCurrentAirportModal={setCurrentAirportModal}
+						setCurrentFlightModal={setCurrentFlightModal}
+						attributes={attributes}
+						className="h-full w-full"
+						airports={airports}
+					/>
+					<Sidebar
+						envios={envios}
+						vuelos={vuelos}
+						aeropuertos={airports}
+						onClickEnvio={(envio: Envio) => {
+							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
+						}}
+						onClicksAeropuerto={{
+							onClickLocation: (aeropuerto: Aeropuerto) => {
+								unlockFlight();
+								zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [number, number]);
+								
+							},
+							onClickInfo: (aeropuerto: Aeropuerto) => {
+								setCurrentAirportModal(aeropuerto);
+							},
+						}}
+						onClickVuelo={(vuelo) => {
+							lockInFlight(vuelo);
+							setCurrentFlightModal(vuelo);
+						}}
+					/>
+				</section>
+			</MainContainer>
+		</>
+	);
 }
+
 export default SimulationPage;

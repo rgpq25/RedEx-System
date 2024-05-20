@@ -13,8 +13,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import java.util.Date;
 
+import pucp.e3c.redex_back.model.Paquete;
+import pucp.e3c.redex_back.model.PlanRuta;
 import pucp.e3c.redex_back.model.Vuelo;
+import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.VueloService;
 
 @RestController
@@ -22,6 +28,12 @@ import pucp.e3c.redex_back.service.VueloService;
 public class VueloController {
     @Autowired
     VueloService vueloService;
+
+    @Autowired
+    PlanRutaXVueloService planRutaXVueloService;
+
+    @Autowired
+    PaqueteService paqueteService;
 
     @PostMapping("/")
     public ResponseEntity<Vuelo> register(@RequestBody Vuelo vuelo) {
@@ -58,5 +70,31 @@ public class VueloController {
     public ResponseEntity<List<Vuelo>> getAll() {
         List<Vuelo> vuelos = vueloService.getAll();
         return new ResponseEntity<>(vuelos, HttpStatus.OK);
+    }
+
+    /*@GetMapping("/destino/{idSimulacion}/{idUbicacion}")
+    public ArrayList<Vuelo> pruebaFindVuelosDestinoAeropuertoSimulacionFecha(@PathVariable("idSimulacion") Integer idSimulacion,
+    @PathVariable("idUbicacion") String idUbicacion) {
+        Date fechaCorte = new Date();
+        return vueloService.findVuelosDestinoAeropuertoSimulacionFecha(idSimulacion, idUbicacion, fechaCorte);
+    }*/
+
+    @GetMapping("/{id}/paquetes")
+    public List<Paquete> getPaquetes(@PathVariable("id") int id) {
+        Vuelo vuelo = vueloService.get(id);
+        if (vuelo != null) {
+            List<PlanRuta> planesRuta = planRutaXVueloService.findPlanesRutaByVuelo(vuelo.getId());
+            List<Paquete> paquetes = new ArrayList<Paquete>();
+            if(planesRuta == null) return null;
+            for (PlanRuta planRuta : planesRuta) {
+                Paquete paquete = paqueteService.findByPlanRutaId(planRuta.getId());
+                if (paquete != null) {
+                    paquetes.add(paquete);
+                }
+            }
+            return paquetes;
+        } else {
+            return null;
+        }
     }
 }

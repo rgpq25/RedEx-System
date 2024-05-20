@@ -29,9 +29,9 @@ function SecurityCodeLoginPage() {
             if (code === "admin") {
                 localStorage.setItem("role", "admin");
                 router.push("/simulation");
-            } else if (code === "operator") {
-                localStorage.setItem("role", "operator");
-                router.push("/manage-packages");
+            } else if (code === "operario") {
+                localStorage.setItem("role", "operario");
+                router.push("/dashboard");
             } else {
                 localStorage.setItem("role", "user");
                 router.push(`/${code}`);

@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +57,11 @@ public class PaqueteController {
     public List<Paquete> findByEnvioId(@PathVariable("id") Integer id) {
         return paqueteService.findByEnvioId(id);
     }
+
+    /*@GetMapping(value = "/simulacion/{idSimulacion}/{idUbicacionOrigen}")
+    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(@PathVariable("idUbicacionOrigen") String idUbicacionOrigen,@PathVariable("idSimulacion") Integer idSimulacion){
+        Date fechaCorte = new Date();
+        return paqueteService.findPaquetesWithoutPlanRutaSimulacion(idUbicacionOrigen, idSimulacion,fechaCorte);
+    }*/
     
 }
