@@ -22,7 +22,7 @@ public class PlanRutaNT {
 
     }
 
-    private void updateCodigo() {
+    public void updateCodigo() {
         StringBuilder sb = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm"); // Formato para las fechas
 

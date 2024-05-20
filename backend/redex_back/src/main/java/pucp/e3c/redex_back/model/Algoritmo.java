@@ -5,6 +5,10 @@ import java.util.HashMap;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import pucp.e3c.redex_back.service.PlanRutaService;
+import pucp.e3c.redex_back.service.PlanRutaXVueloService;
+import pucp.e3c.redex_back.service.VueloService;
+
 public class Algoritmo {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -14,7 +18,8 @@ public class Algoritmo {
     }
 
     public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos,
-            ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes) {
+            ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes, VueloService vueloService,
+            PlanRutaService planRutaService, PlanRutaXVueloService planRutaXVueloService, int id_simulacion) {
 
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
@@ -28,7 +33,7 @@ public class Algoritmo {
         }
 
         // recorrer los paquetes por cada 50
-        int tamanhoPaquetes = 5000;
+        int tamanhoPaquetes = 50;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
 
@@ -41,17 +46,47 @@ public class Algoritmo {
             }
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
                     aeropuertos, planVuelos,
-                    tamanhoPaquetes, i);
+                    tamanhoPaquetes, i, vueloService, planRutaService, id_simulacion);
+            for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
+                PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
+                Paquete paquete = paquetesTemp.get(idx);
+
+                planRutaNT.updateCodigo();
+
+                // Crear y guardar PlanRuta
+                PlanRuta planRuta = new PlanRuta();
+                planRuta.setCodigo(planRutaNT.getCodigo());
+
+                Simulacion simulacion = new Simulacion();
+                simulacion.setId(id_simulacion);
+                planRuta.setSimulacionActual(simulacion);
+                planRuta.setPaquete(paquete);
+                planRuta = planRutaService.register(planRuta);
+
+                // Asociar cada PlanRuta con sus vuelos
+                for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                    PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
+                    planRutaXVuelo.setPlanRuta(planRuta);
+                    planRutaXVuelo.setVuelo(vuelo);
+                    planRutaXVuelo.setIndiceDeOrden(planRutaNT.getVuelos().indexOf(vuelo));
+                    planRutaXVueloService.register(planRutaXVuelo);
+                }
+
+            }
+
             messagingTemplate.convertAndSend("/tema/mensajes", respuestaAlgoritmo);
             // System.out.println("PlanRutas: " + planRutas.size());
+
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }
         return planRutas;
+
     }
 
     public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
             HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes,
-            ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion) {
+            ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
+            VueloService vueloService, PlanRutaService planRutaService, int id_simulacion) {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
@@ -90,6 +125,6 @@ public class Algoritmo {
                 sumaVuelosWeight,
                 promedioPonderadoTiempoAeropuertoWeight);
 
-        return sa.startAlgorithm(grafoVuelos);
+        return sa.startAlgorithm(grafoVuelos, vueloService, planRutaService, id_simulacion);
     }
 }

@@ -67,4 +67,12 @@ public class PlanRuta {
         this.simulacionActual = simulacionActual;
     }
 
+    public Paquete getPaquete() {
+        return paquete;
+    }
+
+    public void setPaquete(Paquete paquete) {
+        this.paquete = paquete;
+    }
+
 }

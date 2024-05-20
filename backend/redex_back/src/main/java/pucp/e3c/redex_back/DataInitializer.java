@@ -58,7 +58,7 @@ public class DataInitializer {
         String startPackagesDate = "2024-01-01 00:00:00";
         String endPackagesDate = "2024-01-04 23:59:59";
         paquetes = Funciones.generarPaquetes(
-                600000,
+                100,
                 aeropuertos,
                 Funciones.parseDateString(startPackagesDate),
                 Funciones.parseDateString(endPackagesDate));

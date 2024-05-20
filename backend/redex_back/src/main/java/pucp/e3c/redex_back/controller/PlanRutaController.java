@@ -39,6 +39,16 @@ public class PlanRutaController {
         }
     }
 
+    @GetMapping("/simulacion/{id}")
+    public ResponseEntity<PlanRuta> findBySimulacionActualId(@PathVariable("id") int id) {
+        PlanRuta planRuta = planRutaService.findBySimulacion(id);
+        if (planRuta != null) {
+            return new ResponseEntity<>(planRuta, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PutMapping("/")
     public ResponseEntity<PlanRuta> put(@RequestBody PlanRuta planRuta) {
         PlanRuta updatedPlanRuta = planRutaService.update(planRuta);

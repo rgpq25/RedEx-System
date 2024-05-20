@@ -25,8 +25,11 @@ import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.PlanRutaService;
+import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
+import pucp.e3c.redex_back.service.VueloService;
 
 @RestController
 @RequestMapping("back/simulacion")
@@ -44,6 +47,15 @@ public class SimulacionController {
 
     @Autowired
     private PaqueteService paqueteService;
+
+    @Autowired
+    private VueloService vueloService;
+
+    @Autowired
+    private PlanRutaService planRutaService;
+
+    @Autowired
+    private PlanRutaXVueloService planRutaXVueloService;
 
     public SimulacionController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -92,8 +104,9 @@ public class SimulacionController {
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
         Algoritmo algoritmo = new Algoritmo(messagingTemplate);
-        ArrayList<PlanRutaNT> respuestaAlgoritmo = algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes);
-        // Guardar las rutas
+        algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
+                vueloService, planRutaService, planRutaXVueloService, id);
+
     }
 
 }

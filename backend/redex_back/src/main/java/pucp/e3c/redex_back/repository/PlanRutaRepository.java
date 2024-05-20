@@ -14,4 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface PlanRutaRepository extends JpaRepository<PlanRuta, Integer> {
     public Optional<PlanRuta> findById(int id);
+
+    public Optional<PlanRuta> findBySimulacionActualId(int id);
 }

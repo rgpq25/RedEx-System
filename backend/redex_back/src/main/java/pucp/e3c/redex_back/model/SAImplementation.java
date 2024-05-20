@@ -9,6 +9,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import pucp.e3c.redex_back.service.PlanRutaService;
+import pucp.e3c.redex_back.service.VueloService;
+
 public class SAImplementation {
         private ArrayList<Aeropuerto> aeropuertos;
         private ArrayList<PlanVuelo> planVuelos;
@@ -73,7 +76,8 @@ public class SAImplementation {
                 this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
         }
 
-        public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos) {
+        public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
+                        PlanRutaService planRutaService, int id_simulacion) {
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
                 long startTime = System.nanoTime();
@@ -109,6 +113,7 @@ public class SAImplementation {
                                 neighbours.add(
                                                 current.generateNeighbour(windowSize));
                         }
+                        System.out.println("aaa");
                         int bestNeighbourIndex = 0;
                         double bestNeighbourCost = Double.MAX_VALUE;
                         for (int i = 0; i < neighbours.size(); i++) {
@@ -166,6 +171,16 @@ public class SAImplementation {
                 Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                 current.printFlightOcupation("ocupacionVuelos.txt");
                 current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+
+                // Guardar vuelos
+                for (int id : current.ocupacionVuelos.keySet()) {
+                        Simulacion simulacion = new Simulacion();
+                        simulacion.setId(id_simulacion);
+                        Vuelo vuelo = current.vuelos_hash.get(id);
+                        vuelo.setSimulacionActual(simulacion);
+                        vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
+                        vueloService.update(vuelo);
+                }
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(current.ocupacionVuelos, current.estado,
                                 current.rutas);
                 return respuestaAlgoritmo;
