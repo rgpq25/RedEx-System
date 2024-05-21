@@ -20,9 +20,8 @@ public class Simulacion {
     Date fechaInicioSistema;
     double multiplicadorTiempo;
     int estado;
+    // tiempoActual = fechaInicioSim + (time - fechaInicioSistema) * multiplicador
     // String resultado;
-
-    
 
     public void fillData() {
         fechaInicioSim = new Date();
@@ -32,73 +31,49 @@ public class Simulacion {
         estado = 0;
     }
 
-
-
     public Integer getId() {
         return Id;
     }
-
-
 
     public void setId(Integer id) {
         Id = id;
     }
 
-
-
     public Date getFechaInicioSim() {
         return fechaInicioSim;
     }
-
-
 
     public void setFechaInicioSim(Date fechaInicioSim) {
         this.fechaInicioSim = fechaInicioSim;
     }
 
-
-
     public Date getFechaFinSim() {
         return fechaFinSim;
     }
-
-
 
     public void setFechaFinSim(Date fechaFinSim) {
         this.fechaFinSim = fechaFinSim;
     }
 
-
-
     public Date getFechaInicioSistema() {
         return fechaInicioSistema;
     }
-
-
 
     public void setFechaInicioSistema(Date fechaInicioSistema) {
         this.fechaInicioSistema = fechaInicioSistema;
     }
 
-
-
     public double getMultiplicadorTiempo() {
         return multiplicadorTiempo;
     }
-
-
 
     public void setMultiplicadorTiempo(double multiplicadorTiempo) {
         this.multiplicadorTiempo = multiplicadorTiempo;
     }
 
-
-
     public int getEstado() {
         return estado;
     }
-
-
 
     public void setEstado(int estado) {
         this.estado = estado;

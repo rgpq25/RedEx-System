@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RespuestaAlgoritmo {
-    private HashMap<Integer, Integer> ocupacionVuelos;
+    private ArrayList<Vuelo> vuelos;
     private EstadoAlmacen estadoAlmacen;
     private ArrayList<PlanRutaNT> planesRutas;
+    private Simulacion simulacion;
 
     public RespuestaAlgoritmo() {
-        this.ocupacionVuelos = new HashMap<>();
+        this.vuelos = new ArrayList<>();
         this.estadoAlmacen = new EstadoAlmacen();
         this.planesRutas = new ArrayList<>();
     }
 
-    public RespuestaAlgoritmo(HashMap<Integer, Integer> ocupacionVuelos, EstadoAlmacen estadoAlmacen,
+    public RespuestaAlgoritmo(ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen,
             ArrayList<PlanRutaNT> planesRutas) {
-        this.ocupacionVuelos = ocupacionVuelos;
+        this.vuelos = vuelos;
         this.estadoAlmacen = estadoAlmacen;
         this.planesRutas = planesRutas;
     }
@@ -29,12 +30,12 @@ public class RespuestaAlgoritmo {
         this.planesRutas = planesRutas;
     }
 
-    public HashMap<Integer, Integer> getOcupacionVuelos() {
-        return ocupacionVuelos;
+    public ArrayList<Vuelo> getVuelos() {
+        return this.vuelos;
     }
 
-    public void setOcupacionVuelos(HashMap<Integer, Integer> ocupacionVuelos) {
-        this.ocupacionVuelos = ocupacionVuelos;
+    public void setOcupacionVuelos(ArrayList<Vuelo> vuelos) {
+        this.vuelos = vuelos;
     }
 
     public EstadoAlmacen getEstadoAlmacen() {
