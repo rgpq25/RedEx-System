@@ -108,7 +108,8 @@ public class SimulacionController {
         Simulacion simulacion = simulacionService.get(id);
         algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                 vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion);
-        return "Simulacion en ejecución";
+
+        return "Simulacion terminada";
 
     }
 

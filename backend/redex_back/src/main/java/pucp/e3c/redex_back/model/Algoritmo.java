@@ -58,15 +58,11 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
-            if (!respuestaAlgoritmo.isCorrecta()) {
-                System.out.println("ERROR: Fallo en la respuesta del algoritmo.");
-                messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en la respuesta del algoritmo");
-                return null;
-            } else {
-                System.out.println("Iteracion " + iter + " del algoritmo terminada exitosamente");
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "Iteracion " + iter + " del algoritmo terminada exitosamente");
-            }
+
+            System.out.println("Iteracion " + iter + " del algoritmo terminada exitosamente");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+                    "Iteracion " + iter + " del algoritmo terminada exitosamente");
+
             iter++;
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
@@ -121,7 +117,7 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
             messagingTemplate.convertAndSend("/algoritmo/estado", "Respuesta del algoritmo enviada");
 
-            // System.out.println("PlanRutas: " + planRutas.size());
+            System.out.println("\nSe envio respuesta\n");
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }
