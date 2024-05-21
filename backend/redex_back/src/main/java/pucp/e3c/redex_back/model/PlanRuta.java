@@ -25,10 +25,6 @@ public class PlanRuta {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_paquete", referencedColumnName = "id")
-    Paquete paquete;
-
     public PlanRuta() {
         this.id = 0;
         this.codigo = "";
@@ -67,12 +63,5 @@ public class PlanRuta {
         this.simulacionActual = simulacionActual;
     }
 
-    public Paquete getPaquete() {
-        return paquete;
-    }
-
-    public void setPaquete(Paquete paquete) {
-        this.paquete = paquete;
-    }
 
 }
