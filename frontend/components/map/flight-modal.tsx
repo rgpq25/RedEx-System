@@ -20,10 +20,28 @@ function FlightModal({ isOpen, setIsOpen, vuelo }: FlightModalProps) {
 					<DialogTitle className="text-2xl">Información de vuelo</DialogTitle>
 				</DialogHeader>
 				<div>
-					<p>Origen - Destino: Lima, Perú - Roma, Italia</p>
+					<p>
+						{"Origen - Destino: " +
+							vuelo?.planVuelo.ciudadOrigen.ciudad +
+							", " +
+							vuelo?.planVuelo.ciudadOrigen.pais +
+							" - " +
+							vuelo?.planVuelo.ciudadDestino.ciudad +
+							", " +
+							vuelo?.planVuelo.ciudadDestino.pais}
+					</p>
+					<p>{"Fecha salida: " + vuelo?.fechaSalida.toLocaleDateString() + " " + vuelo?.fechaSalida.toLocaleTimeString()}</p>
+					<p>{"Fecha llegada: " + vuelo?.fechaLlegada.toLocaleDateString() + " " + vuelo?.fechaLlegada.toLocaleTimeString()}</p>
 					<div className="flex flex-row items-center gap-1">
-						<p>Capacidad actual: 230/250</p>
-						<Chip color="red">Ocupado</Chip>
+						<p>Capacidad actual: {vuelo?.capacidadUtilizada + " / " + vuelo?.planVuelo.capacidadMaxima}</p>
+						{vuelo?.capacidadUtilizada &&
+							(vuelo?.capacidadUtilizada <= 30 ? (
+								<Chip color="green">Bajo</Chip>
+							) : vuelo?.capacidadUtilizada <= 60 ? (
+								<Chip color="yellow">Medio</Chip>
+							) : (
+								<Chip color="red">Alto</Chip>
+							))}
 					</div>
 				</div>
 				<FlightTable />

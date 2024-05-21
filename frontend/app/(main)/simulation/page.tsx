@@ -31,13 +31,11 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function SimulationPage() {
 	const attributes = useMapZoom();
-	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+	const { currentTime, setCurrentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
 	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
-
-	const [startDate, setStartDate] = useState<Date>(new Date());
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
@@ -65,8 +63,18 @@ function SimulationPage() {
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
-				// showNewMessage(JSON.parse(msg.body));
 				const data : RespuestaAlgoritmo = JSON.parse(msg.body);
+
+				const simulation = data.simulacion;
+				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
+				const fechaInicioSim: Date = new Date(simulation.fechaInicioSim);
+				const multiplicadorTiempo: number = simulation.multiplicadorTiempo;
+
+				const currentSimTime = new Date(fechaInicioSim.getTime() + multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime()));
+				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
+
+				// showNewMessage(JSON.parse(msg.body));
+				
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
 
 				const newFlights = data.vuelos

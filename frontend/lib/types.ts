@@ -124,6 +124,7 @@ export type Simulacion = {
 	estado: number;
 	multiplicadorTiempo: number;	
 	fechaInicioSistema: Date;
+	fechaInicioSim: Date;
 	fechaFinSim: Date;
 }
 

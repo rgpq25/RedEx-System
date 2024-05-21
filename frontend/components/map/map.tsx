@@ -25,7 +25,7 @@ interface MapProps {
 	setCurrentAirportModal: (aeropuerto: Aeropuerto | undefined) => void;
 	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
 	attributes: {
-		currentTime: Date;
+		currentTime: Date | undefined;
 		zoom: AnimationObject;
 		centerLongitude: AnimationObject;
 		centerLatitude: AnimationObject;
@@ -121,21 +121,22 @@ function Map({
 								))
 							}
 						</Geographies>
-						{flights
-							.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
-							.map((vuelo, idx) => {
-								return (
-									<PlaneMarker
-										key={idx}
-										currentTime={currentTime}
-										vuelo={vuelo}
-										onClick={(vuelo: Vuelo) => {
-											setCurrentFlightModal(vuelo);
-											lockInFlight(vuelo);
-										}}
-									/>
-								);
-							})}
+						{currentTime &&
+							flights
+								.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+								.map((vuelo, idx) => {
+									return (
+										<PlaneMarker
+											key={idx}
+											currentTime={currentTime}
+											vuelo={vuelo}
+											onClick={(vuelo: Vuelo) => {
+												setCurrentFlightModal(vuelo);
+												lockInFlight(vuelo);
+											}}
+										/>
+									);
+								})}
 						{airports.map((aeropuerto, idx) => {
 							const latitud = aeropuerto.ubicacion.latitud;
 							const longitud = aeropuerto.ubicacion.longitud;
