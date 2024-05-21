@@ -88,13 +88,11 @@ public class DataInitializer {
             planVueloService.register(planVuelo);
         }
 
-        /*
-         * for (Paquete paquete : paquetes) {
-         * envioService.register(paquete.getEnvio());
-         * paquete.setSimulacionActual(simulacion);
-         * paqueteService.register(paquete);
-         * }
-         */
+        for (Paquete paquete : paquetes) {
+            envioService.register(paquete.getEnvio());
+            paquete.setSimulacionActual(simulacion);
+            paqueteService.register(paquete);
+        }
 
     }
 }

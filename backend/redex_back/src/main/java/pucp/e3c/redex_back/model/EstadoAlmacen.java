@@ -253,4 +253,8 @@ public class EstadoAlmacen {
         return costoTotal;
     }
 
+    @Override
+    public String toString() {
+        return "EstadoAlmacen{" + "uso_historico=" + uso_historico + '}';
+    }
 }

@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.VueloService;
 
@@ -77,7 +79,8 @@ public class SAImplementation {
         }
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
-                        PlanRutaService planRutaService, Simulacion simulacion) {
+                        PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
+                        SimpMessagingTemplate messagingTemplate) {
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
                 long startTime = System.nanoTime();
@@ -104,7 +107,8 @@ public class SAImplementation {
                 Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                 System.out.println("Finished solution initialization in "
                                 + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
-
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                                "Inicializacion de la iteracion " + iteracion + " del algoritmo completada");
                 startTime = System.nanoTime();
 
                 while (temperature > 1) {
@@ -113,7 +117,6 @@ public class SAImplementation {
                                 neighbours.add(
                                                 current.generateNeighbour(windowSize));
                         }
-                        System.out.println("aaa");
                         int bestNeighbourIndex = 0;
                         double bestNeighbourCost = Double.MAX_VALUE;
                         for (int i = 0; i < neighbours.size(); i++) {
@@ -142,6 +145,8 @@ public class SAImplementation {
                                         "Current cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
+                        messagingTemplate.convertAndSend("/algoritmo/estado",
+                                        "Costo actual del algoritmo " + current.getSolutionCost());
                 }
 
                 endTime = System.nanoTime();
@@ -178,7 +183,15 @@ public class SAImplementation {
                         Vuelo vuelo = current.vuelos_hash.get(id);
                         vuelo.setSimulacionActual(simulacion);
                         vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
-                        vueloService.update(vuelo);
+                        try {
+                                vueloService.update(vuelo);
+                        } catch (Exception e) {
+                                System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                                messagingTemplate.convertAndSend("/algoritmo/estado",
+                                                "Error al guardar algun vuelo: " + e.getMessage());
+                        }
+                        messagingTemplate.convertAndSend("/algoritmo/estado",
+                                        "Finalizado el guardado de vuelos");
                 }
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
                                 new ArrayList<>(current.vuelos_hash.values()),
