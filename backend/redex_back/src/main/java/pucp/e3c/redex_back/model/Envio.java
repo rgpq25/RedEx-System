@@ -132,7 +132,7 @@ public class Envio {
         return "Envio: idEnvio: " + id + " - desde:  " + this.ubicacionOrigen.getId() + " hasta: "
                 + this.ubicacionDestino.getId() + " - fechaRecepcion: "
                 + fechaRecepcion + " - fechaLimiteEntrega: "
-                + fechaLimiteEntrega;
+                + fechaLimiteEntrega + "\n" + this.simulacionActual.toString();
     }
 
     public Simulacion getSimulacionActual() {
