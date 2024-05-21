@@ -81,6 +81,7 @@ public class SAImplementation {
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
                         SimpMessagingTemplate messagingTemplate) {
+
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
                 long startTime = System.nanoTime();

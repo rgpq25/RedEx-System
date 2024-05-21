@@ -1,9 +1,17 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import jakarta.persistence.PersistenceException;
 import pucp.e3c.redex_back.service.PaqueteService;
@@ -11,6 +19,7 @@ import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.VueloService;
 
+@EnableAsync
 public class Algoritmo {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -19,10 +28,35 @@ public class Algoritmo {
         this.messagingTemplate = messagingTemplate;
     }
 
+    private Date calcularTiempoSimulacion(Simulacion simulacion) {
+        long tiempoActual = new Date().getTime();
+        long inicioSistema = simulacion.getFechaInicioSistema().getTime();
+        long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
+        long multiplicador = (long) simulacion.getMultiplicadorTiempo();
+
+        return new Date(inicioSimulacion
+                + (tiempoActual - inicioSistema) * multiplicador);
+    }
+
+    private Date agregarSAyTA(Date fechaEnSimulacion, int TA, int SA, double multiplicador) {
+        // Supongamos que tienes una fecha, por ejemplo:
+
+        // Crea un objeto Calendar y establece la fecha
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fechaEnSimulacion);
+
+        // Añade 10 minutos a la fecha
+        calendar.add(Calendar.MINUTE, (TA + SA) * (int) multiplicador);
+
+        // Obtiene la nueva fecha con los minutos añadidos
+        Date fechaActualizada = calendar.getTime();
+        return fechaActualizada;
+    }
+
     public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos,
             ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes, VueloService vueloService,
             PlanRutaService planRutaService, PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
-            Simulacion simulacion) {
+            Simulacion simulacion, int SA, int TA) {
         messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
 
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
@@ -39,7 +73,6 @@ public class Algoritmo {
         }
 
         // recorrer los paquetes por cada 50
-        int tamanhoPaquetes = 50;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
@@ -47,21 +80,46 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en generar vuelos");
             return null;
         }
-        int iter = 0;
-        for (int i = 0; i < paquetes.size(); i += tamanhoPaquetes) {
+        int i = 0;
+        boolean es_final = false;
+        while (true) {
+            Date tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, TA, simulacion.getMultiplicadorTiempo());
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
-            ArrayList<Paquete> paquetesTemp = new ArrayList<>();
-            for (int j = i; j < i + tamanhoPaquetes; j++) {
-                if (j < paquetes.size()) {
-                    paquetesTemp.add(paquetes.get(j));
-                }
+            /*
+             * ArrayList<Paquete> paquetesTemp = new ArrayList<>();
+             * for (int j = i; j < i + tamanhoPaquetes; j++) {
+             * if (j < paquetes.size()) {
+             * paquetesTemp.add(paquetes.get(j));
+             * }
+             * }
+             */
+            Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
+
+            // Filtra los paquetes que tengan una fecha de recepción anterior a fechaCorte
+            List<Paquete> paquetesTemp = paquetes.stream()
+                    .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
+                    .collect(Collectors.toList());
+            ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
+
+            int tamanhoPaquetes = paquetesProcesar.size();
+            System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
+            System.out.println("La simulacion inicio " + simulacion.fechaInicioSim);
+
+            if (es_final) {
+                messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
+
+                break;
             }
-            RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
+            if (tamanhoPaquetes == paquetes.size()) {
+                es_final = true;
+            }
+
+            RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
 
-            iter++;
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
@@ -109,8 +167,9 @@ public class Algoritmo {
             }
             // System.out.println(respuestaAlgoritmo.toString());
             messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
-            System.out.println("Planificacion terminada");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion terminada");
+            System.out.println("Planificacion terminada hasta " + fechaLimiteCalculo);
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+                    "Planificacion terminada hasta " + fechaLimiteCalculo);
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }

@@ -2,6 +2,7 @@ package pucp.e3c.redex_back.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -106,10 +107,12 @@ public class SimulacionController {
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
         Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         Simulacion simulacion = simulacionService.get(id);
-        algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
-                vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion);
+        CompletableFuture.runAsync(() -> {
+            algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
+                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion, 5, 1);
+        });
 
-        return "Simulacion terminada";
+        return "Simulacion iniciada";
 
     }
 
