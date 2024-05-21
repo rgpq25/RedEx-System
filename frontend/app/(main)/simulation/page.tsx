@@ -68,7 +68,16 @@ function SimulationPage() {
 				// showNewMessage(JSON.parse(msg.body));
 				const data : RespuestaAlgoritmo = JSON.parse(msg.body);
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
-				setFlights(data.vuelos as Vuelo[]);
+
+				const newFlights = data.vuelos
+				//	.slice(0, 100);
+				
+				setFlights(newFlights.map((vuelo: Vuelo) => {
+					const vueloActualizado = vuelo;
+					vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+					vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+					return vueloActualizado;
+				}));
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				// showNewMessage(JSON.parse(msg.body));

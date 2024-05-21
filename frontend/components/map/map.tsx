@@ -121,19 +121,21 @@ function Map({
 								))
 							}
 						</Geographies>
-						{flights.map((vuelo, idx) => {
-							return (
-								<PlaneMarker
-									key={idx}
-									currentTime={currentTime}
-									vuelo={vuelo}
-									onClick={(vuelo: Vuelo) => {
-										setCurrentFlightModal(vuelo);
-										lockInFlight(vuelo);
-									}}
-								/>
-							);
-						})}
+						{flights
+							.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+							.map((vuelo, idx) => {
+								return (
+									<PlaneMarker
+										key={idx}
+										currentTime={currentTime}
+										vuelo={vuelo}
+										onClick={(vuelo: Vuelo) => {
+											setCurrentFlightModal(vuelo);
+											lockInFlight(vuelo);
+										}}
+									/>
+								);
+							})}
 						{airports.map((aeropuerto, idx) => {
 							const latitud = aeropuerto.ubicacion.latitud;
 							const longitud = aeropuerto.ubicacion.longitud;

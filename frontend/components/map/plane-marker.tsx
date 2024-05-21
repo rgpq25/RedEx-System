@@ -15,12 +15,21 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	const [isHovering, setIsHovering] = useState(false);
 
 	const coordinates = getFlightPosition(
-		vuelo.fechaOrigen,
-		[vuelo.planVuelo.ubicacionOrigen.longitud, vuelo.planVuelo.ubicacionOrigen.latitud] as [number, number],
-		vuelo.fechaDestino,
-		[vuelo.planVuelo.ubicacionDestino.longitud, vuelo.planVuelo.ubicacionDestino.latitud] as [number, number],
+		vuelo.fechaSalida,
+		[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [number, number],
+		vuelo.fechaLlegada,
+		[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [number, number],
 		currentTime
 	);
+
+	if (
+		(coordinates[0] === vuelo.planVuelo.ciudadDestino.longitud &&
+			coordinates[1] === vuelo.planVuelo.ciudadDestino.latitud) ||
+		(coordinates[0] === vuelo.planVuelo.ciudadOrigen.longitud &&
+			coordinates[1] === vuelo.planVuelo.ciudadOrigen.latitud)
+	) {
+		//return null;
+	}
 
 	const dotPositions = getTrayectory(vuelo);
 
@@ -51,13 +60,13 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				<Plane
 					capacity={vuelo.capacidadUtilizada}
 					originCoordinate={
-						[vuelo.planVuelo.ubicacionOrigen.longitud, vuelo.planVuelo.ubicacionOrigen.latitud] as [
+						[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
 							number,
 							number
 						]
 					}
 					destinationCoordinate={
-						[vuelo.planVuelo.ubicacionDestino.longitud, vuelo.planVuelo.ubicacionDestino.latitud] as [
+						[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [
 							number,
 							number
 						]
@@ -65,9 +74,24 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				/>
 				{isHovering && (
 					<>
-						<rect x={-10} y={-18.4} width="20" height="9" fill="black" stroke="white" strokeWidth="1" rx={2} ry={2}/>
-						<text textAnchor="middle" y={-12} x={0.5} className="text-[5px] font-poppins fill-white bg-black">
-							{vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima * 100}%
+						<rect
+							x={-10}
+							y={-18.4}
+							width="20"
+							height="9"
+							fill="black"
+							stroke="white"
+							strokeWidth="1"
+							rx={2}
+							ry={2}
+						/>
+						<text
+							textAnchor="middle"
+							y={-12}
+							x={0.5}
+							className="text-[5px] font-poppins fill-white bg-black"
+						>
+							{(vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100}%
 						</text>
 					</>
 				)}
@@ -99,7 +123,7 @@ function Plane({
 
 	return (
 		<>
-			<g
+			{/* <g
 				fill={color}
 				version="1.1"
 				id="Layer_1"
@@ -125,9 +149,10 @@ function Plane({
                     l-5.96,7.47c-1.01,1.34-1.88,1.23-2.65-0.07L69.43,66.31L45.41,88.48l4.5,26.62c0.26,0.94,0.05,1.82-0.47,2.66l-3.9,4.57
                     c-0.97,0.79-1.81,0.82-2.4-0.54l-13.64-21.57c-4.43,3.74-8.37,6.03-12.42,6.03C16.71,106.24,16.63,106.11,16.63,105.75
                     L16.63,105.75z"
-					transform="scale(0.1)"
+					transform="scale(0.05)"
 				/>
-			</g>
+			</g> */}
+			<circle r={1} fill={color}/>
 			<circle r={12} className="fill-transparent" />
 		</>
 	);

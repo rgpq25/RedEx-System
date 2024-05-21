@@ -39,15 +39,15 @@ const useMapZoom = (
 
 	useEffect(() => {
 		if (currentlyLocked) {
-			const orgLongitude = currentlyLocked.planVuelo.ubicacionOrigen.longitud;
-			const orgLatitude = currentlyLocked.planVuelo.ubicacionOrigen.latitud;
-			const destLongitude = currentlyLocked.planVuelo.ubicacionDestino.longitud;
-			const destLatitude = currentlyLocked.planVuelo.ubicacionDestino.latitud;
+			const orgLongitude = currentlyLocked.planVuelo.ciudadOrigen.longitud;
+			const orgLatitude = currentlyLocked.planVuelo.ciudadOrigen.latitud;
+			const destLongitude = currentlyLocked.planVuelo.ciudadDestino.longitud;
+			const destLatitude = currentlyLocked.planVuelo.ciudadDestino.latitud;
 
 			const coordinates = getFlightPosition(
-				currentlyLocked.fechaOrigen,
+				currentlyLocked.fechaSalida,
 				[orgLongitude, orgLatitude] as [number, number],
-				currentlyLocked.fechaDestino,
+				currentlyLocked.fechaLlegada,
 				[destLongitude, destLatitude] as [number, number],
 				currentTime
 			);
@@ -71,15 +71,15 @@ const useMapZoom = (
 
 	function lockInFlight(vuelo: Vuelo) {
 		setCurrentlyLocked(undefined);
-		const orgLongitude = vuelo.planVuelo.ubicacionOrigen.longitud;
-		const orgLatitude = vuelo.planVuelo.ubicacionOrigen.latitud;
-		const destLongitude = vuelo.planVuelo.ubicacionDestino.longitud;
-		const destLatitude = vuelo.planVuelo.ubicacionDestino.latitud;
+		const orgLongitude = vuelo.planVuelo.ciudadOrigen.longitud;
+		const orgLatitude = vuelo.planVuelo.ciudadOrigen.latitud;
+		const destLongitude = vuelo.planVuelo.ciudadDestino.longitud;
+		const destLatitude = vuelo.planVuelo.ciudadDestino.latitud;
 
 		const coordinates = getFlightPosition(
-			vuelo.fechaOrigen,
+			vuelo.fechaSalida,
 			[orgLongitude, orgLatitude] as [number, number],
-			vuelo.fechaDestino,
+			vuelo.fechaLlegada,
 			[destLongitude, destLatitude] as [number, number],
 			currentTime
 		);

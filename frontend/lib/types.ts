@@ -72,8 +72,8 @@ export type Aeropuerto = {
 
 export type PlanVuelo = {
 	id: number;
-	ubicacionOrigen: Ubicacion;
-	ubicacionDestino: Ubicacion;
+	ciudadOrigen: Ubicacion;
+	ciudadDestino: Ubicacion;
 	horaCiudadOrigen: string;
 	horaCiudadDestino: string;
 	capacidadMaxima: number;
