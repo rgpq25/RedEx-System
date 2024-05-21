@@ -49,6 +49,8 @@ public class Algoritmo {
         }
         int iter = 0;
         for (int i = 0; i < paquetes.size(); i += tamanhoPaquetes) {
+            System.out.println("Planificacion iniciada");
+            messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
             ArrayList<Paquete> paquetesTemp = new ArrayList<>();
             for (int j = i; j < i + tamanhoPaquetes; j++) {
                 if (j < paquetes.size()) {
@@ -58,10 +60,6 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesTemp,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
-
-            System.out.println("Iteracion " + iter + " del algoritmo terminada exitosamente");
-            messagingTemplate.convertAndSend("/algoritmo/estado",
-                    "Iteracion " + iter + " del algoritmo terminada exitosamente");
 
             iter++;
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
@@ -80,8 +78,6 @@ public class Algoritmo {
                     messagingTemplate.convertAndSend("/algoritmo/estado",
                             "Error al guardar algun paquete: " + e.getMessage());
                 }
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "Finalizada la actualizacion de paquetes");
                 planRuta.setSimulacionActual(simulacion);
 
                 try {
@@ -92,8 +88,6 @@ public class Algoritmo {
                     messagingTemplate.convertAndSend("/algoritmo/estado",
                             "Error al guardar algun plan ruta: " + e.getMessage());
                 }
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "Finalizado el guardado de planes ruta");
 
                 // Asociar cada PlanRuta con sus vuelos
                 for (Vuelo vuelo : planRutaNT.getVuelos()) {
@@ -115,9 +109,8 @@ public class Algoritmo {
             }
             // System.out.println(respuestaAlgoritmo.toString());
             messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Respuesta del algoritmo enviada");
-
-            System.out.println("\nSe envio respuesta\n");
+            System.out.println("Planificacion terminada");
+            messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion terminada");
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
         }

@@ -107,8 +107,6 @@ public class SAImplementation {
                 Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                 System.out.println("Finished solution initialization in "
                                 + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                                "Inicializacion de la iteracion " + iteracion + " del algoritmo completada");
                 startTime = System.nanoTime();
 
                 while (temperature > 1) {
@@ -145,8 +143,7 @@ public class SAImplementation {
                                         "Current cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
-                        messagingTemplate.convertAndSend("/algoritmo/estado",
-                                        "Costo actual del algoritmo " + current.getSolutionCost());
+
                 }
 
                 endTime = System.nanoTime();
@@ -190,8 +187,6 @@ public class SAImplementation {
                                 messagingTemplate.convertAndSend("/algoritmo/estado",
                                                 "Error al guardar algun vuelo: " + e.getMessage());
                         }
-                        messagingTemplate.convertAndSend("/algoritmo/estado",
-                                        "Finalizado el guardado de vuelos");
                 }
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
                                 new ArrayList<>(current.vuelos_hash.values()),
