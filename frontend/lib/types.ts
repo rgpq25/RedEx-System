@@ -82,11 +82,10 @@ export type PlanVuelo = {
 export type Vuelo = {
 	id: number;
 	planVuelo: PlanVuelo;
-	fechaOrigen: Date;
-	fechaDestino: Date;
-	tiempoEstimado: number;
+	fechaSalida: Date;
+	fechaLlegada: Date;
 	capacidadUtilizada: number;
-	estado: string;
+	simulacionActual: Simulacion | null;
 };
 
 
@@ -118,4 +117,20 @@ export type Envio = {
     cantidadPaquetes: number;
     codigoSeguridad: string;
     paquetes?: Paquete[];
+}
+
+export type Simulacion = {
+	id: number;
+	estado: number;
+	multiplicadorTiempo: number;	
+	fechaInicioSistema: Date;
+	fechaFinSim: Date;
+}
+
+export type RespuestaAlgoritmo = {
+	correcta: boolean;
+	estadoAlmacen: any;
+	planesRutas: PlanRuta[];
+	simulacion: Simulacion;
+	vuelos: Vuelo[];
 }

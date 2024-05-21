@@ -1,4 +1,7 @@
+"use client";
+import { startWeeklySimulation } from "@/actions/simulation";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
 	Dialog,
 	DialogContent,
@@ -12,9 +15,62 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { FileUp } from "lucide-react";
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
-export function ModalIntro({ isOpen, setIsModalOpen }: { isOpen: boolean; setIsModalOpen: (value: boolean) => void }) {
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { api } from "@/lib/api";
+
+export function ModalIntro({
+	isOpen,
+	setIsModalOpen,
+	onSimulationRegister,
+}: {
+	isOpen: boolean;
+	setIsModalOpen: (value: boolean) => void;
+	onSimulationRegister: (idSimulacion: number) => Promise<void>;
+}) {
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [file, setFile] = useState<File | undefined>();
+	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+
+	const openFilePicker = () => {
+		if (fileInputRef.current) {
+			fileInputRef.current.click();
+		}
+	};
+
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (file) {
+			setFile(file);
+		} else {
+			setFile(undefined);
+		}
+	};
+
+	const handleStartSimulation = async () => {
+		if (!file || !selectedDate) {
+			toast.error("Seleccione un archivo y una fecha de inicio");
+			return;
+		}
+
+		//Register new simulation and all shipments
+		const simulationId = await startWeeklySimulation(file, selectedDate);
+
+		if (simulationId === undefined || simulationId === 0) {
+			toast.error("Error al registrar la simulación");
+			return;
+		}
+
+		await onSimulationRegister(simulationId);
+
+		setIsModalOpen(false);
+	};
+
 	return (
 		<Dialog open={isOpen} onOpenChange={(_isOpen: boolean) => setIsModalOpen(_isOpen)}>
 			<DialogContent className="sm:max-w-[500px]" hasCloseButton={false} disableOutsideEventsToClose={true}>
@@ -32,7 +88,7 @@ export function ModalIntro({ isOpen, setIsModalOpen }: { isOpen: boolean; setIsM
 							Tipo
 						</Label>
 						<Select>
-							<SelectTrigger className="w-[82%]">
+							<SelectTrigger className="w-[77%]">
 								<SelectValue placeholder="Seleccione un tipo de simulación" />
 							</SelectTrigger>
 							<SelectContent>
@@ -42,17 +98,46 @@ export function ModalIntro({ isOpen, setIsModalOpen }: { isOpen: boolean; setIsM
 						</Select>
 					</div>
 					<div className="flex flex-row items-center justify-end gap-4">
-						<Label htmlFor="username" className="text-right">
-							Datos
-						</Label>
-						<Input id="username" placeholder="input_data.txt" className="w-[82%]" />
+						<Label className="text-right">Datos</Label>
+						<div className="w-[77%] flex items-center gap-1">
+							<Input
+								placeholder="No ha seleccionado ningun archivo"
+								readOnly
+								value={file !== undefined ? file!.name : "No ha seleccionado ningun archivo"}
+							/>
+							<Input
+								id="username"
+								placeholder="No ha seleccionado ningun archivo"
+								readOnly
+								ref={fileInputRef}
+								type="file"
+								onChange={handleFileChange}
+								className="hidden"
+							/>
+							<Button size={"icon"} className="shrink-0" onClick={openFilePicker}>
+								<FileUp className="w-5 h-5 shrink-0" />
+							</Button>
+						</div>
+					</div>
+					<div className="flex flex-row items-center justify-end gap-4">
+						<Label className="text-right">Fecha inicio</Label>
+						<DatePicker
+							className="w-[77%]"
+							date={selectedDate}
+							setDate={setSelectedDate}
+							placeholder="Selecciona una fecha"
+						/>
 					</div>
 				</div>
 				<DialogFooter className="flex flex-row items-center">
-					<Link href="/security-code" className={cn(buttonVariants({variant: "outline"}), "w-[100px]")}>
+					<Link href="/security-code" className={cn(buttonVariants({ variant: "outline" }), "w-[100px]")}>
 						Cancelar
 					</Link>
-					<Button className="w-[100px]" onClick={()=>setIsModalOpen(false)}>
+					<Button
+						className="w-[100px]"
+						onClick={() => handleStartSimulation()}
+						disabled={file === undefined || selectedDate === undefined}
+					>
 						Iniciar
 					</Button>
 				</DialogFooter>

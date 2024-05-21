@@ -8,7 +8,6 @@ import { AnimationObject } from "../hooks/useAnimation";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
 import { Aeropuerto, Vuelo } from "@/lib/types";
-import { vuelos } from "@/lib/sample";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 
@@ -35,6 +34,7 @@ interface MapProps {
 		unlockFlight: () => void;
 	};
 	airports: Aeropuerto[];
+	flights: Vuelo[];
 	className?: string;
 }
 
@@ -45,6 +45,7 @@ function Map({
 	setCurrentFlightModal,
 	attributes,
 	airports,
+	flights,
 	className,
 }: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
@@ -120,7 +121,7 @@ function Map({
 								))
 							}
 						</Geographies>
-						{vuelos.map((vuelo, idx) => {
+						{flights.map((vuelo, idx) => {
 							return (
 								<PlaneMarker
 									key={idx}
