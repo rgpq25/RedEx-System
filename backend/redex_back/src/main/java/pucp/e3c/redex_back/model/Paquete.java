@@ -107,6 +107,10 @@ public class Paquete {
         this.id = id;
     }
 
+    public Date getFechaRecepcion() {
+        return this.getEnvio().getFechaRecepcion();
+    }
+
     public Aeropuerto getAeropuertoActual() {
         return aeropuertoActual;
     }
