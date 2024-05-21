@@ -99,7 +99,7 @@ public class SimulacionController {
     }
 
     @GetMapping("/runAlgorithm/{id}")
-    public void correrSimulacion(@PathVariable("id") int id) {
+    public String correrSimulacion(@PathVariable("id") int id) {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
@@ -107,6 +107,7 @@ public class SimulacionController {
         Simulacion simulacion = simulacionService.get(id);
         algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                 vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion);
+        return "Simulacion en ejecución";
 
     }
 
