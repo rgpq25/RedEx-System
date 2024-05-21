@@ -64,6 +64,7 @@ public class SimulacionController {
     @PostMapping("/")
     public ResponseEntity<Simulacion> register(@RequestBody Simulacion simulacion) {
         Simulacion registeredSimulacion = simulacionService.register(simulacion);
+        System.out.println(registeredSimulacion.toString());
         return new ResponseEntity<>(registeredSimulacion, HttpStatus.CREATED);
     }
 

@@ -79,4 +79,15 @@ public class Simulacion {
         this.estado = estado;
     }
 
+    @Override
+    public String toString() {
+        return "Simulacion{" +
+                "Id=" + Id +
+                ", fechaInicioSim=" + fechaInicioSim +
+                ", fechaFinSim=" + fechaFinSim +
+                ", fechaInicioSistema=" + fechaInicioSistema +
+                ", multiplicadorTiempo=" + multiplicadorTiempo +
+                ", estado=" + estado +
+                '}';
+    }
 }

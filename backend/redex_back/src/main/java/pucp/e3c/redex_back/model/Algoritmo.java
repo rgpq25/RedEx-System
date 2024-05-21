@@ -22,6 +22,7 @@ public class Algoritmo {
             ArrayList<PlanVuelo> planVuelos, ArrayList<Paquete> paquetes, VueloService vueloService,
             PlanRutaService planRutaService, PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
             Simulacion simulacion) {
+        messagingTemplate.convertAndSend("/tema/mensajes", "Iniciando loop principal");
 
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
