@@ -118,7 +118,7 @@ public class Algoritmo {
 
             }
             // System.out.println(respuestaAlgoritmo.toString());
-            messagingTemplate.convertAndSend("/algortimo/respuesta", respuestaAlgoritmo);
+            messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
             messagingTemplate.convertAndSend("/algoritmo/estado", "Respuesta del algoritmo enviada");
 
             // System.out.println("PlanRutas: " + planRutas.size());
