@@ -47,8 +47,10 @@ public class EnvioController {
         for (Ubicacion u : ubicaciones) {
             ubicacionMap.put(u.getId(), u);
         }
-        return Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap, registrarEnvio.getSimulacion().getId(),
+        Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                registrarEnvio.getSimulacion().getId(),
                 aeropuertoService);
+        return envioService.register(envio);
     }
 
     @PutMapping(value = "/")

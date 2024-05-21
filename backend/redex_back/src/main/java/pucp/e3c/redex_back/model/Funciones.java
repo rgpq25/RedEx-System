@@ -293,13 +293,15 @@ public class Funciones {
                 "UTC");
 
         envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        Simulacion simulacion = new Simulacion();
+        simulacion.setId(idSimulacion);
+        envio.setSimulacionActual(simulacion);
         for (int i = 0; i < cantidadPaquetes; i++) {
             Paquete paquete = new Paquete();
             paquete.setAeropuertoActual(aeropuertoService.findByUbicacion(origen.getId()));
             paquete.setEnAeropuerto(true);
             paquete.setEntregado(false);
             paquete.setEnvio(envio);
-            Simulacion simulacion = new Simulacion();
             simulacion.setId(idSimulacion);
             paquete.setSimulacionActual(simulacion);
         }
