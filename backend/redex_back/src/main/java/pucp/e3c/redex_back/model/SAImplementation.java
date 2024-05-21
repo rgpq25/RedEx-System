@@ -77,7 +77,7 @@ public class SAImplementation {
         }
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
-                        PlanRutaService planRutaService, int id_simulacion) {
+                        PlanRutaService planRutaService, Simulacion simulacion) {
                 HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
                 long startTime = System.nanoTime();
@@ -174,15 +174,15 @@ public class SAImplementation {
 
                 // Guardar vuelos
                 for (int id : current.ocupacionVuelos.keySet()) {
-                        Simulacion simulacion = new Simulacion();
-                        simulacion.setId(id_simulacion);
+
                         Vuelo vuelo = current.vuelos_hash.get(id);
                         vuelo.setSimulacionActual(simulacion);
                         vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                         vueloService.update(vuelo);
                 }
-                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(current.ocupacionVuelos, current.estado,
-                                current.rutas);
+                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
+                                new ArrayList<>(current.vuelos_hash.values()),
+                                current.estado, current.rutas, simulacion);
                 return respuestaAlgoritmo;
         }
 }

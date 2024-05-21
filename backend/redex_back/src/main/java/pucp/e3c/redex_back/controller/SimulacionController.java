@@ -104,8 +104,9 @@ public class SimulacionController {
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
         Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        Simulacion simulacion = simulacionService.get(id);
         algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
-                vueloService, planRutaService, planRutaXVueloService, id);
+                vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion);
 
     }
 

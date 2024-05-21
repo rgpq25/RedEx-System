@@ -1,7 +1,6 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class RespuestaAlgoritmo {
     private ArrayList<Vuelo> vuelos;
@@ -13,13 +12,24 @@ public class RespuestaAlgoritmo {
         this.vuelos = new ArrayList<>();
         this.estadoAlmacen = new EstadoAlmacen();
         this.planesRutas = new ArrayList<>();
+        this.simulacion = new Simulacion();
     }
 
     public RespuestaAlgoritmo(ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen,
-            ArrayList<PlanRutaNT> planesRutas) {
+            ArrayList<PlanRutaNT> planesRutas, Simulacion simulacion) {
         this.vuelos = vuelos;
         this.estadoAlmacen = estadoAlmacen;
         this.planesRutas = planesRutas;
+        this.simulacion = simulacion;
+
+    }
+
+    public Simulacion getSimulacion() {
+        return this.simulacion;
+    }
+
+    public void setSimulacion(Simulacion simulacion) {
+        this.simulacion = simulacion;
     }
 
     public ArrayList<PlanRutaNT> getPlanesRutas() {
