@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const easeInOutQuad = (t: number) =>
-	t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) * (t - 1);
+const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) * (t - 1));
 
 interface AnimationState {
 	value: number;
@@ -9,16 +8,16 @@ interface AnimationState {
 	startTime: number | null;
 }
 
-type UseAnimationProps = number;
-
-const useAnimation = (
-	initialValue: UseAnimationProps
-): {
+export type AnimationObject = {
 	value: number;
 	setValue: (targetValue: number, duration: number) => void;
 	setValueNoAnimation: (targetValue: number) => void;
 	cancelAnimation: () => void;
-} => {
+};
+
+type UseAnimationProps = number;
+
+const useAnimation = (initialValue: UseAnimationProps): AnimationObject => {
 	const [state, setState] = useState<AnimationState>({
 		value: initialValue,
 		targetValue: initialValue,
@@ -31,14 +30,15 @@ const useAnimation = (
 			const now = Date.now();
 			if (state.startTime === null) return;
 			const elapsed = now - state.startTime;
-			const progress = Math.min(elapsed / animationRef.current!, 1);
-			const newValue =
-				state.value +
-				(state.targetValue - state.value) * easeInOutQuad(progress);
+			let progress = elapsed / animationRef.current!;
+			if (progress > 1) progress = 1; // Cap progress to 1
+			let newValue = state.value + (state.targetValue - state.value) * easeInOutQuad(progress);
+			newValue = progress === 1 ? state.targetValue : newValue;
 			setState({ ...state, value: newValue });
 			if (progress === 1) {
 				setState({ ...state, startTime: null });
 				animationRef.current = null;
+				return;
 			}
 		};
 

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface ChipProps {
 	children: React.ReactNode;
-	color: PackageStatusVariant;
+	color: "gray" | "blue" | "yellow" | "purple" | "green" | "red";
 	size?: "sm" | "md";
     className?: string;
 }
@@ -21,6 +21,7 @@ function Chip({ children, color, size, className }: ChipProps) {
 				color === "yellow" && "bg-[#FEFCE8] text-[#F5A524]",
 				color === "purple" && "bg-[#F2EAFA] text-[#7828C8]",
 				color === "green" && "bg-[#E8FAF0] text-[#17C964]",
+				color === "red" && "bg-red-100 text-red-600",
                 className
 			)}
 		>

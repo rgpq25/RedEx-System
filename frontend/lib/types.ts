@@ -1,117 +1,101 @@
-export type PackageStatusName =
-    | "En almacen origen"
-    | "Volando"
-    | "En espera"
-    | "En almacen destino"
-    | "Entregado";
+export type PackageStatusName = "En almacen origen" | "Volando" | "En espera" | "En almacen destino" | "Entregado";
 
-
-export type AlmacenStatusName =
-    | "En almacen origen"
-    | "Volando"
-    | "En espera"
-    | "En almacen destino"
-    | "Entregado";
+export type AlmacenStatusName = "En almacen origen" | "Volando" | "En espera" | "En almacen destino" | "Entregado";
 
 export type PackageStatusVariant = "gray" | "blue" | "yellow" | "purple" | "green";
 
 export type AlmacenStatusVariant = "gray" | "blue" | "yellow" | "purple" | "green";
 
 export type RowPackageType = {
-    id: string;
-    origin: string;
-    currentLocation: string;
-    destination: string;
-    statusName: PackageStatusName;
-    statusVariant: PackageStatusVariant;
+	id: string;
+	origin: string;
+	currentLocation: string;
+	destination: string;
+	statusName: PackageStatusName;
+	statusVariant: PackageStatusVariant;
 };
 
 export type RowAlmacenType = {
-    id: string;
-    packets: number;
-    origin: string;
-    destination: string;
-    statusAlmacen: AlmacenStatusName;
-    statusVariant: AlmacenStatusVariant;
+	id: string;
+	packets: number;
+	origin: string;
+	destination: string;
+	statusAlmacen: AlmacenStatusName;
+	statusVariant: AlmacenStatusVariant;
 };
 
 export type RowVuelosType = {
-    id: string;
-    packets: number;
-    origin: string;
-    destination: string;
+	id: string;
+	packets: number;
+	origin: string;
+	destination: string;
 };
 
-
 export type RowPackageRouteType = {
-    id: string;
-    origin: string;
-    timeOrigin: string | null;
-    destination: string;
-    timeDestination: string | null;
-    isCurrent: boolean;
-}
+	id: string;
+	origin: string;
+	timeOrigin: string | null;
+	destination: string;
+	timeDestination: string | null;
+	isCurrent: boolean;
+};
 
-export type RoleType = "admin" | "operator" | "user" | null;
+export type RoleType = "admin" | "operario" | "user" | null;
 
 export enum Operacion {
-    Envios = "Envios",
-    Aeropuertos = "Aeropuertos",
-    Vuelos = "Vuelos"
+	Envios = "Envios",
+	Aeropuertos = "Aeropuertos",
+	Vuelos = "Vuelos",
 }
 
 export type Coordenadas = {
-    latitud: number;
-    longitud: number;
+	latitud: number;
+	longitud: number;
 };
 
 export type Ubicacion = {
-    id: number;
-    coordenadas: {
-        latitud: number;
-        longitud: number;
-    };
-    continente: string;
-    pais: string;
-    ciudad: string;
-    ciudad_abreviada: string;
-    zona_horaria: string;
-}
+	id: string;
+	latitud: number;
+	longitud: number;
+	continente: string;
+	pais: string;
+	ciudad: string;
+	ciudadAbreviada: string;
+	zonaHoraria: string;
+};
 
 export type Aeropuerto = {
-    id: number;
-    ubicacion: Ubicacion;
-    capacidad_maxima: number;
-}
+	id: number;
+	ubicacion: Ubicacion;
+	capacidadMaxima: number;
+};
 
 export type PlanVuelo = {
-    id: number;
-    ubicacion_origen: Ubicacion;
-    ubicacion_destino: Ubicacion;
-    hora_ciudad_origen: string;
-    hora_ciudad_destino: string;
-    capacidad_maxima: number;
-}
+	id: number;
+	ciudadOrigen: Ubicacion;
+	ciudadDestino: Ubicacion;
+	horaCiudadOrigen: string;
+	horaCiudadDestino: string;
+	capacidadMaxima: number;
+};
 
 export type Vuelo = {
-    id: number;
-    plan_vuelo: PlanVuelo;
-    fecha_origen: Date;
-    fecha_destino: Date;
-    coordenadas_actual : Coordenadas;
-    tiempo_estimado: number;
-    capacidad_utilizada: number;
-    estado: string;
-}
+	id: number;
+	planVuelo: PlanVuelo;
+	fechaSalida: Date;
+	fechaLlegada: Date;
+	capacidadUtilizada: number;
+	simulacionActual: Simulacion | null;
+};
+
 
 export type PlanRuta = {
-    id: number;
-    ubicacion_origen: Ubicacion;
-    ubicacion_destino: Ubicacion;
-    fecha_inicio: Date;
-    fecha_fin: Date;
-    vuelos: Vuelo[];
-}
+	id: number;
+	estado: string;
+	paquete: Paquete;
+	vuelos: Vuelo[];
+};
+
 
 export type Paquete = {
     id: number;
@@ -119,15 +103,35 @@ export type Paquete = {
     entregado: boolean;
     envio: Envio;
     fecha_entrega: string;
+    plan_ruta: PlanRuta;
 }
 
 export type Envio = {
     id: number;
-    ubicacion_origen: Ubicacion;
-    ubicacion_destino: Ubicacion;
-    fecha_recepcion: Date;
-    fecha_limite_entrega: Date;
+    ubicacionOrigen: Ubicacion;
+    ubicacionDestino: Ubicacion;
+    fechaRecepcion: Date;
+	tiempoEntregaEstimada: string;
+    fechaLimiteEntrega: Date;
     estado: string;
-    cantidad_paquetes: number;
-    codigo_seguridad: string;
+    cantidadPaquetes: number;
+    codigoSeguridad: string;
+    paquetes?: Paquete[];
+}
+
+export type Simulacion = {
+	id: number;
+	estado: number;
+	multiplicadorTiempo: number;	
+	fechaInicioSistema: Date;
+	fechaInicioSim: Date;
+	fechaFinSim: Date;
+}
+
+export type RespuestaAlgoritmo = {
+	correcta: boolean;
+	estadoAlmacen: any;
+	planesRutas: PlanRuta[];
+	simulacion: Simulacion;
+	vuelos: Vuelo[];
 }

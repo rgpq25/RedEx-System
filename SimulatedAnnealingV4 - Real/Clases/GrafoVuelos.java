@@ -1,7 +1,16 @@
 package Clases;
 
+import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -184,7 +193,7 @@ public class GrafoVuelos {
                                                                    // disponibles
         ExecutorService executor = Executors.newFixedThreadPool(nThreads); // Crear un pool de hilos
 
-        List<Future<HashMap<String, ArrayList<PlanRuta>>>> futures = new ArrayList<>();
+        ArrayList<Future<HashMap<String, ArrayList<PlanRuta>>>> futures = new ArrayList<>();
 
         for (Ubicacion origen : grafo.keySet()) {
             for (Ubicacion destino : grafo.keySet()) {
@@ -235,7 +244,8 @@ public class GrafoVuelos {
         }
         ArrayList<PlanRuta> rutas = new ArrayList<>();
         // long startTime = System.nanoTime();
-        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<>(), new HashSet<>(), rutas,
+        buscarRutasDFS(origen, destino, fechaHoraInicio, new PlanRuta(), new HashSet<String>(), new HashSet<String>(),
+                rutas,
                 continental,
                 tamanho_max);
         if (rutas.size() == 0) {
