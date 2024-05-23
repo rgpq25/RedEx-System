@@ -7,7 +7,7 @@ import { Tooltip } from "react-tooltip";
 import { AnimationObject } from "../hooks/useAnimation";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
-import { Aeropuerto, Vuelo } from "@/lib/types";
+import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 
@@ -35,6 +35,7 @@ interface MapProps {
 	};
 	airports: Aeropuerto[];
 	flights: Vuelo[];
+	simulation: Simulacion | undefined;
 	className?: string;
 }
 
@@ -46,6 +47,7 @@ function Map({
 	attributes,
 	airports,
 	flights,
+	simulation,
 	className,
 }: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
@@ -76,11 +78,13 @@ function Map({
 				isOpen={currentFlightModal !== undefined}
 				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
 				vuelo={currentFlightModal}
+				simulacion={simulation}
 			/>
 			<AirportModal
 				isOpen={currentAirportModal !== undefined}
 				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
 				aeropuerto={currentAirportModal}
+				simulacion={simulation}
 			/>
 			<Tooltip
 				id="my-tooltip"

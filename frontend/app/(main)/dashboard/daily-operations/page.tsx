@@ -89,6 +89,8 @@ function DailyOperationsPage() {
 					attributes={attributes}
 					className="h-full w-full"
 					airports={airports}
+					flights={[]}
+					simulation={undefined}
 				/>
 			</section>
 		</MainContainer>

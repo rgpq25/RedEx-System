@@ -1,16 +1,19 @@
 import { api } from "@/lib/api";
+import { Simulacion } from "@/lib/types";
 
-export const startWeeklySimulation = async (enviosFile: File, startDate: Date) => {
+export const startWeeklySimulation = async (enviosFile: File, startDate: Date): Promise<Simulacion> => {
 	let idSimulacion: number = 0;
+	let simulacion: Simulacion | undefined = undefined;
 	const finishDate = new Date(startDate);
 	finishDate.setDate(finishDate.getDate() + 7);
 
 	await api(
 		"POST",
 		"http://localhost:8080/back/simulacion/",
-		(data) => {
+		(data: Simulacion) => {
 			console.log(data);
 			idSimulacion = data.id;
+			simulacion = data;
 		},
 		(error) => {
 			console.log(error);
@@ -67,11 +70,12 @@ export const startWeeklySimulation = async (enviosFile: File, startDate: Date) =
 			);
 
 			conte++;
-			if (conte === 10) break;
+			if (conte === 500) break;
 		}
-
-		return idSimulacion;
 	} catch (error) {
 		console.error("Error processing file:", error);
 	}
+
+	if (simulacion === undefined) throw new Error("Error al crear simulacion");
+	return simulacion;
 };

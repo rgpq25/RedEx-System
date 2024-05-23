@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
 import Map from "@/components/map/map";
 
-type TabType = "weekly" | "colapse";
-
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -39,6 +37,7 @@ function SimulationPage() {
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -53,7 +52,9 @@ function SimulationPage() {
 		}
 	);
 
-	const onSimulationRegister = async (idSimulacion: number) => {
+	const onSimulationRegister = async (simulacion: Simulacion) => {
+		setSimulation(simulacion);
+
 		//Connect to the socket
 		const socket = new WebSocket("ws://localhost:8080/websocket");
 		const client = new Client({
@@ -72,15 +73,10 @@ function SimulationPage() {
 
 				const currentSimTime = new Date(fechaInicioSim.getTime() + multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime()));
 				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
-
-				// showNewMessage(JSON.parse(msg.body));
 				
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
-
-				const newFlights = data.vuelos
-				//	.slice(0, 100);
 				
-				setFlights(newFlights.map((vuelo: Vuelo) => {
+				setFlights(data.vuelos.map((vuelo: Vuelo) => {
 					const vueloActualizado = vuelo;
 					vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
 					vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
@@ -88,7 +84,6 @@ function SimulationPage() {
 				}));
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
-				// showNewMessage(JSON.parse(msg.body));
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
 			});
 		};
@@ -98,7 +93,7 @@ function SimulationPage() {
 		//Call api to run algorithm
 		await api(
 			"GET",
-			"http://localhost:8080/back/simulacion/runAlgorithm/" + idSimulacion,
+			"http://localhost:8080/back/simulacion/runAlgorithm/" + simulacion.id,
 			(data) => {
 				console.log(data);
 			},
@@ -107,12 +102,6 @@ function SimulationPage() {
 			}
 		);
 	};
-
-	// useEffect(()=>{
-	// 	const stompCliente = new StompJs.Client({
-	// 		webSocketFactory: () => new WebSocket('ws://localhost:8080/websocket')
-	// 	});
-	// },[])
 
 	return (
 		<>
@@ -141,6 +130,7 @@ function SimulationPage() {
 						className="h-full w-full"
 						airports={airports}
 						flights={flights}
+						simulation={simulation}
 					/>
 					<Sidebar
 						envios={envios}

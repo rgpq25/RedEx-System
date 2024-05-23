@@ -36,7 +36,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { RowVuelosType } from "@/lib/types";
+import { Paquete, RowVuelosType } from "@/lib/types";
 import Chip from "@/components/ui/chip";
 
 
@@ -123,7 +123,7 @@ export const columns: ColumnDef<RowVuelosType>[] = [
     },
 ];
 
-export function FlightTable() {
+export function FlightTable({paquetes}: {paquetes: Paquete[]}) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);

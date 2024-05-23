@@ -99,11 +99,14 @@ export type PlanRuta = {
 
 export type Paquete = {
     id: number;
-    aeropuerto_actual: Aeropuerto;
+    aeropuertoActual: Aeropuerto;
+	enAeropuerto: boolean;
+	fechaRecepcion: Date;
+	fechaDeEntrega: Date | null;
     entregado: boolean;
     envio: Envio;
-    fecha_entrega: string;
-    plan_ruta: PlanRuta;
+	simulacionActual: Simulacion | null;
+	planRutaActual: PlanRuta | null;
 }
 
 export type Envio = {
@@ -111,7 +114,6 @@ export type Envio = {
     ubicacionOrigen: Ubicacion;
     ubicacionDestino: Ubicacion;
     fechaRecepcion: Date;
-	tiempoEntregaEstimada: string;
     fechaLimiteEntrega: Date;
     estado: string;
     cantidadPaquetes: number;
