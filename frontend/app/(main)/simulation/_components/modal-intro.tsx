@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { api } from "@/lib/api";
+import { Simulacion } from "@/lib/types";
 
 export function ModalIntro({
 	isOpen,
@@ -31,7 +32,7 @@ export function ModalIntro({
 }: {
 	isOpen: boolean;
 	setIsModalOpen: (value: boolean) => void;
-	onSimulationRegister: (idSimulacion: number) => Promise<void>;
+	onSimulationRegister: (simulacion: Simulacion) => Promise<void>;
 }) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [file, setFile] = useState<File | undefined>();
@@ -59,14 +60,14 @@ export function ModalIntro({
 		}
 
 		//Register new simulation and all shipments
-		const simulationId = await startWeeklySimulation(file, selectedDate);
+		const simulacion = await startWeeklySimulation(file, selectedDate);
 
-		if (simulationId === undefined || simulationId === 0) {
+		if (simulacion === undefined || simulacion.id === 0) {
 			toast.error("Error al registrar la simulación");
 			return;
 		}
 
-		await onSimulationRegister(simulationId);
+		await onSimulationRegister(simulacion);
 
 		setIsModalOpen(false);
 	};
