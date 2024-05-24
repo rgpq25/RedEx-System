@@ -13,10 +13,9 @@ export type AnimationObject = {
 	setValue: (targetValue: number, duration: number) => void;
 	setValueNoAnimation: (targetValue: number) => void;
 	cancelAnimation: () => void;
-}
+};
 
 type UseAnimationProps = number;
-
 
 const useAnimation = (initialValue: UseAnimationProps): AnimationObject => {
 	const [state, setState] = useState<AnimationState>({
@@ -31,12 +30,15 @@ const useAnimation = (initialValue: UseAnimationProps): AnimationObject => {
 			const now = Date.now();
 			if (state.startTime === null) return;
 			const elapsed = now - state.startTime;
-			const progress = Math.min(elapsed / animationRef.current!, 1);
-			const newValue = state.value + (state.targetValue - state.value) * easeInOutQuad(progress);
+			let progress = elapsed / animationRef.current!;
+			if (progress > 1) progress = 1; // Cap progress to 1
+			let newValue = state.value + (state.targetValue - state.value) * easeInOutQuad(progress);
+			newValue = progress === 1 ? state.targetValue : newValue;
 			setState({ ...state, value: newValue });
 			if (progress === 1) {
 				setState({ ...state, startTime: null });
 				animationRef.current = null;
+				return;
 			}
 		};
 

@@ -159,11 +159,11 @@ export default function ReceptionPackage() {
                                                 <CardContent className='flex flex-wrap gap-4 justify-between *:flex *:flex-col'>
                                                     <div>
                                                         <Large>Origen</Large>
-                                                        <Muted>{vuelo.planVuelo.ubicacionOrigen.ciudad}</Muted>
+                                                        <Muted>{vuelo.planVuelo.ciudadOrigen.ciudad}</Muted>
                                                     </div>
                                                     <div>
                                                         <Large>Destino</Large>
-                                                        <Muted>{vuelo.planVuelo.ubicacionDestino.ciudad}</Muted>
+                                                        <Muted>{vuelo.planVuelo.ciudadDestino.ciudad}</Muted>
                                                     </div>
                                                 </CardContent>
                                             </Card>
