@@ -49,7 +49,7 @@ public class Algoritmo {
                 + (tiempoActual - inicioSistema) * multiplicador);
     }
 
-    private Date agregarSAyTA(Date fechaEnSimulacion, int TA, int SA) {
+    private Date agregarSAyTA(Date fechaEnSimulacion, int TA, int SA, double multiplicador) {
         // Supongamos que tienes una fecha, por ejemplo:
 
         // Crea un objeto Calendar y establece la fecha
@@ -57,7 +57,7 @@ public class Algoritmo {
         calendar.setTime(fechaEnSimulacion);
 
         // Añade 10 minutos a la fecha
-        calendar.add(Calendar.MINUTE, TA + SA);
+        calendar.add(Calendar.SECOND, (TA + SA) * (int) multiplicador);
 
         // Obtiene la nueva fecha con los minutos añadidos
         Date fechaActualizada = calendar.getTime();
@@ -106,8 +106,8 @@ public class Algoritmo {
                 }
                 continue;
             }
-            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, TA);
-            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, 0);
+            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, TA, simulacion.getMultiplicadorTiempo());
+            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, 0, simulacion.getMultiplicadorTiempo());
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
             /*
@@ -137,14 +137,12 @@ public class Algoritmo {
 
             int tamanhoPaquetes = paquetesProcesar.size();
 
-            if (es_final) {
+            if (tamanhoPaquetes == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
                 System.out.println("No hay mas paquetes, terminando");
                 break;
             }
-            if (tamanhoPaquetes == paquetes.size()) {
-                es_final = true;
-            }
+
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
