@@ -55,8 +55,8 @@ public class DataInitializer {
         aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
         planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
-        String startPackagesDate = "2024-01-01 00:00:00";
-        String endPackagesDate = "2024-01-04 23:59:59";
+        String startPackagesDate = "2024-05-23 00:00:00";
+        String endPackagesDate = "2024-05-26 23:59:59";
         paquetes = Funciones.generarPaquetes(
                 1000,
                 aeropuertos,
@@ -70,11 +70,11 @@ public class DataInitializer {
 
         System.out.println("Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
         System.out.println("Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
-
         Simulacion simulacion = new Simulacion();
         simulacion.fillData();
-
+        simulacion.setMultiplicadorTiempo(20.0);
         simulacion = simulacionService.register(simulacion);
+        System.out.println(simulacion.toString());
 
         for (Ubicacion ubicacion : ubicacionMap.values()) {
             ubicacionService.register(ubicacion);

@@ -35,7 +35,16 @@ public class Algoritmo {
         long inicioSistema = simulacion.getFechaInicioSistema().getTime();
         long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
+        // System.out.println("Inicio simulacion: " + new Date(inicioSimulacion));
 
+        // System.out.println("Inicio sistema: " + new Date(inicioSistema));
+        // System.out.println("Tiempo actual: " + new Date(tiempoActual));
+        // System.out.println("Tiempo pasado realmente: " + (tiempoActual -
+        // inicioSistema));
+        // System.out.println("Tiempo pasado en simulacion: " + ((tiempoActual -
+        // inicioSistema) * multiplicador));
+
+        // System.out.println("------------------------------");
         return new Date(inicioSimulacion
                 + (tiempoActual - inicioSistema) * multiplicador);
     }
@@ -87,10 +96,14 @@ public class Algoritmo {
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
         while (true) {
-            if (tiempoEnSimulacion.isBefore(fechaSgteCalculo)){
+            if (tiempoEnSimulacion.before(fechaSgteCalculo)) {
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 System.out.println("Aun no es tiempo de planificar, la fecha en simulacion es " + tiempoEnSimulacion);
-                Thread.sleep(10000);
+                try {
+                    Thread.sleep(10000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
                 continue;
             }
             Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, TA);
@@ -107,34 +120,37 @@ public class Algoritmo {
              */
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
-            // Filtra los paquetes que tengan una fecha de recepción anterior a fechaCorte y fecha de entrega posterior a la actual
+            // Filtra los paquetes que tengan una fecha de recepción anterior a fechaCorte y
+            // fecha de entrega posterior a la actual
             /*
+             * List<Paquete> paquetesTemp = paquetes.stream()
+             * .filter(p -> p.getFechaDeEntrega() != null)
+             * .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo) ||
+             * p.getFechaDeEntrega().after(fechaEnSimulacion))
+             * .collect(Collectors.toList());
+             */
             List<Paquete> paquetesTemp = paquetes.stream()
-                .filter(p -> p.getFechaDeEntrega() != null)  
-                .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo) || p.getFechaDeEntrega().after(fechaEnSimulacion))
-                .collect(Collectors.toList());
-            */
-            List<Paquete> paquetesTemp = paquetes.stream()
-                .filter(p -> p.getFechaDeEntrega() == null)  
-                .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
-                .collect(Collectors.toList());
+                    .filter(p -> p.getFechaDeEntrega() == null)
+                    .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
+                    .collect(Collectors.toList());
             ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
 
             int tamanhoPaquetes = paquetesProcesar.size();
-            System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
             if (es_final) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
+                System.out.println("No hay mas paquetes, terminando");
                 break;
             }
             if (tamanhoPaquetes == paquetes.size()) {
                 es_final = true;
             }
-            
+            System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
+
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
-            
+
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
@@ -143,7 +159,7 @@ public class Algoritmo {
                 // Crear y guardar PlanRuta
                 planRuta.setCodigo(planRutaNT.getCodigo());
                 paquetes.get(i).setPlanRutaActual(planRuta);
-                paquetes.get(i).setFechaDeEntrega(paquetes.get(i).getPlanRutaActual.getFin());
+                paquetes.get(i).setFechaDeEntrega(new Date());
                 try {
                     paqueteService.update(paquetes.get(i));
                 } catch (Exception e) {
@@ -179,7 +195,7 @@ public class Algoritmo {
                                 "Error al guardar algun plan ruta x vuelo: " + e.getMessage());
                     }
                 }
-                //Actualizar entrega estimada del paquete
+                // Actualizar entrega estimada del paquete
 
             }
             // System.out.println(respuestaAlgoritmo.toString());
@@ -189,11 +205,10 @@ public class Algoritmo {
             System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     "Planificacion terminada hasta " + fechaLimiteCalculo);
-            
+
             System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
-           
             tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
 
         }
@@ -201,15 +216,15 @@ public class Algoritmo {
 
     }
 
-    public Paquete finPaqueteByID(ArrayList<Paquete> paquetes, int idBuscado){
-        Paquete paqueteEncontrado = null; 
-    
+    public Paquete finPaqueteByID(ArrayList<Paquete> paquetes, int idBuscado) {
+        Paquete paqueteEncontrado = null;
+
         for (Paquete paquete : paquetes) {
             if (paquete.getId() == idBuscado) {
-                paqueteEncontrado = paquete; 
+                paqueteEncontrado = paquete;
             }
         }
-    
+
         return paqueteEncontrado;
     }
 
@@ -259,4 +274,3 @@ public class Algoritmo {
         return sa.startAlgorithm(grafoVuelos, vueloService, planRutaService, simulacion, iteracion, messagingTemplate);
     }
 }
-
