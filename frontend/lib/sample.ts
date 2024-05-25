@@ -73,6 +73,12 @@ const ubicaciones: Ubicacion[] = [
 	},
 ];
 
+const continentes: string[] = [
+    "America del Sur",
+    "Europa",
+    "Asia",
+];
+
 const aeropuertos: Aeropuerto[] = [
 	{
 		id: 1,
@@ -252,4 +258,4 @@ const envios: Envio[] = [
 	},
 ];
 
-export { ubicaciones, aeropuertos, vuelos, envios };
+export { ubicaciones, continentes, aeropuertos, vuelos, envios };
