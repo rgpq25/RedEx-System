@@ -327,12 +327,12 @@ public class Algoritmo {
                 }
 
                 // Actualizar paquete
-                paquetes.get(idx).setFechaDeEntrega(planRutaNT.getFin());
-                paquetes.get(idx).setSimulacionActual(simulacion);
-                paquetes.get(idx).setPlanRutaActual(planRuta);
+                paquetesProcesar.get(idx).setFechaDeEntrega(planRutaNT.getFin());
+                paquetesProcesar.get(idx).setSimulacionActual(simulacion);
+                paquetesProcesar.get(idx).setPlanRutaActual(planRuta);
 
                 try {
-                    paqueteService.update(paquetes.get(idx));
+                    paqueteService.update(paquetesProcesar.get(idx));
                 } catch (Exception e) {
                     // Manejo de errores si algo sale mal durante la operación de guardado
                     System.err.println("Error al guardar en la base de datos: " + e.getMessage());
