@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,8 +57,16 @@ public class DataInitializer {
         aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
         planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
-        String startPackagesDate = "2024-01-01 00:00:00";
-        String endPackagesDate = "2024-01-04 23:59:59";
+        LocalDate today = LocalDate.now();
+
+        // Sumar 3 días a la fecha de hoy
+        LocalDate endDate = today.plusDays(3);
+
+        // Formatear las fechas como strings
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startPackagesDate = today.atStartOfDay().format(formatter);
+        String endPackagesDate = endDate.atTime(23, 59, 59).format(formatter);
+
         paquetes = Funciones.generarPaquetes(
                 1000,
                 aeropuertos,
@@ -70,11 +80,11 @@ public class DataInitializer {
 
         System.out.println("Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
         System.out.println("Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
-
         Simulacion simulacion = new Simulacion();
         simulacion.fillData();
-
+        simulacion.setMultiplicadorTiempo(20.0);
         simulacion = simulacionService.register(simulacion);
+        System.out.println(simulacion.toString());
 
         for (Ubicacion ubicacion : ubicacionMap.values()) {
             ubicacionService.register(ubicacion);

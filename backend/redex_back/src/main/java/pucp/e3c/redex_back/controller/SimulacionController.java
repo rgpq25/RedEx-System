@@ -109,7 +109,7 @@ public class SimulacionController {
         Simulacion simulacion = simulacionService.get(id);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
-                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion, 5, 1);
+                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion, 30, 10);
         });
 
         return "Simulacion iniciada";

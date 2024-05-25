@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.lang.Thread;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -33,7 +35,6 @@ public class Algoritmo {
         long inicioSistema = simulacion.getFechaInicioSistema().getTime();
         long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
-
         return new Date(inicioSimulacion
                 + (tiempoActual - inicioSistema) * multiplicador);
     }
@@ -46,7 +47,7 @@ public class Algoritmo {
         calendar.setTime(fechaEnSimulacion);
 
         // Añade 10 minutos a la fecha
-        calendar.add(Calendar.MINUTE, (TA + SA) * (int) multiplicador);
+        calendar.add(Calendar.SECOND, (TA + SA) * (int) multiplicador);
 
         // Obtiene la nueva fecha con los minutos añadidos
         Date fechaActualizada = calendar.getTime();
@@ -72,7 +73,6 @@ public class Algoritmo {
             return null;
         }
 
-        // recorrer los paquetes por cada 50
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
         if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
@@ -81,40 +81,42 @@ public class Algoritmo {
             return null;
         }
         int i = 0;
-        boolean es_final = false;
+
+        Date fechaSgteCalculo = simulacion.getFechaInicioSim();
+        Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
         while (true) {
-            Date tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+            if (tiempoEnSimulacion.before(fechaSgteCalculo)) {
+                tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+                System.out.println("Aun no es tiempo de planificar, la fecha en simulacion es " + tiempoEnSimulacion);
+                try {
+                    Thread.sleep(10000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
+                continue;
+            }
             Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, TA, simulacion.getMultiplicadorTiempo());
+            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, 0, simulacion.getMultiplicadorTiempo());
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
-            /*
-             * ArrayList<Paquete> paquetesTemp = new ArrayList<>();
-             * for (int j = i; j < i + tamanhoPaquetes; j++) {
-             * if (j < paquetes.size()) {
-             * paquetesTemp.add(paquetes.get(j));
-             * }
-             * }
-             */
+
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
-            // Filtra los paquetes que tengan una fecha de recepción anterior a fechaCorte
             List<Paquete> paquetesTemp = paquetes.stream()
+                    .filter(p -> p.getFechaDeEntrega() == null)
                     .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
                     .collect(Collectors.toList());
             ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
 
             int tamanhoPaquetes = paquetesProcesar.size();
-            System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
-            System.out.println("La simulacion inicio " + simulacion.fechaInicioSim);
 
-            if (es_final) {
+            if (tamanhoPaquetes == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
-
+                System.out.println("No hay mas paquetes, terminando");
                 break;
             }
-            if (tamanhoPaquetes == paquetes.size()) {
-                es_final = true;
-            }
+
+            System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
@@ -123,10 +125,22 @@ public class Algoritmo {
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
+                // Crear y guardar PlanRuta
                 planRutaNT.updateCodigo();
                 PlanRuta planRuta = new PlanRuta();
-                // Crear y guardar PlanRuta
                 planRuta.setCodigo(planRutaNT.getCodigo());
+                planRuta.setSimulacionActual(simulacion);
+                try {
+                    planRuta = planRutaService.register(planRuta);
+                } catch (PersistenceException e) {
+                    // Manejo de errores si algo sale mal durante la operación de guardado
+                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                            "Error al guardar algun plan ruta: " + e.getMessage());
+                }
+                // ------------------------------ temporal
+                paquetes.get(i).setFechaDeEntrega(new Date());
+                paquetes.get(i).setSimulacionActual(simulacion);
                 paquetes.get(i).setPlanRutaActual(planRuta);
                 try {
                     paqueteService.update(paquetes.get(i));
@@ -136,19 +150,10 @@ public class Algoritmo {
                     messagingTemplate.convertAndSend("/algoritmo/estado",
                             "Error al guardar algun paquete: " + e.getMessage());
                 }
-                planRuta.setSimulacionActual(simulacion);
-
-                try {
-                    planRuta = planRutaService.register(planRuta);
-                } catch (PersistenceException e) {
-                    // Manejo de errores si algo sale mal durante la operación de guardado
-                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                    messagingTemplate.convertAndSend("/algoritmo/estado",
-                            "Error al guardar algun plan ruta: " + e.getMessage());
-                }
 
                 // Asociar cada PlanRuta con sus vuelos
                 for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                    vuelo = vueloService.register(vuelo);
                     PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
                     planRutaXVuelo.setPlanRuta(planRuta);
                     planRutaXVuelo.setVuelo(vuelo);
@@ -163,18 +168,37 @@ public class Algoritmo {
                                 "Error al guardar algun plan ruta x vuelo: " + e.getMessage());
                     }
                 }
+                // Actualizar entrega estimada del paquete
 
             }
             // System.out.println(respuestaAlgoritmo.toString());
+            simulacion.setFechaInicioSistema(new Date());
+            respuestaAlgoritmo.setSimulacion(simulacion);
             messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
-            System.out.println("Planificacion terminada hasta " + fechaLimiteCalculo);
+            System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     "Planificacion terminada hasta " + fechaLimiteCalculo);
 
+            System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
+
+            tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+
         }
         return planRutas;
 
+    }
+
+    public Paquete finPaqueteByID(ArrayList<Paquete> paquetes, int idBuscado) {
+        Paquete paqueteEncontrado = null;
+
+        for (Paquete paquete : paquetes) {
+            if (paquete.getId() == idBuscado) {
+                paqueteEncontrado = paquete;
+            }
+        }
+
+        return paqueteEncontrado;
     }
 
     public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
