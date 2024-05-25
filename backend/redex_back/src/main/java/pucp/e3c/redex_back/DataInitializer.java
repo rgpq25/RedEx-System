@@ -1,5 +1,7 @@
 package pucp.e3c.redex_back;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,8 +57,16 @@ public class DataInitializer {
         aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
         planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
-        String startPackagesDate = "2024-05-23 00:00:00";
-        String endPackagesDate = "2024-05-26 23:59:59";
+        LocalDate today = LocalDate.now();
+
+        // Sumar 3 días a la fecha de hoy
+        LocalDate endDate = today.plusDays(3);
+
+        // Formatear las fechas como strings
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startPackagesDate = today.atStartOfDay().format(formatter);
+        String endPackagesDate = endDate.atTime(23, 59, 59).format(formatter);
+
         paquetes = Funciones.generarPaquetes(
                 1000,
                 aeropuertos,

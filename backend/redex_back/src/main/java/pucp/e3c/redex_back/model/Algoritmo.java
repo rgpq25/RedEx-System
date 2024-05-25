@@ -35,16 +35,6 @@ public class Algoritmo {
         long inicioSistema = simulacion.getFechaInicioSistema().getTime();
         long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
-        // System.out.println("Inicio simulacion: " + new Date(inicioSimulacion));
-
-        // System.out.println("Inicio sistema: " + new Date(inicioSistema));
-        // System.out.println("Tiempo actual: " + new Date(tiempoActual));
-        // System.out.println("Tiempo pasado realmente: " + (tiempoActual -
-        // inicioSistema));
-        // System.out.println("Tiempo pasado en simulacion: " + ((tiempoActual -
-        // inicioSistema) * multiplicador));
-
-        // System.out.println("------------------------------");
         return new Date(inicioSimulacion
                 + (tiempoActual - inicioSistema) * multiplicador);
     }
@@ -91,7 +81,6 @@ public class Algoritmo {
             return null;
         }
         int i = 0;
-        boolean es_final = false;
 
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
@@ -110,25 +99,9 @@ public class Algoritmo {
             fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, SA, 0, simulacion.getMultiplicadorTiempo());
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
-            /*
-             * ArrayList<Paquete> paquetesTemp = new ArrayList<>();
-             * for (int j = i; j < i + tamanhoPaquetes; j++) {
-             * if (j < paquetes.size()) {
-             * paquetesTemp.add(paquetes.get(j));
-             * }
-             * }
-             */
+
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
-            // Filtra los paquetes que tengan una fecha de recepción anterior a fechaCorte y
-            // fecha de entrega posterior a la actual
-            /*
-             * List<Paquete> paquetesTemp = paquetes.stream()
-             * .filter(p -> p.getFechaDeEntrega() != null)
-             * .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo) ||
-             * p.getFechaDeEntrega().after(fechaEnSimulacion))
-             * .collect(Collectors.toList());
-             */
             List<Paquete> paquetesTemp = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null)
                     .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
@@ -152,22 +125,11 @@ public class Algoritmo {
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
+                // Crear y guardar PlanRuta
                 planRutaNT.updateCodigo();
                 PlanRuta planRuta = new PlanRuta();
-                // Crear y guardar PlanRuta
                 planRuta.setCodigo(planRutaNT.getCodigo());
-                paquetes.get(i).setPlanRutaActual(planRuta);
-                paquetes.get(i).setFechaDeEntrega(new Date());
-                try {
-                    paqueteService.update(paquetes.get(i));
-                } catch (Exception e) {
-                    // Manejo de errores si algo sale mal durante la operación de guardado
-                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                    messagingTemplate.convertAndSend("/algoritmo/estado",
-                            "Error al guardar algun paquete: " + e.getMessage());
-                }
                 planRuta.setSimulacionActual(simulacion);
-
                 try {
                     planRuta = planRutaService.register(planRuta);
                 } catch (PersistenceException e) {
@@ -176,9 +138,22 @@ public class Algoritmo {
                     messagingTemplate.convertAndSend("/algoritmo/estado",
                             "Error al guardar algun plan ruta: " + e.getMessage());
                 }
+                // ------------------------------ temporal
+                paquetes.get(i).setFechaDeEntrega(new Date());
+                paquetes.get(i).setSimulacionActual(simulacion);
+                paquetes.get(i).setPlanRutaActual(planRuta);
+                try {
+                    paqueteService.update(paquetes.get(i));
+                } catch (Exception e) {
+                    // Manejo de errores si algo sale mal durante la operación de guardado
+                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                            "Error al guardar algun paquete: " + e.getMessage());
+                }
 
                 // Asociar cada PlanRuta con sus vuelos
                 for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                    vuelo = vueloService.register(vuelo);
                     PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
                     planRutaXVuelo.setPlanRuta(planRuta);
                     planRutaXVuelo.setVuelo(vuelo);
