@@ -91,6 +91,8 @@ public class Algoritmo {
         while (true) {
             simulacion = simulacionService.get(simulacion.getId());
             if (simulacion.estado == 1) {
+                System.out.println("Simulacion terminada");
+                messagingTemplate.convertAndSend("/algoritmo/estado", "Simulacion terminada");
                 break;
             }
 
