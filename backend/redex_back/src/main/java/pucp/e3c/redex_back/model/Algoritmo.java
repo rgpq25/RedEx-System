@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.lang.Thread;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import jakarta.persistence.PersistenceException;
@@ -145,22 +144,20 @@ public class Algoritmo {
             }
             System.out.println("LLegue aqui");
             // Filtrar paquetes que estan volando
-            /*
-             * for (Paquete paquete : paquetesProcesar) {
-             * ArrayList<Vuelo> vuelos =
-             * vueloService.findVuelosByPaqueteId(paquete.getId());
-             * for (Vuelo vuelo : vuelos) {
-             * if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
-             * && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
-             * paquetesProcesar.remove(paquete);
-             * break;
-             * }
-             * }
-             * }
-             */
+
+            for (Paquete paquete : paquetesProcesar) {
+                ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+                for (Vuelo vuelo : vuelos) {
+                    if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
+                            && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
+                        paquetesProcesar.remove(paquete);
+                        break;
+                    }
+                }
+            }
 
             // Recalcular el tamanho de paquetes
-            // tamanhoPaquetes = paquetesProcesar.size();
+            tamanhoPaquetes = paquetesProcesar.size();
 
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
@@ -168,7 +165,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
-
+            i++;
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
@@ -187,12 +184,12 @@ public class Algoritmo {
                 }
 
                 // Actualizar paquete
-                paquetes.get(i).setFechaDeEntrega(planRutaNT.getFin());
-                paquetes.get(i).setSimulacionActual(simulacion);
-                paquetes.get(i).setPlanRutaActual(planRuta);
+                paquetes.get(idx).setFechaDeEntrega(planRutaNT.getFin());
+                paquetes.get(idx).setSimulacionActual(simulacion);
+                paquetes.get(idx).setPlanRutaActual(planRuta);
 
                 try {
-                    paqueteService.update(paquetes.get(i));
+                    paqueteService.update(paquetes.get(idx));
                 } catch (Exception e) {
                     // Manejo de errores si algo sale mal durante la operación de guardado
                     System.err.println("Error al guardar en la base de datos: " + e.getMessage());
