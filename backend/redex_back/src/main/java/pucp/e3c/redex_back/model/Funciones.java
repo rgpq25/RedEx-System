@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.TimeZone;
 
 import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.PaqueteService;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -283,7 +284,6 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
-
         Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
         Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
 
@@ -293,16 +293,12 @@ public class Funciones {
                 "UTC");
 
         envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
-        for (int i = 0; i < cantidadPaquetes; i++) {
-            Paquete paquete = new Paquete();
-            paquete.setAeropuertoActual(aeropuertoService.findByUbicacion(origen.getId()));
-            paquete.setEnAeropuerto(true);
-            paquete.setEntregado(false);
-            paquete.setEnvio(envio);
-            Simulacion simulacion = new Simulacion();
-            simulacion.setId(idSimulacion);
-            paquete.setSimulacionActual(simulacion);
-        }
+        envio.setCantidadPaquetes(cantidadPaquetes);
+        envio.setCodigoSeguridad("123456");
+        Simulacion simulacion = new Simulacion();
+        simulacion.setId(idSimulacion);
+        envio.setSimulacionActual(simulacion);
+
         return envio;
     }
 

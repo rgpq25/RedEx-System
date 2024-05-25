@@ -532,11 +532,11 @@ function Vuelos({ vuelos, onClick }: { vuelos: Vuelo[] | undefined; onClick: (vu
 											</CardHeader>
 											<CardContent>
 												<span className="flex flex-wrap *:flex-grow">
-													<Muted>Origen: {vuelo.planVuelo.ubicacionOrigen.ciudad}</Muted>
-													<Muted>Destino: {vuelo.planVuelo.ubicacionDestino.ciudad}</Muted>
+													<Muted>Origen: {vuelo.planVuelo.ciudadOrigen.ciudad}</Muted>
+													<Muted>Destino: {vuelo.planVuelo.ciudadDestino.ciudad}</Muted>
 												</span>
-												<Muted>Fecha origen: {formatDateShort(vuelo.fechaOrigen)}</Muted>
-												<Muted>Fecha destino: {formatDateShort(vuelo.fechaDestino)}</Muted>
+												<Muted>Fecha origen: {formatDateShort(vuelo.fechaSalida)}</Muted>
+												<Muted>Fecha destino: {formatDateShort(vuelo.fechaLlegada)}</Muted>
 												<Muted>Capacidad: {vuelo.capacidadUtilizada}</Muted>
 											</CardContent>
 										</Card>

@@ -72,8 +72,8 @@ export type Aeropuerto = {
 
 export type PlanVuelo = {
 	id: number;
-	ubicacionOrigen: Ubicacion;
-	ubicacionDestino: Ubicacion;
+	ciudadOrigen: Ubicacion;
+	ciudadDestino: Ubicacion;
 	horaCiudadOrigen: string;
 	horaCiudadDestino: string;
 	capacidadMaxima: number;
@@ -82,11 +82,10 @@ export type PlanVuelo = {
 export type Vuelo = {
 	id: number;
 	planVuelo: PlanVuelo;
-	fechaOrigen: Date;
-	fechaDestino: Date;
-	tiempoEstimado: number;
+	fechaSalida: Date;
+	fechaLlegada: Date;
 	capacidadUtilizada: number;
-	estado: string;
+	simulacionActual: Simulacion | null;
 };
 
 
@@ -100,11 +99,14 @@ export type PlanRuta = {
 
 export type Paquete = {
     id: number;
-    aeropuerto_actual: Aeropuerto;
+    aeropuertoActual: Aeropuerto;
+	enAeropuerto: boolean;
+	fechaRecepcion: Date;
+	fechaDeEntrega: Date | null;
     entregado: boolean;
     envio: Envio;
-    fecha_entrega: string;
-    plan_ruta: PlanRuta;
+	simulacionActual: Simulacion | null;
+	planRutaActual: PlanRuta | null;
 }
 
 export type Envio = {
@@ -112,10 +114,26 @@ export type Envio = {
     ubicacionOrigen: Ubicacion;
     ubicacionDestino: Ubicacion;
     fechaRecepcion: Date;
-	tiempoEntregaEstimada: string;
     fechaLimiteEntrega: Date;
     estado: string;
     cantidadPaquetes: number;
     codigoSeguridad: string;
     paquetes?: Paquete[];
+}
+
+export type Simulacion = {
+	id: number;
+	estado: number;
+	multiplicadorTiempo: number;	
+	fechaInicioSistema: Date;
+	fechaInicioSim: Date;
+	fechaFinSim: Date;
+}
+
+export type RespuestaAlgoritmo = {
+	correcta: boolean;
+	estadoAlmacen: any;
+	planesRutas: PlanRuta[];
+	simulacion: Simulacion;
+	vuelos: Vuelo[];
 }

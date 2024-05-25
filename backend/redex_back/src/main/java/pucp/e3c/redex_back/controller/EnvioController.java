@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.Funciones;
+import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
+import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
+import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.UbicacionService;
 
 @RestController
@@ -35,6 +39,12 @@ public class EnvioController {
     @Autowired
     private AeropuertoService aeropuertoService;
 
+    @Autowired
+    private PaqueteService paqueteService;
+
+    @Autowired
+    private SimulacionService simulacionService;
+
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {
         return envioService.register(envio);
@@ -47,8 +57,24 @@ public class EnvioController {
         for (Ubicacion u : ubicaciones) {
             ubicacionMap.put(u.getId(), u);
         }
-        return Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap, registrarEnvio.getSimulacion().getId(),
+        Simulacion simulacion = simulacionService.get(registrarEnvio.getSimulacion().getId());
+
+        Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                registrarEnvio.getSimulacion().getId(),
                 aeropuertoService);
+        Envio auxEnvio = envioService.register(envio);
+        System.out.println("\n " + auxEnvio.getCantidadPaquetes() + "\n");
+        for (int i = 0; i < auxEnvio.getCantidadPaquetes(); i++) {
+            Paquete paquete = new Paquete();
+            paquete.setAeropuertoActual(aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId()));
+            paquete.setEnAeropuerto(true);
+            paquete.setEntregado(false);
+            paquete.setEnvio(envio);
+            paquete.setSimulacionActual(simulacion);
+            paqueteService.register(paquete);
+        }
+        auxEnvio.setSimulacionActual(simulacion);
+        return auxEnvio;
     }
 
     @PutMapping(value = "/")

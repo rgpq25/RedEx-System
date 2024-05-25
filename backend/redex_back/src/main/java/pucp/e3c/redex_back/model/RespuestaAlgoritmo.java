@@ -7,12 +7,14 @@ public class RespuestaAlgoritmo {
     private EstadoAlmacen estadoAlmacen;
     private ArrayList<PlanRutaNT> planesRutas;
     private Simulacion simulacion;
+    private boolean correcta;
 
     public RespuestaAlgoritmo() {
         this.vuelos = new ArrayList<>();
         this.estadoAlmacen = new EstadoAlmacen();
         this.planesRutas = new ArrayList<>();
         this.simulacion = new Simulacion();
+        this.correcta = true;
     }
 
     public RespuestaAlgoritmo(ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen,
@@ -21,7 +23,7 @@ public class RespuestaAlgoritmo {
         this.estadoAlmacen = estadoAlmacen;
         this.planesRutas = planesRutas;
         this.simulacion = simulacion;
-
+        this.correcta = true;
     }
 
     public Simulacion getSimulacion() {
@@ -54,5 +56,31 @@ public class RespuestaAlgoritmo {
 
     public void setEstadoAlmacen(EstadoAlmacen estadoAlmacen) {
         this.estadoAlmacen = estadoAlmacen;
+    }
+
+    public boolean isCorrecta() {
+        return correcta;
+    }
+
+    public void setCorrecta(boolean correcta) {
+        this.correcta = correcta;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RespuestaAlgoritmo {");
+        sb.append(" vuelos=").append(vuelos.size());
+        sb.append(", estadoAlmacen=").append(estadoAlmacen != null);
+        sb.append(", planesRutas=").append(planesRutas.size());
+        sb.append(", simulacion=").append(simulacion != null);
+        sb.append(" }");
+        return sb.toString();
+    }
+
+    public void verificarEstado() {
+        if (vuelos.isEmpty() || estadoAlmacen == null || planesRutas.isEmpty() || simulacion == null) {
+            correcta = false;
+        }
     }
 }

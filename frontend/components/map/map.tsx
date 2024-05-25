@@ -7,8 +7,7 @@ import { Tooltip } from "react-tooltip";
 import { AnimationObject } from "../hooks/useAnimation";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
-import { Aeropuerto, Vuelo } from "@/lib/types";
-import { vuelos } from "@/lib/sample";
+import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 
@@ -26,7 +25,7 @@ interface MapProps {
 	setCurrentAirportModal: (aeropuerto: Aeropuerto | undefined) => void;
 	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
 	attributes: {
-		currentTime: Date;
+		currentTime: Date | undefined;
 		zoom: AnimationObject;
 		centerLongitude: AnimationObject;
 		centerLatitude: AnimationObject;
@@ -35,6 +34,8 @@ interface MapProps {
 		unlockFlight: () => void;
 	};
 	airports: Aeropuerto[];
+	flights: Vuelo[];
+	simulation: Simulacion | undefined;
 	className?: string;
 }
 
@@ -45,6 +46,8 @@ function Map({
 	setCurrentFlightModal,
 	attributes,
 	airports,
+	flights,
+	simulation,
 	className,
 }: MapProps) {
 	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
@@ -75,11 +78,13 @@ function Map({
 				isOpen={currentFlightModal !== undefined}
 				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
 				vuelo={currentFlightModal}
+				simulacion={simulation}
 			/>
 			<AirportModal
 				isOpen={currentAirportModal !== undefined}
 				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
 				aeropuerto={currentAirportModal}
+				simulacion={simulation}
 			/>
 			<Tooltip
 				id="my-tooltip"
@@ -120,19 +125,22 @@ function Map({
 								))
 							}
 						</Geographies>
-						{vuelos.map((vuelo, idx) => {
-							return (
-								<PlaneMarker
-									key={idx}
-									currentTime={currentTime}
-									vuelo={vuelo}
-									onClick={(vuelo: Vuelo) => {
-										setCurrentFlightModal(vuelo);
-										lockInFlight(vuelo);
-									}}
-								/>
-							);
-						})}
+						{currentTime &&
+							flights
+								.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+								.map((vuelo, idx) => {
+									return (
+										<PlaneMarker
+											key={idx}
+											currentTime={currentTime}
+											vuelo={vuelo}
+											onClick={(vuelo: Vuelo) => {
+												setCurrentFlightModal(vuelo);
+												lockInFlight(vuelo);
+											}}
+										/>
+									);
+								})}
 						{airports.map((aeropuerto, idx) => {
 							const latitud = aeropuerto.ubicacion.latitud;
 							const longitud = aeropuerto.ubicacion.longitud;

@@ -24,16 +24,12 @@ public class PlanRutaNT {
 
     public void updateCodigo() {
         StringBuilder sb = new StringBuilder();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm"); // Formato para las fechas
 
         for (Vuelo v : vuelos) {
             String ciudadOrigen = v.getPlanVuelo().getHoraCiudadOrigen();
-            String fechaPartida = sdf.format(v.getFechaSalida());
             String ciudadDestino = v.getPlanVuelo().getHoraCiudadDestino();
-            String fechaLlegada = sdf.format(v.getFechaLlegada());
 
-            sb.append(ciudadOrigen).append("-").append(fechaPartida).append("-")
-                    .append(ciudadDestino).append("-").append(fechaLlegada).append(";");
+            sb.append(ciudadOrigen).append("-").append(ciudadDestino).append(";");
         }
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 1); // Elimina el último punto y coma

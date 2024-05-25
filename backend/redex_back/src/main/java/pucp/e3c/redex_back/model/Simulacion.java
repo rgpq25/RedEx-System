@@ -19,6 +19,7 @@ public class Simulacion {
     Date fechaFinSim;
     Date fechaInicioSistema;
     double multiplicadorTiempo;
+    long milisegundosPausados;
     int estado;
     // tiempoActual = fechaInicioSim + (time - fechaInicioSistema) * multiplicador
     // String resultado;
@@ -29,6 +30,7 @@ public class Simulacion {
         fechaInicioSistema = new Date();
         multiplicadorTiempo = 1;
         estado = 0;
+        milisegundosPausados = 0;
     }
 
     public Integer getId() {
@@ -79,4 +81,23 @@ public class Simulacion {
         this.estado = estado;
     }
 
+    public long getMilisegundosPausados() {
+        return milisegundosPausados;
+    }
+
+    public void setMilisegundosPausados(long milisegundosPausados) {
+        this.milisegundosPausados = milisegundosPausados;
+    }
+
+    @Override
+    public String toString() {
+        return "Simulacion{" +
+                "Id=" + Id +
+                ", fechaInicioSim=" + fechaInicioSim +
+                ", fechaFinSim=" + fechaFinSim +
+                ", fechaInicioSistema=" + fechaInicioSistema +
+                ", multiplicadorTiempo=" + multiplicadorTiempo +
+                ", estado=" + estado +
+                '}';
+    }
 }
