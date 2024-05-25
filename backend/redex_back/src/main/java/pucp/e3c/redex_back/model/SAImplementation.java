@@ -179,7 +179,9 @@ public class SAImplementation {
                 for (int id : current.ocupacionVuelos.keySet()) {
 
                         Vuelo vuelo = current.vuelos_hash.get(id);
-                        vuelo.setSimulacionActual(simulacion);
+                        if(simulacion!=null){
+                                vuelo.setSimulacionActual(simulacion);
+                        }
                         vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                         try {
                                 vueloService.update(vuelo);
