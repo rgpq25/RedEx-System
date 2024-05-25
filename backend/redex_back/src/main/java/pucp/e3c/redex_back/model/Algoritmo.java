@@ -144,17 +144,19 @@ public class Algoritmo {
             }
             System.out.println("LLegue aqui");
             // Filtrar paquetes que estan volando
-
-            for (Paquete paquete : paquetesProcesar) {
-                ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
-                for (Vuelo vuelo : vuelos) {
-                    if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
-                            && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
-                        paquetesProcesar.remove(paquete);
-                        break;
-                    }
-                }
-            }
+            /*
+             * for (Paquete paquete : paquetesProcesar) {
+             * ArrayList<Vuelo> vuelos =
+             * vueloService.findVuelosByPaqueteId(paquete.getId());
+             * for (Vuelo vuelo : vuelos) {
+             * if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
+             * && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
+             * paquetesProcesar.remove(paquete);
+             * break;
+             * }
+             * }
+             * }
+             */
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
