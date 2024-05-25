@@ -84,6 +84,7 @@ public class Algoritmo {
 
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
+        boolean primera_iter = true;
         while (true) {
             if (tiempoEnSimulacion.before(fechaSgteCalculo)) {
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
@@ -172,7 +173,11 @@ public class Algoritmo {
 
             }
             // System.out.println(respuestaAlgoritmo.toString());
-            simulacion.setFechaInicioSistema(new Date());
+            if (primera_iter) {
+                simulacion.setFechaInicioSistema(new Date());
+                primera_iter = false;
+
+            }
             respuestaAlgoritmo.setSimulacion(simulacion);
             messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
             System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
