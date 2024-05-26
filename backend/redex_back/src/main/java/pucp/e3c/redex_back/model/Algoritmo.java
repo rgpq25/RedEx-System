@@ -301,6 +301,9 @@ public class Algoritmo {
                 messagingTemplate.convertAndSend("/algoritmo/estado",
                         "No hay paquetes para la planificacion actual, esperando");
                 System.out.println("No hay paquetes para la planificacion actual, esperando");
+                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
                 continue;
             }
 
@@ -435,7 +438,7 @@ public class Algoritmo {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 10;
+        int neighbourCount = 5;
         int windowSize = tamanhoPaquetes / 5;
         boolean stopWhenNoPackagesLeft = true;
 
