@@ -143,4 +143,13 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte){
+        try {
+            return paqueteRepository.findPaquetesWithoutPlanRuta(idUbicacionOrigen, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }

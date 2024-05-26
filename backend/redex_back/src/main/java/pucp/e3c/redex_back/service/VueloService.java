@@ -245,4 +245,22 @@ public class VueloService {
             return null;
         }
     }
+
+    public ArrayList<Vuelo> findVuelosDestinoAeropuertoFechaCorte(String idUbicacion, Date fechaCorte){
+        try {
+            return vueloRepository.findVuelosDestinoAeropuertoFechaCorte(idUbicacion, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Vuelo> findVuelosOrigenAeropuertoFechaCorte(String idUbicacion, Date fechaCorte){
+        try {
+            return vueloRepository.findVuelosOrigenAeropuertoFechaCorte(idUbicacion, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
 }
