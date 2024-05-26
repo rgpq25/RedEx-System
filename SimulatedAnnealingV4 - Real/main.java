@@ -56,7 +56,7 @@ public class main {
         // Simmulated Annealing Parameters
 
         
-        double temperature = 1000;
+        double temperature = 10000;
         double coolingRate = 0.08;
         int neighbourCount = 10;
         int windowSize = 250; 
@@ -72,6 +72,8 @@ public class main {
         double sumaPaquetesWeight = 10;
         double sumaVuelosWeight = 4;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
+
+
         
 
         String inputPath = "inputGenerado";
@@ -81,10 +83,28 @@ public class main {
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
         ArrayList<Paquete> paquetes = new ArrayList<Paquete>();
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        // Manually assign values to the keys
+        map.put(0, 250);
+        map.put(1, 500);
+        map.put(2, 1000);
+        map.put(3, 2000);
+        map.put(4, 3000);
+        map.put(5, 6250);
+        // Continue this for all keys from 0 to 29
+        // Example values here, you can change these as needed
+        map.put(6, 12500);
+        map.put(7, 25000);
+        map.put(8, 50000);
+        map.put(9, 100000);
+ 
         
 
-        for(int i = 0; i<30; i++){
-            String pathParaExpNum = "outputExpNum/paquetes500_j" + (i+1) + ".csv";
+        for(int i = 0; i<10; i++){
+            //String pathParaExpNum = "outputExpNum/paquetes500_j" + (i+1) + ".csv";
+            String pathParaExpNum = "benchmark/paquetes" + map.get(i) + ".csv";
         
 
             long startTime = System.nanoTime();
@@ -108,7 +128,7 @@ public class main {
                 // );
 
                 paquetes = Funciones.generarPaquetes(
-                    packagesAmount,
+                    map.get(i),
                     aeropuertos,
                     Funciones.parseDateString(startPackagesDate),
                     Funciones.parseDateString(endPackagesDate),
@@ -127,13 +147,13 @@ public class main {
                 aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
 
                 planVuelos = Funciones.leerRawPlanesVuelo(ubicacionMap, "rawData");
-                paquetes = Funciones.leerRawEnvios(
+                /*paquetes = Funciones.leerRawEnvios(
                     ubicacionMap, 
                     "rawData/envios", 
                     Funciones.parseDateString(minPackagesDate), 
                     Funciones.parseDateString(maxPackagesDate)
-                );
-                // paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
+                );*/
+                paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
                 
                 Date minDate = Funciones.parseDateString("2026-01-01 00:00:00");
                 Date maxDate = Funciones.parseDateString("2021-01-01 00:00:00");

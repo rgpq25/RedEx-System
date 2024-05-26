@@ -134,4 +134,13 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados(){
+        try {
+            return paqueteRepository.findPaquetesSinSimulacionYNoEntregados();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }

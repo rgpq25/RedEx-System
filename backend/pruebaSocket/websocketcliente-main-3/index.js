@@ -4,7 +4,7 @@ let stompClient = null;
 const onConnectSocket = () => {
     const mensajeMostrar = { nombre: 'Usuario', contenido: 'Hola' }
     const mensajeError = { nombre: 'Usuario', contenido: 'Error' }
-    stompClient.subscribe('/tema/mensajes', (mensaje) => {
+    stompClient.subscribe('/algoritmo/diaDiaRespuesta', (mensaje) => {
         //mostrarMensaje(JSON.parse(mensaje.body));
         if(mensaje.body){
             mostrarMensaje(mensajeMostrar);
