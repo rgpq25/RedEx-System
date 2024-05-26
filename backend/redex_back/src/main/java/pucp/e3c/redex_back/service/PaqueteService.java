@@ -134,4 +134,22 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados(){
+        try {
+            return paqueteRepository.findPaquetesSinSimulacionYNoEntregados();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte){
+        try {
+            return paqueteRepository.findPaquetesWithoutPlanRuta(idUbicacionOrigen, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }
