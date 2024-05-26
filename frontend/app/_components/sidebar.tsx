@@ -127,149 +127,260 @@ export default function Sidebar({
     );
 }
 
-function Envios({ envios, onClick }: { envios: Envio[] | undefined; onClick: (envio: Envio) => void }) {
-    const [filteredEnvios, setFilteredEnvios] = useState<Envio[] | undefined>(envios);
+function Envios({
+    envios,
+    onClick,
+    tiempoActual,
+}: {
+    envios: Envio[] | undefined;
+    onClick: (envio: Envio) => void;
+    tiempoActual?: Date | undefined;
+}) {
     const [receptionDateStart, setReceptionDateStart] = useState<Date | undefined>(undefined);
     const [receptionDateEnd, setReceptionDateEnd] = useState<Date | undefined>(undefined);
+    const [page, setPage] = useState<number>(1);
+    const rowsPerPage = 10;
     const [search, setSearch] = useState<string>("");
+    const hasSearchFilter = Boolean(search);
+    const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
+
+    const minCapacidad = Math.min(...rangoCapacidadFilter);
+    const maxCapacidad = Math.max(...rangoCapacidadFilter);
+
+    const filteredItems = useMemo(() => {
+        let filteredEnvios = envios;
+        if (tiempoActual) {
+            filteredEnvios = filteredEnvios?.filter(
+                (envio) =>
+                    envio.fechaRecepcion.getTime() <= tiempoActual.getTime() && envio.fechaLimiteEntrega.getTime() >= tiempoActual.getTime()
+            );
+        }
+        if (rangoCapacidadFilter) {
+            filteredEnvios = filteredEnvios?.filter(
+                (envio) => envio.cantidadPaquetes >= minCapacidad && envio.cantidadPaquetes <= maxCapacidad
+            );
+        }
+        if (receptionDateStart && receptionDateEnd) {
+            filteredEnvios = filteredEnvios?.filter(
+                (envio) =>
+                    envio.fechaRecepcion.getTime() >= receptionDateStart.getTime() &&
+                    envio.fechaRecepcion.getTime() <= receptionDateEnd.getTime()
+            );
+        }
+        if (hasSearchFilter) {
+            filteredEnvios = filteredEnvios?.filter((envio) => envio.id.toString().includes(search));
+        }
+        return filteredEnvios;
+    }, [
+        envios,
+        receptionDateStart,
+        receptionDateEnd,
+        search,
+        hasSearchFilter,
+        tiempoActual,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+    ]);
+
+    const pages = Math.ceil((filteredItems?.length || 0) / 10);
+
+    const items = useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        return filteredItems?.slice(start, end);
+    }, [filteredItems, page, rowsPerPage]);
+
+    const onNextPage = useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+    const onPreviousPage = useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+    const onSearchChange = useCallback((value: string) => {
+        if (value) {
+            setSearch(value);
+            setPage(1);
+        } else {
+            setSearch("");
+        }
+    }, []);
+    const onClearFilters = useCallback(() => {
+        setReceptionDateStart(undefined);
+        setReceptionDateEnd(undefined);
+        setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+    }, []);
+
+    const renderCard = useCallback(
+        (envio: Envio) => (
+            <Card
+                key={envio.id}
+                className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'
+                onClick={() => onClick(envio)}
+            >
+                <CardHeader>
+                    <Large>{envio.id}</Large>
+                </CardHeader>
+                <CardContent>
+                    <Muted>Fecha de recepción: {formatDateShort(envio.fechaRecepcion)}</Muted>
+                    <Muted>Cantidad: {envio.cantidadPaquetes}</Muted>
+                    <span className='flex flex-wrap *:flex-grow'>
+                        <Muted>Origen: {envio.ubicacionOrigen.ciudad}</Muted>
+                        <Muted>Destino: {envio.ubicacionDestino.ciudad}</Muted>
+                    </span>
+                </CardContent>
+            </Card>
+        ),
+        [onClick]
+    );
+
+    const renderFilters = useCallback(() => {
+        return (
+            <>
+                <section className='flex flex-row justify-between gap-4 w-full'>
+                    <Input
+                        placeholder='Buscar envío...'
+                        value={search}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                    />
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant='secondary'>
+                                <ListFilter className='mr-2 h-4 w-4' /> Filtros
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            align='start'
+                            className='w-fit flex flex-col gap-4'
+                        >
+                            <Small>Rango de cantidad de paquetes:</Small>
+                            <div className='flex justify-between'>
+                                <Small>{minCapacidad}</Small>
+                                <Small>{maxCapacidad}</Small>
+                            </div>
+                            <SliderDouble
+                                onValueChange={(range) => {
+                                    const [newMin, newMax] = range;
+                                    setRangoCapacidadFilter([newMin, newMax]);
+                                }}
+                                value={rangoCapacidadFilter}
+                                min={DEFAULT_RANGO_CAPACIDAD[0]}
+                                max={DEFAULT_RANGO_CAPACIDAD[1]}
+                                defaultValue={DEFAULT_RANGO_CAPACIDAD}
+                                step={10}
+                            />
+                            <Separator />
+                            <Small>Rango de fecha de recepción:</Small>
+                            <section className='flex flex-col gap-2'>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-[280px] justify-start text-left font-normal",
+                                                !receptionDateStart && "text-muted-foreground"
+                                            )}
+                                        >
+                                            <CalendarIcon className='mr-2 h-4 w-4' />
+                                            {receptionDateStart ? format(receptionDateStart, "PPP") : <span>Fecha de inicio</span>}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className='w-auto p-0'>
+                                        <Calendar
+                                            mode='single'
+                                            selected={receptionDateStart}
+                                            onSelect={setReceptionDateStart}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-[280px] justify-start text-left font-normal",
+                                                !receptionDateEnd && "text-muted-foreground"
+                                            )}
+                                        >
+                                            <CalendarIcon className='mr-2 h-4 w-4' />
+                                            {receptionDateEnd ? format(receptionDateEnd, "PPP") : <span>Fecha de fin</span>}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className='w-auto p-0'>
+                                        <Calendar
+                                            mode='single'
+                                            selected={receptionDateEnd}
+                                            onSelect={setReceptionDateEnd}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </section>
+                            <Separator />
+                            <section className='flex flex-row justify-end gap-4'>
+                                <Button
+                                    size='sm'
+                                    variant='secondary'
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        onClearFilters();
+                                    }}
+                                >
+                                    <Eraser className='mr-2 h-4 w-4' />
+                                    Limpiar filtros
+                                </Button>
+                            </section>
+                        </PopoverContent>
+                    </Popover>
+                </section>
+            </>
+        );
+    }, [search, onSearchChange, receptionDateStart, receptionDateEnd, onClearFilters, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
 
     return (
         <>
-            {envios === undefined ? (
+            {items === undefined ? (
                 SidebarSkeleton()
-            ) : envios.length === 0 ? (
-                <p>No hay envíos disponibles</p>
             ) : (
                 <>
-                    <section className='flex flex-row justify-between gap-4 w-full'>
-                        <Input
-                            placeholder='Buscar envío...'
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant='secondary'>
-                                    <ListFilter className='mr-2 h-4 w-4' /> Filtros
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align='start'
-                                className='w-fit flex flex-col gap-4'
-                            >
-                                <Small>Fecha de registro:</Small>
-                                <section className='flex flex-col gap-2'>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-[280px] justify-start text-left font-normal",
-                                                    !receptionDateStart && "text-muted-foreground"
-                                                )}
-                                            >
-                                                <CalendarIcon className='mr-2 h-4 w-4' />
-                                                {receptionDateStart ? format(receptionDateStart, "PPP") : <span>Fecha de inicio</span>}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className='w-auto p-0'>
-                                            <Calendar
-                                                mode='single'
-                                                selected={receptionDateStart}
-                                                onSelect={setReceptionDateStart}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-[280px] justify-start text-left font-normal",
-                                                    !receptionDateEnd && "text-muted-foreground"
-                                                )}
-                                            >
-                                                <CalendarIcon className='mr-2 h-4 w-4' />
-                                                {receptionDateEnd ? format(receptionDateEnd, "PPP") : <span>Fecha de fin</span>}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className='w-auto p-0'>
-                                            <Calendar
-                                                mode='single'
-                                                selected={receptionDateEnd}
-                                                onSelect={setReceptionDateEnd}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                </section>
-                                <Separator />
-                                <Small>Rango de capacidad:</Small>
-                                <Input
-                                    type='number'
-                                    placeholder='Cantidad minima'
-                                    defaultValue={0}
-                                />
-                                <Input
-                                    type='number'
-                                    placeholder='Cantidad maxima'
-                                    defaultValue={1000}
-                                />
-                                <section className='flex flex-row justify-end gap-4'>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        onSelect={(e) => {
-                                            e.preventDefault();
-                                        }}
-                                    >
-                                        <Check className='mr-2 h-4 w-4' />
-                                        Aplicar filtros
-                                    </Button>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        onSelect={(e) => {
-                                            e.preventDefault();
-                                        }}
-                                    >
-                                        <Eraser className='mr-2 h-4 w-4' />
-                                        Limpiar filtros
-                                    </Button>
-                                </section>
-                            </PopoverContent>
-                        </Popover>
-                    </section>
-                    <ScrollArea className='h-screen'>
-                        <section className='flex flex-col gap-4'>
-                            {envios.filter((envio) => envio.id.toString().includes(search)).length === 0 ? (
-                                <p>No se encontraron resultados</p>
-                            ) : (
-                                envios
-                                    .filter((envio) => envio.id.toString().includes(search))
-                                    .map((envio) => (
-                                        <Card
-                                            key={envio.id}
-                                            className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'
-                                            onClick={() => onClick(envio)}
-                                        >
-                                            <CardHeader>
-                                                <Large>{envio.id}</Large>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Muted>Fecha de recepción: {formatDateShort(envio.fechaRecepcion)}</Muted>
-                                                <Muted>Cantidad: {envio.cantidadPaquetes}</Muted>
-                                                <span className='flex flex-wrap *:flex-grow'>
-                                                    <Muted>Origen: {envio.ubicacionOrigen.ciudad}</Muted>
-                                                    <Muted>Destino: {envio.ubicacionDestino.ciudad}</Muted>
-                                                </span>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                            )}
-                        </section>
-                    </ScrollArea>
+                    {renderFilters()}
+                    {items.length === 0 ? (
+                        <p>No hay envíos disponibles</p>
+                    ) : (
+                        <>
+                            <ScrollArea className='h-screen'>
+                                <section className='flex flex-col gap-4'>{items?.map(renderCard)}</section>
+                            </ScrollArea>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                onPreviousPage();
+                                            }}
+                                        />
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink>{page}</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                onNextPage();
+                                            }}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </>
+                    )}
                 </>
             )}
         </>
@@ -450,7 +561,7 @@ function Vuelos({
 }: {
     vuelos: Vuelo[] | undefined;
     onClick: (vuelo: Vuelo) => void;
-    tiempoActual: Date | undefined;
+    tiempoActual?: Date | undefined;
 }) {
     const [page, setPage] = useState<number>(1);
     const rowsPerPage = 10;
@@ -469,12 +580,13 @@ function Vuelos({
         }
         if (continentesFilter) {
             filteredVuelos = filteredVuelos?.filter((vuelo) => {
-                return (
-                    continentesFilter?.includes(vuelo.planVuelo.ciudadOrigen.continente)
-                )});
+                return continentesFilter?.includes(vuelo.planVuelo.ciudadOrigen.continente);
+            });
         }
         if (rangoCapacidadFilter) {
-            filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.capacidadUtilizada >= minCapacidad && vuelo.capacidadUtilizada <= maxCapacidad);
+            filteredVuelos = filteredVuelos?.filter(
+                (vuelo) => vuelo.capacidadUtilizada >= minCapacidad && vuelo.capacidadUtilizada <= maxCapacidad
+            );
         }
         if (hasSearchFilter) {
             filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.id.toString().includes(search));
@@ -483,7 +595,7 @@ function Vuelos({
     }, [vuelos, search, hasSearchFilter, continentesFilter, tiempoActual, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
 
     const pages = Math.ceil((filteredItems?.length || 0) / rowsPerPage);
-    
+
     const items = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -561,7 +673,7 @@ function Vuelos({
                                 <Small>{minCapacidad}</Small>
                                 <Small>{maxCapacidad}</Small>
                             </div>
-                            <SliderDouble 
+                            <SliderDouble
                                 onValueChange={(range) => {
                                     const [newMin, newMax] = range;
                                     setRangoCapacidadFilter([newMin, newMax]);
@@ -575,7 +687,10 @@ function Vuelos({
                             <Separator />
                             <Small>Continente de origen:</Small>
                             {continentes.map((continente) => (
-                                <div className="ml-4 flex items-center space-x-2" key={continente}>
+                                <div
+                                    className='ml-4 flex items-center space-x-2'
+                                    key={continente}
+                                >
                                     <Checkbox
                                         id={continente}
                                         checked={continentesFilter.includes(continente)}
@@ -618,12 +733,10 @@ function Vuelos({
                     {renderFilters()}
                     {items.length === 0 ? (
                         <p>No hay vuelos disponibles</p>
-                    ) : ( 
+                    ) : (
                         <>
                             <ScrollArea className='h-screen'>
-                                <section className='flex flex-col gap-4'>
-                                    {items.map(renderCard)}
-                                </section>
+                                <section className='flex flex-col gap-4'>{items.map(renderCard)}</section>
                             </ScrollArea>
                             <Pagination>
                                 <PaginationContent>

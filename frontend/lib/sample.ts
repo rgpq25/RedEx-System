@@ -256,6 +256,17 @@ const envios: Envio[] = [
 		codigoSeguridad: "987654",
 		tiempoEntregaEstimada: "3 días",
 	},
+    {
+        id: 4,
+        ubicacionOrigen: ubicaciones[6],
+        ubicacionDestino: ubicaciones[0],
+        fechaRecepcion: new Date("2024-05-10T00:00:03"),
+        fechaLimiteEntrega: new Date("2024-05-13T00:00:03"),
+        estado: "En camino",
+        cantidadPaquetes: 200,
+        codigoSeguridad: "456789",
+        tiempoEntregaEstimada: "3 días",
+    }
 ];
 
 export { ubicaciones, continentes, aeropuertos, vuelos, envios };
