@@ -60,11 +60,12 @@ public class DataInitializer {
         LocalDate today = LocalDate.now();
 
         // Sumar 3 días a la fecha de hoy
-        LocalDate endDate = today.plusDays(0);
+        LocalDate startDate = today.plusDays(1);
+        LocalDate endDate = today.plusDays(3);
 
         // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startPackagesDate = today.atStartOfDay().format(formatter);
+        String startPackagesDate = startDate.atStartOfDay().format(formatter);
         String endPackagesDate = endDate.atTime(20, 59, 59).format(formatter);
 
         paquetes = Funciones.generarPaquetes(
@@ -100,7 +101,7 @@ public class DataInitializer {
 
         for (Paquete paquete : paquetes) {
             envioService.register(paquete.getEnvio());
-            //paquete.setSimulacionActual(simulacion);
+            paquete.setSimulacionActual(simulacion);
             paqueteService.register(paquete);
         }
 
