@@ -55,17 +55,17 @@ public class Algoritmo {
         return fechaActualizada;
     }
 
-    public ArrayList<PlanRutaNT> loopPrincipalDiaADia(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos,
+    public ArrayList<PlanRutaNT> loopPrincipalDiaADia(ArrayList<Aeropuerto> aeropuertos,
+            ArrayList<PlanVuelo> planVuelos,
             VueloService vueloService, PlanRutaService planRutaService,
             PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService, int SA, int TA) {
-        //SA y TA en segundos       
-        
+        // SA y TA en segundos
+
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
 
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
-        
         if (planVuelos.size() == 0) {
             System.out.println("ERROR: No hay planes de vuelo para procesar.");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin planes vuelo");
@@ -80,7 +80,7 @@ public class Algoritmo {
                 System.out.println("No hay paquetes para procesar.");
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
                 long end = System.currentTimeMillis();
-                long sa_millis = SA*1000 - (end - start);
+                long sa_millis = SA * 1000 - (end - start);
                 try {
                     Thread.sleep(sa_millis);
                 } catch (Exception e) {
@@ -95,7 +95,7 @@ public class Algoritmo {
                 System.out.println("ERROR: No se generaron vuelos.");
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
                 return null;
-            }           
+            }
 
             // Calculo del limie de planificacion
             System.out.println("Planificacion iniciada");
@@ -120,16 +120,19 @@ public class Algoritmo {
             // Filtrar paquetes que estan volando
 
             Date now = new Date();
-            /*for (Paquete paquete : paquetesProcesar) {
-                ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
-                for (Vuelo vuelo : vuelos) {
-                    if (vuelo.getFechaLlegada().after(now)
-                            && vuelo.getFechaSalida().before(now)) {
-                        paquetesProcesar.remove(paquete);
-                        break;
-                    }
-                }
-            }*/
+            /*
+             * for (Paquete paquete : paquetesProcesar) {
+             * ArrayList<Vuelo> vuelos =
+             * vueloService.findVuelosByPaqueteId(paquete.getId());
+             * for (Vuelo vuelo : vuelos) {
+             * if (vuelo.getFechaLlegada().after(now)
+             * && vuelo.getFechaSalida().before(now)) {
+             * paquetesProcesar.remove(paquete);
+             * break;
+             * }
+             * }
+             * }
+             */
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -200,9 +203,8 @@ public class Algoritmo {
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
-
             long end = System.currentTimeMillis();
-            long sa_millis = SA*1000 - (end - start);
+            long sa_millis = SA * 1000 - (end - start);
             try {
                 Thread.sleep(sa_millis);
             } catch (Exception e) {
@@ -213,7 +215,6 @@ public class Algoritmo {
         return planRutas;
 
     }
-
 
     public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos,
             ArrayList<Paquete> paquetes, VueloService vueloService, PlanRutaService planRutaService,
@@ -279,8 +280,8 @@ public class Algoritmo {
             }
 
             // Calculo del limie de planificacion
-            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion,TA, SA, simulacion.getMultiplicadorTiempo());
-            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion,0,SA, simulacion.getMultiplicadorTiempo());
+            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
+            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
 
@@ -297,12 +298,24 @@ public class Algoritmo {
             int tamanhoPaquetes = paquetesProcesar.size();
 
             if (tamanhoPaquetes == 0) {
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                        "No hay paquetes para la planificacion actual, esperando");
+                System.out.println("No hay paquetes para la planificacion actual, esperando");
+                continue;
+            }
+
+            List<Paquete> paquetesRest = paquetes.stream()
+                    .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion))
+                    .collect(Collectors.toList());
+
+            if (paquetesRest.size() == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
                 System.out.println("No hay mas paquetes, terminando");
                 simulacion.setEstado(1);
+                simulacionService.update(simulacion);
                 break;
             }
-            System.out.println("LLegue aqui");
+
             // Filtrar paquetes que estan volando
             /*
              * for (Paquete paquete : paquetesProcesar) {
