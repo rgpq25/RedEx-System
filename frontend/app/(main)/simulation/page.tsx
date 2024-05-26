@@ -155,6 +155,7 @@ function SimulationPage() {
 							lockInFlight(vuelo);
 							setCurrentFlightModal(vuelo);
 						}}
+                        tiempoActual={currentTime}
 					/>
 				</section>
 			</MainContainer>
