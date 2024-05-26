@@ -120,7 +120,7 @@ public class Algoritmo {
             // Filtrar paquetes que estan volando
 
             Date now = new Date();
-            for (Paquete paquete : paquetesProcesar) {
+            /*for (Paquete paquete : paquetesProcesar) {
                 ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
                 for (Vuelo vuelo : vuelos) {
                     if (vuelo.getFechaLlegada().after(now)
@@ -129,7 +129,7 @@ public class Algoritmo {
                         break;
                     }
                 }
-            }
+            }*/
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -197,12 +197,9 @@ public class Algoritmo {
             System.out.println("Planificacion terminada en tiempo de simulacion hasta " + now);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                     "Planificacion terminada hasta " + now);
-            //TO DO
-            //System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
-            //tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
 
             long end = System.currentTimeMillis();
             long sa_millis = SA*1000 - (end - start);
