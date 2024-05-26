@@ -103,7 +103,8 @@ public class SAImplementation {
         long startTimeInitialization = System.nanoTime();
         current.force_initialize(todasLasRutas);
         Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
-        System.out.println("Finished solution initialization in " + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
+        long segundosInitiliazation = (System.nanoTime() - startTimeInitialization) / 1000000000;
+        System.out.println("Finished solution initialization in " + segundosInitiliazation+ " s");
 
         
         startTime = System.nanoTime();
@@ -178,6 +179,7 @@ public class SAImplementation {
 
         //current.printCosts();
         current.printCostsInLog();
+        Funciones.printLineInLog("Finished solution initialization in " + segundosInitiliazation+ " s");
         Funciones.printLineInLog("");
         Funciones.printLineInLog("");
 

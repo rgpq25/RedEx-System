@@ -51,6 +51,16 @@ public class VueloController {
         }
     }
 
+    @GetMapping("paquete/{id}")
+    public ResponseEntity<ArrayList<Vuelo>> findByPaqueteId(@PathVariable("id") int id) {
+        ArrayList<Vuelo> vuelo = vueloService.findVuelosByPaqueteId(id);
+        if (vuelo != null) {
+            return new ResponseEntity<ArrayList<Vuelo>>(vuelo, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PutMapping("/")
     public ResponseEntity<Vuelo> put(@RequestBody Vuelo vuelo) {
         Vuelo updatedVuelo = vueloService.update(vuelo);
@@ -72,12 +82,18 @@ public class VueloController {
         return new ResponseEntity<>(vuelos, HttpStatus.OK);
     }
 
-    /*@GetMapping("/destino/{idSimulacion}/{idUbicacion}")
-    public ArrayList<Vuelo> pruebaFindVuelosDestinoAeropuertoSimulacionFecha(@PathVariable("idSimulacion") Integer idSimulacion,
-    @PathVariable("idUbicacion") String idUbicacion) {
-        Date fechaCorte = new Date();
-        return vueloService.findVuelosDestinoAeropuertoSimulacionFecha(idSimulacion, idUbicacion, fechaCorte);
-    }*/
+    /*
+     * @GetMapping("/destino/{idSimulacion}/{idUbicacion}")
+     * public ArrayList<Vuelo>
+     * pruebaFindVuelosDestinoAeropuertoSimulacionFecha(@PathVariable(
+     * "idSimulacion") Integer idSimulacion,
+     * 
+     * @PathVariable("idUbicacion") String idUbicacion) {
+     * Date fechaCorte = new Date();
+     * return vueloService.findVuelosDestinoAeropuertoSimulacionFecha(idSimulacion,
+     * idUbicacion, fechaCorte);
+     * }
+     */
 
     @GetMapping("/{id}/paquetes")
     public List<Paquete> getPaquetes(@PathVariable("id") int id) {
@@ -85,7 +101,8 @@ public class VueloController {
         if (vuelo != null) {
             List<PlanRuta> planesRuta = planRutaXVueloService.findPlanesRutaByVuelo(vuelo.getId());
             List<Paquete> paquetes = new ArrayList<Paquete>();
-            if(planesRuta == null) return null;
+            if (planesRuta == null)
+                return null;
             for (PlanRuta planRuta : planesRuta) {
                 Paquete paquete = paqueteService.findByPlanRutaId(planRuta.getId());
                 if (paquete != null) {
