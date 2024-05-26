@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.lang.Thread;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -219,6 +221,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
+
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
         if (paquetes.size() == 0) {
@@ -294,21 +297,12 @@ public class Algoritmo {
             int tamanhoPaquetes = paquetesProcesar.size();
 
             if (tamanhoPaquetes == 0) {
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "No hay mas paquetes que cumplan los criterios, esperando");
-                System.out.println("No hay mas paquetes que cumplan los criterios, esperando");
-                continue;
-            }
-
-            List<Paquete> paquetesRestantes = paquetes.stream()
-                    .filter(p -> p.getPlanRutaActual() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
-                    .collect(Collectors.toList());
-            if (paquetesRestantes.size() == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
                 System.out.println("No hay mas paquetes, terminando");
+                simulacion.setEstado(1);
                 break;
             }
-
+            System.out.println("LLegue aqui");
             // Filtrar paquetes que estan volando
             /*
              * for (Paquete paquete : paquetesProcesar) {
@@ -325,7 +319,7 @@ public class Algoritmo {
              */
 
             // Recalcular el tamanho de paquetes
-            // tamanhoPaquetes = paquetesProcesar.size();
+            tamanhoPaquetes = paquetesProcesar.size();
 
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
