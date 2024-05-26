@@ -27,10 +27,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Large, Muted, Small } from "@/components/ui/typography";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Operacion, Aeropuerto, Envio, Vuelo } from "@/lib/types";
+import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion } from "@/lib/types";
 import { continentes } from "@/lib/sample";
 import { formatDateShort } from "@/lib/date";
 import { Label } from "@/components/ui/label";
+import { api } from "@/lib/api";
 
 const DEFAULT_RANGO_CAPACIDAD: [number, number] = [0, 1000];
 
@@ -60,6 +61,25 @@ export default function Sidebar({
 }: SidebarProps) {
     const [selectedOperation, setSelectedOperation] = useState<Operacion>(Operacion.Envios);
     const [visible, setVisible] = useState<boolean>(true);
+    const [ubicaciones, setUbicaciones] = useState<Ubicacion[]>([]);
+
+    const getUbicaciones = useCallback(async () => {
+        const ubicaciones = await api(
+            "GET",
+            "http://localhost:8080/back/ubicacion/",
+            (data: Ubicacion[]) => {
+                setUbicaciones(data);
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+        return ubicaciones;
+    }, []);
+
+    useEffect(() => {
+        getUbicaciones();
+    });
 
     return (
         <>
@@ -106,12 +126,15 @@ export default function Sidebar({
                         <Envios
                             envios={envios}
                             onClick={onClickEnvio}
+                            tiempoActual={tiempoActual}
+                            ubicaciones={ubicaciones}
                         />
                     )}
                     {selectedOperation === Operacion.Aeropuertos && (
                         <Aeropuertos
                             aeropuertos={aeropuertos}
                             onClicks={onClicksAeropuerto}
+                            ubicaciones={ubicaciones}
                         />
                     )}
                     {selectedOperation === Operacion.Vuelos && (
@@ -119,6 +142,7 @@ export default function Sidebar({
                             vuelos={vuelos}
                             onClick={onClickVuelo}
                             tiempoActual={tiempoActual}
+                            ubicaciones={ubicaciones}
                         />
                     )}
                 </CardContent>
@@ -131,10 +155,12 @@ function Envios({
     envios,
     onClick,
     tiempoActual,
+    ubicaciones,
 }: {
     envios: Envio[] | undefined;
     onClick: (envio: Envio) => void;
     tiempoActual?: Date | undefined;
+    ubicaciones: Ubicacion[];
 }) {
     const [receptionDateStart, setReceptionDateStart] = useState<Date | undefined>(undefined);
     const [receptionDateEnd, setReceptionDateEnd] = useState<Date | undefined>(undefined);
@@ -390,164 +416,216 @@ function Envios({
 function Aeropuertos({
     aeropuertos,
     onClicks,
+    ubicaciones,
 }: {
     aeropuertos: Aeropuerto[] | undefined;
     onClicks: {
         onClickLocation: (aeropuerto: Aeropuerto) => void;
         onClickInfo: (aeropuerto: Aeropuerto) => void;
     };
+    ubicaciones: Ubicacion[];
 }) {
     const [search, setSearch] = useState<string>("");
+    const hasSearchFilter = Boolean(search);
+    const [continentesFilter, setContinentesFilter] = useState<string[]>(continentes);
+    const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
+    const [gmtFilter, setGmtFilter] = useState<string | undefined>(undefined);
+
+    const minCapacidad = Math.min(...rangoCapacidadFilter);
+    const maxCapacidad = Math.max(...rangoCapacidadFilter);
+
+    const items = useMemo(() => {
+        let filteredAeropuertos = aeropuertos;
+        if (continentesFilter) {
+            filteredAeropuertos = filteredAeropuertos?.filter((aeropuerto) => continentesFilter?.includes(aeropuerto.ubicacion.continente));
+        }
+        if (rangoCapacidadFilter) {
+            filteredAeropuertos = filteredAeropuertos?.filter(
+                (aeropuerto) => aeropuerto.capacidadMaxima >= minCapacidad && aeropuerto.capacidadMaxima <= maxCapacidad
+            );
+        }
+        if (gmtFilter) {
+            filteredAeropuertos = filteredAeropuertos?.filter((aeropuerto) => aeropuerto.ubicacion.zonaHoraria === gmtFilter);
+        }
+        if (hasSearchFilter) {
+            filteredAeropuertos = filteredAeropuertos?.filter(
+                (aeropuerto) =>
+                    aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase()) ||
+                    aeropuerto.ubicacion.ciudad.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+        return filteredAeropuertos;
+    }, [aeropuertos, search, hasSearchFilter, continentesFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad, gmtFilter]);
+
+    const onSearchChange = useCallback((value: string) => {
+        if (value) {
+            setSearch(value);
+        } else {
+            setSearch("");
+        }
+    }, []);
+    const onClearFilters = useCallback(() => {
+        setContinentesFilter(continentes);
+        setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+        setGmtFilter(undefined);
+    }, []);
+
+    const renderCard = useCallback(
+        (aeropuerto: Aeropuerto) => (
+            <Card
+                key={aeropuerto.id}
+                className='p-3 *:p-0 relative'
+                onClick={(e) => {
+                    //e.preventDefault();
+                    // onClicks.onClickLocation(aeropuerto);
+                    // onClicks.onClickInfo(aeropuerto);
+                }}
+            >
+                <CardHeader>
+                    <Large>
+                        {aeropuerto.ubicacion.ciudad} ({aeropuerto.ubicacion.ciudadAbreviada.toUpperCase()})
+                    </Large>
+                </CardHeader>
+                <CardContent>
+                    <Muted>Capacidad: {aeropuerto.capacidadMaxima}</Muted>
+                    <Muted>Zona horaria: {aeropuerto.ubicacion.zonaHoraria}</Muted>
+                </CardContent>
+                <div className='absolute right-0 top-0 bottom-0 flex flex-col justify-center items-center gap-1 w-[59px]'>
+                    <Button
+                        variant={"outline"}
+                        className='w-8 h-8 p-0'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onClicks.onClickLocation(aeropuerto);
+                        }}
+                    >
+                        <MapPinned className='w-4 h-4 ' />
+                    </Button>
+                    <Button
+                        variant={"outline"}
+                        className='w-8 h-8 p-0'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onClicks.onClickInfo(aeropuerto);
+                        }}
+                    >
+                        <Info className='w-4 h-4 ' />
+                    </Button>
+                </div>
+            </Card>
+        ),
+        [onClicks]
+    );
+
+    const renderFilters = useCallback(() => {
+        return (
+            <>
+                <section className='flex flex-row justify-between gap-4 w-full'>
+                    <Input
+                        placeholder='Buscar aeropuerto...'
+                        value={search}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                    />
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant='secondary'>
+                                <ListFilter className='mr-2 h-4 w-4' /> Filtros
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            align='start'
+                            className='w-fit flex flex-col gap-4'
+                        >
+                            <Small>Rango de capacidad usada:</Small>
+                            <div className='flex justify-between'>
+                                <Small>{minCapacidad}</Small>
+                                <Small>{maxCapacidad}</Small>
+                            </div>
+                            <SliderDouble
+                                onValueChange={(range) => {
+                                    const [newMin, newMax] = range;
+                                    setRangoCapacidadFilter([newMin, newMax]);
+                                }}
+                                value={rangoCapacidadFilter}
+                                min={DEFAULT_RANGO_CAPACIDAD[0]}
+                                max={DEFAULT_RANGO_CAPACIDAD[1]}
+                                defaultValue={DEFAULT_RANGO_CAPACIDAD}
+                                step={10}
+                            />
+                            <Separator />
+                            <Small>Continente de origen:</Small>
+                            {continentes.map((continente) => (
+                                <div
+                                    className='ml-4 flex items-center space-x-2'
+                                    key={continente}
+                                >
+                                    <Checkbox
+                                        id={continente}
+                                        checked={continentesFilter.includes(continente)}
+                                        onCheckedChange={(checked) => {
+                                            setContinentesFilter((prev) =>
+                                                checked ? [...prev, continente] : prev.filter((c) => c !== continente)
+                                            );
+                                        }}
+                                    />
+                                    <Label htmlFor={continente}>{continente}</Label>
+                                </div>
+                            ))}
+                            <Separator />
+                            <Small>Zona horaria:</Small>
+                            <Select key={gmtFilter} onValueChange={(e) => setGmtFilter(e as string)} value={gmtFilter} defaultValue={gmtFilter}>
+                                <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder={gmtFilter || "GMT"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {ubicaciones.reduce((acc, ubicacion) => {
+                                        if (!acc.includes(ubicacion.zonaHoraria)) {
+                                            acc.push(ubicacion.zonaHoraria);
+                                        }
+                                        return acc;
+                                    }
+                                    , [] as string[]).sort( (a, b) => a.localeCompare(b)).map((zonaHoraria) => (
+                                        <SelectItem key={zonaHoraria} value={zonaHoraria}>
+                                            {zonaHoraria}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Separator />
+                            <section className='flex flex-row justify-end gap-4'>
+                                <Button
+                                    size='sm'
+                                    variant='secondary'
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        onClearFilters();
+                                    }}
+                                >
+                                    <Eraser className='mr-2 h-4 w-4' />
+                                    Limpiar filtros
+                                </Button>
+                            </section>
+                        </PopoverContent>
+                    </Popover>
+                </section>
+            </>
+        );
+    }, [search, onSearchChange, continentesFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad, onClearFilters, ubicaciones, gmtFilter]);
 
     return (
         <>
-            {aeropuertos === undefined ? (
+            {items === undefined ? (
                 SidebarSkeleton()
-            ) : aeropuertos.length === 0 ? (
-                <p>No hay aeropuertos disponibles</p>
             ) : (
                 <>
-                    <section className='flex flex-row justify-between gap-4 w-full'>
-                        <Input
-                            placeholder='Buscar aeropuerto...'
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant='secondary'>
-                                    <ListFilter className='mr-2 h-4 w-4' /> Filtros
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                align='start'
-                                className='w-fit flex flex-col gap-4'
-                            >
-                                <Small>Rango de capacidad:</Small>
-                                <Input
-                                    type='number'
-                                    placeholder='Cantidad minima'
-                                    defaultValue={0}
-                                />
-                                <Input
-                                    type='number'
-                                    placeholder='Cantidad maxima'
-                                    defaultValue={1000}
-                                />
-                                <Separator />
-                                <Small>Zona horaria:</Small>
-                                <Select>
-                                    <SelectTrigger className='w-full'>
-                                        <SelectValue placeholder='Zona horaria' />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value='-10'>GMT-10</SelectItem>
-                                        <SelectItem value='-9'>GMT-9</SelectItem>
-                                        <SelectItem value='-8'>GMT-8</SelectItem>
-                                        <SelectItem value='-7'>GMT-7</SelectItem>
-                                        <SelectItem value='-6'>GMT-6</SelectItem>
-                                        <SelectItem value='-5'>GMT-5</SelectItem>
-                                        <SelectItem value='-4'>GMT-4</SelectItem>
-                                        <SelectItem value='-3'>GMT-3</SelectItem>
-                                        <SelectItem value='-2'>GMT-2</SelectItem>
-                                        <SelectItem value='-1'>GMT-1</SelectItem>
-                                        <SelectItem value='0'>GMT</SelectItem>
-                                        <SelectItem value='1'>GMT+1</SelectItem>
-                                        <SelectItem value='2'>GMT+2</SelectItem>
-                                        <SelectItem value='3'>GMT+3</SelectItem>
-                                        <SelectItem value='4'>GMT+4</SelectItem>
-                                        <SelectItem value='5'>GMT+5</SelectItem>
-                                        <SelectItem value='6'>GMT+6</SelectItem>
-                                        <SelectItem value='7'>GMT+7</SelectItem>
-                                        <SelectItem value='8'>GMT+8</SelectItem>
-                                        <SelectItem value='9'>GMT+9</SelectItem>
-                                        <SelectItem value='10'>GMT+10</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Separator />
-                                <section className='flex flex-row justify-end gap-4'>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        onSelect={(e) => {
-                                            e.preventDefault();
-                                        }}
-                                    >
-                                        <Check className='mr-2 h-4 w-4' />
-                                        Aplicar filtros
-                                    </Button>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        onSelect={(e) => {
-                                            e.preventDefault();
-                                        }}
-                                    >
-                                        <Eraser className='mr-2 h-4 w-4' />
-                                        Limpiar filtros
-                                    </Button>
-                                </section>
-                            </PopoverContent>
-                        </Popover>
-                    </section>
-                    <ScrollArea className='flex-1 pr-3'>
-                        <section className='flex flex-col gap-4'>
-                            {aeropuertos.filter((aeropuerto) =>
-                                aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase())
-                            ).length === 0 ? (
-                                <p>No se encontraron resultados</p>
-                            ) : (
-                                aeropuertos
-                                    .filter((aeropuerto) =>
-                                        aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase())
-                                    )
-                                    .map((aeropuerto) => (
-                                        <Card
-                                            key={aeropuerto.id}
-                                            className='p-3 *:p-0  cursor-pointer relative'
-                                            onClick={(e) => {
-                                                //e.preventDefault();
-                                                // onClicks.onClickLocation(aeropuerto);
-                                                // onClicks.onClickInfo(aeropuerto);
-                                            }}
-                                        >
-                                            <CardHeader>
-                                                <Large>
-                                                    {aeropuerto.ubicacion.ciudad} ({aeropuerto.ubicacion.ciudadAbreviada.toUpperCase()})
-                                                </Large>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Muted>Capacidad: {aeropuerto.capacidadMaxima}</Muted>
-                                                <Muted>Zona horaria: {aeropuerto.ubicacion.zonaHoraria}</Muted>
-                                            </CardContent>
-
-                                            <div className='absolute right-0 top-0 bottom-0 flex flex-col justify-center items-center gap-1 w-[59px]'>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className='w-8 h-8 p-0'
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        onClicks.onClickLocation(aeropuerto);
-                                                    }}
-                                                >
-                                                    <MapPinned className='w-4 h-4 ' />
-                                                </Button>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className='w-8 h-8 p-0'
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        onClicks.onClickInfo(aeropuerto);
-                                                    }}
-                                                >
-                                                    <Info className='w-4 h-4 ' />
-                                                </Button>
-                                            </div>
-                                        </Card>
-                                    ))
-                            )}
-                        </section>
-                    </ScrollArea>
+                    {renderFilters()}
+                    {items.length === 0 ? (
+                        <p>No hay aeropuertos disponibles</p>
+                    ) : (
+                        <ScrollArea className='flex-1 pr-3'>
+                            <section className='flex flex-col gap-4'>{items.map(renderCard)}</section>
+                        </ScrollArea>
+                    )}
                 </>
             )}
         </>
@@ -558,16 +636,20 @@ function Vuelos({
     vuelos,
     onClick,
     tiempoActual,
+    ubicaciones,
 }: {
     vuelos: Vuelo[] | undefined;
     onClick: (vuelo: Vuelo) => void;
     tiempoActual?: Date | undefined;
+    ubicaciones: Ubicacion[];
 }) {
     const [page, setPage] = useState<number>(1);
     const rowsPerPage = 10;
     const [search, setSearch] = useState<string>("");
     const hasSearchFilter = Boolean(search);
     const [continentesFilter, setContinentesFilter] = useState<string[]>(continentes);
+    const [paisOrigenFilter, setPaisOrigenFilter] = useState<string | undefined>(undefined);
+    const [paisDestinoFilter, setPaisDestinoFilter] = useState<string | undefined>(undefined);
     const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
 
     const minCapacidad = Math.min(...rangoCapacidadFilter);
@@ -583,6 +665,12 @@ function Vuelos({
                 return continentesFilter?.includes(vuelo.planVuelo.ciudadOrigen.continente);
             });
         }
+        if (paisOrigenFilter) {
+            filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.planVuelo.ciudadOrigen.pais === paisOrigenFilter);
+        }
+        if (paisDestinoFilter) {
+            filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.planVuelo.ciudadDestino.pais === paisDestinoFilter);
+        }
         if (rangoCapacidadFilter) {
             filteredVuelos = filteredVuelos?.filter(
                 (vuelo) => vuelo.capacidadUtilizada >= minCapacidad && vuelo.capacidadUtilizada <= maxCapacidad
@@ -592,7 +680,18 @@ function Vuelos({
             filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.id.toString().includes(search));
         }
         return filteredVuelos;
-    }, [vuelos, search, hasSearchFilter, continentesFilter, tiempoActual, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+    }, [
+        vuelos,
+        search,
+        hasSearchFilter,
+        continentesFilter,
+        tiempoActual,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+        paisOrigenFilter,
+        paisDestinoFilter,
+    ]);
 
     const pages = Math.ceil((filteredItems?.length || 0) / rowsPerPage);
 
@@ -623,6 +722,8 @@ function Vuelos({
     const onClearFilters = useCallback(() => {
         setContinentesFilter(continentes);
         setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+        setPaisOrigenFilter(undefined);
+        setPaisDestinoFilter(undefined);
     }, []);
 
     const renderCard = useCallback(
@@ -704,6 +805,49 @@ function Vuelos({
                                 </div>
                             ))}
                             <Separator />
+                            <Small>Pais de origen:</Small>
+                            <Select
+                                key={paisOrigenFilter}
+                                onValueChange={(e) => setPaisOrigenFilter(e as string)}
+                                value={paisOrigenFilter}
+                                defaultValue={paisOrigenFilter}
+                            >
+                                <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder={paisOrigenFilter || "Pais de origen"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {ubicaciones.map((ubicacion) => (
+                                        <SelectItem
+                                            key={ubicacion.pais}
+                                            value={ubicacion.pais}
+                                        >
+                                            {ubicacion.pais}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Small>Pais de destino:</Small>
+                            <Select
+                                key={paisDestinoFilter}
+                                onValueChange={(e) => setPaisDestinoFilter(e as string)}
+                                value={paisDestinoFilter}
+                                defaultValue={paisDestinoFilter}
+                            >
+                                <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder={paisDestinoFilter || "Pais de destino"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {ubicaciones.map((ubicacion) => (
+                                        <SelectItem
+                                            key={ubicacion.pais}
+                                            value={ubicacion.pais}
+                                        >
+                                            {ubicacion.pais}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Separator />
                             <section className='flex flex-row justify-end gap-4'>
                                 <Button
                                     size='sm'
@@ -722,7 +866,18 @@ function Vuelos({
                 </section>
             </>
         );
-    }, [search, onSearchChange, continentesFilter, onClearFilters, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+    }, [
+        search,
+        onSearchChange,
+        continentesFilter,
+        onClearFilters,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+        ubicaciones,
+        paisOrigenFilter,
+        paisDestinoFilter,
+    ]);
 
     return (
         <>
