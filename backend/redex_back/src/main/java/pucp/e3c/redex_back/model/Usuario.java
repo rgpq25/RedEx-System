@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "vuelo")
+@Table(name = "usuario")
 public class Usuario {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +17,11 @@ public class Usuario {
   @Column(length = 40)
   private String nombre;
 
-  @Column(length = 100)
+  @Column(length = 50)
   private String correo;
 
-  private char tipo;
+  @Column(length = 1)
+  private String tipo;
 
   // Getters
   public Integer getId() {
@@ -35,7 +36,7 @@ public class Usuario {
     return correo;
   }
 
-  public char getTipo() {
+  public String getTipo() {
     return tipo;
   }
 
@@ -52,7 +53,7 @@ public class Usuario {
     this.correo = correo;
   }
 
-  public void setTipo(char tipo) {
+  public void setTipo(String tipo) {
     this.tipo = tipo;
   }
 
