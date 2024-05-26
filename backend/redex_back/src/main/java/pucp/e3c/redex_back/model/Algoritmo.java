@@ -303,6 +303,7 @@ public class Algoritmo {
                 System.out.println("No hay paquetes para la planificacion actual, esperando");
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
                 messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
                 continue;
             }
