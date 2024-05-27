@@ -52,29 +52,7 @@ public class EnvioController {
 
     @PostMapping(value = "/codigo")
     public Envio registerByString(@RequestBody RegistrarEnvio registrarEnvio) {
-        List<Ubicacion> ubicaciones = ubicacionService.getAll();
-        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
-        for (Ubicacion u : ubicaciones) {
-            ubicacionMap.put(u.getId(), u);
-        }
-        Simulacion simulacion = simulacionService.get(registrarEnvio.getSimulacion().getId());
-
-        Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
-                registrarEnvio.getSimulacion().getId(),
-                aeropuertoService);
-        Envio auxEnvio = envioService.register(envio);
-        System.out.println("\n " + auxEnvio.getCantidadPaquetes() + "\n");
-        for (int i = 0; i < auxEnvio.getCantidadPaquetes(); i++) {
-            Paquete paquete = new Paquete();
-            paquete.setAeropuertoActual(aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId()));
-            paquete.setEnAeropuerto(true);
-            paquete.setEntregado(false);
-            paquete.setEnvio(envio);
-            paquete.setSimulacionActual(simulacion);
-            paqueteService.register(paquete);
-        }
-        auxEnvio.setSimulacionActual(simulacion);
-        return auxEnvio;
+        return registerByString(registrarEnvio);
     }
 
     @PutMapping(value = "/")

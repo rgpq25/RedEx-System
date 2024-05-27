@@ -10,8 +10,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.TimeZone;
 
-import pucp.e3c.redex_back.service.AeropuertoService;
-import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.repository.AeropuertoRepository;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -268,7 +267,7 @@ public class Funciones {
     }
 
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, int idSimulacion,
-            AeropuertoService aeropuertoService) {
+            AeropuertoRepository aeropuertoRepository) {
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
@@ -281,6 +280,15 @@ public class Funciones {
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
 
+        if (origen == null) {
+            // System.out.println("Error: Ubicacion " + origenCode + " no encontrada");
+            return null;
+        }
+
+        if (destino == null) {
+            // System.out.println("Error: Ubicacion " + destinoCode + " no encontrada");
+            return null;
+        }
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
