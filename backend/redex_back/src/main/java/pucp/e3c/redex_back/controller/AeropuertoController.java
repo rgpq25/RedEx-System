@@ -220,6 +220,11 @@ public class AeropuertoController {
         return paquetes;
     }
     
+    public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes){
+        for (Paquete paquete : paquetes) {
+            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete);
+        }
+    }
 
     @GetMapping(value = "/{idAeropuerto}/paquetes")
     public ArrayList<Paquete> getPaquetes(@PathVariable("idAeropuerto") Integer idAeropuerto){
@@ -267,6 +272,7 @@ public class AeropuertoController {
         }
         if(planRutasMap.isEmpty()){
             ArrayList<Paquete> paquetesEnAeropuerto = paqueteService.findPaquetesWithoutPlanRuta(aeropuerto.getUbicacion().getId(), fechaCorte);
+            actualizaPaquetesNoSimulacion(paquetesEnAeropuerto);
             return paquetesEnAeropuerto;
         }
         //iterate hashmap planRutasMap
@@ -318,6 +324,7 @@ public class AeropuertoController {
         }
         if(planRutasValidasMap.isEmpty()){
             ArrayList<Paquete> paquetesEnAeropuerto = paqueteService.findPaquetesWithoutPlanRuta(aeropuerto.getUbicacion().getId(), fechaCorte);
+            actualizaPaquetesNoSimulacion(paquetesEnAeropuerto);
             return paquetesEnAeropuerto;
         }
 
@@ -333,6 +340,7 @@ public class AeropuertoController {
         if(paquetesEnAeropuerto != null){
             paquetes.addAll(paquetesEnAeropuerto);
         }
+        actualizaPaquetesNoSimulacion(paquetes);
         return paquetes;
     }
     

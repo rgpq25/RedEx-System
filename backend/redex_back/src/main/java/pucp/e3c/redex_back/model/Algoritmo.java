@@ -276,7 +276,7 @@ public class Algoritmo {
             respuestaAlgoritmo.setSimulacion(null);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-            System.out.println("Planificacion terminada en tiempo de simulacion hasta " + now);
+            System.out.println("Planificacion terminada hasta " + now);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                     "Planificacion terminada hasta " + now);
 
