@@ -52,7 +52,7 @@ public class EnvioController {
 
     @PostMapping(value = "/codigo")
     public Envio registerByString(@RequestBody RegistrarEnvio registrarEnvio) {
-        return registerByString(registrarEnvio);
+        return envioService.registerByString(registrarEnvio);
     }
 
     @PutMapping(value = "/")

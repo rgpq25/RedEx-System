@@ -103,9 +103,6 @@ public class EnvioService {
         Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
                 registrarEnvio.getSimulacion().getId(),
                 aeropuertoRepository);
-        if (envio == null) {
-            return null;
-        }
         Envio auxEnvio = envioRepository.save(envio);
         for (int i = 0; i < auxEnvio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
