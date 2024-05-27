@@ -20,7 +20,7 @@ const Progress = React.forwardRef<
         {...props}
       >
         <ProgressPrimitive.Indicator
-          className="h-full bg-red-500 transition-all duration-300 ease-in-out"
+          className="h-full bg-red-700 transition-all duration-300 ease-in-out"
           style={{ width: `${value}%` }}
         />
       </ProgressPrimitive.Root>
@@ -28,19 +28,19 @@ const Progress = React.forwardRef<
       <div className="mt-2 w-1/3 flex justify-between text-xs">
         <Badge 
           variant={currentStep >= 1 ? "solid" : "outline"} 
-          className={currentStep >= 1 ? "bg-red-500 text-white" : "bg-gray-300 text-white"}
+          className={currentStep >= 1 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Emisor
         </Badge>
         <Badge 
           variant={currentStep >= 2 ? "solid" : "outline"} 
-          className={currentStep >= 2 ? "bg-red-500 text-white" : "bg-gray-300 text-white"}
+          className={currentStep >= 2 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Receptor
         </Badge>
         <Badge 
           variant={currentStep >= 3 ? "solid" : "outline"} 
-          className={currentStep >= 3 ? "bg-red-500 text-white" : "bg-gray-300 text-white"}
+          className={currentStep >= 3 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Paquete
         </Badge>
