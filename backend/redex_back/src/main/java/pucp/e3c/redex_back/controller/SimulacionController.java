@@ -38,6 +38,9 @@ public class SimulacionController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
+    private Algoritmo algoritmo;
+
+    @Autowired
     SimulacionService simulacionService;
 
     @Autowired
@@ -105,7 +108,7 @@ public class SimulacionController {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        //Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         Simulacion simulacion = simulacionService.get(id);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,

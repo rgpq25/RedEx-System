@@ -29,7 +29,7 @@ public class Paquete {
     @Column(nullable = true)
     private Date fechaDeEntrega;
 
-    //private String estado;
+    //private String estado; //en almacen origen, volando, en espera , en almacen destino, entregado
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_envio", referencedColumnName = "id")
@@ -172,5 +172,15 @@ public class Paquete {
     public void setPlanRutaActual(PlanRuta planRutaActual) {
         this.planRutaActual = planRutaActual;
     }
+
+    /*public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }*/
+
+    
 
 }

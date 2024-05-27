@@ -34,6 +34,9 @@ public class DataInitializer {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
+    private Algoritmo algoritmo;
+
+    @Autowired
     private PlanVueloService planVueloService;
 
     @Autowired
@@ -128,7 +131,7 @@ public class DataInitializer {
         //INICIALIZA LOOP PRINCIPAL DIA A DIA
         ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<PlanVuelo> planVuelosLoop = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        //Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
