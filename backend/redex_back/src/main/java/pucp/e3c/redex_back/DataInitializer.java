@@ -73,6 +73,51 @@ public class DataInitializer {
         this.messagingTemplate = messagingTemplate;
     }
 
+    private void inicializaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap, ArrayList<PlanVuelo> planVuelos){
+        LocalDate today = LocalDate.now();
+
+        // Sumar 3 días a la fecha de hoy
+        LocalDate startDate = today.plusDays(0);//1
+        LocalDate endDate = today.plusDays(0);//3
+
+        // Formatear las fechas como strings
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startPackagesDate = startDate.atStartOfDay().format(formatter);
+        String endPackagesDate = endDate.atTime(20, 59, 59).format(formatter);
+
+        ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
+                1000,
+                aeropuertos,
+                Funciones.parseDateString(startPackagesDate),
+                Funciones.parseDateString(endPackagesDate));
+
+        System.out.println("Operaciones Dia a Dia: Se generaron " + paquetes.size() + " paquetes.");
+
+        Date minDate = Funciones.parseDateString(startPackagesDate);
+        Date maxDate = Funciones.parseDateString(endPackagesDate);
+
+        System.out.println("Operaciones Dia a Dia: Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
+        System.out.println("Operaciones Dia a Dia: Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));;
+
+        for (Ubicacion ubicacion : ubicacionMap.values()) {
+            ubicacionService.register(ubicacion);
+        }
+
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            aeropuertoService.register(aeropuerto);
+        }
+
+        for (PlanVuelo planVuelo : planVuelos) {
+            planVueloService.register(planVuelo);
+        }
+
+        for (Paquete paquete : paquetes) {
+            envioService.register(paquete.getEnvio());
+            //paquete.setSimulacionActual(simulacion);
+            paqueteService.register(paquete);
+        }
+    }
+
     @PostConstruct
     public void initData() {
         System.out.println("Inicializando planes de vuelo y aeropuertos");
@@ -160,6 +205,10 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        if(inicializar_paquetes_operaciones_dia_dia){
+            inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+        }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
         ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
