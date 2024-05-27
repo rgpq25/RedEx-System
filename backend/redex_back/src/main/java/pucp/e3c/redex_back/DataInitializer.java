@@ -121,7 +121,7 @@ public class DataInitializer {
          * Funciones.getFormattedDate(maxDate));
          */
         LocalDate hoy = LocalDate.of(2024, 1, 3);
-        LocalDateTime fecha = hoy.atStartOfDay();
+        LocalDateTime fecha = hoy.atTime(6, 0, 0);
         Date fechaDate = java.sql.Timestamp.valueOf(fecha);
         Simulacion simulacion = new Simulacion();
         simulacion.fillData();
