@@ -26,6 +26,9 @@ public class PaqueteService {
     @Autowired
     private PaqueteRepository paqueteRepository;
 
+    @Autowired
+    private PlanRutaXVueloService planRutaXVueloService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PaqueteService.class);
 
     public Paquete register(Paquete paquete) {
@@ -38,11 +41,29 @@ public class PaqueteService {
         }
     }
 
+    /*public Paquete actualizaEstadoPaquete(Paquete paquete){
+        try {
+            if(paquete.getPlanRutaActual()==null){
+                paquete.setEstado("En almacen origen");
+            }
+            else{
+                ArrayList<Vuelo> vuelos = (ArrayList<Vuelo>)planRutaXVueloService.findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId());
+                if(vuelos == null) paquete.setEstado("En almacen origen");
+                else{
+
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }*/
+
     public Paquete get(Integer id) {
-        // Optional<Paquete> optional_paquete = paqueteRepository.findById(id);
-        // return optional_paquete.get();
         try {
             Optional<Paquete> optional_paquete = paqueteRepository.findById(id);
+            Paquete paquete = optional_paquete.get();
+            
             return optional_paquete.get();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

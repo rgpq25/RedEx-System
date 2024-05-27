@@ -14,6 +14,7 @@ import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanVuelo;
+import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.PaqueteService;
@@ -26,8 +27,6 @@ import pucp.e3c.redex_back.service.VueloService;
 @RestController
 @RequestMapping("back/operacionesDiaDia")
 public class OperacionesDiaDiaController {
-    
-    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     SimulacionService simulacionService;
@@ -50,9 +49,17 @@ public class OperacionesDiaDiaController {
     @Autowired
     private PlanRutaXVueloService planRutaXVueloService;
 
-    public OperacionesDiaDiaController(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    @Autowired
+    private Algoritmo algoritmo;
+
+    @GetMapping("/diaDiaRespuesta")
+    public RespuestaAlgoritmo resendLastMessage() {
+        return algoritmo.getUltimaRespuestaOperacionDiaDia();
     }
+
+    /*public RespuestaAlgoritmo obtenerUltimaRespuesta(){
+
+    }*/
 
     /*@GetMapping("/runAlgorithm")
     public String correrSimulacion() {
@@ -67,5 +74,13 @@ public class OperacionesDiaDiaController {
 
         return "Simulacion iniciada";
 
+    }*/
+    
+    /*@GetMapping("/ejecutarUnaPlanificacion")
+    public RespuestaAlgoritmo ejecutarUnaPlanificacion(){
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
+        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        return algoritmo.unaPlanificacionDiaDia(aeropuertos, planVuelos, vueloService, planRutaService, paqueteService, planRutaXVueloService);        
     }*/
 }
