@@ -64,4 +64,8 @@ public class PaqueteController {
         return paqueteService.findPaquetesWithoutPlanRutaSimulacion(idUbicacionOrigen, idSimulacion,fechaCorte);
     }*/
     
+    @GetMapping(value = "/getPaqueteNoSimulacion/{id}")
+    public Paquete getPaqueteNoSimulacion(@PathVariable("id") Integer id){
+        return paqueteService.getPaqueteNoSimulacion(id);
+    }
 }

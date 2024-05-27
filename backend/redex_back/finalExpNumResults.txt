@@ -520,3 +520,12 @@ Final cost: 8301.495470194102 | Packages left: 0.0 | Temperature: 242.3221228050
  -> Costo total: 8301.495470194102
 
 
+Tiempo de ejecucion de algoritmo: 9.0 segundos
+Final cost: 8280.92591788173 | Packages left: 0.0 | Temperature: 263.3936117445887
+ -> Costo de paquetes y su asignacion de rutas: 823.557960254302
+ -> Costo de cantidad de vuelos por ruta: 2.486
+ -> Costo de vuelos: 7.5980433006535755
+ -> Costo de aeropuertos: 0.009535534024583887
+ -> Costo total: 8280.92591788173
+
+
