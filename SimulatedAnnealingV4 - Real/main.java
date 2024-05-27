@@ -58,7 +58,7 @@ public class main {
         
         double temperature = 10000;
         double coolingRate = 0.08;
-        int neighbourCount = 10;
+        int neighbourCount = 5;
         int windowSize = 250; 
         boolean stopWhenNoPackagesLeft = false;
 
@@ -87,128 +87,132 @@ public class main {
         HashMap<Integer, Integer> map = new HashMap<>();
 
         // Manually assign values to the keys
-        map.put(0, 250);
-        map.put(1, 500);
-        map.put(2, 1000);
-        map.put(3, 2000);
-        map.put(4, 3000);
-        map.put(5, 6250);
-        // Continue this for all keys from 0 to 29
-        // Example values here, you can change these as needed
-        map.put(6, 12500);
-        map.put(7, 25000);
-        map.put(8, 50000);
+        map.put(0, 5000);
+        map.put(1, 6250);
+        map.put(2, 8000);
+        map.put(3, 10000);
+        map.put(4, 15000);
+        map.put(5, 20000);
+        map.put(6, 25000);
+        map.put(7, 50000);
+        map.put(8, 75000);
         map.put(9, 100000);
  
         
-
-        for(int i = 0; i<10; i++){
-            //String pathParaExpNum = "outputExpNum/paquetes500_j" + (i+1) + ".csv";
-            String pathParaExpNum = "benchmark/paquetes" + map.get(i) + ".csv";
-        
-
-            long startTime = System.nanoTime();
-            if (useGeneratedData == true) {
-                HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap(maxAirports);
-                aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-                aeropuertos = new ArrayList<Aeropuerto>(aeropuertos.subList(0, maxAirports));
-
-                // planVuelos = Funciones.generarPlanesDeVuelo(
-                //     aeropuertos, 
-                //     flightsMultiplier,
-                //     generatedInputPath + "/vuelos.csv"
-                // );
-
-                // paquetes = Funciones.generarPaquetes(
-                //     packagesAmount,
-                //     aeropuertos,
-                //     Funciones.parseDateString(startPackagesDate),
-                //     Funciones.parseDateString(endPackagesDate),
-                //     generatedInputPath + "paquetes.csv"
-                // );
-
-                paquetes = Funciones.generarPaquetes(
-                    map.get(i),
-                    aeropuertos,
-                    Funciones.parseDateString(startPackagesDate),
-                    Funciones.parseDateString(endPackagesDate),
-                    pathParaExpNum
-                    // "/CAMBIAR AQUI"
-                );
-
-                System.out.println("Se generaron " + paquetes.size() + " paquetes.");
-                System.out.println("Se generaron " + planVuelos.size() + " planes de vuelo.");
-                System.out.println("Tiempo de generacion de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");
-
-                continue;
-            } else {
-
-                HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap(30);
-                aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-
-                planVuelos = Funciones.leerRawPlanesVuelo(ubicacionMap, "rawData");
-                /*paquetes = Funciones.leerRawEnvios(
-                    ubicacionMap, 
-                    "rawData/envios", 
-                    Funciones.parseDateString(minPackagesDate), 
-                    Funciones.parseDateString(maxPackagesDate)
-                );*/
-                paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
-                
-                Date minDate = Funciones.parseDateString("2026-01-01 00:00:00");
-                Date maxDate = Funciones.parseDateString("2021-01-01 00:00:00");
-
-                for(Paquete paquete : paquetes){
-                    if(paquete.getFecha_recepcion() != null){
-                        if(paquete.getFecha_recepcion().before(minDate)){
-                            minDate = paquete.getFecha_recepcion();
-                        }
-                        if(paquete.getFecha_recepcion().after(maxDate)){
-                            maxDate = paquete.getFecha_recepcion();
+        for(int idx = 0; idx < 5; idx++){
+            Funciones.printLineInLog("ITERACION NUMERO " + idx+1);
+            for(int i = 0; i<10; i++){
+                //String pathParaExpNum = "outputExpNum/paquetes500_j" + (i+1) + ".csv";
+                String pathParaExpNum = "benchmark/paquetes" + map.get(i) + ".csv";
+            
+    
+                long startTime = System.nanoTime();
+                if (useGeneratedData == true) {
+                    HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap(maxAirports);
+                    aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
+                    aeropuertos = new ArrayList<Aeropuerto>(aeropuertos.subList(0, maxAirports));
+    
+                    // planVuelos = Funciones.generarPlanesDeVuelo(
+                    //     aeropuertos, 
+                    //     flightsMultiplier,
+                    //     generatedInputPath + "/vuelos.csv"
+                    // );
+    
+                    // paquetes = Funciones.generarPaquetes(
+                    //     packagesAmount,
+                    //     aeropuertos,
+                    //     Funciones.parseDateString(startPackagesDate),
+                    //     Funciones.parseDateString(endPackagesDate),
+                    //     generatedInputPath + "paquetes.csv"
+                    // );
+    
+                    paquetes = Funciones.generarPaquetes(
+                        map.get(i),
+                        aeropuertos,
+                        Funciones.parseDateString(startPackagesDate),
+                        Funciones.parseDateString(endPackagesDate),
+                        pathParaExpNum
+                        // "/CAMBIAR AQUI"
+                    );
+    
+                    System.out.println("Se generaron " + paquetes.size() + " paquetes.");
+                    System.out.println("Se generaron " + planVuelos.size() + " planes de vuelo.");
+                    System.out.println("Tiempo de generacion de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");
+    
+                    continue;
+                } else {
+    
+                    HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap(30);
+                    aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
+    
+                    planVuelos = Funciones.leerRawPlanesVuelo(ubicacionMap, "rawData");
+                    /*paquetes = Funciones.leerRawEnvios(
+                        ubicacionMap, 
+                        "rawData/envios", 
+                        Funciones.parseDateString(minPackagesDate), 
+                        Funciones.parseDateString(maxPackagesDate)
+                    );*/
+                    paquetes = Funciones.leerPaquetes(pathParaExpNum, ubicacionMap);
+                    
+                    Date minDate = Funciones.parseDateString("2026-01-01 00:00:00");
+                    Date maxDate = Funciones.parseDateString("2021-01-01 00:00:00");
+    
+                    for(Paquete paquete : paquetes){
+                        if(paquete.getFecha_recepcion() != null){
+                            if(paquete.getFecha_recepcion().before(minDate)){
+                                minDate = paquete.getFecha_recepcion();
+                            }
+                            if(paquete.getFecha_recepcion().after(maxDate)){
+                                maxDate = paquete.getFecha_recepcion();
+                            }
                         }
                     }
+    
+                    System.out.println("Se leyeron " + paquetes.size() + " paquetes.");
+                    System.out.println("Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
+                    System.out.println("Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
+                    System.out.println("Tiempo de lectura de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");
+                }   
+    
+                if(paquetes.size() == 0){
+                    System.out.println("ERROR: No hay paquetes para procesar.");
+                    return;
                 }
-
-                System.out.println("Se leyeron " + paquetes.size() + " paquetes.");
-                System.out.println("Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
-                System.out.println("Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
-                System.out.println("Tiempo de lectura de datos: " + (System.nanoTime() - startTime) / 1000000000 + " s");
-            }   
-
-            if(paquetes.size() == 0){
-                System.out.println("ERROR: No hay paquetes para procesar.");
-                return;
+                if(planVuelos.size() == 0){
+                    System.out.println("ERROR: No hay planes de vuelo para procesar.");
+                    return;
+                }
+    
+    
+                SAImplementation sa = new SAImplementation();
+    
+                sa.setData(
+                    aeropuertos,
+                    planVuelos,
+                    paquetes
+                );
+                
+                sa.setParameters(
+                    stopWhenNoPackagesLeft,
+                    temperature,
+                    coolingRate,
+                    neighbourCount,
+                    windowSize,
+                    badSolutionPenalization, 
+                    flightPenalization, 
+                    airportPenalization, 
+                    sumaPaquetesWeight, 
+                    sumaVuelosWeight, 
+                    promedioPonderadoTiempoAeropuertoWeight
+                );
+    
+                sa.startAlgorithm(pathParaExpNum);
+    
             }
-            if(planVuelos.size() == 0){
-                System.out.println("ERROR: No hay planes de vuelo para procesar.");
-                return;
-            }
-
-
-            SAImplementation sa = new SAImplementation();
-
-            sa.setData(
-                aeropuertos,
-                planVuelos,
-                paquetes
-            );
             
-            sa.setParameters(
-                stopWhenNoPackagesLeft,
-                temperature,
-                coolingRate,
-                neighbourCount,
-                windowSize,
-                badSolutionPenalization, 
-                flightPenalization, 
-                airportPenalization, 
-                sumaPaquetesWeight, 
-                sumaVuelosWeight, 
-                promedioPonderadoTiempoAeropuertoWeight
-            );
-
-            sa.startAlgorithm(pathParaExpNum);
-
+            Funciones.printLineInLog("");
+            Funciones.printLineInLog("");
         }
+        
     }
 }

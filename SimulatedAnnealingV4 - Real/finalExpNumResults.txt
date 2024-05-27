@@ -1,300 +1,615 @@
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j1.csv
+ITERACION NUMERO 01
+Nombre de archivo de entrada -> benchmark/paquetes5000.csv
+Tiempo de ejecucion de algoritmo: 45.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 41007.80569999261 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 4083.9022063323623
+ -> Costo de cantidad de vuelos por ruta: 2.5186
+ -> Costo de vuelos: 38.38924428104676
+ -> Costo de aeropuertos: 0.028764886200856238
+ -> Costo total: 41007.80569999261
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes6250.csv
+Tiempo de ejecucion de algoritmo: 47.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 51888.599296526 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 5168.073295255334
+ -> Costo de cantidad de vuelos por ruta: 2.52384
+ -> Costo de vuelos: 48.144840686274144
+ -> Costo de aeropuertos: 0.03598530689024879
+ -> Costo total: 51888.599296526
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes8000.csv
+Tiempo de ejecucion de algoritmo: 48.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 69022.12982810597 | Packages left: 2.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 6875.932445458317
+ -> Costo de cantidad de vuelos por ruta: 2.536
+ -> Costo de vuelos: 61.85050245097921
+ -> Costo de aeropuertos: 0.04684092972094258
+ -> Costo total: 69022.12982810597
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes10000.csv
+Tiempo de ejecucion de algoritmo: 49.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 107631.87958759068 | Packages left: 24.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 10730.77861379019
+ -> Costo de cantidad de vuelos por ruta: 2.5296
+ -> Costo de vuelos: 77.1712499999992
+ -> Costo de aeropuertos: 0.057712422199841296
+ -> Costo total: 107631.87958759068
+Finished solution initialization in 2 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes15000.csv
+Tiempo de ejecucion de algoritmo: 55.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 368931.0860539748 | Packages left: 245.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 36845.34632764898
+ -> Costo de cantidad de vuelos por ruta: 2.5251333333333332
+ -> Costo de vuelos: 115.53071895424799
+ -> Costo de aeropuertos: 0.08727541700654799
+ -> Costo total: 368931.0860539748
+Finished solution initialization in 3 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes20000.csv
+Tiempo de ejecucion de algoritmo: 60.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 766898.7784240509 | Packages left: 604.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 76626.49014923011
+ -> Costo de cantidad de vuelos por ruta: 2.533
+ -> Costo de vuelos: 154.55442810457424
+ -> Costo de aeropuertos: 0.11530483286277059
+ -> Costo total: 766898.7784240509
+Finished solution initialization in 4 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes25000.csv
+Tiempo de ejecucion de algoritmo: 64.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1405040.552692143 | Packages left: 1205.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 140424.94580424624
+ -> Costo de cantidad de vuelos por ruta: 2.54208
+ -> Costo de vuelos: 193.8171609477114
+ -> Costo de aeropuertos: 0.14338147246241043
+ -> Costo total: 1405040.552692143
+Finished solution initialization in 5 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes50000.csv
+Tiempo de ejecucion de algoritmo: 88.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 5266793.713112194 | Packages left: 4846.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 522521.55471110175
+ -> Costo de cantidad de vuelos por ruta: 2.56176
+ -> Costo de vuelos: 390.6988602941167
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 5266793.713112194
+Finished solution initialization in 10 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes75000.csv
+Tiempo de ejecucion de algoritmo: 118.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 9699346.311687779 | Packages left: 9104.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 965698.5132718891
+ -> Costo de cantidad de vuelos por ruta: 2.563346666666667
+ -> Costo de vuelos: 586.4497222222171
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 9699346.311687779
+Finished solution initialization in 15 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes100000.csv
+Tiempo de ejecucion de algoritmo: 139.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1.4508765395343369E7 | Packages left: 13742.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 1446561.2897761539
+ -> Costo de cantidad de vuelos por ruta: 2.57189
+ -> Costo de vuelos: 784.2665604574894
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 1.4508765395343369E7
+Finished solution initialization in 20 s
+
+
+
+
+ITERACION NUMERO 11
+Nombre de archivo de entrada -> benchmark/paquetes5000.csv
+Tiempo de ejecucion de algoritmo: 45.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 41197.25850846524 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 4102.867597086879
+ -> Costo de cantidad de vuelos por ruta: 2.5144
+ -> Costo de vuelos: 38.344791666667575
+ -> Costo de aeropuertos: 0.029242732444447223
+ -> Costo total: 41197.25850846524
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes6250.csv
+Tiempo de ejecucion de algoritmo: 47.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 51800.83280866771 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 5159.432552112288
+ -> Costo de cantidad de vuelos por ruta: 2.50896
+ -> Costo de vuelos: 47.82740604575179
+ -> Costo de aeropuertos: 0.03597584045303408
+ -> Costo total: 51800.83280866771
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes8000.csv
+Tiempo de ejecucion de algoritmo: 48.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 69751.01999233312 | Packages left: 3.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 6949.030601900304
+ -> Costo de cantidad de vuelos por ruta: 2.514375
+ -> Costo de vuelos: 61.36003676470596
+ -> Costo de aeropuertos: 0.04689406781755019
+ -> Costo total: 69751.01999233312
+Finished solution initialization in 1 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes10000.csv
+Tiempo de ejecucion de algoritmo: 50.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 112560.73051313798 | Packages left: 29.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 11223.528518000734
+ -> Costo de cantidad de vuelos por ruta: 2.5411
+ -> Costo de vuelos: 77.49147875816882
+ -> Costo de aeropuertos: 0.058204524492451025
+ -> Costo total: 112560.73051313798
+Finished solution initialization in 2 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes15000.csv
+Tiempo de ejecucion de algoritmo: 55.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 375876.29395268415 | Packages left: 252.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 37539.54073573611
+ -> Costo de cantidad de vuelos por ruta: 2.5428
+ -> Costo de vuelos: 116.32014705882393
+ -> Costo de aeropuertos: 0.08730177193555828
+ -> Costo total: 375876.29395268415
+Finished solution initialization in 3 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes20000.csv
+Tiempo de ejecucion de algoritmo: 60.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 817925.6875587465 | Packages left: 655.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 81729.0260994593
+ -> Costo de cantidad de vuelos por ruta: 2.54125
+ -> Costo de vuelos: 154.9292647058814
+ -> Costo de aeropuertos: 0.11550133249716579
+ -> Costo total: 817925.6875587465
+Finished solution initialization in 4 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes25000.csv
+Tiempo de ejecucion de algoritmo: 66.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1411027.3171455802 | Packages left: 1211.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 141023.28684336835
+ -> Costo de cantidad de vuelos por ruta: 2.55292
+ -> Costo de vuelos: 194.6402287581652
+ -> Costo de aeropuertos: 0.14256921600018752
+ -> Costo total: 1411027.3171455802
+Finished solution initialization in 5 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes50000.csv
+Tiempo de ejecucion de algoritmo: 91.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 5293956.718172627 | Packages left: 4874.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 525238.0497477463
+ -> Costo de cantidad de vuelos por ruta: 2.55852
+ -> Costo de vuelos: 390.21739379084215
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 5293956.718172627
+Finished solution initialization in 10 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes75000.csv
 Tiempo de ejecucion de algoritmo: 114.0 segundos
-Final cost: 4069.238808072288 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 403.9508411058723
- -> Costo de cantidad de vuelos por ruta: 2.454
- -> Costo de vuelos: 3.748476307189539
- -> Costo de aeropuertos: 0.0031229462016572973
- -> Costo total: 4069.238808072288
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 9755413.067551294 | Packages left: 9161.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 971305.5818543582
+ -> Costo de cantidad de vuelos por ruta: 2.5600933333333336
+ -> Costo de vuelos: 585.4721119280961
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 9755413.067551294
+Finished solution initialization in 15 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j2.csv
-Tiempo de ejecucion de algoritmo: 116.0 segundos
-Final cost: 4071.5245734600517 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.14919068500325
- -> Costo de cantidad de vuelos por ruta: 2.484
- -> Costo de vuelos: 3.7790645424836526
- -> Costo de aeropuertos: 0.003102110021087645
- -> Costo total: 4071.5245734600517
+Nombre de archivo de entrada -> benchmark/paquetes100000.csv
+Tiempo de ejecucion de algoritmo: 140.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1.4653083606108591E7 | Packages left: 13887.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 1460993.429203722
+ -> Costo de cantidad de vuelos por ruta: 2.56844
+ -> Costo de vuelos: 783.4758578431079
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 1.4653083606108591E7
+Finished solution initialization in 20 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j3.csv
-Tiempo de ejecucion de algoritmo: 105.0 segundos
-Final cost: 4021.757721306534 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 399.1858057037013
- -> Costo de cantidad de vuelos por ruta: 2.47
- -> Costo de vuelos: 3.7668096405228697
- -> Costo de aeropuertos: 0.003106426857389329
- -> Costo total: 4021.757721306534
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j4.csv
-Tiempo de ejecucion de algoritmo: 112.0 segundos
-Final cost: 4066.964978545894 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 403.69281897369405
- -> Costo de cantidad de vuelos por ruta: 2.484
- -> Costo de vuelos: 3.780093954248359
- -> Costo de aeropuertos: 0.003103247989991389
- -> Costo total: 4066.964978545894
+ITERACION NUMERO 21
+Nombre de archivo de entrada -> benchmark/paquetes5000.csv
+Tiempo de ejecucion de algoritmo: 46.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 41065.00866599946 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 4089.892596251584
+ -> Costo de cantidad de vuelos por ruta: 2.4772
+ -> Costo de vuelos: 37.775792483660744
+ -> Costo de aeropuertos: 0.029083387243216928
+ -> Costo total: 41065.00866599946
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j5.csv
-Tiempo de ejecucion de algoritmo: 102.0 segundos
-Final cost: 4035.4792106833806 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 400.5883491466742
- -> Costo de cantidad de vuelos por ruta: 2.444
- -> Costo de vuelos: 3.7298488562091445
- -> Costo de aeropuertos: 0.0030809479503286653
- -> Costo total: 4035.4792106833806
+Nombre de archivo de entrada -> benchmark/paquetes6250.csv
+Tiempo de ejecucion de algoritmo: 47.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 51846.26509083157 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 5163.810283006542
+ -> Costo de cantidad de vuelos por ruta: 2.5296
+ -> Costo de vuelos: 48.20996323529441
+ -> Costo de aeropuertos: 0.03620195624412268
+ -> Costo total: 51846.26509083157
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j6.csv
-Tiempo de ejecucion de algoritmo: 106.0 segundos
-Final cost: 4030.048323015516 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 400.0800801943569
- -> Costo de cantidad de vuelos por ruta: 2.414
- -> Costo de vuelos: 3.6877777777777747
- -> Costo de aeropuertos: 0.003102490208851477
- -> Costo total: 4030.048323015516
+Nombre de archivo de entrada -> benchmark/paquetes8000.csv
+Tiempo de ejecucion de algoritmo: 48.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 67827.26812799988 | Packages left: 1.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 6756.4762029332305
+ -> Costo de cantidad de vuelos por ruta: 2.532875
+ -> Costo de vuelos: 61.780866013070614
+ -> Costo de aeropuertos: 0.046346153818438596
+ -> Costo total: 67827.26812799988
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j7.csv
-Tiempo de ejecucion de algoritmo: 104.0 segundos
-Final cost: 4043.2546860862035 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.35617003489375
- -> Costo de cantidad de vuelos por ruta: 2.45
- -> Costo de vuelos: 3.7451960784313667
- -> Costo de aeropuertos: 0.0030503558851859972
- -> Costo total: 4043.2546860862035
+Nombre de archivo de entrada -> benchmark/paquetes10000.csv
+Tiempo de ejecucion de algoritmo: 50.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 104667.77035548205 | Packages left: 21.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 10434.280847739697
+ -> Costo de cantidad de vuelos por ruta: 2.5368
+ -> Costo de vuelos: 77.37601307189439
+ -> Costo de aeropuertos: 0.05925644937401652
+ -> Costo total: 104667.77035548205
+Finished solution initialization in 2 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j8.csv
-Tiempo de ejecucion de algoritmo: 106.0 segundos
-Final cost: 4044.6282453419653 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.5236585040446
- -> Costo de cantidad de vuelos por ruta: 2.43
- -> Costo de vuelos: 3.6998611111111033
- -> Costo de aeropuertos: 0.0030539642688054212
- -> Costo total: 4044.6282453419653
+Nombre de archivo de entrada -> benchmark/paquetes15000.csv
+Tiempo de ejecucion de algoritmo: 55.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 349272.8632658842 | Packages left: 225.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 34879.11754156383
+ -> Costo de cantidad de vuelos por ruta: 2.5476
+ -> Costo de vuelos: 116.51481617646955
+ -> Costo de aeropuertos: 0.0857463850331874
+ -> Costo total: 349272.8632658842
+Finished solution initialization in 3 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j9.csv
-Tiempo de ejecucion de algoritmo: 104.0 segundos
-Final cost: 4076.504774662076 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.62305897496566
- -> Costo de cantidad de vuelos por ruta: 2.502
- -> Costo de vuelos: 3.812520424836597
- -> Costo de aeropuertos: 0.0030258032682280887
- -> Costo total: 4076.504774662076
+Nombre de archivo de entrada -> benchmark/paquetes20000.csv
+Tiempo de ejecucion de algoritmo: 61.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 818767.4224923431 | Packages left: 656.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 81813.08670812723
+ -> Costo de cantidad de vuelos por ruta: 2.5433
+ -> Costo de vuelos: 155.20932598039107
+ -> Costo de aeropuertos: 0.11457678730156406
+ -> Costo total: 818767.4224923431
+Finished solution initialization in 4 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j10.csv
-Tiempo de ejecucion de algoritmo: 104.0 segundos
-Final cost: 4067.793033713275 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 403.7705350363437
- -> Costo de cantidad de vuelos por ruta: 2.486
- -> Costo de vuelos: 3.789889705882349
- -> Costo de aeropuertos: 0.0030311315770721594
- -> Costo total: 4067.793033713275
+Nombre de archivo de entrada -> benchmark/paquetes25000.csv
+Tiempo de ejecucion de algoritmo: 69.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1433144.1284587837 | Packages left: 1233.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 143234.91902074654
+ -> Costo de cantidad de vuelos por ruta: 2.55576
+ -> Costo de vuelos: 194.7574142156857
+ -> Costo de aeropuertos: 0.1435086138026378
+ -> Costo total: 1433144.1284587837
+Finished solution initialization in 5 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j11.csv
-Tiempo de ejecucion de algoritmo: 112.0 segundos
-Final cost: 4014.3727663418244 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 398.4519642230735
- -> Costo de cantidad de vuelos por ruta: 2.468
- -> Costo de vuelos: 3.7583129084967237
- -> Costo de aeropuertos: 0.0029681192757154734
- -> Costo total: 4014.3727663418244
+Nombre de archivo de entrada -> benchmark/paquetes50000.csv
+Tiempo de ejecucion de algoritmo: 88.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 5324894.950355495 | Packages left: 4905.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 528331.723265628
+ -> Costo de cantidad de vuelos por ruta: 2.56036
+ -> Costo de vuelos: 390.5888848039212
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 5324894.950355495
+Finished solution initialization in 10 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j12.csv
+Nombre de archivo de entrada -> benchmark/paquetes75000.csv
 Tiempo de ejecucion de algoritmo: 114.0 segundos
-Final cost: 4013.7214131271153 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 398.4230132348824
- -> Costo de cantidad de vuelos por ruta: 2.438
- -> Costo de vuelos: 3.7126593137254886
- -> Costo de aeropuertos: 0.003160880847392759
- -> Costo total: 4013.7214131271153
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 9679710.68416683 | Packages left: 9085.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 963735.4210878988
+ -> Costo de cantidad de vuelos por ruta: 2.5589466666666665
+ -> Costo de vuelos: 585.2799019607763
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 9679710.68416683
+Finished solution initialization in 15 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j13.csv
-Tiempo de ejecucion de algoritmo: 114.0 segundos
-Final cost: 4051.479747139054 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 402.1525166125385
- -> Costo de cantidad de vuelos por ruta: 2.478
- -> Costo de vuelos: 3.768513071895416
- -> Costo de aeropuertos: 0.003132181521919304
- -> Costo total: 4051.479747139054
+Nombre de archivo de entrada -> benchmark/paquetes100000.csv
+Tiempo de ejecucion de algoritmo: 139.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1.4324400614413416E7 | Packages left: 13555.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 1428125.1789829757
+ -> Costo de cantidad de vuelos por ruta: 2.5691
+ -> Costo de vuelos: 783.3524959149998
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 1.4324400614413416E7
+Finished solution initialization in 20 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j14.csv
-Tiempo de ejecucion de algoritmo: 109.0 segundos
-Final cost: 4055.8234199700737 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 402.54347639675336
- -> Costo de cantidad de vuelos por ruta: 2.508
- -> Costo de vuelos: 3.8320057189542434
- -> Costo de aeropuertos: 0.003158281680895427
- -> Costo total: 4055.8234199700737
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j15.csv
-Tiempo de ejecucion de algoritmo: 105.0 segundos
-Final cost: 4048.9676475984443 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.907877144023
- -> Costo de cantidad de vuelos por ruta: 2.47
- -> Costo de vuelos: 3.764158496732022
- -> Costo de aeropuertos: 0.0030605428214269927
- -> Costo total: 4048.9676475984443
+ITERACION NUMERO 31
+Nombre de archivo de entrada -> benchmark/paquetes5000.csv
+Tiempo de ejecucion de algoritmo: 45.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 40923.86865361014 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 4075.6794704249583
+ -> Costo de cantidad de vuelos por ruta: 2.492
+ -> Costo de vuelos: 38.00113153594863
+ -> Costo de aeropuertos: 0.02935580419235248
+ -> Costo total: 40923.86865361014
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j16.csv
-Tiempo de ejecucion de algoritmo: 110.0 segundos
-Final cost: 4033.7196676084823 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 400.4286646050888
- -> Costo de cantidad de vuelos por ruta: 2.432
- -> Costo de vuelos: 3.7071977124182927
- -> Costo de aeropuertos: 0.0030576769803700773
- -> Costo total: 4033.7196676084823
+Nombre de archivo de entrada -> benchmark/paquetes6250.csv
+Tiempo de ejecucion de algoritmo: 47.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 51800.79451136067 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 5159.387497366659
+ -> Costo de cantidad de vuelos por ruta: 2.51456
+ -> Costo de vuelos: 47.921973039214635
+ -> Costo de aeropuertos: 0.036071384306471416
+ -> Costo total: 51800.79451136067
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j17.csv
-Tiempo de ejecucion de algoritmo: 104.0 segundos
-Final cost: 4071.9725080990183 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.1680704660162
- -> Costo de cantidad de vuelos por ruta: 2.502
- -> Costo de vuelos: 3.816854575163393
- -> Costo de aeropuertos: 0.003096284550629141
- -> Costo total: 4071.9725080990183
+Nombre de archivo de entrada -> benchmark/paquetes8000.csv
+Tiempo de ejecucion de algoritmo: 48.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 67719.1960590642 | Packages left: 1.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 6745.680118329564
+ -> Costo de cantidad de vuelos por ruta: 2.52975
+ -> Costo de vuelos: 61.7571772875824
+ -> Costo de aeropuertos: 0.04691665455836095
+ -> Costo total: 67719.1960590642
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j18.csv
-Tiempo de ejecucion de algoritmo: 111.0 segundos
-Final cost: 4075.357281394431 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.4759429560701
- -> Costo de cantidad de vuelos por ruta: 2.526
- -> Costo de vuelos: 3.857295751633985
- -> Costo de aeropuertos: 0.0031672067985353456
- -> Costo total: 4075.357281394431
+Nombre de archivo de entrada -> benchmark/paquetes10000.csv
+Tiempo de ejecucion de algoritmo: 51.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 112519.40777091999 | Packages left: 29.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 11219.466384815916
+ -> Costo de cantidad de vuelos por ruta: 2.5342
+ -> Costo de vuelos: 77.32622549019601
+ -> Costo de aeropuertos: 0.058455200011493076
+ -> Costo total: 112519.40777091999
+Finished solution initialization in 2 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j19.csv
-Tiempo de ejecucion de algoritmo: 101.0 segundos
-Final cost: 4045.194474759403 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.5564765753487
- -> Costo de cantidad de vuelos por ruta: 2.448
- -> Costo de vuelos: 3.73237745098039
- -> Costo de aeropuertos: 0.0030498004985264732
- -> Costo total: 4045.194474759403
+Nombre de archivo de entrada -> benchmark/paquetes15000.csv
+Tiempo de ejecucion de algoritmo: 55.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 376015.436860051 | Packages left: 252.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 37553.450121914735
+ -> Costo de cantidad de vuelos por ruta: 2.542466666666667
+ -> Costo de vuelos: 116.33455065359331
+ -> Costo de aeropuertos: 0.08565957232323212
+ -> Costo total: 376015.436860051
+Finished solution initialization in 3 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j20.csv
-Tiempo de ejecucion de algoritmo: 108.0 segundos
-Final cost: 4078.3065570621334 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.8106987741178
- -> Costo de cantidad de vuelos por ruta: 2.49
- -> Costo de vuelos: 3.8117483660130693
- -> Costo de aeropuertos: 0.0031439642258843012
- -> Costo total: 4078.3065570621334
+Nombre de archivo de entrada -> benchmark/paquetes20000.csv
+Tiempo de ejecucion de algoritmo: 61.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 828825.3621716179 | Packages left: 666.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 82818.93758496403
+ -> Costo de cantidad de vuelos por ruta: 2.54105
+ -> Costo de vuelos: 155.06939950980367
+ -> Costo de aeropuertos: 0.11560598458565037
+ -> Costo total: 828825.3621716179
+Finished solution initialization in 4 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j21.csv
-Tiempo de ejecucion de algoritmo: 106.0 segundos
-Final cost: 4075.741779250648 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.5415447099943
- -> Costo de cantidad de vuelos por ruta: 2.512
- -> Costo de vuelos: 3.810518790849669
- -> Costo de aeropuertos: 0.0030642468266345872
- -> Costo total: 4075.741779250648
+Nombre de archivo de entrada -> benchmark/paquetes25000.csv
+Tiempo de ejecucion de algoritmo: 64.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1398552.805788533 | Packages left: 1198.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 139775.80639202244
+ -> Costo de cantidad de vuelos por ruta: 2.55356
+ -> Costo de vuelos: 194.71200163398333
+ -> Costo de aeropuertos: 0.14312544321609943
+ -> Costo total: 1398552.805788533
+Finished solution initialization in 5 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j22.csv
-Tiempo de ejecucion de algoritmo: 107.0 segundos
-Final cost: 4046.587301048215 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.6566394710942
- -> Costo de cantidad de vuelos por ruta: 2.478
- -> Costo de vuelos: 3.785122549019603
- -> Costo de aeropuertos: 0.0031040352987211054
- -> Costo total: 4046.587301048215
+Nombre de archivo de entrada -> benchmark/paquetes50000.csv
+Tiempo de ejecucion de algoritmo: 88.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 5237814.885055962 | Packages left: 4817.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 519623.668143923
+ -> Costo de cantidad de vuelos por ruta: 2.56252
+ -> Costo de vuelos: 390.70712418299934
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 5237814.885055962
+Finished solution initialization in 10 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j23.csv
-Tiempo de ejecucion de algoritmo: 104.0 segundos
-Final cost: 4046.882482481595 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 401.7200122528398
- -> Costo de cantidad de vuelos por ruta: 2.454
- -> Costo de vuelos: 3.736450163398688
- -> Costo de aeropuertos: 0.0031398249006080866
- -> Costo total: 4046.882482481595
+Nombre de archivo de entrada -> benchmark/paquetes75000.csv
+Tiempo de ejecucion de algoritmo: 117.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 9699649.345807882 | Packages left: 9105.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 965729.1130405007
+ -> Costo de cantidad de vuelos por ruta: 2.5608133333333334
+ -> Costo de vuelos: 585.712630718954
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 9699649.345807882
+Finished solution initialization in 15 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j24.csv
-Tiempo de ejecucion de algoritmo: 112.0 segundos
-Final cost: 4057.2387478221913 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 402.69120942331995
- -> Costo de cantidad de vuelos por ruta: 2.506
- -> Costo de vuelos: 3.81963235294117
- -> Costo de aeropuertos: 0.0030310443068036308
- -> Costo total: 4057.2387478221913
+Nombre de archivo de entrada -> benchmark/paquetes100000.csv
+Tiempo de ejecucion de algoritmo: 143.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1.4414035971808204E7 | Packages left: 13645.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 1437088.4386989118
+ -> Costo de cantidad de vuelos por ruta: 2.57049
+ -> Costo de vuelos: 784.040469771219
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 1.4414035971808204E7
+Finished solution initialization in 20 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j25.csv
-Tiempo de ejecucion de algoritmo: 106.0 segundos
-Final cost: 4073.3744635253843 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.37266063023776
- -> Costo de cantidad de vuelos por ruta: 2.448
- -> Costo de vuelos: 3.7368790849673155
- -> Costo de aeropuertos: 0.003085220784298251
- -> Costo total: 4073.3744635253843
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j26.csv
-Tiempo de ejecucion de algoritmo: 103.0 segundos
-Final cost: 4039.537795877323 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 400.9699975588463
- -> Costo de cantidad de vuelos por ruta: 2.466
- -> Costo de vuelos: 3.7572630718954216
- -> Costo de aeropuertos: 0.003192000319677488
- -> Costo total: 4039.537795877323
+ITERACION NUMERO 41
+Nombre de archivo de entrada -> benchmark/paquetes5000.csv
+Tiempo de ejecucion de algoritmo: 45.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 41075.57537452932 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 4090.8341289941977
+ -> Costo de cantidad de vuelos por ruta: 2.4938
+ -> Costo de vuelos: 38.03852532679734
+ -> Costo de aeropuertos: 0.029295820037942327
+ -> Costo total: 41075.57537452932
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j27.csv
-Tiempo de ejecucion de algoritmo: 106.0 segundos
-Final cost: 4076.7811558034914 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 404.7006467784535
- -> Costo de cantidad de vuelos por ruta: 2.462
- -> Costo de vuelos: 3.747598039215679
- -> Costo de aeropuertos: 0.0030739655234325734
- -> Costo total: 4076.7811558034914
+Nombre de archivo de entrada -> benchmark/paquetes6250.csv
+Tiempo de ejecucion de algoritmo: 47.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 51776.14049852906 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 5156.830118269747
+ -> Costo de cantidad de vuelos por ruta: 2.52256
+ -> Costo de vuelos: 48.13975898692747
+ -> Costo de aeropuertos: 0.036229970969599165
+ -> Costo total: 51776.14049852906
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j28.csv
-Tiempo de ejecucion de algoritmo: 101.0 segundos
-Final cost: 4060.8265741175155 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 403.1136992933587
- -> Costo de cantidad de vuelos por ruta: 2.454
- -> Costo de vuelos: 3.738218954248362
- -> Costo de aeropuertos: 0.003176341733654282
- -> Costo total: 4060.8265741175155
+Nombre de archivo de entrada -> benchmark/paquetes8000.csv
+Tiempo de ejecucion de algoritmo: 48.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 67009.77211071755 | Packages left: 0.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 6674.667551654261
+ -> Costo de cantidad de vuelos por ruta: 2.53675
+ -> Costo de vuelos: 61.92187091503167
+ -> Costo de aeropuertos: 0.04715262870350306
+ -> Costo total: 67009.77211071755
+Finished solution initialization in 1 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j29.csv
-Tiempo de ejecucion de algoritmo: 105.0 segundos
-Final cost: 4096.363807668139 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 406.64039513173856
- -> Costo de cantidad de vuelos por ruta: 2.474
- -> Costo de vuelos: 3.7757802287581668
- -> Costo de aeropuertos: 0.0031838589300887065
- -> Costo total: 4096.363807668139
+Nombre de archivo de entrada -> benchmark/paquetes10000.csv
+Tiempo de ejecucion de algoritmo: 51.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 104388.57730153973 | Packages left: 21.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 10406.383038786704
+ -> Costo de cantidad de vuelos por ruta: 2.5354
+ -> Costo de vuelos: 77.32558006535815
+ -> Costo de aeropuertos: 0.05804835281251733
+ -> Costo total: 104388.57730153973
+Finished solution initialization in 2 s
 
 
-Nombre de archivo de entrada -> outputExpNum/paquetes500_j30.csv
-Tiempo de ejecucion de algoritmo: 111.0 segundos
-Final cost: 4061.6804635616922 | Packages left: 0.0 | Temperature: 0.9871648196540229
- -> Costo de paquetes y su asignacion de rutas: 403.08618288711057
- -> Costo de cantidad de vuelos por ruta: 2.546
- -> Costo de vuelos: 3.8826307189542404
- -> Costo de aeropuertos: 0.003027953692393385
- -> Costo total: 4061.6804635616922
+Nombre de archivo de entrada -> benchmark/paquetes15000.csv
+Tiempo de ejecucion de algoritmo: 56.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 372006.28089839424 | Packages left: 248.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 37152.644202162235
+ -> Costo de cantidad de vuelos por ruta: 2.5360666666666667
+ -> Costo de vuelos: 116.0696078431367
+ -> Costo de aeropuertos: 0.08601134985576135
+ -> Costo total: 372006.28089839424
+Finished solution initialization in 3 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes20000.csv
+Tiempo de ejecucion de algoritmo: 62.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 780753.9902153654 | Packages left: 618.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 78012.0060414589
+ -> Costo de cantidad de vuelos por ruta: 2.5341
+ -> Costo de vuelos: 154.56523692810003
+ -> Costo de aeropuertos: 0.11606326600897207
+ -> Costo total: 780753.9902153654
+Finished solution initialization in 4 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes25000.csv
+Tiempo de ejecucion de algoritmo: 67.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1436828.712783572 | Packages left: 1237.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 143603.4015261511
+ -> Costo de cantidad de vuelos por ruta: 2.5538
+ -> Costo de vuelos: 194.6985580065312
+ -> Costo de aeropuertos: 0.14512250866581178
+ -> Costo total: 1436828.712783572
+Finished solution initialization in 5 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes50000.csv
+Tiempo de ejecucion de algoritmo: 90.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 5337422.879368704 | Packages left: 4918.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 529584.4403665044
+ -> Costo de cantidad de vuelos por ruta: 2.56262
+ -> Costo de vuelos: 390.7749959150265
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 5337422.879368704
+Finished solution initialization in 10 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes75000.csv
+Tiempo de ejecucion de algoritmo: 117.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 9807701.960687745 | Packages left: 9214.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 976534.5885394934
+ -> Costo de cantidad de vuelos por ruta: 2.5586
+ -> Costo de vuelos: 585.1809232025988
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 9807701.960687745
+Finished solution initialization in 15 s
+
+
+Nombre de archivo de entrada -> benchmark/paquetes100000.csv
+Tiempo de ejecucion de algoritmo: 142.0 segundos
+Parametros: Temperatura 0.9559800634705576 | Cooling Rate 0.08 | Neighbour Count 5 | Window Size 250
+Final cost: 1.4257382137223728E7 | Packages left: 13488.0 | Temperature: 0.9559800634705576
+ -> Costo de paquetes y su asignacion de rutas: 1421423.559534974
+ -> Costo de cantidad de vuelos por ruta: 2.56629
+ -> Costo de vuelos: 782.7860334967085
+ -> Costo de aeropuertos: 10000.0
+ -> Costo total: 1.4257382137223728E7
+Finished solution initialization in 20 s
+
+
 
 

@@ -5,8 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -20,12 +22,17 @@ import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.PlanRutaService;
+import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.UbicacionService;
+import pucp.e3c.redex_back.service.VueloService;
 
 @Component
 public class DataInitializer {
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Autowired
     private PlanVueloService planVueloService;
 
@@ -42,7 +49,20 @@ public class DataInitializer {
     private SimulacionService simulacionService;
 
     @Autowired
+    private VueloService vueloService;
+
+    @Autowired
+    private PlanRutaService planRutaService;
+
+    @Autowired
+    private PlanRutaXVueloService planRutaXVueloService;
+
+    @Autowired
     private EnvioService envioService;
+
+    public DataInitializer(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @PostConstruct
     public void initData() {
@@ -60,13 +80,13 @@ public class DataInitializer {
         LocalDate today = LocalDate.now();
 
         // Sumar 3 días a la fecha de hoy
-        LocalDate startDate = today.plusDays(1);
-        LocalDate endDate = today.plusDays(3);
+        LocalDate startDate = today.plusDays(1);//1
+        LocalDate endDate = today.plusDays(3);//3
 
         // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String startPackagesDate = startDate.atStartOfDay().format(formatter);
-        String endPackagesDate = endDate.atTime(20, 59, 59).format(formatter);
+        String endPackagesDate = endDate.atTime(23, 59, 59).format(formatter);
 
         paquetes = Funciones.generarPaquetes(
                 1000,
@@ -104,6 +124,16 @@ public class DataInitializer {
             paquete.setSimulacionActual(simulacion);
             paqueteService.register(paquete);
         }
+
+        //INICIALIZA LOOP PRINCIPAL DIA A DIA
+        ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+        ArrayList<PlanVuelo> planVuelosLoop = (ArrayList<PlanVuelo>) planVueloService.getAll();
+        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        CompletableFuture.runAsync(() -> {
+            algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
+                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
+                    120, 60);
+        });
 
     }
 }

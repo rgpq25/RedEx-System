@@ -165,6 +165,7 @@ public class SAImplementation {
         1000000000) + " segundos");
         Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
         1000000000) + " segundos");
+        Funciones.printLineInLog("Parametros: Temperatura " + temperature + " | Cooling Rate " + coolingRate + " | Neighbour Count " + neighbourCount + " | Window Size " + windowSize);
 
         System.out.println(
             "Final cost: " + current.getSolutionCost() + 
