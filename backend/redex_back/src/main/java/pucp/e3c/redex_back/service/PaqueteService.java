@@ -41,7 +41,14 @@ public class PaqueteService {
         }
     }
 
-    /*public Paquete actualizaEstadoPaquete(Paquete paquete){
+    private boolean isAfterByMoreThanFiveMinutes(Date date1, Date date2) {
+        long differenceInMillis = date1.getTime() - date2.getTime();
+        long fiveMinutesInMillis = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+        return differenceInMillis > fiveMinutesInMillis;
+    }
+
+    public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete){
         try {
             if(paquete.getPlanRutaActual()==null){
                 paquete.setEstado("En almacen origen");
@@ -50,14 +57,44 @@ public class PaqueteService {
                 ArrayList<Vuelo> vuelos = (ArrayList<Vuelo>)planRutaXVueloService.findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId());
                 if(vuelos == null) paquete.setEstado("En almacen origen");
                 else{
-
+                    Date fechaActual = new Date();
+                    int i=0;
+                    for (Vuelo vuelo : vuelos) {
+                        if(vuelo.getFechaSalida().after(fechaActual)){
+                            if(i==0){
+                                paquete.setEstado("En almacen origen");
+                            }
+                            else{
+                                paquete.setEstado("En espera");
+                            }
+                            break;
+                        }
+                        else if(vuelo.getFechaLlegada().before(fechaActual) && i==vuelos.size()-1){
+                            if(isAfterByMoreThanFiveMinutes(fechaActual, vuelo.getFechaLlegada())){
+                                paquete.setEstado("Entregado");
+                                paquete.setEntregado(true);
+                            }
+                            else{
+                                paquete.setEstado("En almacen destino");
+                            }
+                            break;
+                        }
+                        else if(vuelo.getFechaSalida().before(fechaActual) && vuelo.getFechaLlegada().after(fechaActual)){
+                            paquete.setEstado("Volando");
+                            break;
+                        }
+                        
+                        i++;
+                    }
                 }
             }
+            update(paquete);
+            return paquete;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
-    }*/
+    }
 
     public Paquete get(Integer id) {
         try {
@@ -65,6 +102,16 @@ public class PaqueteService {
             Paquete paquete = optional_paquete.get();
             
             return optional_paquete.get();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public Paquete getPaqueteNoSimulacion(Integer id) {
+        try {
+            Paquete paquete = get(id);
+            return actualizaEstadoPaqueteNoSimulacion(paquete);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
