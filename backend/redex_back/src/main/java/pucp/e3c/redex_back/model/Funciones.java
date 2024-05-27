@@ -279,16 +279,6 @@ public class Funciones {
 
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
-
-        if (origen == null) {
-            // System.out.println("Error: Ubicacion " + origenCode + " no encontrada");
-            return null;
-        }
-
-        if (destino == null) {
-            // System.out.println("Error: Ubicacion " + destinoCode + " no encontrada");
-            return null;
-        }
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
