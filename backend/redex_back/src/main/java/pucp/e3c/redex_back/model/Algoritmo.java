@@ -372,6 +372,7 @@ public class Algoritmo {
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
+
             List<Paquete> paquetesTemp = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
                     .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
@@ -388,11 +389,12 @@ public class Algoritmo {
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
                 messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
+                tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 continue;
             }
 
             List<Paquete> paquetesRest = paquetes.stream()
-                    .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion))
+                    .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
 
             if (paquetesRest.size() == 0) {
