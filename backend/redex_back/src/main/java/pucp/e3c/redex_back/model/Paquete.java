@@ -29,6 +29,8 @@ public class Paquete {
     @Column(nullable = true)
     private Date fechaDeEntrega;
 
+    //private String estado;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_envio", referencedColumnName = "id")
     private Envio envio;

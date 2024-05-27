@@ -72,6 +72,7 @@ public class Algoritmo {
             return null;
         }
         int i = 0;
+        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
 
         while (true) {
             long start = System.currentTimeMillis();
@@ -81,6 +82,7 @@ public class Algoritmo {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
                 long end = System.currentTimeMillis();
                 long sa_millis = SA * 1000 - (end - start);
+                if(sa_millis < 0) continue;
                 try {
                     Thread.sleep(sa_millis);
                 } catch (Exception e) {
@@ -89,7 +91,7 @@ public class Algoritmo {
                 continue;
             }
 
-            HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
+            
             GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
             if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
                 System.out.println("ERROR: No se generaron vuelos.");
@@ -205,6 +207,7 @@ public class Algoritmo {
 
             long end = System.currentTimeMillis();
             long sa_millis = SA * 1000 - (end - start);
+            if(sa_millis < 0) continue;
             try {
                 Thread.sleep(sa_millis);
             } catch (Exception e) {
@@ -301,6 +304,10 @@ public class Algoritmo {
                 messagingTemplate.convertAndSend("/algoritmo/estado",
                         "No hay paquetes para la planificacion actual, esperando");
                 System.out.println("No hay paquetes para la planificacion actual, esperando");
+                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
+                messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
                 continue;
             }
 
@@ -435,7 +442,7 @@ public class Algoritmo {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 10;
+        int neighbourCount = 5;
         int windowSize = tamanhoPaquetes / 5;
         boolean stopWhenNoPackagesLeft = true;
 

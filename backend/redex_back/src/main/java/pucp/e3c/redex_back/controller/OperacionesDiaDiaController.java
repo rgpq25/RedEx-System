@@ -54,7 +54,7 @@ public class OperacionesDiaDiaController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @GetMapping("/runAlgorithm")
+    /*@GetMapping("/runAlgorithm")
     public String correrSimulacion() {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
@@ -67,5 +67,5 @@ public class OperacionesDiaDiaController {
 
         return "Simulacion iniciada";
 
-    }
+    }*/
 }
