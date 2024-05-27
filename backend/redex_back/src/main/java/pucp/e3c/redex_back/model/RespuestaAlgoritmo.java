@@ -7,6 +7,7 @@ public class RespuestaAlgoritmo {
     private EstadoAlmacen estadoAlmacen;
     private ArrayList<PlanRutaNT> planesRutas;
     private Simulacion simulacion;
+    private ArrayList<Paquete> paquetes;
     private boolean correcta;
 
     public RespuestaAlgoritmo() {
@@ -14,6 +15,7 @@ public class RespuestaAlgoritmo {
         this.estadoAlmacen = new EstadoAlmacen();
         this.planesRutas = new ArrayList<>();
         this.simulacion = new Simulacion();
+        this.paquetes = new ArrayList<Paquete>();
         this.correcta = true;
     }
 
@@ -24,6 +26,14 @@ public class RespuestaAlgoritmo {
         this.planesRutas = planesRutas;
         this.simulacion = simulacion;
         this.correcta = true;
+    }
+
+    public ArrayList<Paquete> getPaquetes() {
+        return paquetes;
+    }
+
+    public void setPaquetes(ArrayList<Paquete> paquetes) {
+        this.paquetes = paquetes;
     }
 
     public Simulacion getSimulacion() {

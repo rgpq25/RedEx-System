@@ -307,6 +307,10 @@ public class Algoritmo {
 
             int tamanhoPaquetes = paquetesProcesar.size();
 
+            List<Paquete> paquetesRest = paquetes.stream()
+                    .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
+                    .collect(Collectors.toList());
+
             if (tamanhoPaquetes == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado",
                         "No hay paquetes para la planificacion actual, esperando");
@@ -314,14 +318,12 @@ public class Algoritmo {
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
+                respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
+
                 messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 continue;
             }
-
-            List<Paquete> paquetesRest = paquetes.stream()
-                    .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
-                    .collect(Collectors.toList());
 
             if (paquetesRest.size() == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
@@ -357,6 +359,8 @@ public class Algoritmo {
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
             i++;
+            respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
+
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
