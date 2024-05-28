@@ -23,4 +23,10 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
 
     @Query("SELECT p FROM Paquete p WHERE p.planRutaActual IS NULL AND p.envio.ubicacionOrigen.id = :idUbicacionOrigen AND p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte")
     public ArrayList<Paquete> findPaquetesWithoutPlanRutaSimulacion(String idUbicacionOrigen, Integer idSimulacion, Date fechaCorte);
+
+    @Query("SELECT p FROM Paquete p WHERE p.planRutaActual IS NULL AND p.envio.ubicacionOrigen.id = :idUbicacionOrigen AND p.simulacionActual IS NULL AND p.envio.fechaRecepcion < :fechaCorte")
+    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte);
+
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual IS NULL AND p.entregado = false")
+    public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados();
 }

@@ -38,6 +38,9 @@ public class SimulacionController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
+    private Algoritmo algoritmo;
+
+    @Autowired
     SimulacionService simulacionService;
 
     @Autowired
@@ -89,6 +92,55 @@ public class SimulacionController {
         }
     }
 
+    @PutMapping("/detener")
+    public ResponseEntity<Simulacion> detenerSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 0) {
+            simulacion.setEstado(1);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/reiniciar")
+    public ResponseEntity<Simulacion> reiniciarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 1) {
+            simulacion.setEstado(0);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/pausar")
+    public ResponseEntity<Simulacion> pausarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 0) {
+            simulacion.setEstado(2);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/reanudar")
+    public ResponseEntity<Simulacion> reanudarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        simulacion.setMilisegundosPausados(simulacion.getMilisegundosPausados());
+        if (simulacion.getEstado() == 2) {
+            simulacion.setEstado(0);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") int id) {
         simulacionService.delete(id);
@@ -105,11 +157,13 @@ public class SimulacionController {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         Simulacion simulacion = simulacionService.get(id);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
-                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacion, 5, 1);
+                    vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
+                    simulacionService, simulacion,
+                    30, 10);
         });
 
         return "Simulacion iniciada";
