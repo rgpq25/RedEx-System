@@ -269,6 +269,7 @@ public class Algoritmo {
         HashMap<Integer, Vuelo> nuevoHashMap = new HashMap<>();
         for (Vuelo vuelo : grafoVuelos.getVuelosHash().values()) {
             vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
             nuevoHashMap.put(vuelo.getId(), vuelo);
             grafoVuelos.setVuelosHash(nuevoHashMap);
         }
