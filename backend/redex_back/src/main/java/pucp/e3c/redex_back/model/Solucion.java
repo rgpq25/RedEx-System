@@ -272,11 +272,6 @@ public class Solucion {
         double sum = 0;
         for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
             Vuelo vuelo = vuelos_hash.get(entry.getKey());
-            if (vuelo == null) {
-                System.out.println("No se encontro el vuelo con id " + entry.getKey());
-
-                return 10000.0;
-            }
             int maxCapacity = vuelo.getPlanVuelo().getCapacidadMaxima();
             int usedCapacity = entry.getValue();
 

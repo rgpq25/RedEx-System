@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.PersistenceException;
+import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
@@ -236,7 +237,8 @@ public class Algoritmo {
 
     public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos,
             ArrayList<Paquete> paquetes, VueloService vueloService, PlanRutaService planRutaService,
-            PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
+            PaqueteService paqueteService, AeropuertoService aeropuertoService,
+            PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
@@ -260,19 +262,13 @@ public class Algoritmo {
         }
 
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
-        GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
+        GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService);
         if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
             System.out.println("ERROR: No se generaron vuelos.");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en generar vuelos");
             return null;
         }
-        HashMap<Integer, Vuelo> nuevoHashMap = new HashMap<>();
-        for (Vuelo vuelo : grafoVuelos.getVuelosHash().values()) {
-            vuelo = vueloService.register(vuelo);
-            vuelo = vueloService.get(vuelo.getId());
-            nuevoHashMap.put(vuelo.getId(), vuelo);
-            grafoVuelos.setVuelosHash(nuevoHashMap);
-        }
+
         int i = 0;
 
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
@@ -280,7 +276,7 @@ public class Algoritmo {
         boolean primera_iter = true;
         while (true) {
             simulacion = simulacionService.get(simulacion.getId());
-            paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion);
+            paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
             // Gestion de parado forzado
             if (simulacion.estado == 1) {
                 System.out.println("Simulacion terminada");
@@ -497,15 +493,15 @@ public class Algoritmo {
     }
 
     private ArrayList<Paquete> actualizarPaquetes(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
-            Date fechaEnSimulacion) {
+            Date fechaEnSimulacion, AeropuertoService aeropuertoService) {
         for (int i = 0; i < paquetes.size(); i++) {
             if (planRutaNTs != null) {
                 boolean primero = true;
                 for (Vuelo vuelo : planRutaNTs.get(i).getVuelos()) {
                     if (vuelo.getFechaSalida().after(fechaEnSimulacion)) {
-                        Aeropuerto aeropuerto = new Aeropuerto();
-                        aeropuerto.setUbicacion(vuelo.getPlanVuelo().getCiudadOrigen());
-                        paquetes.get(i).setAeropuertoActual(aeropuerto);
+
+                        paquetes.get(i).setAeropuertoActual(
+                                aeropuertoService.findByUbicacion(vuelo.getPlanVuelo().getCiudadOrigen().getId()));
                         paquetes.get(i).setEnAeropuerto(true);
                         if (primero) {
                             paquetes.get(i).setEstado("En aeropuerto origen");

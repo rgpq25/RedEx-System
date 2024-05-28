@@ -84,7 +84,6 @@ public class SAImplementation {
 
                 try {
                         HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
-
                         long startTime = System.nanoTime();
                         HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas = new HashMap<String, ArrayList<PlanRutaNT>>();
                         long endTime = System.nanoTime();
