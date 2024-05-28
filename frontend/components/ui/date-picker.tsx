@@ -8,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 import { SelectSingleEventHandler } from "react-day-picker";
+import { es } from "date-fns/locale";
 
 export function DatePicker({
 	className,
@@ -27,13 +28,13 @@ export function DatePicker({
 				<Button
 					variant={"outline"}
 					className={cn(
-						"w-[280px] justify-start text-left font-normal",
+						"justify-start text-left font-normal",
 						!date && "text-muted-foreground",
 						className
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
-					{date ? format(date, "PPP") : <span>{placeholder || "Pick a date"}</span>}
+					{date ? format(date, "PPP", { locale: es }) : <span>{placeholder || "Pick a date"}</span>}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0">

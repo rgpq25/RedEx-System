@@ -1,42 +1,39 @@
 "use client";
 import { Aeropuerto } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { Marker, useZoomPanContext } from "react-simple-maps";
 
-function AirportMarker({
-	aeropuerto,
-	coordinates,
-	onClick,
-}: {
-	aeropuerto: Aeropuerto;
-	coordinates: [number, number];
-	onClick: (coordinates: [number, number]) => void;
-}) {
-	//TODO: Aqui se deberia mostrar la capacidad actual, pero no se tiene la informacion
-	const [isHovering, setIsHovering] = useState(false);
+const AirportMarker = memo(
+	({
+		aeropuerto,
+		coordinates,
+		onClick,
+	}: {
+		aeropuerto: Aeropuerto;
+		coordinates: [number, number];
+		onClick: (coordinates: [number, number]) => void;
+	}) => {
+		const [isHovering, setIsHovering] = useState(false);
 
-	function handleMouseEnter() {
-		setIsHovering(true);
-	}
+		function handleMouseEnter() {
+			setIsHovering(true);
+		}
 
-	function handleMouseLeave() {
-		setIsHovering(false);
-	}
+		function handleMouseLeave() {
+			setIsHovering(false);
+		}
 
-	return (
-		<>
-			<Marker
-				coordinates={coordinates}
-				className="cursor-pointer"
-			>
-				<Airport3
-					aeropuerto={aeropuerto}
-					handleMouseEnter={handleMouseEnter}
-					handleMouseLeave={handleMouseLeave}
-					onClick={() => onClick(coordinates)}
-				/>
-				{/* {isHovering && (
+		return (
+			<>
+				<Marker coordinates={coordinates} className="cursor-pointer">
+					<Airport3
+						aeropuerto={aeropuerto}
+						handleMouseEnter={handleMouseEnter}
+						handleMouseLeave={handleMouseLeave}
+						onClick={() => onClick(coordinates)}
+					/>
+					{/* {isHovering && (
 					<>
 						<rect
 							x={-10}
@@ -59,10 +56,11 @@ function AirportMarker({
 						</text>
 					</>
 				)} */}
-			</Marker>
-		</>
-	);
-}
+				</Marker>
+			</>
+		);
+	}
+);
 export default AirportMarker;
 
 function Airport3({

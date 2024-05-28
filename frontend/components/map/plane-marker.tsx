@@ -125,7 +125,7 @@ function Plane({
 
 	return (
 		<>
-			<g
+			{/* <g
 				fill={color}
 				version="1.1"
 				id="Layer_1"
@@ -153,8 +153,8 @@ function Plane({
                     L16.63,105.75z"
 					transform="scale(0.1)"
 				/>
-			</g>
-			{/* <circle r={1} fill={color}/> */}
+			</g> */}
+			<circle r={1} fill={color} className=""/>
 			<circle r={5} className="fill-transparent" />
 		</>
 	);

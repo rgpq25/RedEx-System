@@ -22,8 +22,8 @@ export const startWeeklySimulation = async (enviosFile: File, startDate: Date): 
 			fechaInicioSim: startDate,
 			fechaFinSim: finishDate,
 			fechaInicioSistema: new Date(),
-			multiplicadorTiempo: 1,
-			estado: 1,
+			multiplicadorTiempo: 100,
+			estado: 0,
 		}
 	);
 

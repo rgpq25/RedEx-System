@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { CircleStop, Play, SkipBack, SkipForward } from "lucide-react";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -29,7 +31,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function SimulationPage() {
 	const attributes = useMapZoom();
-	const { currentTime, setCurrentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+	const { currentTime, setCurrentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } =
+		attributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
@@ -64,24 +67,30 @@ function SimulationPage() {
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
-				const data : RespuestaAlgoritmo = JSON.parse(msg.body);
+				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 				const simulation = data.simulacion;
 				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
 				const fechaInicioSim: Date = new Date(simulation.fechaInicioSim);
 				const multiplicadorTiempo: number = simulation.multiplicadorTiempo;
 
-				const currentSimTime = new Date(fechaInicioSim.getTime() + multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime()));
+				const currentSimTime = new Date(
+					fechaInicioSim.getTime() +
+						multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime())
+				);
+
 				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
-				
+
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
-				
-				setFlights(data.vuelos.map((vuelo: Vuelo) => {
+
+				const newFlights = data.vuelos.map((vuelo: Vuelo) => {
 					const vueloActualizado = vuelo;
 					vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
 					vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
 					return vueloActualizado;
-				}));
+				});
+
+				setFlights(newFlights);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
@@ -117,10 +126,27 @@ function SimulationPage() {
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
-					<PlaneLegend />
+					<div className="flex items-center gap-5">
+						<PlaneLegend />
+						<div className="flex items-center gap-1">
+							<Button size={"icon"}>
+								<CircleStop className="w-5 h-5" />
+							</Button>
+							<Button size={"icon"}>
+								<SkipBack className="w-5 h-5" />
+							</Button>
+
+							<Button size={"icon"}>
+								<Play className="w-5 h-5" />
+							</Button>
+							<Button size={"icon"}>
+								<SkipForward className="w-5 h-5" />
+							</Button>
+						</div>
+					</div>
 				</div>
 
-				<section className="relative flex-1 mt-[10px] overflow-hidden">
+				<section className="relative flex-1 mt-[8px] overflow-hidden">
 					<Map
 						currentAirportModal={currentAirportModal}
 						currentFlightModal={currentFlightModal}
@@ -155,7 +181,7 @@ function SimulationPage() {
 							lockInFlight(vuelo);
 							setCurrentFlightModal(vuelo);
 						}}
-                        tiempoActual={currentTime}
+						tiempoActual={currentTime}
 					/>
 				</section>
 			</MainContainer>
