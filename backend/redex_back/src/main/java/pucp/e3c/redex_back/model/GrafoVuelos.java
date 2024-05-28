@@ -330,6 +330,10 @@ public class GrafoVuelos {
 
     }
 
+    public void setVuelosHash(HashMap<Integer, Vuelo> vuelosHash) {
+        this.vuelos_hash = vuelosHash;
+    }
+
     public ArrayList<Vuelo> obtenerVuelosEntreFechas(Ubicacion ciudadOrigen, Date fechaInicio, Date fechaFin) {
         if (grafo.containsKey(ciudadOrigen)) {
             TreeMap<Date, Vuelo> vuelos = grafo.get(ciudadOrigen);

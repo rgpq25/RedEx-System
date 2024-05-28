@@ -21,6 +21,7 @@ import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.VueloService;
+import java.util.Map.Entry;
 
 @Component
 @EnableAsync
@@ -265,6 +266,12 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en generar vuelos");
             return null;
         }
+        HashMap<Integer, Vuelo> nuevoHashMap = new HashMap<>();
+        for (Entry<Integer, Vuelo> entryVuelo : grafoVuelos.getVuelosHash().entrySet()) {
+            Vuelo vuelo = vueloService.register(entryVuelo.getValue());
+            nuevoHashMap.put(vuelo.getId(), vuelo);
+            grafoVuelos.setVuelosHash(nuevoHashMap);
+        }
         int i = 0;
 
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
@@ -470,7 +477,6 @@ public class Algoritmo {
 
             // Asociar cada PlanRuta con sus vuelos
             for (Vuelo vuelo : planRutaNT.getVuelos()) {
-                vuelo = vueloService.register(vuelo);
                 PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
                 planRutaXVuelo.setPlanRuta(planRuta);
                 planRutaXVuelo.setVuelo(vuelo);
