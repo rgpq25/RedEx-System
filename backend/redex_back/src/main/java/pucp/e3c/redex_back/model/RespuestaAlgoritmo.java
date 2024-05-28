@@ -28,6 +28,16 @@ public class RespuestaAlgoritmo {
         this.correcta = true;
     }
 
+    public void filtrarVuelosSinPaquetes(){
+        ArrayList<Vuelo> vuelosFiltrados = new ArrayList<>();
+        for (Vuelo vuelo : vuelos) {
+            if (vuelo.getCapacidadUtilizada()> 0) {
+                vuelosFiltrados.add(vuelo);
+            }
+        }
+        vuelos = vuelosFiltrados;
+    }
+
     public ArrayList<Paquete> getPaquetes() {
         return paquetes;
     }

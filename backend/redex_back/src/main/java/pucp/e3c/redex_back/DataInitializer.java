@@ -219,6 +219,8 @@ public class DataInitializer {
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
                     120, 60);
         });
+        /*algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
+                    120, 60);*/
 
     }
 }
