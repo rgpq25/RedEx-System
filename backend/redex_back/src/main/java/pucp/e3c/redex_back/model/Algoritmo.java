@@ -331,11 +331,12 @@ public class Algoritmo {
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
                     fechaLimiteCalculo);
             int tamanhoPaquetes = paquetesProcesar.size();
-
+            System.out.println("Se filtraron los validos");
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
             List<Paquete> paquetesRest = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
+            System.out.println("Se filtraron los restantes");
 
             if (tamanhoPaquetes == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/estado",
@@ -361,6 +362,7 @@ public class Algoritmo {
 
             // Filtrar paquetes que estan volando
             paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnSimulacion);
+            System.out.println("Se filtraron los paquetes volando");
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -413,20 +415,35 @@ public class Algoritmo {
 
     private ArrayList<Paquete> filtrarPaquetesVolando(ArrayList<Paquete> paquetesProcesar, VueloService vueloService,
             Date tiempoEnSimulacion) {
-        for (Paquete paquete : paquetesProcesar) {
-            if (paquete.planRutaActual == null) {
+        ArrayList<Integer> indicesAEliminar = new ArrayList<>();
+        for (int i = 0; i < paquetesProcesar.size(); i++) {
+            // for (Paquete paquete : paquetesProcesar) {
+
+            if (paquetesProcesar.get(i).planRutaActual == null) {
                 continue;
             }
-            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquetesProcesar.get(i).getId());
+            if (vuelos == null) {
+                System.out.println("El paquete tiene planRuta pero no vuelo");
+            }
             for (Vuelo vuelo : vuelos) {
                 if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
                         && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
-                    paquetesProcesar.remove(paquete);
+                    // System.out.println("Eliminando paquete " + paquetesProcesar.get(i));
+                    indicesAEliminar.add(i);
                     break;
                 }
             }
         }
+        Collections.sort(indicesAEliminar, Collections.reverseOrder());
+        for (int index : indicesAEliminar) {
+            paquetesProcesar.remove(index);
+        }
+
+        // System.out.println("Paquetes eliminados exitosamente.");
+
         return paquetesProcesar;
+
     }
 
     private void enviarRespuesta(RespuestaAlgoritmo respuestaAlgoritmo, Simulacion simulacion, Date fechaLimiteCalculo,
