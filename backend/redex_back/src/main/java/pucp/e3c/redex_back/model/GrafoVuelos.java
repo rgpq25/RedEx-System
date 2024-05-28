@@ -418,6 +418,9 @@ public class GrafoVuelos {
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
             PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService);
+            for (Vuelo vuelo : rutaTomada.getVuelos()) {
+                aeropuertosVisitados.add(vuelo.getPlanVuelo().getCiudadOrigen().getId());
+            }
             PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getAeropuertoActual().getUbicacion(),
                     paquete.getEnvio().getUbicacionDestino(),
                     paquete.getEnvio().getFechaRecepcion(), rutaTomada,
@@ -436,6 +439,7 @@ public class GrafoVuelos {
     }
 
     public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService) {
+
         Ubicacion ubicacionActual = paquete.getAeropuertoActual().getUbicacion();
 
         PlanRutaNT rutaHastaActual = new PlanRutaNT();
@@ -446,11 +450,11 @@ public class GrafoVuelos {
         }
         // Iterar sobre los vuelos en el plan de ruta completo
         for (Vuelo vuelo : vuelosPaquete) {
-            vuelosTomados.add(vuelo); // Agregar vuelo a la lista de vuelos tomados
-            // Verificar si el destino del vuelo es el aeropuerto actual
-            if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(ubicacionActual.getId())) {
-                break; // Si se alcanza el aeropuerto actual, detener la iteración
+
+            if (vuelo.getPlanVuelo().getCiudadOrigen().getId().equals(ubicacionActual.getId())) {
+                break;
             }
+            vuelosTomados.add(vuelo);
         }
 
         rutaHastaActual.setVuelos(vuelosTomados);
