@@ -131,6 +131,7 @@ public class SimulacionController {
     @PutMapping("/reanudar")
     public ResponseEntity<Simulacion> reanudarSimulacion(@RequestBody Simulacion simulacion) {
         simulacion = simulacionService.get(simulacion.getId());
+        simulacion.setMilisegundosPausados(simulacion.getMilisegundosPausados());
         if (simulacion.getEstado() == 2) {
             simulacion.setEstado(0);
             Simulacion updatedSimulacion = simulacionService.update(simulacion);
