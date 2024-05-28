@@ -149,7 +149,11 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, messagingTemplate);
+            respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             i++;
+            System.out.println("");
+            System.out.println("Planificacion finalizada");
+            System.out.println("");
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
