@@ -92,6 +92,55 @@ public class SimulacionController {
         }
     }
 
+    @PutMapping("/detener")
+    public ResponseEntity<Simulacion> detenerSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 0) {
+            simulacion.setEstado(1);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/reiniciar")
+    public ResponseEntity<Simulacion> reiniciarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 1) {
+            simulacion.setEstado(0);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/pausar")
+    public ResponseEntity<Simulacion> pausarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        if (simulacion.getEstado() == 0) {
+            simulacion.setEstado(2);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PutMapping("/reanudar")
+    public ResponseEntity<Simulacion> reanudarSimulacion(@RequestBody Simulacion simulacion) {
+        simulacion = simulacionService.get(simulacion.getId());
+        simulacion.setMilisegundosPausados(simulacion.getMilisegundosPausados());
+        if (simulacion.getEstado() == 2) {
+            simulacion.setEstado(0);
+            Simulacion updatedSimulacion = simulacionService.update(simulacion);
+            return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") int id) {
         simulacionService.delete(id);
