@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-
+import { useState, useEffect } from 'react';
+import { Ubicacion } from "@/lib/types";
 
 import {
   Popover,
@@ -59,13 +60,23 @@ function NavigationButtons({ api }) {
   );
 }
 
+
+
 function RegisterShipmentPage() {
 
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
-  const [progress, setProgress] = React.useState(13)
+  const [progress, setProgress] = React.useState(0)
   const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [locations, setLocations] = useState<Ubicacion[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/back/ubicacion/')
+      .then(response => response.json())
+      .then(data => setLocations(data))
+      .catch(error => console.error('Error fetching locations:', error));
+  }, []);
 
   React.useEffect(() => {
     if (api) {
@@ -82,7 +93,7 @@ function RegisterShipmentPage() {
   
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setProgress(66), 500)
+    const timer = setTimeout(() => setProgress(33), 500)
     return () => clearTimeout(timer)
   }, [])
 
@@ -153,10 +164,9 @@ function RegisterShipmentPage() {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de origen</SelectLabel>
-              <SelectItem value="Lima, Perú">Lima, Perú</SelectItem>
-              <SelectItem value="New York, USA">New York, USA</SelectItem>
-              <SelectItem value="Londres, UK">Londres, UK</SelectItem>
-              <SelectItem value="Cairo, Egipto">Cairo, Egipto</SelectItem>
+              {locations.map((location) => (
+                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -169,10 +179,9 @@ function RegisterShipmentPage() {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de destino</SelectLabel>
-              <SelectItem value="Lima, Perú">Lima, Perú</SelectItem>
-              <SelectItem value="New York, USA">New York, USA</SelectItem>
-              <SelectItem value="Londres, UK">Londres, UK</SelectItem>
-              <SelectItem value="Cairo, Egipto">Cairo, Egipto</SelectItem>
+              {locations.map((location) => (
+                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -217,10 +226,10 @@ function RegisterShipmentPage() {
 
   
 	return (
-
-    <div className="flex flex-col justify-center items-center h-screen space-y-10">
+    
+    <div className="flex flex-col justify-center items-center h-screen space-y-5">
       <div className="progress-container"></div>
-        
+      <Label htmlFor="proceso-registro" className="font-semibold text-base">Proceso de Registro</Label>
       <Progress value={progress} currentStep={current} className="w-[35%]" />
       
       <Carousel setApi={setApi} className="w-full max-w-2x1" > 
