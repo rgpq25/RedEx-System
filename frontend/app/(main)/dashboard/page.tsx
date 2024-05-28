@@ -34,10 +34,10 @@ function ManagePackagesPage() {
 					<div className="flex flex-col items-start justify-center">
 						<h1 className="text-4xl font-semibold font-poppins">Bienvenido, operario</h1>
 						<div className="grid grid-cols-2 gap-[5px] w-[410px] mt-[6px]">
-							<Button disabled>
+							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/register-shipment"}>
 								<PackagePlus className={twStyle} />
 								<p>Registrar envio</p>
-							</Button>
+							</Link>
 							<Button disabled>
 								<FileUp className={twStyle} />
 								<p>Carga de envíos</p>
