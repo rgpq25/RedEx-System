@@ -181,7 +181,7 @@ public class SAImplementation {
                         Funciones.printLineInLog("");
                         Funciones.printLineInLog("");
 
-                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                        Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                         // current.printFlightOcupation("ocupacionVuelos.txt");
                         // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
@@ -194,7 +194,7 @@ public class SAImplementation {
                                 }
                                 vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                                 try {
-                                        vueloService.update(vuelo);
+                                        // vueloService.update(vuelo);
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                                         messagingTemplate.convertAndSend("/algoritmo/estado",

@@ -36,7 +36,7 @@ public class EnvioService {
     SimulacionRepository simulacionRepository;
 
     @Autowired
-    PaqueteRepository PaqueteRepository;
+    PaqueteRepository paqueteRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnvioService.class);
 
@@ -111,7 +111,7 @@ public class EnvioService {
             paquete.setEntregado(false);
             paquete.setEnvio(envio);
             paquete.setSimulacionActual(simulacion);
-            PaqueteRepository.save(paquete);
+            Paquete _paquete = paqueteRepository.save(paquete);
         }
         auxEnvio.setSimulacionActual(simulacion);
         return auxEnvio;

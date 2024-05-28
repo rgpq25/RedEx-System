@@ -48,42 +48,40 @@ public class PaqueteService {
         return differenceInMillis > fiveMinutesInMillis;
     }
 
-    public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete){
+    public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete) {
         try {
-            if(paquete.getPlanRutaActual()==null){
+            if (paquete.getPlanRutaActual() == null) {
                 paquete.setEstado("En almacen origen");
-            }
-            else{
-                ArrayList<Vuelo> vuelos = (ArrayList<Vuelo>)planRutaXVueloService.findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId());
-                if(vuelos == null) paquete.setEstado("En almacen origen");
-                else{
+            } else {
+                ArrayList<Vuelo> vuelos = (ArrayList<Vuelo>) planRutaXVueloService
+                        .findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId());
+                if (vuelos == null)
+                    paquete.setEstado("En almacen origen");
+                else {
                     Date fechaActual = new Date();
-                    int i=0;
+                    int i = 0;
                     for (Vuelo vuelo : vuelos) {
-                        if(vuelo.getFechaSalida().after(fechaActual)){
-                            if(i==0){
+                        if (vuelo.getFechaSalida().after(fechaActual)) {
+                            if (i == 0) {
                                 paquete.setEstado("En almacen origen");
-                            }
-                            else{
+                            } else {
                                 paquete.setEstado("En espera");
                             }
                             break;
-                        }
-                        else if(vuelo.getFechaLlegada().before(fechaActual) && i==vuelos.size()-1){
-                            if(isAfterByMoreThanFiveMinutes(fechaActual, vuelo.getFechaLlegada())){
+                        } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
+                            if (isAfterByMoreThanFiveMinutes(fechaActual, vuelo.getFechaLlegada())) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
-                            }
-                            else{
+                            } else {
                                 paquete.setEstado("En almacen destino");
                             }
                             break;
-                        }
-                        else if(vuelo.getFechaSalida().before(fechaActual) && vuelo.getFechaLlegada().after(fechaActual)){
+                        } else if (vuelo.getFechaSalida().before(fechaActual)
+                                && vuelo.getFechaLlegada().after(fechaActual)) {
                             paquete.setEstado("Volando");
                             break;
                         }
-                        
+
                         i++;
                     }
                 }
@@ -100,7 +98,7 @@ public class PaqueteService {
         try {
             Optional<Paquete> optional_paquete = paqueteRepository.findById(id);
             Paquete paquete = optional_paquete.get();
-            
+
             return optional_paquete.get();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -170,13 +168,8 @@ public class PaqueteService {
     }
 
     public List<Paquete> findBySimulacionId(Integer id) {
-        // return paqueteRepository.findBySimulacionActualId(id);
-        try {
-            return paqueteRepository.findBySimulacionActualId(id);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            return null;
-        }
+        return paqueteRepository.findBySimulacionActualId(id);
+
     }
 
     public Paquete findByPlanRutaId(Integer id) {
@@ -202,7 +195,7 @@ public class PaqueteService {
         }
     }
 
-    public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados(){
+    public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados() {
         try {
             return paqueteRepository.findPaquetesSinSimulacionYNoEntregados();
         } catch (Exception e) {
@@ -211,7 +204,7 @@ public class PaqueteService {
         }
     }
 
-    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte){
+    public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte) {
         try {
             return paqueteRepository.findPaquetesWithoutPlanRuta(idUbicacionOrigen, fechaCorte);
         } catch (Exception e) {

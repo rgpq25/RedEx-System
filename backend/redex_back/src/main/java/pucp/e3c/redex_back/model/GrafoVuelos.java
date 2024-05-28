@@ -15,7 +15,9 @@ public class GrafoVuelos {
     private HashMap<Ubicacion, TreeMap<Date, Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
+    private Date fecha_fin;
     private HashMap<Integer, Vuelo> vuelos_hash = new HashMap<>();
+    private int sgteId = 0;
 
     public HashMap<Integer, Vuelo> getVuelosHash() {
         return vuelos_hash;
@@ -23,10 +25,16 @@ public class GrafoVuelos {
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, Date inicio, Date fin) {
         fecha_inicio = inicio;
+        fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        int i = 0;
         for (Vuelo vuelo : vuelos) {
+            vuelo.setId(i);
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
+            i++;
         }
+        this.sgteId = i;
     }
 
     public Date hora_local_a_fecha_generica(Date fechaGMT0, String hora_local, int diferencia_horaria) {
@@ -79,13 +87,35 @@ public class GrafoVuelos {
         Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         fecha_inicio = inicio;
+        fecha_fin = fin;
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        int i = 0;
         for (Vuelo vuelo : vuelos) {
+            vuelo.setId(i);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
+            i++;
         }
+        this.sgteId = i;
         System.out.println("Vuelos generados: " + vuelos.size());
+
+    }
+
+    public void agregarVuelosHasta(ArrayList<PlanVuelo> planV, Date nuevaFechaFin) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.fecha_fin);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date tempInicio = cal.getTime();
+
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
+        for (Vuelo vuelo : vuelos) {
+            vuelo.setId(sgteId);
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+            sgteId++;
+        }
+        fecha_fin = nuevaFechaFin;
 
     }
 
