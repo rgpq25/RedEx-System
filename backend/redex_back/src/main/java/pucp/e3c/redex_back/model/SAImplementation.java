@@ -112,19 +112,19 @@ public class SAImplementation {
                         startTime = System.nanoTime();
 
                         //print current.paquetes.size
-                        System.out.println("\nPaquetes size: " + current.paquetes.size());
+                        //System.out.println("\nPaquetes size: " + current.paquetes.size());
                         //print windowSize
-                        System.out.println("Window size: " + windowSize +"\n");
+                        //System.out.println("Window size: " + windowSize +"\n");
 
                         while (temperature > 1) {
-                                System.out.println("\nIteracion en loop\n");
+                                //System.out.println("\nIteracion en loop\n");
                                 ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
                                 for (int i = 0; i < neighbourCount; i++) {
                                         neighbours.add(
                                                         current.generateNeighbour(windowSize));
-                                        System.out.println("Vecino generado");        
+                                        //System.out.println("Vecino generado");        
                                 }
-                                System.out.println("\nNeighbours iterados\n");
+                                //System.out.println("\nNeighbours iterados\n");
                                 int bestNeighbourIndex = 0;
                                 double bestNeighbourCost = Double.MAX_VALUE;
                                 for (int i = 0; i < neighbours.size(); i++) {
@@ -135,7 +135,7 @@ public class SAImplementation {
                                                 bestNeighbourIndex = i;
                                         }
                                 }
-                                System.out.println("\nBest neighbour\n");
+                                //System.out.println("\nBest neighbour\n");
                                 double costDifference = bestNeighbourCost - current.getSolutionCost();
 
                                 if (costDifference < 0 ||
