@@ -40,6 +40,7 @@ function SimulationPage() {
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
+	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -97,6 +98,7 @@ function SimulationPage() {
 		};
 
 		client.activate();
+		setClient(client);
 
 		//Call api to run algorithm
 		await api(
@@ -109,7 +111,16 @@ function SimulationPage() {
 				console.log(error);
 			}
 		);
+
 	};
+
+	useEffect(() => {
+		return () => {
+			if (client) {
+				client.deactivate();
+			}
+		};
+	},[])
 
 	return (
 		<>
@@ -131,16 +142,16 @@ function SimulationPage() {
 							<Button size={"icon"}>
 								<CircleStop className="w-5 h-5" />
 							</Button>
-							<Button size={"icon"}>
+							{/* <Button size={"icon"}>
 								<SkipBack className="w-5 h-5" />
-							</Button>
+							</Button> */}
 
 							<Button size={"icon"}>
 								<Play className="w-5 h-5" />
 							</Button>
-							<Button size={"icon"}>
+							{/* <Button size={"icon"}>
 								<SkipForward className="w-5 h-5" />
-							</Button>
+							</Button> */}
 						</div>
 					</div>
 				</div>

@@ -39,6 +39,7 @@ function DailyOperationsPage() {
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -81,6 +82,7 @@ function DailyOperationsPage() {
 			};
 
 			client.activate();
+			setClient(client)
 
 			await api(
 				"GET",
@@ -101,14 +103,18 @@ function DailyOperationsPage() {
 					console.log(error);
 				}
 			);
-
-			return () => {
-				client.deactivate();
-			};
 		}
 
 		getData();
 	}, []);
+
+	useEffect(()=>{
+		return () => {
+			if (client) {
+				client.deactivate();
+			}
+		}
+	},[])
 
 	return (
 		<MainContainer>

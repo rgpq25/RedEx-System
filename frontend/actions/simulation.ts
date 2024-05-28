@@ -70,7 +70,6 @@ export const startWeeklySimulation = async (enviosFile: File, startDate: Date): 
 			);
 
 			conte++;
-			if (conte === 500) break;
 		}
 	} catch (error) {
 		console.error("Error processing file:", error);
