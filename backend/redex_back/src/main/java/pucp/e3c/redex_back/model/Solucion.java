@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import pucp.e3c.redex_back.service.VueloService;
+
 public class Solucion {
     public ArrayList<Paquete> paquetes;
     public ArrayList<PlanRutaNT> rutas;
@@ -63,7 +65,7 @@ public class Solucion {
         this.grafoVuelos = grafoVuelos;
     }
 
-    public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas) {
+    public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService) {
         // We do 5 attempts to try to initialize the solution
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
@@ -76,7 +78,8 @@ public class Solucion {
                 while (true) {
                     ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                     tempPaquetesArray.add(paquetes.get(i));
-                    ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray);
+                    ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
+                            vueloService);
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                     if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
@@ -107,7 +110,7 @@ public class Solucion {
 
     }
 
-    public void initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas) {
+    public void initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService) {
         // We do 5 attempts to try to initialize the solution
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
@@ -117,7 +120,8 @@ public class Solucion {
             for (int i = 0; i < paquetes.size(); i++) {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(paquetes.get(i));
-                ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray);
+                ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
+                        vueloService);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // this.rutas.add(av_rutas.get(i));
@@ -142,7 +146,7 @@ public class Solucion {
 
     }
 
-    public Solucion generateNeighbour(int windowSize) {
+    public Solucion generateNeighbour(int windowSize, VueloService vueloService) {
 
         Solucion neighbour = new Solucion(
                 new ArrayList<>(this.paquetes),
@@ -183,7 +187,8 @@ public class Solucion {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(randomPackages.get(j));
 
-                ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray);
+                ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
+                        vueloService);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // check if origin and destiny is different
