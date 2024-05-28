@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Icon } from "leaflet";
 import { useState } from "react";
 // import { Marker } from "react-simple-maps";
-import { Marker } from "react-leaflet";
+import { Marker, Tooltip } from "react-leaflet";
 
 interface PlaneMarkerProps {
 	vuelo: Vuelo;
@@ -36,68 +36,44 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	const dotPositions = getTrayectory(vuelo);
 
 	const airplaneIcon = new Icon({
-		iconUrl: "/green-airplane.png",
-		iconSize: [10, 10],
+		iconUrl: "/green-airplane_centered.png",
+		iconSize: [30, 30],
 		//iconAnchor: [15, 15],
+	});
+
+	const trackIcon = new Icon({
+		iconUrl: "/tracking-dots.png",
+		iconSize: [20, 20],
 	});
 
 	return (
 		<>
-			{isHovering && dotPositions.map((dotPosition, idx) => (
-				<Marker
-					key={idx}
-					position={[dotPosition[1], dotPosition[0]] as [number, number]}
-					// className={cn(
-					// 	"transition-opacity duration-75 ease-in",
-					// 	isHovering === true ? "opacity-100" : "opacity-0"
-					// )}
-					icon={airplaneIcon}
-				>
-				</Marker>
-			))}
+			{isHovering &&
+				dotPositions.map((dotPosition, idx) => (
+					<Marker
+						key={idx}
+						position={[dotPosition[1], dotPosition[0]] as [number, number]}
+						icon={trackIcon}
+						zIndexOffset={10}
+						autoPan={false}
+					/>
+				))}
 			<Marker
 				position={[coordinates[1], coordinates[0]] as [number, number]}
 				icon={airplaneIcon}
 				eventHandlers={{
 					click: () => onClick(vuelo),
-					mouseover: () => setIsHovering(true),
-					mouseout: () => setIsHovering(false),
+					mouseover: () => {
+						console.log("Setting mouse over");
+						setIsHovering(true);
+					},
+					mouseout: () => {
+						console.log("Setting mouse out");
+						setIsHovering(false);
+					},
 				}}
-				//onClick={() => onClick(vuelo)}
-				// onMouseEnter={() => {
-				// 	setIsHovering(true);
-				// }}
-				// onMouseLeave={() => {
-				// 	setIsHovering(false);
-				// }}
-				//z={1000}
-			>
-				{/* <Plane
-					capacity={vuelo.capacidadUtilizada}
-					originCoordinate={
-						[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
-							number,
-							number
-						]
-					}
-					destinationCoordinate={
-						[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [
-							number,
-							number
-						]
-					}
-				/> */}
-				{isHovering && (
-					<>
-						<p
-							className="text-[5px] font-poppins fill-white bg-black"
-						>
-							{/* {((vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100).toFixed(2)}% */}
-							{vuelo.capacidadUtilizada + " / " + vuelo.planVuelo.capacidadMaxima}
-						</p>
-					</>
-				)}
-			</Marker>
+				zIndexOffset={ 50}
+			></Marker>
 		</>
 	);
 }
