@@ -267,8 +267,8 @@ public class Algoritmo {
             return null;
         }
         HashMap<Integer, Vuelo> nuevoHashMap = new HashMap<>();
-        for (Entry<Integer, Vuelo> entryVuelo : grafoVuelos.getVuelosHash().entrySet()) {
-            Vuelo vuelo = vueloService.register(entryVuelo.getValue());
+        for (Vuelo vuelo : grafoVuelos.getVuelosHash().values()) {
+            vuelo = vueloService.register(vuelo);
             nuevoHashMap.put(vuelo.getId(), vuelo);
             grafoVuelos.setVuelosHash(nuevoHashMap);
         }
