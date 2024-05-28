@@ -14,6 +14,7 @@ import useApi from "@/components/hooks/useApi";
 import { toast } from "sonner";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
+import useMapModals from "@/components/hooks/useMapModals";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -32,12 +33,12 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function DailyOperationsPage() {
 	const attributes = useMapZoom();
+	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
+	const { openFlightModal, openAirportModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
-	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
-	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -129,23 +130,21 @@ function DailyOperationsPage() {
 					}}
 					onClicksAeropuerto={{
 						onClickLocation: (aeropuerto: Aeropuerto) => {
-							zoomToAirport(aeropuerto)
+							zoomToAirport(aeropuerto);
 						},
 						onClickInfo: (aeropuerto: Aeropuerto) => {
-							setCurrentAirportModal(aeropuerto);
+							openAirportModal(aeropuerto);
 						},
 					}}
 					onClickVuelo={(vuelo: Vuelo) => {
 						lockToFlight(vuelo);
-						setCurrentFlightModal(vuelo);
+						openFlightModal(vuelo);
 					}}
 					tiempoActual={currentTime}
 				/>
 				<Map
-					currentAirportModal={currentAirportModal}
-					currentFlightModal={currentFlightModal}
-					setCurrentAirportModal={setCurrentAirportModal}
-					setCurrentFlightModal={setCurrentFlightModal}
+					isSimulation={false}
+					mapModalAttributes={mapModalAttributes}
 					attributes={attributes}
 					className="h-full w-full"
 					airports={airports}

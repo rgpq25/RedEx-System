@@ -17,6 +17,7 @@ import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { CircleStop, Play, SkipBack, SkipForward } from "lucide-react";
+import useMapModals from "@/components/hooks/useMapModals";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -31,12 +32,11 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function SimulationPage() {
 	const attributes = useMapZoom();
+	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
+	const { openFlightModal, openAirportModal } = mapModalAttributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
-	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
-	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
-
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
@@ -147,10 +147,8 @@ function SimulationPage() {
 
 				<section className="relative flex-1 mt-[8px] overflow-hidden">
 					<Map
-						currentAirportModal={currentAirportModal}
-						currentFlightModal={currentFlightModal}
-						setCurrentAirportModal={setCurrentAirportModal}
-						setCurrentFlightModal={setCurrentFlightModal}
+						isSimulation={true}
+						mapModalAttributes={mapModalAttributes}
 						attributes={attributes}
 						className="h-full w-full"
 						airports={airports}
@@ -169,12 +167,12 @@ function SimulationPage() {
 								zoomToAirport(aeropuerto)
 							},
 							onClickInfo: (aeropuerto: Aeropuerto) => {
-								setCurrentAirportModal(aeropuerto);
+								openAirportModal(aeropuerto);
 							},
 						}}
 						onClickVuelo={(vuelo: Vuelo) => {
 							lockToFlight(vuelo);
-							setCurrentFlightModal(vuelo);
+							openFlightModal(vuelo);
 						}}
 						tiempoActual={currentTime}
 					/>

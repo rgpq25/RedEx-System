@@ -4,11 +4,8 @@ import { Aeropuerto, Vuelo } from "@/lib/types";
 import { getFlightPosition } from "@/lib/map-utils";
 import { Map as MapType } from "leaflet";
 
-const useMapZoom = (
-	initialZoom = 1,
-	initialLongitude = 0,
-	initialLatitude = 0
-): {
+
+export type MapZoomAttributes = {
 	currentTime: Date | undefined;
 	setCurrentTime: (time: Date, fechaInicioSistema: Date, fechaInicioSim: Date, multiplicadorTiempo: number) => void;
 	setCurrentTimeNoSimulation: () => void;
@@ -16,7 +13,13 @@ const useMapZoom = (
 	setMap: (map: MapType) => void;
 	zoomToAirport: (airport: Aeropuerto) => void;
 	lockToFlight: (flight: Vuelo) => void;
-} => {
+}
+
+const useMapZoom = (
+	initialZoom = 1,
+	initialLongitude = 0,
+	initialLatitude = 0
+): MapZoomAttributes => {
 	const zoomFactor = 7;
 	const curInterval = useRef<NodeJS.Timeout | null>(null);
 

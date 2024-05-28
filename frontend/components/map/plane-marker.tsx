@@ -43,18 +43,18 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 
 	return (
 		<>
-			{/* {dotPositions.map((dotPosition, idx) => (
+			{isHovering && dotPositions.map((dotPosition, idx) => (
 				<Marker
 					key={idx}
-					coordinates={dotPosition as [number, number]}
-					className={cn(
-						"transition-opacity duration-75 ease-in",
-						isHovering === true ? "opacity-100" : "opacity-0"
-					)}
+					position={[dotPosition[1], dotPosition[0]] as [number, number]}
+					// className={cn(
+					// 	"transition-opacity duration-75 ease-in",
+					// 	isHovering === true ? "opacity-100" : "opacity-0"
+					// )}
+					icon={airplaneIcon}
 				>
-					<circle r={1} className="fill-red-600" />
 				</Marker>
-			))} */}
+			))}
 			<Marker
 				position={[coordinates[1], coordinates[0]] as [number, number]}
 				icon={airplaneIcon}
