@@ -11,7 +11,7 @@ import { Calendar as CalendarIcon } from "lucide-react"
 import { useState, useEffect } from 'react';
 import { Ubicacion , Envio} from "@/lib/types";
 import { formatISO } from "date-fns"
-
+import { api } from "@/lib/api";
 
 import {
   Popover,
@@ -69,7 +69,7 @@ function NavigationButtons({ api, currentStep, handleConfirm }) {
 
 function RegisterShipmentPage() {
 
-  const [api, setApi] = React.useState<CarouselApi>()
+  const [carouselApi, setCarouselApi] = React.useState<CarouselApi>();
   const [currentStep, setCurrentStep] = React.useState(0);
   const [progress, setProgress] = React.useState(0)
   const [date, setDate] = useState(new Date());
@@ -87,23 +87,23 @@ function RegisterShipmentPage() {
   }, []);
 
   useEffect(() => {
-    if (api) {
+    if (carouselApi) {
       const updateProgressAndStep = () => {
-        const newStep = api.selectedScrollSnap();
+        const newStep = carouselApi.selectedScrollSnap();
         setCurrentStep(newStep );
         setProgress((newStep + 1) / 3 * 100); // Asume que hay 3 pasos
       };
   
-      api.on("select", updateProgressAndStep);
-      return () => api.off("select", updateProgressAndStep);
+      carouselApi.on("select", updateProgressAndStep);
+      return () => carouselApi.off("select", updateProgressAndStep);
     }
-  }, [api]);
+  }, [carouselApi]);
 
   useEffect(() => {
     setProgress(33.33); 
   }, []);
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     const formattedDate = formatISO(date);
     const dataToSend = {
       ubicacionOrigen: { id: originLocationId },
@@ -116,26 +116,17 @@ function RegisterShipmentPage() {
       simulacionActual: null
     };
 
-    fetch('http://localhost:8080/back/envio/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(dataToSend),
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Registro completado:', data);
-    })
-    .catch(error => {
-      console.error('Error registrando el envío:', error);
-    });
+    api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+  };
+
+  const handleSuccess = (data) => {
+    console.log('Registro completado:', data);
+    alert("Registro completado con éxito!");
+  };
+
+  const handleError = (error) => {
+    console.error('Error registrando el envío:', error);
+    alert("Error en el registro: " + error);
   };
   
 
@@ -274,7 +265,7 @@ function RegisterShipmentPage() {
       <Label htmlFor="proceso-registro" className="font-semibold text-base">Proceso de Registro</Label>
       <Progress value={progress} currentStep={currentStep} className="w-[35%]" />
       
-      <Carousel setApi={setApi} className="w-full max-w-2x1" > 
+      <Carousel setApi={setCarouselApi} className="w-full max-w-2x1" > 
         <CarouselContent>
           <CarouselItem key="sender" className="flex justify-center">
             <Card className="w-[1000px] h-[580px]">
@@ -293,7 +284,7 @@ function RegisterShipmentPage() {
           </CarouselItem>
         </CarouselContent>  
       </Carousel>
-      {api && <NavigationButtons api={api} currentStep={currentStep} handleConfirm={handleConfirm} />}
+      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} handleConfirm={handleConfirm} />}
 
     </div>
   );
