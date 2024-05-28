@@ -573,22 +573,32 @@ function Aeropuertos({
                             ))}
                             <Separator />
                             <Small>Zona horaria:</Small>
-                            <Select key={gmtFilter} onValueChange={(e) => setGmtFilter(e as string)} value={gmtFilter} defaultValue={gmtFilter}>
+                            <Select
+                                key={gmtFilter}
+                                onValueChange={(e) => setGmtFilter(e as string)}
+                                value={gmtFilter}
+                                defaultValue={gmtFilter}
+                            >
                                 <SelectTrigger className='w-full'>
                                     <SelectValue placeholder={gmtFilter || "GMT"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {ubicaciones.reduce((acc, ubicacion) => {
-                                        if (!acc.includes(ubicacion.zonaHoraria)) {
-                                            acc.push(ubicacion.zonaHoraria);
-                                        }
-                                        return acc;
-                                    }
-                                    , [] as string[]).sort( (a, b) => a.localeCompare(b)).map((zonaHoraria) => (
-                                        <SelectItem key={zonaHoraria} value={zonaHoraria}>
-                                            {zonaHoraria}
-                                        </SelectItem>
-                                    ))}
+                                    {ubicaciones
+                                        .reduce((acc, ubicacion) => {
+                                            if (!acc.includes(ubicacion.zonaHoraria)) {
+                                                acc.push(ubicacion.zonaHoraria);
+                                            }
+                                            return acc;
+                                        }, [] as string[])
+                                        .sort((a, b) => a.localeCompare(b))
+                                        .map((zonaHoraria) => (
+                                            <SelectItem
+                                                key={zonaHoraria}
+                                                value={zonaHoraria}
+                                            >
+                                                {zonaHoraria}
+                                            </SelectItem>
+                                        ))}
                                 </SelectContent>
                             </Select>
                             <Separator />
@@ -610,7 +620,17 @@ function Aeropuertos({
                 </section>
             </>
         );
-    }, [search, onSearchChange, continentesFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad, onClearFilters, ubicaciones, gmtFilter]);
+    }, [
+        search,
+        onSearchChange,
+        continentesFilter,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+        onClearFilters,
+        ubicaciones,
+        gmtFilter,
+    ]);
 
     return (
         <>
@@ -657,8 +677,11 @@ function Vuelos({
 
     const filteredItems = useMemo(() => {
         let filteredVuelos = vuelos;
+        console.log("Tiempo actual: ", tiempoActual);
         if (tiempoActual) {
-            filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.fechaSalida.getTime() <= tiempoActual.getTime());
+            filteredVuelos = filteredVuelos?.filter(
+                (vuelo) => vuelo.fechaSalida.getTime() <= tiempoActual.getTime() && vuelo.fechaLlegada.getTime() >= tiempoActual.getTime()
+            );
         }
         if (continentesFilter) {
             filteredVuelos = filteredVuelos?.filter((vuelo) => {
@@ -816,7 +839,7 @@ function Vuelos({
                                     <SelectValue placeholder={paisOrigenFilter || "Pais de origen"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {ubicaciones.map((ubicacion) => (
+                                    {ubicaciones.sort((a, b) => a.pais.localeCompare(b.pais)).map((ubicacion) => (
                                         <SelectItem
                                             key={ubicacion.pais}
                                             value={ubicacion.pais}
@@ -837,7 +860,7 @@ function Vuelos({
                                     <SelectValue placeholder={paisDestinoFilter || "Pais de destino"} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {ubicaciones.map((ubicacion) => (
+                                    {ubicaciones.sort((a, b) => a.pais.localeCompare(b.pais)).map((ubicacion) => (
                                         <SelectItem
                                             key={ubicacion.pais}
                                             value={ubicacion.pais}
