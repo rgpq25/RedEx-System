@@ -2,8 +2,10 @@
 import { calculateAngle, getFlightPosition, getTrayectory } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Icon } from "leaflet";
 import { useState } from "react";
-import { Marker } from "react-simple-maps";
+// import { Marker } from "react-simple-maps";
+import { Marker } from "react-leaflet";
 
 interface PlaneMarkerProps {
 	vuelo: Vuelo;
@@ -33,9 +35,15 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 
 	const dotPositions = getTrayectory(vuelo);
 
+	const airplaneIcon = new Icon({
+		iconUrl: "/green-airplane.png",
+		iconSize: [10, 10],
+		//iconAnchor: [15, 15],
+	});
+
 	return (
 		<>
-			{dotPositions.map((dotPosition, idx) => (
+			{/* {dotPositions.map((dotPosition, idx) => (
 				<Marker
 					key={idx}
 					coordinates={dotPosition as [number, number]}
@@ -46,19 +54,25 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				>
 					<circle r={1} className="fill-red-600" />
 				</Marker>
-			))}
+			))} */}
 			<Marker
-				coordinates={coordinates as [number, number]}
-				onClick={() => onClick(vuelo)}
-				onMouseEnter={() => {
-					setIsHovering(true);
+				position={[coordinates[1], coordinates[0]] as [number, number]}
+				icon={airplaneIcon}
+				eventHandlers={{
+					click: () => onClick(vuelo),
+					mouseover: () => setIsHovering(true),
+					mouseout: () => setIsHovering(false),
 				}}
-				onMouseLeave={() => {
-					setIsHovering(false);
-				}}
+				//onClick={() => onClick(vuelo)}
+				// onMouseEnter={() => {
+				// 	setIsHovering(true);
+				// }}
+				// onMouseLeave={() => {
+				// 	setIsHovering(false);
+				// }}
 				//z={1000}
 			>
-				<Plane
+				{/* <Plane
 					capacity={vuelo.capacidadUtilizada}
 					originCoordinate={
 						[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
@@ -72,29 +86,15 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 							number
 						]
 					}
-				/>
+				/> */}
 				{isHovering && (
 					<>
-						<rect
-							x={-10}
-							y={-18.4}
-							width="20"
-							height="9"
-							fill="black"
-							stroke="white"
-							strokeWidth="1"
-							rx={2}
-							ry={2}
-						/>
-						<text
-							textAnchor="middle"
-							y={-12}
-							x={0.5}
+						<p
 							className="text-[5px] font-poppins fill-white bg-black"
 						>
 							{/* {((vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100).toFixed(2)}% */}
 							{vuelo.capacidadUtilizada + " / " + vuelo.planVuelo.capacidadMaxima}
-						</text>
+						</p>
 					</>
 				)}
 			</Marker>
@@ -112,7 +112,7 @@ function Plane({
 	originCoordinate: [number, number];
 	destinationCoordinate: [number, number];
 }) {
-	const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
+	//const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
 	const [color, setColor] = useState(mapCapacity(capacity));
 
 	function mapCapacity(_capacity: number) {
@@ -154,7 +154,7 @@ function Plane({
 					transform="scale(0.1)"
 				/>
 			</g> */}
-			<circle r={1} fill={color} className=""/>
+			<circle r={30} fill={color} className="" />
 			<circle r={5} className="fill-transparent" />
 		</>
 	);

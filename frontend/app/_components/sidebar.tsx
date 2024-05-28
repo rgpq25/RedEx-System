@@ -86,7 +86,7 @@ export default function Sidebar({
             <Button
                 onClick={() => setVisible(true)}
                 className={cn(
-                    "absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[10]",
+                    "absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[20]",
                     visible ? "opacity-0" : "opacity-100"
                 )}
             >

@@ -31,8 +31,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function SimulationPage() {
 	const attributes = useMapZoom();
-	const { currentTime, setCurrentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } =
-		attributes;
+	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
@@ -163,22 +162,18 @@ function SimulationPage() {
 						vuelos={flights}
 						aeropuertos={airports}
 						onClickEnvio={(envio: Envio) => {
-							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
+							toast.error("Pendiente de implementar");
 						}}
 						onClicksAeropuerto={{
 							onClickLocation: (aeropuerto: Aeropuerto) => {
-								unlockFlight();
-								zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [
-									number,
-									number
-								]);
+								zoomToAirport(aeropuerto)
 							},
 							onClickInfo: (aeropuerto: Aeropuerto) => {
 								setCurrentAirportModal(aeropuerto);
 							},
 						}}
-						onClickVuelo={(vuelo) => {
-							lockInFlight(vuelo);
+						onClickVuelo={(vuelo: Vuelo) => {
+							lockToFlight(vuelo);
 							setCurrentFlightModal(vuelo);
 						}}
 						tiempoActual={currentTime}

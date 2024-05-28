@@ -32,7 +32,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function DailyOperationsPage() {
 	const attributes = useMapZoom();
-	const { centerLatitude, centerLongitude, currentTime, setCurrentTime, setCurrentTimeNoSimulation, lockInFlight, unlockFlight, zoom, zoomIn } = attributes;
+	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
@@ -129,17 +129,17 @@ function DailyOperationsPage() {
 					}}
 					onClicksAeropuerto={{
 						onClickLocation: (aeropuerto: Aeropuerto) => {
-							unlockFlight();
-							zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [number, number]);
+							zoomToAirport(aeropuerto)
 						},
 						onClickInfo: (aeropuerto: Aeropuerto) => {
 							setCurrentAirportModal(aeropuerto);
 						},
 					}}
 					onClickVuelo={(vuelo: Vuelo) => {
-						lockInFlight(vuelo);
+						lockToFlight(vuelo);
 						setCurrentFlightModal(vuelo);
 					}}
+					tiempoActual={currentTime}
 				/>
 				<Map
 					currentAirportModal={currentAirportModal}

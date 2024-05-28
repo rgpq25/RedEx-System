@@ -21,8 +21,13 @@ function AirportModal({ isOpen, setIsOpen, aeropuerto, simulacion }: AirportModa
 
 	useEffect(() => {
 		async function getAirportShipments() {
-			if(aeropuerto === undefined || simulacion === undefined){
-				toast.error("No se encontró aeropuerto o simulación");
+			if(aeropuerto === undefined){
+				toast.error("No se encontró aeropuerto");
+				return;
+			}
+
+			if(simulacion === undefined){
+				toast.error("No se encontró simulación");
 				return;
 			}
 			

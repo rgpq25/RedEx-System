@@ -1,7 +1,8 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
 import { cn } from "@/lib/utils";
-import React, { useCallback, useState } from "react";
+import React, { LegacyRef, useCallback, useEffect, useMemo, useState } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { Tooltip } from "react-tooltip";
 import { AnimationObject } from "../hooks/useAnimation";
@@ -10,6 +11,10 @@ import AirportMarker from "./airport-marker";
 import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
+
+import { MapContainer, TileLayer, Popup, Marker, Circle } from "react-leaflet";
+import { Map as MapType } from "leaflet";
+import { getFlightPosition } from "@/lib/map-utils";
 
 //TODO: Download and store on local repository, currently depends on third party URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -26,12 +31,17 @@ interface MapProps {
 	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
 	attributes: {
 		currentTime: Date | undefined;
-		zoom: AnimationObject;
-		centerLongitude: AnimationObject;
-		centerLatitude: AnimationObject;
-		zoomIn: (coordinates: [number, number]) => void;
-		lockInFlight: (vuelo: Vuelo) => void;
-		unlockFlight: () => void;
+		setCurrentTime: (
+			time: Date,
+			fechaInicioSistema: Date,
+			fechaInicioSim: Date,
+			multiplicadorTiempo: number
+		) => void;
+		setCurrentTimeNoSimulation: () => void;
+		map: MapType | null;
+		setMap: (map: MapType) => void;
+		zoomToAirport: (airport: Aeropuerto) => void;
+		lockToFlight: (flight: Vuelo) => void;
 	};
 	airports: Aeropuerto[];
 	flights: Vuelo[];
@@ -50,30 +60,72 @@ function Map({
 	simulation,
 	className,
 }: MapProps) {
-	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+	const {
+		currentTime,
+		map,
+		setMap,
+		zoomToAirport,
+		lockToFlight,
+	} = attributes;
 
-	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
-		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
-	}
+	const displayMap = useMemo(
+		() => (
+			<MapContainer
+				center={[0, 0]}
+				zoom={3}
+				scrollWheelZoom={true}
+				maxZoom={8}
+				minZoom={3}
+				className="z-[10]"
+				ref={setMap as LegacyRef<MapType>}
+			>
+				<TileLayer
+					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+					//url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"	//Clear less realistic
+					//url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" //Realistic
+					url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" //Light clear map
+					//url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"		//Dark map
+				/>
 
-	const [content, setContent] = useState<string>("");
+				{map &&
+					airports.map((aeropuerto, idx) => {
+						const latitud = aeropuerto.ubicacion.latitud;
+						const longitud = aeropuerto.ubicacion.longitud;
 
-	const handleMoveEnd = useCallback(
-		(position: Position) => {
-			zoom.setValueNoAnimation(position.zoom);
-			centerLongitude.setValueNoAnimation(position.coordinates[0]);
-			centerLatitude.setValueNoAnimation(position.coordinates[1]);
-			unlockFlight();
-		},
-		[zoom, centerLongitude, centerLatitude, unlockFlight]
+						return (
+							<AirportMarker
+								key={aeropuerto.id}
+								aeropuerto={aeropuerto}
+								coordinates={[latitud, longitud] as [number, number]}
+								onClick={(coordinates: [number, number]) => {
+									setCurrentAirportModal(aeropuerto);
+									zoomToAirport(aeropuerto);
+								}}
+							/>
+						);
+					})}
+
+				{map &&
+					currentTime &&
+					flights
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+						.map((vuelo, idx) => {
+							return (
+								<PlaneMarker
+									key={idx}
+									currentTime={currentTime}
+									vuelo={vuelo}
+									onClick={(vuelo: Vuelo) => {
+										setCurrentFlightModal(vuelo);
+										lockToFlight(vuelo);
+									}}
+								/>
+							);
+						})}
+			</MapContainer>
+		),
+		[currentTime, flights, airports]
 	);
-
-	const handleMoveStart = useCallback(() => {
-		zoom.cancelAnimation();
-		centerLongitude.cancelAnimation();
-		centerLatitude.cancelAnimation();
-		unlockFlight();
-	}, [zoom, centerLongitude, centerLatitude]);
 
 	return (
 		<>
@@ -89,80 +141,13 @@ function Map({
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
 			/>
-			{/* <Tooltip
-				id="my-tooltip"
-				className="border border-white z-[100]"
-				classNameArrow="border-b-[1px] border-r-[1px] border-white"
-			>
-				{content}
-			</Tooltip> */}
 			<div
-				className={cn("border rounded-xl flex justify-center items-center flex-1  overflow-hidden", className)}
+				className={cn(
+					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden z-[10]",
+					className
+				)}
 			>
-				{/* <Button size="icon" className="absolute top-4 right-4">
-					<Settings className="w-5 h-5"/>
-				</Button> */}
-				<ComposableMap className="" projection={"geoMercator"} min={-5}>
-					<ZoomableGroup
-						zoom={zoom.value}
-						center={[centerLongitude.value, centerLatitude.value]}
-						onMoveEnd={handleMoveEnd}
-						onMoveStart={handleMoveStart}
-					>
-						<Geographies geography={geoUrl}>
-							{({ geographies }) =>
-								geographies.map((geo) => (
-									<Geography
-										data-tooltip-id="my-tooltip"
-										key={geo.rsmKey}
-										geography={geo}
-										// onMouseEnter={() => {
-										// 	const { name } = geo.properties;
-										// 	setContent(name);
-										// }}
-										// onMouseLeave={() => {
-										// 	setContent("");
-										// }}
-										className="hover:fill-gray-600 fill-slate-400 transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
-									/>
-								))
-							}
-						</Geographies>
-
-						{airports.map((aeropuerto, idx) => {
-							const latitud = aeropuerto.ubicacion.latitud;
-							const longitud = aeropuerto.ubicacion.longitud;
-
-							return (
-								<AirportMarker
-									key={idx}
-									aeropuerto={aeropuerto}
-									coordinates={[longitud, latitud] as [number, number]}
-									onClick={(coordinates: [number, number]) => {
-										setCurrentAirportModal(aeropuerto);
-										zoomIn(coordinates);
-									}}
-								/>
-							);
-						})}
-						{currentTime &&
-							flights
-								.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
-								.map((vuelo, idx) => {
-									return (
-										<PlaneMarker
-											key={idx}
-											currentTime={currentTime}
-											vuelo={vuelo}
-											onClick={(vuelo: Vuelo) => {
-												setCurrentFlightModal(vuelo);
-												lockInFlight(vuelo);
-											}}
-										/>
-									);
-								})}
-					</ZoomableGroup>
-				</ComposableMap>
+				{displayMap}
 			</div>
 		</>
 	);
