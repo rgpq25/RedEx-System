@@ -1,7 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils";
 import * as React from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";  
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,7 +9,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { useState, useEffect } from 'react';
-import { Ubicacion } from "@/lib/types";
+import { Ubicacion , Envio} from "@/lib/types";
+import { formatISO } from "date-fns"
+
 
 import {
   Popover,
@@ -41,7 +42,7 @@ import { Progress } from "@/components/ui/progress"
 
 const twStyle = "w-5 h-5";
 
-function NavigationButtons({ api }) {
+function NavigationButtons({ api, currentStep, handleConfirm }) {
   return (
     <div className="flex justify-center items-center space-x-4 absolute bottom-40 w-full">
       <Button 
@@ -52,24 +53,31 @@ function NavigationButtons({ api }) {
       </Button>
       <Button 
         className="bg-red-800 text-white px-8 py-6 rounded shadow"
-        onClick={() => api.scrollNext()}
+        onClick={() => {
+          if (currentStep === 2) {
+            handleConfirm();
+          } else {
+            api.scrollNext();
+          }
+        }}
       >
-        Confirmar
+        {currentStep === 2 ? "Confirmar" : "Siguiente"}
       </Button>
     </div>
   );
 }
 
-
-
 function RegisterShipmentPage() {
 
   const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  const [currentStep, setCurrentStep] = React.useState(0);
   const [progress, setProgress] = React.useState(0)
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [date, setDate] = useState(new Date());
   const [locations, setLocations] = useState<Ubicacion[]>([]);
+
+  const [originLocationId, setOriginLocationId] = useState('');
+  const [destinationLocationId, setDestinationLocationId] = useState('');
+  const [packagesCount, setPackagesCount] = useState(1);
 
   useEffect(() => {
     fetch('http://localhost:8080/back/ubicacion/')
@@ -78,24 +86,58 @@ function RegisterShipmentPage() {
       .catch(error => console.error('Error fetching locations:', error));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (api) {
-      setCount(api.scrollSnapList().length);
-      setCurrent(api.selectedScrollSnap() + 1);
-      setProgress((api.selectedScrollSnap() + 1) / api.scrollSnapList().length * 100);
+      const updateProgressAndStep = () => {
+        const newStep = api.selectedScrollSnap();
+        setCurrentStep(newStep );
+        setProgress((newStep + 1) / 3 * 100); // Asume que hay 3 pasos
+      };
   
-      api.on("select", () => {
-        setCurrent(api.selectedScrollSnap() + 1);
-        setProgress((api.selectedScrollSnap() + 1) / api.scrollSnapList().length * 100);
-      });
+      api.on("select", updateProgressAndStep);
+      return () => api.off("select", updateProgressAndStep);
     }
   }, [api]);
-  
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => setProgress(33), 500)
-    return () => clearTimeout(timer)
-  }, [])
+  useEffect(() => {
+    setProgress(33.33); 
+  }, []);
+
+  const handleConfirm = async () => {
+    const formattedDate = formatISO(date);
+    const dataToSend = {
+      ubicacionOrigen: { id: originLocationId },
+      ubicacionDestino: { id: destinationLocationId },
+      fechaRecepcion: formattedDate,
+      fechaLimiteEntrega: formattedDate,
+      estado: 'En Almacen',
+      cantidadPaquetes: packagesCount,
+      codigoSeguridad: '123456',
+      simulacionActual: null
+    };
+
+    fetch('http://localhost:8080/back/envio/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(dataToSend),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Registro completado:', data);
+    })
+    .catch(error => {
+      console.error('Error registrando el envío:', error);
+    });
+  };
+  
 
   const SenderCard = () => (
     <div className="p-8">
@@ -230,34 +272,28 @@ function RegisterShipmentPage() {
     <div className="flex flex-col justify-center items-center h-screen space-y-5">
       <div className="progress-container"></div>
       <Label htmlFor="proceso-registro" className="font-semibold text-base">Proceso de Registro</Label>
-      <Progress value={progress} currentStep={current} className="w-[35%]" />
+      <Progress value={progress} currentStep={currentStep} className="w-[35%]" />
       
       <Carousel setApi={setApi} className="w-full max-w-2x1" > 
         <CarouselContent>
           <CarouselItem key="sender" className="flex justify-center">
             <Card className="w-[1000px] h-[580px]">
-              <CardContent>
-                <SenderCard />
-              </CardContent>
+              <CardContent>{SenderCard()}</CardContent>
             </Card>
           </CarouselItem>
           <CarouselItem key="receiver" className="flex justify-center">
             <Card className="w-[1000px] h-[580px]">
-              <CardContent>
-                <ReceiverCard />
-              </CardContent>
+              <CardContent>{ReceiverCard()}</CardContent>
             </Card>
           </CarouselItem>
           <CarouselItem key="package" className="flex justify-center"> 
             <Card className="w-[1000px] h-[580px]">
-              <CardContent>
-                <PackageCard />
-              </CardContent>
+            <CardContent>{PackageCard()}</CardContent>
             </Card>
           </CarouselItem>
         </CarouselContent>  
       </Carousel>
-      {api && <NavigationButtons api={api} />}
+      {api && <NavigationButtons api={api} currentStep={currentStep} handleConfirm={handleConfirm} />}
 
     </div>
   );

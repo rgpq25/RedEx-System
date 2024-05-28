@@ -27,20 +27,20 @@ const Progress = React.forwardRef<
       {/* Label container below the progress bar */}
       <div className="mt-2 w-1/3 flex justify-between text-xs">
         <Badge 
-          variant={currentStep >= 1 ? "solid" : "outline"} 
-          className={currentStep >= 1 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
+          variant={currentStep >= 0 ? "solid" : "outline"} 
+          className={currentStep >= 0 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Emisor
         </Badge>
         <Badge 
-          variant={currentStep >= 2 ? "solid" : "outline"} 
-          className={currentStep >= 2 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
+          variant={currentStep >= 1 ? "solid" : "outline"} 
+          className={currentStep >= 1 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Receptor
         </Badge>
         <Badge 
-          variant={currentStep >= 3 ? "solid" : "outline"} 
-          className={currentStep >= 3 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
+          variant={currentStep >= 2 ? "solid" : "outline"} 
+          className={currentStep >= 2 ? "bg-red-700 text-white" : "bg-gray-300 text-white"}
         >
           Paquete
         </Badge>
