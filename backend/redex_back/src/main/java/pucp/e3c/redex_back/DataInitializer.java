@@ -73,12 +73,13 @@ public class DataInitializer {
         this.messagingTemplate = messagingTemplate;
     }
 
-    private void inicializaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap, ArrayList<PlanVuelo> planVuelos){
+    private void inicializaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
+            ArrayList<PlanVuelo> planVuelos) {
         LocalDate today = LocalDate.now();
 
         // Sumar 3 días a la fecha de hoy
-        LocalDate startDate = today.plusDays(0);//1
-        LocalDate endDate = today.plusDays(0);//3
+        LocalDate startDate = today.plusDays(0);// 1
+        LocalDate endDate = today.plusDays(0);// 3
 
         // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -96,24 +97,14 @@ public class DataInitializer {
         Date minDate = Funciones.parseDateString(startPackagesDate);
         Date maxDate = Funciones.parseDateString(endPackagesDate);
 
-        System.out.println("Operaciones Dia a Dia: Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
-        System.out.println("Operaciones Dia a Dia: Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));;
-
-        for (Ubicacion ubicacion : ubicacionMap.values()) {
-            ubicacionService.register(ubicacion);
-        }
-
-        for (Aeropuerto aeropuerto : aeropuertos) {
-            aeropuertoService.register(aeropuerto);
-        }
-
-        for (PlanVuelo planVuelo : planVuelos) {
-            planVueloService.register(planVuelo);
-        }
+        System.out.println(
+                "Operaciones Dia a Dia: Fecha minima de recepcion de paquetes: " + Funciones.getFormattedDate(minDate));
+        System.out.println(
+                "Operaciones Dia a Dia: Fecha maxima de recepcion de paquetes: " + Funciones.getFormattedDate(maxDate));
+        ;
 
         for (Paquete paquete : paquetes) {
             envioService.register(paquete.getEnvio());
-            //paquete.setSimulacionActual(simulacion);
             paqueteService.register(paquete);
         }
     }
@@ -125,10 +116,9 @@ public class DataInitializer {
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
-        ArrayList<Paquete> paquetes = new ArrayList<>();
         HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap();
         for (Ubicacion ubicacion : ubicacionMap.values()) {
-            ubicacionService.register(ubicacion);
+            ubicacion = ubicacionService.register(ubicacion);
         }
         aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
         planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
@@ -171,9 +161,28 @@ public class DataInitializer {
         Simulacion simulacion = new Simulacion();
         simulacion.fillData();
         simulacion.setFechaInicioSim(fechaDate);
-        simulacion.setMultiplicadorTiempo(100.0);
+        simulacion.setMultiplicadorTiempo(50.0);
         simulacion = simulacionService.register(simulacion);
         System.out.println(simulacion.toString());
+
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            aeropuerto = aeropuertoService.register(aeropuerto);
+        }
+
+        for (PlanVuelo planVuelo : planVuelos) {
+            planVuelo = planVueloService.register(planVuelo);
+        }
+        /*
+         * for (Paquete paquete : paquetes) {
+         * envioService.register(paquete.getEnvio());
+         * paquete.setSimulacionActual(simulacion);
+         * paqueteService.register(paquete);
+         * }
+         */
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        if (inicializar_paquetes_operaciones_dia_dia) {
+            inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+        }
 
         try (BufferedReader reader = new BufferedReader(
                 new FileReader("src\\main\\resources\\dataFija\\pack_enviado_SKBO.txt"))) {
@@ -191,25 +200,6 @@ public class DataInitializer {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
 
-        for (Aeropuerto aeropuerto : aeropuertos) {
-            aeropuertoService.register(aeropuerto);
-        }
-
-        for (PlanVuelo planVuelo : planVuelos) {
-            planVueloService.register(planVuelo);
-        }
-        /*
-         * for (Paquete paquete : paquetes) {
-         * envioService.register(paquete.getEnvio());
-         * paquete.setSimulacionActual(simulacion);
-         * paqueteService.register(paquete);
-         * }
-         */
-        boolean inicializar_paquetes_operaciones_dia_dia = true;
-        if(inicializar_paquetes_operaciones_dia_dia){
-            inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
-        }
-
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
         ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<PlanVuelo> planVuelosLoop = (ArrayList<PlanVuelo>) planVueloService.getAll();
@@ -219,8 +209,11 @@ public class DataInitializer {
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
                     120, 60);
         });
-        /*algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-                    120, 60);*/
+        /*
+         * algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService,
+         * planRutaService, paqueteService, planRutaXVueloService, simulacionService,
+         * 120, 60);
+         */
 
     }
 }

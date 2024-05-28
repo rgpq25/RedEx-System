@@ -82,9 +82,8 @@ public class SAImplementation {
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
                         SimpMessagingTemplate messagingTemplate) {
 
-                try{
+                try {
                         HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
-
                         long startTime = System.nanoTime();
                         HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas = new HashMap<String, ArrayList<PlanRutaNT>>();
                         long endTime = System.nanoTime();
@@ -105,26 +104,26 @@ public class SAImplementation {
                                         grafoVuelos);
 
                         long startTimeInitialization = System.nanoTime();
-                        current.force_initialize(todasLasRutas);
-                        Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+                        current.force_initialize(todasLasRutas, vueloService);
+                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                         System.out.println("Finished solution initialization in "
                                         + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
                         startTime = System.nanoTime();
 
-                        //print current.paquetes.size
-                        //System.out.println("\nPaquetes size: " + current.paquetes.size());
-                        //print windowSize
-                        //System.out.println("Window size: " + windowSize +"\n");
+                        // print current.paquetes.size
+                        // System.out.println("\nPaquetes size: " + current.paquetes.size());
+                        // print windowSize
+                        // System.out.println("Window size: " + windowSize +"\n");
 
                         while (temperature > 1) {
-                                //System.out.println("\nIteracion en loop\n");
+                                // System.out.println("\nIteracion en loop\n");
                                 ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
                                 for (int i = 0; i < neighbourCount; i++) {
                                         neighbours.add(
-                                                        current.generateNeighbour(windowSize));
-                                        //System.out.println("Vecino generado");        
+                                                        current.generateNeighbour(windowSize, vueloService));
+                                        // System.out.println("Vecino generado");
                                 }
-                                //System.out.println("\nNeighbours iterados\n");
+                                // System.out.println("\nNeighbours iterados\n");
                                 int bestNeighbourIndex = 0;
                                 double bestNeighbourCost = Double.MAX_VALUE;
                                 for (int i = 0; i < neighbours.size(); i++) {
@@ -135,7 +134,7 @@ public class SAImplementation {
                                                 bestNeighbourIndex = i;
                                         }
                                 }
-                                //System.out.println("\nBest neighbour\n");
+                                // System.out.println("\nBest neighbour\n");
                                 double costDifference = bestNeighbourCost - current.getSolutionCost();
 
                                 if (costDifference < 0 ||
@@ -151,7 +150,8 @@ public class SAImplementation {
 
                                 System.out.println(
                                                 "Current cost: " + current.getSolutionCost() +
-                                                                " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                                                                " | Packages left: "
+                                                                + current.costoDePaquetesYRutasErroneas +
                                                                 " | Temperature: " + temperature);
 
                         }
@@ -181,19 +181,19 @@ public class SAImplementation {
                         Funciones.printLineInLog("");
 
                         Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-                        current.printFlightOcupation("ocupacionVuelos.txt");
-                        current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+                        // current.printFlightOcupation("ocupacionVuelos.txt");
+                        // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {
 
                                 Vuelo vuelo = current.vuelos_hash.get(id);
-                                if(simulacion!=null){
+                                if (simulacion != null) {
                                         vuelo.setSimulacionActual(simulacion);
                                 }
                                 vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                                 try {
-                                        vueloService.update(vuelo);
+                                        // vueloService.update(vuelo);
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                                         messagingTemplate.convertAndSend("/algoritmo/estado",
@@ -204,13 +204,13 @@ public class SAImplementation {
                                         new ArrayList<>(current.vuelos_hash.values()),
                                         current.estado, current.rutas, simulacion);
                         return respuestaAlgoritmo;
-                }
-                catch(Exception e){
-                        System.err.println("Error al ejecutar el algoritmo: " + e.getMessage());
+                } catch (Exception e) {
+                        e.printStackTrace();
+                        System.err.println("Error al ejecutar el algoritmo p: " + e.getMessage());
                         messagingTemplate.convertAndSend("/algoritmo/estado",
                                         "Error al ejecutar el algoritmo: " + e.getMessage());
                         return null;
                 }
-                
+
         }
 }

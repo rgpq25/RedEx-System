@@ -57,6 +57,9 @@ public class VueloService {
         Optional<Paquete> optionalPaquete = paqueteRepository.findById(idPaquete);
         if (optionalPaquete.isPresent()) {
             Paquete paquete = optionalPaquete.get();
+            if (paquete.getPlanRutaActual() == null) {
+                return null;
+            }
             Optional<PlanRuta> optionalPlanRuta = planRutaRepository.findById(paquete.getPlanRutaActual().getId());
             if (optionalPlanRuta.isPresent()) {
                 PlanRuta planRuta = optionalPlanRuta.get();
@@ -246,7 +249,7 @@ public class VueloService {
         }
     }
 
-    public ArrayList<Vuelo> findVuelosDestinoAeropuertoFechaCorte(String idUbicacion, Date fechaCorte){
+    public ArrayList<Vuelo> findVuelosDestinoAeropuertoFechaCorte(String idUbicacion, Date fechaCorte) {
         try {
             return vueloRepository.findVuelosDestinoAeropuertoFechaCorte(idUbicacion, fechaCorte);
         } catch (Exception e) {
@@ -255,7 +258,7 @@ public class VueloService {
         }
     }
 
-    public ArrayList<Vuelo> findVuelosOrigenAeropuertoFechaCorte(String idUbicacion, Date fechaCorte){
+    public ArrayList<Vuelo> findVuelosOrigenAeropuertoFechaCorte(String idUbicacion, Date fechaCorte) {
         try {
             return vueloRepository.findVuelosOrigenAeropuertoFechaCorte(idUbicacion, fechaCorte);
         } catch (Exception e) {

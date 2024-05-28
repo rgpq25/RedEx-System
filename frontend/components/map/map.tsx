@@ -14,35 +14,15 @@ import FlightModal from "./flight-modal";
 
 import { MapContainer, TileLayer, Popup, Marker, Circle } from "react-leaflet";
 import { Map as MapType } from "leaflet";
-import { getFlightPosition } from "@/lib/map-utils";
+import { MapZoomAttributes } from "../hooks/useMapZoom";
+import { MapModalAttributes } from "../hooks/useMapModals";
 
-//TODO: Download and store on local repository, currently depends on third party URL
-const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-type Position = {
-	coordinates: [number, number];
-	zoom: number;
-};
 
 interface MapProps {
-	currentAirportModal: Aeropuerto | undefined;
-	currentFlightModal: Vuelo | undefined;
-	setCurrentAirportModal: (aeropuerto: Aeropuerto | undefined) => void;
-	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
-	attributes: {
-		currentTime: Date | undefined;
-		setCurrentTime: (
-			time: Date,
-			fechaInicioSistema: Date,
-			fechaInicioSim: Date,
-			multiplicadorTiempo: number
-		) => void;
-		setCurrentTimeNoSimulation: () => void;
-		map: MapType | null;
-		setMap: (map: MapType) => void;
-		zoomToAirport: (airport: Aeropuerto) => void;
-		lockToFlight: (flight: Vuelo) => void;
-	};
+	isSimulation: boolean;
+	mapModalAttributes: MapModalAttributes;
+	attributes: MapZoomAttributes;
 	airports: Aeropuerto[];
 	flights: Vuelo[];
 	simulation: Simulacion | undefined;
@@ -50,16 +30,18 @@ interface MapProps {
 }
 
 function Map({
-	currentAirportModal,
-	currentFlightModal,
-	setCurrentAirportModal,
-	setCurrentFlightModal,
+	isSimulation,
+	mapModalAttributes,
 	attributes,
 	airports,
 	flights,
 	simulation,
 	className,
 }: MapProps) {
+
+	if(typeof window === 'undefined') return null;
+
+
 	const {
 		currentTime,
 		map,
@@ -67,6 +49,19 @@ function Map({
 		zoomToAirport,
 		lockToFlight,
 	} = attributes;
+
+	const {
+		setCurrentAirportModal,
+		setCurrentFlightModal,
+		currentFlightModal,
+		currentAirportModal,
+		isAirportModalOpen,
+		isFlightModalOpen,
+		setIsAirportModalOpen,
+		setIsFlightModalOpen,
+		openFlightModal,
+		openAirportModal,
+	} = mapModalAttributes;
 
 	const displayMap = useMemo(
 		() => (
@@ -78,6 +73,7 @@ function Map({
 				minZoom={3}
 				className="z-[10]"
 				ref={setMap as LegacyRef<MapType>}
+				zoomControl={false}
 			>
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -98,8 +94,8 @@ function Map({
 								aeropuerto={aeropuerto}
 								coordinates={[latitud, longitud] as [number, number]}
 								onClick={(coordinates: [number, number]) => {
-									setCurrentAirportModal(aeropuerto);
 									zoomToAirport(aeropuerto);
+									openAirportModal(aeropuerto);
 								}}
 							/>
 						);
@@ -116,8 +112,8 @@ function Map({
 									currentTime={currentTime}
 									vuelo={vuelo}
 									onClick={(vuelo: Vuelo) => {
-										setCurrentFlightModal(vuelo);
 										lockToFlight(vuelo);
+										openFlightModal(vuelo);
 									}}
 								/>
 							);
@@ -130,14 +126,16 @@ function Map({
 	return (
 		<>
 			<FlightModal
-				isOpen={currentFlightModal !== undefined}
-				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
+				isSimulation={isSimulation}
+				isOpen={isFlightModalOpen}
+				setIsOpen={(isOpen: boolean) => setIsFlightModalOpen(isOpen)}
 				vuelo={currentFlightModal}
 				simulacion={simulation}
 			/>
 			<AirportModal
-				isOpen={currentAirportModal !== undefined}
-				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
+				isSimulation={isSimulation}
+				isOpen={isAirportModalOpen}
+				setIsOpen={(isOpen: boolean) => setIsAirportModalOpen(isOpen)}
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
 			/>

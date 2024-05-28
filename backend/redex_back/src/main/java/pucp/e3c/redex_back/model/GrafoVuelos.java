@@ -9,10 +9,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import pucp.e3c.redex_back.service.VueloService;
+
 public class GrafoVuelos {
     private HashMap<Ubicacion, TreeMap<Date, Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
+    private Date fecha_fin;
     private HashMap<Integer, Vuelo> vuelos_hash = new HashMap<>();
 
     public HashMap<Integer, Vuelo> getVuelosHash() {
@@ -21,9 +24,14 @@ public class GrafoVuelos {
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, Date inicio, Date fin) {
         fecha_inicio = inicio;
+        fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        int i = 0;
         for (Vuelo vuelo : vuelos) {
+            vuelo.setId(i);
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
+            i++;
         }
     }
 
@@ -77,14 +85,58 @@ public class GrafoVuelos {
         Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         fecha_inicio = inicio;
+        fecha_fin = fin;
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        int i = 0;
         for (Vuelo vuelo : vuelos) {
+            vuelo.setId(i);
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+            i++;
+        }
+        System.out.println("Vuelos generados: " + vuelos.size());
+
+    }
+
+    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService) {
+        // Encuentra el paquete con la fecha de recepción más temprana
+        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
+
+        // Encuentra el paquete con la fecha de entrega máxima más tardía
+        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+
+        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
+        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+
+        fecha_inicio = inicio;
+        fecha_fin = fin;
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        for (Vuelo vuelo : vuelos) {
+            vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
         System.out.println("Vuelos generados: " + vuelos.size());
+    }
 
+    public void agregarVuelosHasta(ArrayList<PlanVuelo> planV, Date nuevaFechaFin, VueloService vueloService) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.fecha_fin);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date tempInicio = cal.getTime();
+
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
+        for (Vuelo vuelo : vuelos) {
+            vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+        }
+        fecha_fin = nuevaFechaFin;
     }
 
     public GrafoVuelos() {
@@ -298,6 +350,10 @@ public class GrafoVuelos {
 
     }
 
+    public void setVuelosHash(HashMap<Integer, Vuelo> vuelosHash) {
+        this.vuelos_hash = vuelosHash;
+    }
+
     public ArrayList<Vuelo> obtenerVuelosEntreFechas(Ubicacion ciudadOrigen, Date fechaInicio, Date fechaFin) {
         if (grafo.containsKey(ciudadOrigen)) {
             TreeMap<Date, Vuelo> vuelos = grafo.get(ciudadOrigen);
@@ -357,13 +413,14 @@ public class GrafoVuelos {
         return null; // No se encontró ruta, retornar null.
     }
 
-    public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
+    public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes, VueloService vueloService) {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-            PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getEnvio().getUbicacionOrigen(),
+            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService);
+            PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getAeropuertoActual().getUbicacion(),
                     paquete.getEnvio().getUbicacionDestino(),
-                    paquete.getEnvio().getFechaRecepcion(), new PlanRutaNT(),
+                    paquete.getEnvio().getFechaRecepcion(), rutaTomada,
                     aeropuertosVisitados,
                     paquete.getEnvio().getUbicacionOrigen().getId()
                             .equals(paquete.getEnvio().getUbicacionDestino().getId()),
@@ -376,5 +433,27 @@ public class GrafoVuelos {
             rutas.add(rutaEncontrada);
         }
         return rutas;
+    }
+
+    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService) {
+        Ubicacion ubicacionActual = paquete.getAeropuertoActual().getUbicacion();
+
+        PlanRutaNT rutaHastaActual = new PlanRutaNT();
+        ArrayList<Vuelo> vuelosTomados = new ArrayList<>();
+        ArrayList<Vuelo> vuelosPaquete = vueloService.findVuelosByPaqueteId(paquete.getId());
+        if (vuelosPaquete == null) {
+            return rutaHastaActual;
+        }
+        // Iterar sobre los vuelos en el plan de ruta completo
+        for (Vuelo vuelo : vuelosPaquete) {
+            vuelosTomados.add(vuelo); // Agregar vuelo a la lista de vuelos tomados
+            // Verificar si el destino del vuelo es el aeropuerto actual
+            if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(ubicacionActual.getId())) {
+                break; // Si se alcanza el aeropuerto actual, detener la iteración
+            }
+        }
+
+        rutaHastaActual.setVuelos(vuelosTomados);
+        return rutaHastaActual;
     }
 }
