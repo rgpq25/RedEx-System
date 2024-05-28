@@ -84,10 +84,10 @@ public class DataInitializer {
         // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String startPackagesDate = startDate.atStartOfDay().format(formatter);
-        String endPackagesDate = endDate.atTime(23, 59, 59).format(formatter);
+        String endPackagesDate = endDate.atTime(14, 59, 59).format(formatter);
 
         ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
-                1000,
+                500,
                 aeropuertos,
                 Funciones.parseDateString(startPackagesDate),
                 Funciones.parseDateString(endPackagesDate));
@@ -207,7 +207,7 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-                    120, 60);
+                    60, 30);
         });
         /*
          * algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService,

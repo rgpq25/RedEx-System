@@ -68,10 +68,10 @@ public class Algoritmo {
             SimulacionService simulacionService, int SA, int TA) {
         // SA y TA en segundos\
 
-        int aux = 2;
+        /*int aux = 2;
         if (aux == 2) {
             return null;
-        }
+        }*/
 
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
 
@@ -85,30 +85,56 @@ public class Algoritmo {
         int i = 0;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
 
+        
+        boolean primera_iteracion = true;
+        ArrayList<Paquete> paquetes = null;
+        GrafoVuelos grafoVuelos = null;
+
         while (true) {
             long start = System.currentTimeMillis();
-            ArrayList<Paquete> paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
-            if (paquetes.size() == 0) {
-                System.out.println("No hay paquetes para procesar.");
-                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
-                long end = System.currentTimeMillis();
-                long sa_millis = SA * 1000 - (end - start);
-                if (sa_millis < 0)
+            Date now = new Date();
+            if(primera_iteracion){
+                paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
+                if (paquetes.size() == 0) {
+                    System.out.println("No hay paquetes para procesar.");
+                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                    long end = System.currentTimeMillis();
+                    long sa_millis = SA * 1000 - (end - start);
+                    if (sa_millis < 0)
+                        continue;
+                    try {
+                        Thread.sleep(sa_millis);
+                    } catch (Exception e) {
+                        System.out.println("Error en sleep");
+                    }
                     continue;
-                try {
-                    Thread.sleep(sa_millis);
-                } catch (Exception e) {
-                    System.out.println("Error en sleep");
                 }
-                continue;
+                grafoVuelos = new GrafoVuelos(planVuelos, paquetes,vueloService);
+                if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
+                    System.out.println("ERROR: No se generaron vuelos.");
+                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
+                    return null;
+                }
+                primera_iteracion = false;
             }
-            ContadorID.reiniciar();
-            GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
-            if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
-                System.out.println("ERROR: No se generaron vuelos.");
-                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
-                return null;
-            }
+            else{
+                paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
+                if (paquetes.size() == 0) {
+                    System.out.println("No hay paquetes para procesar.");
+                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                    long end = System.currentTimeMillis();
+                    long sa_millis = SA * 1000 - (end - start);
+                    if (sa_millis < 0)
+                        continue;
+                    try {
+                        Thread.sleep(sa_millis);
+                    } catch (Exception e) {
+                        System.out.println("Error en sleep");
+                    }
+                    continue;
+                }
+                grafoVuelos.agregarVuelosHasta(planVuelos,now, vueloService);
+            }           
 
             // Calculo del limie de planificacion
             System.out.println("Planificacion iniciada");
@@ -118,7 +144,7 @@ public class Algoritmo {
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
             List<Paquete> paquetesTemp = paquetes.stream()
-                    .filter(p -> p.getFechaDeEntrega() == null)
+                    //.filter(p -> p.getFechaDeEntrega() == null)
                     .collect(Collectors.toList());
             ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
 
@@ -130,22 +156,9 @@ public class Algoritmo {
                 break;
             }
             // Filtrar paquetes que estan volando
-
-            Date now = new Date();
-            /*
-             * for (Paquete paquete : paquetesProcesar) {
-             * ArrayList<Vuelo> vuelos =
-             * vueloService.findVuelosByPaqueteId(paquete.getId());
-             * for (Vuelo vuelo : vuelos) {
-             * if (vuelo.getFechaLlegada().after(now)
-             * && vuelo.getFechaSalida().before(now)) {
-             * paquetesProcesar.remove(paquete);
-             * break;
-             * }
-             * }
-             * }
-             */
-
+            System.out.println("Filtrando vuelos");
+            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, now);
+            System.out.println("Fin de filtrado de vuelos");
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
 
