@@ -9,6 +9,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import pucp.e3c.redex_back.service.VueloService;
+
 public class GrafoVuelos {
     private HashMap<Ubicacion, TreeMap<Date, Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
@@ -357,13 +359,14 @@ public class GrafoVuelos {
         return null; // No se encontró ruta, retornar null.
     }
 
-    public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes) {
+    public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes, VueloService vueloService) {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-            PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getEnvio().getUbicacionOrigen(),
+            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService);
+            PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(paquete.getAeropuertoActual().getUbicacion(),
                     paquete.getEnvio().getUbicacionDestino(),
-                    paquete.getEnvio().getFechaRecepcion(), new PlanRutaNT(),
+                    paquete.getEnvio().getFechaRecepcion(), rutaTomada,
                     aeropuertosVisitados,
                     paquete.getEnvio().getUbicacionOrigen().getId()
                             .equals(paquete.getEnvio().getUbicacionDestino().getId()),
@@ -376,5 +379,27 @@ public class GrafoVuelos {
             rutas.add(rutaEncontrada);
         }
         return rutas;
+    }
+
+    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService) {
+        Ubicacion ubicacionActual = paquete.getAeropuertoActual().getUbicacion();
+
+        PlanRutaNT rutaHastaActual = new PlanRutaNT();
+        ArrayList<Vuelo> vuelosTomados = new ArrayList<>();
+        ArrayList<Vuelo> vuelosPaquete = vueloService.findVuelosByPaqueteId(paquete.getId());
+        if (vuelosPaquete == null) {
+            return rutaHastaActual;
+        }
+        // Iterar sobre los vuelos en el plan de ruta completo
+        for (Vuelo vuelo : vuelosPaquete) {
+            vuelosTomados.add(vuelo); // Agregar vuelo a la lista de vuelos tomados
+            // Verificar si el destino del vuelo es el aeropuerto actual
+            if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(ubicacionActual.getId())) {
+                break; // Si se alcanza el aeropuerto actual, detener la iteración
+            }
+        }
+
+        rutaHastaActual.setVuelos(vuelosTomados);
+        return rutaHastaActual;
     }
 }
