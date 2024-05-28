@@ -163,7 +163,7 @@ public class Solucion {
         HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
         ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
         int[] randomPackageIndexes = new int[windowSize];
-        //System.out.println("Primer Loop");
+        // System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
             int randomIndex = (int) (Math.random() * this.paquetes.size());
             while (indexes.get(randomIndex) != null) {
@@ -178,11 +178,11 @@ public class Solucion {
 
         }
 
-        //System.out.println("Segundo Loop");
+        // System.out.println("Segundo Loop");
         // generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
             int conteo = 0;
-            //System.out.print("| Intento " + (j + 1) + " de generacion de vecino |");
+            // System.out.print("| Intento " + (j + 1) + " de generacion de vecino |");
             while (true) {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(randomPackages.get(j));
@@ -272,6 +272,11 @@ public class Solucion {
         double sum = 0;
         for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
             Vuelo vuelo = vuelos_hash.get(entry.getKey());
+            if (vuelo == null) {
+                System.out.println("No se encontro el vuelo con id " + entry.getKey());
+
+                return 10000.0;
+            }
             int maxCapacity = vuelo.getPlanVuelo().getCapacidadMaxima();
             int usedCapacity = entry.getValue();
 

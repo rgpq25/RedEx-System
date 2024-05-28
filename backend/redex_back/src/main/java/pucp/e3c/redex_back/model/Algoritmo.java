@@ -64,7 +64,12 @@ public class Algoritmo {
             VueloService vueloService, PlanRutaService planRutaService,
             PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService, int SA, int TA) {
-        // SA y TA en segundos
+        // SA y TA en segundos\
+
+        int aux = 2;
+        if (aux == 2) {
+            return null;
+        }
 
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
 
@@ -95,7 +100,7 @@ public class Algoritmo {
                 }
                 continue;
             }
-
+            ContadorID.reiniciar();
             GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes);
             if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
                 System.out.println("ERROR: No se generaron vuelos.");
@@ -267,8 +272,7 @@ public class Algoritmo {
         boolean primera_iter = true;
         while (true) {
             simulacion = simulacionService.get(simulacion.getId());
-            paquetes = actualizarPaquetes(paquetes, tiempoEnSimulacion);
-
+            paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion);
             // Gestion de parado forzado
             if (simulacion.estado == 1) {
                 System.out.println("Simulacion terminada");
@@ -306,9 +310,9 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
 
             // Filtrar paquetes a calcular
+
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
                     fechaLimiteCalculo);
-
             int tamanhoPaquetes = paquetesProcesar.size();
 
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
@@ -356,7 +360,6 @@ public class Algoritmo {
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService);
-                    
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
 
             // Solo en la primera iter, definir el inicio de la simulacion
@@ -383,7 +386,6 @@ public class Algoritmo {
         Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
         final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
-
         List<Paquete> paquetesTemp = paquetes.stream()
                 .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
                 .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
@@ -428,13 +430,13 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo, Simulacion simulacion, PaqueteService paqueteService,
             PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService) {
         for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
+
             PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
             int index = paquetesTotal.indexOf(paquetesProcesar.get(idx));
-
             // Verificar si tenia ruta
             if (planRutaNTs.get(index) != null) {
                 // Eliminar antigua ruta del paquete
-                planRutaService.delete(paquetesTotal.get(index).getPlanRutaActual().getId());
+                // planRutaService.delete(paquetesTotal.get(index).getPlanRutaActual().getId());
             }
             planRutaNTs.set(index, planRutaNT);
 
@@ -487,11 +489,40 @@ public class Algoritmo {
         }
     }
 
-    private ArrayList<Paquete> actualizarPaquetes(ArrayList<Paquete> paquetes, Date fechaEnSimulacion) {
-        for (Paquete paquete : paquetes) {
+    private ArrayList<Paquete> actualizarPaquetes(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
+            Date fechaEnSimulacion) {
+        for (int i = 0; i < paquetes.size(); i++) {
+            if (planRutaNTs != null) {
+                boolean primero = true;
+                for (Vuelo vuelo : planRutaNTs.get(i).getVuelos()) {
+                    if (vuelo.getFechaSalida().after(fechaEnSimulacion)) {
+                        Aeropuerto aeropuerto = new Aeropuerto();
+                        aeropuerto.setUbicacion(vuelo.getPlanVuelo().getCiudadOrigen());
+                        paquetes.get(i).setAeropuertoActual(aeropuerto);
+                        paquetes.get(i).setEnAeropuerto(true);
+                        if (primero) {
+                            paquetes.get(i).setEstado("En aeropuerto origen");
+                        } else {
+                            paquetes.get(i).setEstado("En espera");
+
+                        }
+                    } else if (vuelo.getFechaLlegada().after(fechaEnSimulacion)) {
+                        paquetes.get(i).setEstado("En vuelo");
+                        paquetes.get(i).setAeropuertoActual(null);
+                        paquetes.get(i).setEnAeropuerto(false);
+                    } else {
+                        paquetes.get(i).setEstado("Entregado");
+                        paquetes.get(i).setEntregado(true);
+                        paquetes.get(i).setAeropuertoActual(null);
+                        paquetes.get(i).setEnAeropuerto(false);
+                    }
+
+                    primero = false;
+                }
+            }
 
         }
-        return null;
+        return paquetes;
     }
 
     public Paquete finPaqueteByID(ArrayList<Paquete> paquetes, int idBuscado) {

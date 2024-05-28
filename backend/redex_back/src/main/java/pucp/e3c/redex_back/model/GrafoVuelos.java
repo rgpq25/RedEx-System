@@ -81,9 +81,12 @@ public class GrafoVuelos {
         fecha_inicio = inicio;
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        int i = 0;
         for (Vuelo vuelo : vuelos) {
+            vuelo.setId(i);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
+            i++;
         }
         System.out.println("Vuelos generados: " + vuelos.size());
 
