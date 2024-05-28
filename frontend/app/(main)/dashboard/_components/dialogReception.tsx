@@ -10,6 +10,7 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Envio } from "@/lib/types";
 
 import { api } from "@/lib/api";
@@ -22,12 +23,15 @@ function DialogReception({ twStyle }: { twStyle: string }) {
         const packageId = inputRef.current?.value;
         await api(
             "GET",
-            `${process.env.NEXT_PUBLIC_API}/back/envio/${packageId}`,
+            `${process.env.NEXT_PUBLIC_API}/back/envio/codigo_seguridad/${packageId}`,
             (data: Envio) => {
                 router.push(`/dashboard/reception-package/${packageId}`);
             },
             (error) => {
-                console.log(error);
+                toast.error("No se encontró el envío", {
+                    position: "bottom-right",
+                    duration: 3000,
+                });
             }
         );
     };

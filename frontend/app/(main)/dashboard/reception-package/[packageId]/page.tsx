@@ -14,11 +14,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Large, Muted } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 import { Envio, Paquete, Aeropuerto, Ubicacion, Vuelo } from "@/lib/types";
 import { api } from "@/lib/api";
 import { formatDateLong } from "@/lib/date";
-import { format } from "date-fns";
+import { format, parseISO } from 'date-fns';
 
 export default function ReceptionPackage() {
     const params = useParams<{ packageId: string }>();
@@ -27,7 +28,7 @@ export default function ReceptionPackage() {
     const getEnvio = useCallback(async () => {
         await api(
             "GET",
-            `${process.env.NEXT_PUBLIC_API}/back/envio/${params.packageId}`,
+            `${process.env.NEXT_PUBLIC_API}/back/envio/codigo_seguridad/${params.packageId}`,
             (data: Envio) => {
                 setEnvio(data);
             },
@@ -66,7 +67,7 @@ export default function ReceptionPackage() {
             ) : (
                 <>
                     <section className='grid grid-cols-1 lg:grid-cols-2 flex-wrap gap-4 m-auto *:bg-muted *:max-h-fit'>
-                        {/* <Card>
+                        <Card>
                             <CardHeader>
                                 <CardTitle>Información personal (emisor)</CardTitle>
                             </CardHeader>
@@ -103,7 +104,7 @@ export default function ReceptionPackage() {
                                     <Input disabled type='name' />
                                 </div>
                             </CardContent>
-                        </Card> */}
+                        </Card>
                         <Card>
                             <CardHeader>
                                 <CardTitle>Información del envío</CardTitle>
@@ -123,7 +124,7 @@ export default function ReceptionPackage() {
                                 </div>
                                 <div>
                                     <Label>Fecha de recepción</Label>
-                                    <Input disabled type='date' defaultValue={format(envio.fechaRecepcion, "yyyy-MM-dd")}/>
+                                    <Input disabled type='name' defaultValue={format(parseISO(envio.fechaRecepcion.toString()).toString(), 'dd/MM/yyyy')}/>
                                 </div>
                                 <div>
                                     <Label>Ciudad de origen</Label>
@@ -154,7 +155,7 @@ export default function ReceptionPackage() {
                                 </Select>
                                 <ScrollArea>
                                     {envio.paquetes?.map((paquete: Paquete) =>
-                                        paquete.plan_ruta?.vuelos.map((vuelo: Vuelo) => (
+                                        paquete.planRutaActual?.vuelos.map((vuelo: Vuelo) => (
                                             <Card key={vuelo.id}>
                                                 <CardContent className='flex flex-wrap gap-4 justify-between *:flex *:flex-col'>
                                                     <div>
