@@ -171,15 +171,15 @@ public class SAImplementation {
                 Funciones.printLineInLog("");
                 Funciones.printLineInLog("");
 
-                Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-                current.printFlightOcupation("ocupacionVuelos.txt");
-                current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+                // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                // current.printFlightOcupation("ocupacionVuelos.txt");
+                // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
                 // Guardar vuelos
                 for (int id : current.ocupacionVuelos.keySet()) {
 
                         Vuelo vuelo = current.vuelos_hash.get(id);
-                        if(simulacion!=null){
+                        if (simulacion != null) {
                                 vuelo.setSimulacionActual(simulacion);
                         }
                         vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
