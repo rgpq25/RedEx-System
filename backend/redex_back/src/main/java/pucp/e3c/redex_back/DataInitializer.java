@@ -207,7 +207,7 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-                    60, 30);
+                    120, 60);
         });
         /*
          * algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService,
