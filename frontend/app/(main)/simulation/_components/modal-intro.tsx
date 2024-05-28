@@ -37,6 +37,7 @@ export function ModalIntro({
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [file, setFile] = useState<File | undefined>();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+	const [selectedTime, setSelectedTime] = useState<string>("");
 
 	const openFilePicker = () => {
 		if (fileInputRef.current) {
@@ -54,13 +55,28 @@ export function ModalIntro({
 	};
 
 	const handleStartSimulation = async () => {
-		if (!file || !selectedDate) {
-			toast.error("Seleccione un archivo y una fecha de inicio");
+		if (!file || !selectedDate || !selectedTime) {
+			toast.error("Complete todos los campos");
 			return;
 		}
 
+		const [hours, minutes] = selectedTime.split(":").map(Number);
+
+		if (isNaN(hours) || isNaN(minutes)) {
+			toast.error("Error en el formato de la hora seleccionada");
+			return undefined;
+		}
+
+		const realDate = new Date(selectedDate);
+		realDate.setHours(hours);
+		realDate.setMinutes(minutes);
+		realDate.setSeconds(0);
+		realDate.setMilliseconds(0);
+
+		console.log("Date is ", realDate)
+
 		//Register new simulation and all shipments
-		const simulacion = await startWeeklySimulation(file, selectedDate);
+		const simulacion = await startWeeklySimulation(file, realDate);
 
 		if (simulacion === undefined || simulacion.id === 0) {
 			toast.error("Error al registrar la simulación");
@@ -100,7 +116,7 @@ export function ModalIntro({
 					</div>
 					<div className="flex flex-row items-center justify-end gap-4">
 						<Label className="text-right">Datos</Label>
-						<div className="w-[77%] flex items-center gap-1">
+						<div className="flex items-center w-[77%] gap-1">
 							<Input
 								placeholder="No ha seleccionado ningun archivo"
 								readOnly
@@ -122,12 +138,20 @@ export function ModalIntro({
 					</div>
 					<div className="flex flex-row items-center justify-end gap-4">
 						<Label className="text-right">Fecha inicio</Label>
-						<DatePicker
-							className="w-[77%]"
-							date={selectedDate}
-							setDate={setSelectedDate}
-							placeholder="Selecciona una fecha"
-						/>
+						<div className="flex items-center w-[77%] gap-1">
+							<DatePicker
+								className="flex-1"
+								date={selectedDate}
+								setDate={setSelectedDate}
+								placeholder="Selecciona una fecha"
+							/>
+							<Input
+								type="time"
+								className="w-[95px]"
+								value={selectedTime}
+								onChange={(e) => setSelectedTime(e.target.value)}
+							/>
+						</div>
 					</div>
 				</div>
 				<DialogFooter className="flex flex-row items-center">

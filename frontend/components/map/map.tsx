@@ -1,7 +1,8 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { LegacyRef, useCallback, useEffect, useMemo, useState } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { Tooltip } from "react-tooltip";
 import { AnimationObject } from "../hooks/useAnimation";
@@ -11,28 +12,17 @@ import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 
-//TODO: Download and store on local repository, currently depends on third party URL
-const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+import { MapContainer, TileLayer, Popup, Marker, Circle } from "react-leaflet";
+import { Map as MapType } from "leaflet";
+import { MapZoomAttributes } from "../hooks/useMapZoom";
+import { MapModalAttributes } from "../hooks/useMapModals";
 
-type Position = {
-	coordinates: [number, number];
-	zoom: number;
-};
+
 
 interface MapProps {
-	currentAirportModal: Aeropuerto | undefined;
-	currentFlightModal: Vuelo | undefined;
-	setCurrentAirportModal: (aeropuerto: Aeropuerto | undefined) => void;
-	setCurrentFlightModal: (vuelo: Vuelo | undefined) => void;
-	attributes: {
-		currentTime: Date | undefined;
-		zoom: AnimationObject;
-		centerLongitude: AnimationObject;
-		centerLatitude: AnimationObject;
-		zoomIn: (coordinates: [number, number]) => void;
-		lockInFlight: (vuelo: Vuelo) => void;
-		unlockFlight: () => void;
-	};
+	isSimulation: boolean;
+	mapModalAttributes: MapModalAttributes;
+	attributes: MapZoomAttributes;
 	airports: Aeropuerto[];
 	flights: Vuelo[];
 	simulation: Simulacion | undefined;
@@ -40,125 +30,122 @@ interface MapProps {
 }
 
 function Map({
-	currentAirportModal,
-	currentFlightModal,
-	setCurrentAirportModal,
-	setCurrentFlightModal,
+	isSimulation,
+	mapModalAttributes,
 	attributes,
 	airports,
 	flights,
 	simulation,
 	className,
 }: MapProps) {
-	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
 
-	if (!zoom || !centerLongitude || !centerLatitude || !zoomIn) {
-		throw new Error("Missing required zoom props, use useMapZoom hook to get them");
-	}
+	if(typeof window === 'undefined') return null;
 
-	const [content, setContent] = useState<string>("");
 
-	function handleMoveEnd(position: Position) {
-		zoom.setValueNoAnimation(position.zoom);
-		centerLongitude.setValueNoAnimation(position.coordinates[0]);
-		centerLatitude.setValueNoAnimation(position.coordinates[1]);
-		unlockFlight();
-	}
+	const {
+		currentTime,
+		map,
+		setMap,
+		zoomToAirport,
+		lockToFlight,
+	} = attributes;
 
-	function handleMoveStart() {
-		zoom.cancelAnimation();
-		centerLongitude.cancelAnimation();
-		centerLatitude.cancelAnimation();
-		unlockFlight();
-	}
+	const {
+		setCurrentAirportModal,
+		setCurrentFlightModal,
+		currentFlightModal,
+		currentAirportModal,
+		isAirportModalOpen,
+		isFlightModalOpen,
+		setIsAirportModalOpen,
+		setIsFlightModalOpen,
+		openFlightModal,
+		openAirportModal,
+	} = mapModalAttributes;
 
-	return (
-		<>
-			<FlightModal
-				isOpen={currentFlightModal !== undefined}
-				setIsOpen={(isOpen: boolean) => setCurrentFlightModal(undefined)}
-				vuelo={currentFlightModal}
-				simulacion={simulation}
-			/>
-			<AirportModal
-				isOpen={currentAirportModal !== undefined}
-				setIsOpen={(isOpen: boolean) => setCurrentAirportModal(undefined)}
-				aeropuerto={currentAirportModal}
-				simulacion={simulation}
-			/>
-			<Tooltip
-				id="my-tooltip"
-				className="border border-white z-[100]"
-				classNameArrow="border-b-[1px] border-r-[1px] border-white"
+	const displayMap = useMemo(
+		() => (
+			<MapContainer
+				center={[0, 0]}
+				zoom={3}
+				scrollWheelZoom={true}
+				maxZoom={8}
+				minZoom={3}
+				className="z-[10]"
+				ref={setMap as LegacyRef<MapType>}
+				zoomControl={false}
 			>
-				{content}
-			</Tooltip>
-			<div
-				className={cn("border rounded-xl flex justify-center items-center flex-1  overflow-hidden", className)}
-			>
-				{/* <Button size="icon" className="absolute top-4 right-4">
-					<Settings className="w-5 h-5"/>
-				</Button> */}
-				<ComposableMap className="" projection={"geoMercator"} min={-5}>
-					<ZoomableGroup
-						zoom={zoom.value}
-						center={[centerLongitude.value, centerLatitude.value]}
-						onMoveEnd={handleMoveEnd}
-						onMoveStart={handleMoveStart}
-					>
-						<Geographies geography={geoUrl}>
-							{({ geographies }) =>
-								geographies.map((geo) => (
-									<Geography
-										data-tooltip-id="my-tooltip"
-										key={geo.rsmKey}
-										geography={geo}
-										onMouseEnter={() => {
-											const { name } = geo.properties;
-											setContent(name);
-										}}
-										onMouseLeave={() => {
-											setContent("");
-										}}
-										className="hover:fill-gray-600 fill-slate-400 transition-all duration-75 ease-in-out stroke-white stroke-[0.2px]"
-									/>
-								))
-							}
-						</Geographies>
-						{currentTime &&
-							flights
-								.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
-								.map((vuelo, idx) => {
-									return (
-										<PlaneMarker
-											key={idx}
-											currentTime={currentTime}
-											vuelo={vuelo}
-											onClick={(vuelo: Vuelo) => {
-												setCurrentFlightModal(vuelo);
-												lockInFlight(vuelo);
-											}}
-										/>
-									);
-								})}
-						{airports.map((aeropuerto, idx) => {
-							const latitud = aeropuerto.ubicacion.latitud;
-							const longitud = aeropuerto.ubicacion.longitud;
+				<TileLayer
+					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+					//url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"	//Clear less realistic
+					//url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" //Realistic
+					url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" //Light clear map
+					//url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"		//Dark map
+				/>
 
+				{map &&
+					airports.map((aeropuerto, idx) => {
+						const latitud = aeropuerto.ubicacion.latitud;
+						const longitud = aeropuerto.ubicacion.longitud;
+
+						return (
+							<AirportMarker
+								key={aeropuerto.id}
+								aeropuerto={aeropuerto}
+								coordinates={[latitud, longitud] as [number, number]}
+								onClick={(coordinates: [number, number]) => {
+									zoomToAirport(aeropuerto);
+									openAirportModal(aeropuerto);
+								}}
+							/>
+						);
+					})}
+
+				{map &&
+					currentTime &&
+					flights
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+						.map((vuelo, idx) => {
 							return (
-								<AirportMarker
+								<PlaneMarker
 									key={idx}
-									aeropuerto={aeropuerto}
-									coordinates={[longitud, latitud] as [number, number]}
-									onClick={(coordinates: [number, number]) => {
-										setCurrentAirportModal(aeropuerto);
-										zoomIn(coordinates);
+									currentTime={currentTime}
+									vuelo={vuelo}
+									onClick={(vuelo: Vuelo) => {
+										lockToFlight(vuelo);
+										openFlightModal(vuelo);
 									}}
 								/>
 							);
 						})}
-					</ZoomableGroup>
-				</ComposableMap>
+			</MapContainer>
+		),
+		[currentTime, flights, airports]
+	);
+
+	return (
+		<>
+			<FlightModal
+				isSimulation={isSimulation}
+				isOpen={isFlightModalOpen}
+				setIsOpen={(isOpen: boolean) => setIsFlightModalOpen(isOpen)}
+				vuelo={currentFlightModal}
+				simulacion={simulation}
+			/>
+			<AirportModal
+				isSimulation={isSimulation}
+				isOpen={isAirportModalOpen}
+				setIsOpen={(isOpen: boolean) => setIsAirportModalOpen(isOpen)}
+				aeropuerto={currentAirportModal}
+				simulacion={simulation}
+			/>
+			<div
+				className={cn(
+					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden z-[10]",
+					className
+				)}
+			>
+				{displayMap}
 			</div>
 		</>
 	);
