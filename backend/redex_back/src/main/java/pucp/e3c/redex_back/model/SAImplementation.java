@@ -82,118 +82,135 @@ public class SAImplementation {
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
                         SimpMessagingTemplate messagingTemplate) {
 
-                HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
+                try{
+                        HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
 
-                long startTime = System.nanoTime();
-                HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas = new HashMap<String, ArrayList<PlanRutaNT>>();
-                long endTime = System.nanoTime();
-                long duration = endTime - startTime;
-                System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000)
-                                + " segundos");
+                        long startTime = System.nanoTime();
+                        HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas = new HashMap<String, ArrayList<PlanRutaNT>>();
+                        long endTime = System.nanoTime();
+                        long duration = endTime - startTime;
+                        System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000)
+                                        + " segundos");
 
-                Solucion current = new Solucion(
-                                paquetes,
-                                new ArrayList<PlanRutaNT>(),
-                                aeropuertos,
-                                ocupacionInicial,
-                                0,
-                                badSolutionPenalization,
-                                flightPenalization,
-                                airportPenalization,
-                                vuelos_map,
-                                grafoVuelos);
+                        Solucion current = new Solucion(
+                                        paquetes,
+                                        new ArrayList<PlanRutaNT>(),
+                                        aeropuertos,
+                                        ocupacionInicial,
+                                        0,
+                                        badSolutionPenalization,
+                                        flightPenalization,
+                                        airportPenalization,
+                                        vuelos_map,
+                                        grafoVuelos);
 
-                long startTimeInitialization = System.nanoTime();
-                current.force_initialize(todasLasRutas);
-                Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
-                System.out.println("Finished solution initialization in "
-                                + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
-                startTime = System.nanoTime();
+                        long startTimeInitialization = System.nanoTime();
+                        current.force_initialize(todasLasRutas);
+                        Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
+                        System.out.println("Finished solution initialization in "
+                                        + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
+                        startTime = System.nanoTime();
 
-                while (temperature > 1) {
-                        ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
-                        for (int i = 0; i < neighbourCount; i++) {
-                                neighbours.add(
-                                                current.generateNeighbour(windowSize));
-                        }
-                        int bestNeighbourIndex = 0;
-                        double bestNeighbourCost = Double.MAX_VALUE;
-                        for (int i = 0; i < neighbours.size(); i++) {
-                                Solucion neighbour = neighbours.get(i);
-                                double neighbourCost = neighbour.getSolutionCost();
-                                if (neighbourCost < bestNeighbourCost) {
-                                        bestNeighbourCost = neighbourCost;
-                                        bestNeighbourIndex = i;
+                        //print current.paquetes.size
+                        //System.out.println("\nPaquetes size: " + current.paquetes.size());
+                        //print windowSize
+                        //System.out.println("Window size: " + windowSize +"\n");
+
+                        while (temperature > 1) {
+                                //System.out.println("\nIteracion en loop\n");
+                                ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
+                                for (int i = 0; i < neighbourCount; i++) {
+                                        neighbours.add(
+                                                        current.generateNeighbour(windowSize));
+                                        //System.out.println("Vecino generado");        
                                 }
+                                //System.out.println("\nNeighbours iterados\n");
+                                int bestNeighbourIndex = 0;
+                                double bestNeighbourCost = Double.MAX_VALUE;
+                                for (int i = 0; i < neighbours.size(); i++) {
+                                        Solucion neighbour = neighbours.get(i);
+                                        double neighbourCost = neighbour.getSolutionCost();
+                                        if (neighbourCost < bestNeighbourCost) {
+                                                bestNeighbourCost = neighbourCost;
+                                                bestNeighbourIndex = i;
+                                        }
+                                }
+                                //System.out.println("\nBest neighbour\n");
+                                double costDifference = bestNeighbourCost - current.getSolutionCost();
+
+                                if (costDifference < 0 ||
+                                                Math.exp(-costDifference / temperature) > Math.random()) {
+                                        current = neighbours.get(bestNeighbourIndex);
+                                }
+
+                                if (current.costoDePaquetesYRutasErroneas == 0 && stopWhenNoPackagesLeft == true) {
+                                        break;
+                                }
+
+                                temperature *= 1 - coolingRate;
+
+                                System.out.println(
+                                                "Current cost: " + current.getSolutionCost() +
+                                                                " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                                                                " | Temperature: " + temperature);
+
                         }
 
-                        double costDifference = bestNeighbourCost - current.getSolutionCost();
+                        endTime = System.nanoTime();
+                        duration = endTime - startTime;
 
-                        if (costDifference < 0 ||
-                                        Math.exp(-costDifference / temperature) > Math.random()) {
-                                current = neighbours.get(bestNeighbourIndex);
-                        }
+                        System.out.println("=====================================");
 
-                        if (current.costoDePaquetesYRutasErroneas == 0 && stopWhenNoPackagesLeft == true) {
-                                break;
-                        }
-
-                        temperature *= 1 - coolingRate;
+                        System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
+                                        1000000000) + " segundos");
+                        Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
+                                        1000000000) + " segundos");
 
                         System.out.println(
-                                        "Current cost: " + current.getSolutionCost() +
+                                        "Final cost: " + current.getSolutionCost() +
+                                                        " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                                                        " | Temperature: " + temperature);
+                        Funciones.printLineInLog(
+                                        "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
 
-                }
+                        // current.printCosts();
+                        current.printCostsInLog();
+                        Funciones.printLineInLog("");
+                        Funciones.printLineInLog("");
 
-                endTime = System.nanoTime();
-                duration = endTime - startTime;
+                        Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                        current.printFlightOcupation("ocupacionVuelos.txt");
+                        current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
-                System.out.println("=====================================");
+                        // Guardar vuelos
+                        for (int id : current.ocupacionVuelos.keySet()) {
 
-                System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
-                                1000000000) + " segundos");
-                Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
-                                1000000000) + " segundos");
-
-                System.out.println(
-                                "Final cost: " + current.getSolutionCost() +
-                                                " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                " | Temperature: " + temperature);
-                Funciones.printLineInLog(
-                                "Final cost: " + current.getSolutionCost() +
-                                                " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                " | Temperature: " + temperature);
-
-                // current.printCosts();
-                current.printCostsInLog();
-                Funciones.printLineInLog("");
-                Funciones.printLineInLog("");
-
-                // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
-                // current.printFlightOcupation("ocupacionVuelos.txt");
-                // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
-
-                // Guardar vuelos
-                for (int id : current.ocupacionVuelos.keySet()) {
-
-                        Vuelo vuelo = current.vuelos_hash.get(id);
-                        if (simulacion != null) {
-                                vuelo.setSimulacionActual(simulacion);
+                                Vuelo vuelo = current.vuelos_hash.get(id);
+                                if(simulacion!=null){
+                                        vuelo.setSimulacionActual(simulacion);
+                                }
+                                vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
+                                try {
+                                        vueloService.update(vuelo);
+                                } catch (Exception e) {
+                                        System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                                        messagingTemplate.convertAndSend("/algoritmo/estado",
+                                                        "Error al guardar algun vuelo: " + e.getMessage());
+                                }
                         }
-                        vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
-                        try {
-                                vueloService.update(vuelo);
-                        } catch (Exception e) {
-                                System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                                messagingTemplate.convertAndSend("/algoritmo/estado",
-                                                "Error al guardar algun vuelo: " + e.getMessage());
-                        }
+                        RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
+                                        new ArrayList<>(current.vuelos_hash.values()),
+                                        current.estado, current.rutas, simulacion);
+                        return respuestaAlgoritmo;
                 }
-                RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
-                                new ArrayList<>(current.vuelos_hash.values()),
-                                current.estado, current.rutas, simulacion);
-                return respuestaAlgoritmo;
+                catch(Exception e){
+                        System.err.println("Error al ejecutar el algoritmo: " + e.getMessage());
+                        messagingTemplate.convertAndSend("/algoritmo/estado",
+                                        "Error al ejecutar el algoritmo: " + e.getMessage());
+                        return null;
+                }
+                
         }
 }

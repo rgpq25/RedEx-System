@@ -83,7 +83,7 @@ public class DataInitializer {
         // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String startPackagesDate = startDate.atStartOfDay().format(formatter);
-        String endPackagesDate = endDate.atTime(20, 59, 59).format(formatter);
+        String endPackagesDate = endDate.atTime(23, 59, 59).format(formatter);
 
         ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
                 1000,

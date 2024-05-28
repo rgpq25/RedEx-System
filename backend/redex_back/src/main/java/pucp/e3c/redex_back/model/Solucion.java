@@ -159,6 +159,7 @@ public class Solucion {
         HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
         ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
         int[] randomPackageIndexes = new int[windowSize];
+        //System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
             int randomIndex = (int) (Math.random() * this.paquetes.size());
             while (indexes.get(randomIndex) != null) {
@@ -173,9 +174,11 @@ public class Solucion {
 
         }
 
+        //System.out.println("Segundo Loop");
         // generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
             int conteo = 0;
+            //System.out.print("| Intento " + (j + 1) + " de generacion de vecino |");
             while (true) {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(randomPackages.get(j));
@@ -190,8 +193,9 @@ public class Solucion {
                     neighbour.rutas.set(randomPackageIndexes[j], randomRoute);
                     break;
                 }
+                conteo++;
 
-                if (conteo >= 50) { // antes era 1000
+                if (conteo >= 200) { // antes era 1000
                     return this;
                 }
             }
