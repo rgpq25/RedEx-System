@@ -29,7 +29,7 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         int i = 0;
         for (Vuelo vuelo : vuelos) {
-            vuelo.setId(i);
+            vuelo.setId(0);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
             i++;
@@ -92,10 +92,9 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         int i = 0;
         for (Vuelo vuelo : vuelos) {
-            vuelo.setId(i);
+            vuelo.setId(0);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
-            i++;
         }
         this.sgteId = i;
         System.out.println("Vuelos generados: " + vuelos.size());
