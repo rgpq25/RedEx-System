@@ -52,7 +52,7 @@ export function calculateAngle(coord1: [number, number], coord2: [number, number
 
 export function getTrayectory(vuelo: Vuelo) {
 	const dotPositions = [];
-	const steps = 50;
+	let steps = 50;
 
 	const originCoordinate = [
 		vuelo.planVuelo.ciudadOrigen.longitud,
@@ -62,6 +62,14 @@ export function getTrayectory(vuelo: Vuelo) {
 		vuelo.planVuelo.ciudadDestino.longitud,
 		vuelo.planVuelo.ciudadDestino.latitud,
 	] as [number, number];
+
+
+	const distance = Math.sqrt(
+		Math.pow(destinationCoordinate[0] - originCoordinate[0], 2) +
+		Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
+	);
+
+	steps = Math.floor(distance / 2);
 	
 	//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array
 	for (let i = 0; i < steps; i++) {

@@ -27,16 +27,18 @@ function AirportMarker({
 	const airportIcon = new Icon({
 		iconUrl: "/airportIcon.png",
 		iconSize: [30, 30],
+		iconAnchor: [15, 30],
 	});
 
 	return (
 		<>
-			<Marker position={coordinates} icon={airportIcon} eventHandlers={{
-				click: () => onClick(coordinates)
-			}}>
-				{/* <Popup>
-					A pretty CSS3 popup. <br /> Easily customizable.
-				</Popup> */}
+			<Marker
+				position={coordinates}
+				icon={airportIcon}
+				eventHandlers={{
+					click: () => onClick(coordinates),
+				}}
+			>
 			</Marker>
 		</>
 	);
