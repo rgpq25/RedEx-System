@@ -135,7 +135,10 @@ function Map({
 			<AirportModal
 				isSimulation={isSimulation}
 				isOpen={isAirportModalOpen}
-				setIsOpen={(isOpen: boolean) => setIsAirportModalOpen(isOpen)}
+				setIsOpen={(isOpen: boolean) => {
+					setCurrentFlightModal(null);
+					setIsAirportModalOpen(isOpen)
+				}}
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
 			/>

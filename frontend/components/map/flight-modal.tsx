@@ -120,7 +120,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
 
 	useEffect(() => {
-		async function getAirportShipments() {
+		async function getFlightShipments() {
 			if (vuelo === null) {
 				toast.error("No se encontró aeropuerto");
 				return;
@@ -132,7 +132,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					return;
 				}
 
-				console.log(`Fetching airport data with flight id ${vuelo.id} and simulation id ${simulacion.id}`);
+				console.log(`Fetching airport data with flight id ${vuelo.id}, current used capacity ${vuelo.capacidadUtilizada} and simulation id ${simulacion.id}`);
 				setIsLoading(true);
 				await api(
 					"GET",
@@ -149,7 +149,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					}
 				);
 			} else {
-				console.log(`Fetching airport data with flight id ${vuelo.id}`);
+				console.log(`Fetching airport data with flight id ${vuelo.id} and current used capacity ${vuelo.capacidadUtilizada}`);
 				setIsLoading(true);
 				await api(
 					"GET",
@@ -169,7 +169,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 		}
 
 		if (isOpen === true) {
-			getAirportShipments();
+			getFlightShipments();
 		}
 	}, [isOpen]);
 

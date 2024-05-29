@@ -3,7 +3,7 @@ import { Aeropuerto } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Icon } from "leaflet";
 import { useEffect, useState } from "react";
-import { Marker, Popup, useMapEvents } from "react-leaflet";
+import { Marker, Tooltip } from "react-leaflet";
 
 function AirportMarker({
 	aeropuerto,
@@ -39,6 +39,9 @@ function AirportMarker({
 					click: () => onClick(coordinates),
 				}}
 			>
+				<Tooltip direction="top" offset={[0, -35]} className="font-bold text-md">
+					{aeropuerto.ubicacion.id}
+				</Tooltip>
 			</Marker>
 		</>
 	);

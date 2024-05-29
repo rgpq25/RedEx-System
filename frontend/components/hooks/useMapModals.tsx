@@ -21,12 +21,17 @@ const useMapModals = (): MapModalAttributes => {
 	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | null>(null);
 
     const openFlightModal = (flight: Vuelo) => {
+		setIsAirportModalOpen(false);
+		setCurrentAirportModal(null);
+
         setIsFlightModalOpen(true)
         setCurrentFlightModal(flight);
     }
 
     const openAirportModal = (airport: Aeropuerto) => {
-        console.log("Setting airport modal to airportId: ", airport.id)
+		setIsFlightModalOpen(false);
+		setCurrentFlightModal(null);
+		
         setIsAirportModalOpen(true)
         setCurrentAirportModal(airport);
     }
