@@ -34,6 +34,7 @@ public class Algoritmo {
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+        this.ultimaRespuestaOperacionDiaDia = null;
     }
 
     private Date calcularTiempoSimulacion(Simulacion simulacion) {
@@ -133,6 +134,8 @@ public class Algoritmo {
                     }
                     continue;
                 }
+                //fecha vuelo de ultimo paquete
+                //camibo de santiago, pasar paquetes
                 grafoVuelos.agregarVuelosHasta(planVuelos,now, vueloService);
             }           
 
@@ -173,6 +176,7 @@ public class Algoritmo {
             System.out.println("");
             System.out.println("Planificacion finalizada");
             System.out.println("");
+            //TO DO: reemplazar con lo de abajo realizarGuardado
             for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
                 PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
@@ -222,6 +226,8 @@ public class Algoritmo {
                 }
 
             }
+
+            //TO DO: reutilzar funcion enviarRespuesta
 
             // Formar respuesta a front
             respuestaAlgoritmo.setSimulacion(null);
