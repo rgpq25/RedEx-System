@@ -80,13 +80,14 @@ public class EnvioController {
         return envioService.findByCodigo_seguridad(codigoSeguridad);
     }
 
-    @GetMapping(value = "/getPaquetesDelEvioNoSimulacion/{id}")
-    public ArrayList<Paquete> getPaquetesDelEvioNoSimulacion(@PathVariable("id") Integer id) {
-        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findByEnvioId(id);
-        for (Paquete paquete : paquetes) {
-            paquete = paqueteService.getPaqueteNoSimulacion(paquete.getId());
-        }
-        return paquetes;
+    @GetMapping(value = "/simulacion/{id}")
+    public ArrayList<Envio> findByCodigo_seguridad(@PathVariable("id") Integer id) {
+        return envioService.findBySimulacionActualID(id);
+    }
+
+    @GetMapping(value = "/sin_simulacion")
+    public ArrayList<Envio> findSinSimuacionActual() {
+        return envioService.findSinSimulacionActual();
     }
 
 }
