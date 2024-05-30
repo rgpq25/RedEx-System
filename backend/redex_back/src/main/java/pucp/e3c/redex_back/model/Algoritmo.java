@@ -375,6 +375,9 @@ public class Algoritmo {
 
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
+            // Limpiar ocupacion de vuelos de paquetes a replanificar
+            limpiarOcupacionVuelos(ocupacionVuelos, paquetesProcesar, vueloService);
+
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     aeropuertos, planVuelos,
@@ -405,6 +408,24 @@ public class Algoritmo {
         }
         return planRutas;
 
+    }
+
+    private void limpiarOcupacionVuelos(HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetesProcesar,
+            VueloService vueloService) {
+
+        for (Paquete paquete : paquetesProcesar) {
+            if (paquete.planRutaActual == null) {
+                continue;
+            }
+            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+            if (vuelos == null || vuelos.size() == 0) {
+                System.out.println("El paquete tiene planRuta pero no vuelos");
+                continue;
+            }
+            for (Vuelo vuelo : vuelos) {
+                ocupacionVuelos.put(vuelo.getId(), ocupacionVuelos.get(vuelo.getId()) - 1);
+            }
+        }
     }
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
