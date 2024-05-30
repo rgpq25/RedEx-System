@@ -112,7 +112,7 @@ public class EnvioService {
             paquete.setEntregado(false);
             paquete.setEnvio(envio);
             paquete.setSimulacionActual(simulacion);
-            Paquete _paquete = paqueteRepository.save(paquete);
+            paqueteRepository.save(paquete);
         }
         auxEnvio.setSimulacionActual(simulacion);
         return auxEnvio;

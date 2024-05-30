@@ -1,5 +1,6 @@
 package pucp.e3c.redex_back.controller;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
+import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRutaNT;
 import pucp.e3c.redex_back.model.PlanVuelo;
 import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
@@ -61,6 +64,9 @@ public class SimulacionController {
     @Autowired
     private PlanRutaXVueloService planRutaXVueloService;
 
+    @Autowired
+    private EnvioService envioService;
+
     public SimulacionController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
@@ -70,6 +76,37 @@ public class SimulacionController {
         Simulacion registeredSimulacion = simulacionService.register(simulacion);
         System.out.println(registeredSimulacion.toString());
         return new ResponseEntity<>(registeredSimulacion, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/inicializarSimulacion")
+    public ResponseEntity<Simulacion> inicializarSimulacion(@RequestBody Simulacion simulacion) {
+        // Registrar una nueva simulacion
+        simulacion.setId(0);
+        simulacion.setMilisegundosPausados(0);
+        simulacion = simulacionService.register(simulacion);
+
+        ArrayList<Envio> envios = envioService.findBySimulacionActualID(1);
+        Date fechaMinima = simulacion.getFechaInicioSim();
+        System.out.println("Se encontraron " + envios.size() + " envios");
+        System.out.println("La fecha minima es " + fechaMinima);
+        envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+        System.out.println("Tras quedaron " + envios.size() + " envios");
+
+        for (Envio envio : envios) {
+            int antiguoEnvioId = envio.getId();
+            envio.setId(0);
+            envio.setSimulacionActual(simulacion);
+            envio = envioService.register(envio);
+            ArrayList<Paquete> paquetes = new ArrayList<>(paqueteService.findByEnvioId(antiguoEnvioId));
+            for (Paquete paquete : paquetes) {
+                paquete.setId(0);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(simulacion);
+                paquete = paqueteService.register(paquete);
+            }
+        }
+
+        return new ResponseEntity<>(simulacion, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

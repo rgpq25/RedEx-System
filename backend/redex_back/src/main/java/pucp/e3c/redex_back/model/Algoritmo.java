@@ -262,6 +262,9 @@ public class Algoritmo {
             Simulacion simulacion, int SA, int TA) {
         messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
 
+        Date fechaMinima = simulacion.getFechaInicioSim();
+        paquetes.removeIf(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaMinima));
+
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
         for (int i = 0; i < paquetes.size(); i++) {
