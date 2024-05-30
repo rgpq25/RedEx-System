@@ -34,6 +34,7 @@ public class Algoritmo {
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+        this.ultimaRespuestaOperacionDiaDia = null;
     }
 
     private Date calcularTiempoSimulacion(Simulacion simulacion) {
