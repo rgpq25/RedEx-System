@@ -4,7 +4,7 @@ import useMapZoom from "@/components/hooks/useMapZoom";
 import Map from "@/components/map/map";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
 import { Clock } from "lucide-react";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
@@ -39,6 +39,8 @@ function DailyOperationsPage() {
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
+
 	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
@@ -67,14 +69,17 @@ function DailyOperationsPage() {
 					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
-					const newFlights = data.vuelos.map((vuelo: Vuelo) => {
-						const vueloActualizado = vuelo;
-						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-						return vueloActualizado;
-					});
+					const newFlights = data.vuelos
+						.map((vuelo: Vuelo) => {
+							const vueloActualizado = vuelo;
+							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+							return vueloActualizado;
+						})
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
 					setFlights(newFlights);
+					setEstadoAlmacen(data.estadoAlmacen);
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
 					console.log("MENSAJE DE /algoritmo/diaDiaEstado: ", msg.body);
@@ -82,22 +87,32 @@ function DailyOperationsPage() {
 			};
 
 			client.activate();
-			setClient(client)
+			setClient(client);
 
 			await api(
 				"GET",
 				"http://localhost:8080/back/operacionesDiaDia/diaDiaRespuesta",
 				(data: RespuestaAlgoritmo) => {
 					setCurrentTimeNoSimulation();
+
 					console.log(data);
-					const newFlights = data.vuelos.map((vuelo: Vuelo) => {
-						const vueloActualizado = vuelo;
-						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-						return vueloActualizado;
-					});
+					console.log(typeof data)
+					if (data === null) {
+						console.log("Data devuelta es NULL");
+						return;
+					}
+
+					const newFlights = data.vuelos
+						.map((vuelo: Vuelo) => {
+							const vueloActualizado = vuelo;
+							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+							return vueloActualizado;
+						})
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
 					setFlights(newFlights);
+					setEstadoAlmacen(data.estadoAlmacen);
 				},
 				(error) => {
 					console.log(error);
@@ -108,13 +123,13 @@ function DailyOperationsPage() {
 		getData();
 	}, []);
 
-	useEffect(()=>{
+	useEffect(() => {
 		return () => {
 			if (client) {
 				client.deactivate();
 			}
-		}
-	},[])
+		};
+	}, []);
 
 	return (
 		<MainContainer>
@@ -155,6 +170,7 @@ function DailyOperationsPage() {
 					className="h-full w-full"
 					airports={airports}
 					flights={flights}
+					estadoAlmacen={estadoAlmacen}
 					simulation={undefined}
 				/>
 			</section>

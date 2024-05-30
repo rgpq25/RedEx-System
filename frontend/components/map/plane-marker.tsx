@@ -34,7 +34,7 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	}
 
 	const dotPositions = getTrayectory(vuelo);
-	const porcentajeUtilizado = vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima;
+	const porcentajeUtilizado = (vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100;
 
 	const airplaneIcon = new Icon({
 		iconUrl:

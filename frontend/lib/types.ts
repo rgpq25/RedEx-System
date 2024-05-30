@@ -88,7 +88,6 @@ export type Vuelo = {
 	simulacionActual: Simulacion | null;
 };
 
-
 export type PlanRuta = {
 	id: number;
 	estado: string;
@@ -96,45 +95,56 @@ export type PlanRuta = {
 	vuelos: Vuelo[];
 };
 
-
 export type Paquete = {
-    id: number;
-    aeropuertoActual: Aeropuerto;
+	id: number;
+	aeropuertoActual: Aeropuerto;
 	enAeropuerto: boolean;
 	fechaRecepcion: Date;
 	fechaDeEntrega: Date | null;
-    entregado: boolean;
-    envio: Envio;
+	entregado: boolean;
+	envio: Envio;
 	simulacionActual: Simulacion | null;
 	planRutaActual: PlanRuta | null;
-}
+};
 
 export type Envio = {
-    id: number;
-    ubicacionOrigen: Ubicacion;
-    ubicacionDestino: Ubicacion;
-    fechaRecepcion: Date;
-    fechaLimiteEntrega: Date;
-    estado: string;
-    cantidadPaquetes: number;
-    codigoSeguridad: string;
-    paquetes?: Paquete[];
-}
+	id: number;
+	ubicacionOrigen: Ubicacion;
+	ubicacionDestino: Ubicacion;
+	fechaRecepcion: Date;
+	fechaLimiteEntrega: Date;
+	estado: string;
+	cantidadPaquetes: number;
+	codigoSeguridad: string;
+	paquetes?: Paquete[];
+};
 
 export type Simulacion = {
 	id: number;
 	estado: number;
-	multiplicadorTiempo: number;	
+	multiplicadorTiempo: number;
 	fechaInicioSistema: Date;
 	fechaInicioSim: Date;
 	fechaFinSim: Date;
 	milisegundosPausados: number;
-}
+};
 
 export type RespuestaAlgoritmo = {
 	correcta: boolean;
-	estadoAlmacen: any;
+	estadoAlmacen: EstadoAlmacen;
 	planesRutas: PlanRuta[];
 	simulacion: Simulacion;
 	vuelos: Vuelo[];
-}
+};
+
+export type EstadoAlmacen = {
+	uso_historico: UsoHistorico;
+};
+
+export type UsoHistorico = {
+	[key: string]: HistoricoValores;
+};
+
+export type HistoricoValores = {
+	[key: string]: number;
+};

@@ -4,7 +4,7 @@ import Sidebar from "@/app/_components/sidebar";
 import Map from "@/components/map/map";
 
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -40,6 +40,8 @@ function SimulationPage() {
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
+	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
+
 	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
@@ -83,14 +85,17 @@ function SimulationPage() {
 
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
 
-				const newFlights = data.vuelos.map((vuelo: Vuelo) => {
-					const vueloActualizado = vuelo;
-					vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-					vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-					return vueloActualizado;
-				});
+				const newFlights = data.vuelos
+					.map((vuelo: Vuelo) => {
+						const vueloActualizado = vuelo;
+						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+						return vueloActualizado;
+					})
+					.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
 				setFlights(newFlights);
+				setEstadoAlmacen(data.estadoAlmacen);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
@@ -111,7 +116,6 @@ function SimulationPage() {
 				console.log(error);
 			}
 		);
-
 	};
 
 	useEffect(() => {
@@ -120,7 +124,7 @@ function SimulationPage() {
 				client.deactivate();
 			}
 		};
-	},[])
+	}, []);
 
 	return (
 		<>
@@ -164,6 +168,7 @@ function SimulationPage() {
 						className="h-full w-full"
 						airports={airports}
 						flights={flights}
+						estadoAlmacen={estadoAlmacen}
 						simulation={simulation}
 					/>
 					<Sidebar
@@ -175,7 +180,7 @@ function SimulationPage() {
 						}}
 						onClicksAeropuerto={{
 							onClickLocation: (aeropuerto: Aeropuerto) => {
-								zoomToAirport(aeropuerto)
+								zoomToAirport(aeropuerto);
 							},
 							onClickInfo: (aeropuerto: Aeropuerto) => {
 								openAirportModal(aeropuerto);
