@@ -10,42 +10,45 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class EstadoAlmacen {
 
-    private HashMap<Aeropuerto, TreeMap<Date, Integer>> uso_historico;
+    private HashMap<String, TreeMap<Date, Integer>> uso_historico;
+    private ArrayList<Aeropuerto> aeropuertos;
 
-    public EstadoAlmacen(HashMap<Aeropuerto, TreeMap<Date, Integer>> uso_historico) {
+    public EstadoAlmacen(HashMap<String, TreeMap<Date, Integer>> uso_historico) {
         this.uso_historico = uso_historico;
     }
 
     public EstadoAlmacen() {
-        uso_historico = new HashMap<Aeropuerto, TreeMap<Date, Integer>>();
+        uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
     }
 
     public EstadoAlmacen(EstadoAlmacen estado) {
         uso_historico = estado.getUso_historico();
     }
 
-    public HashMap<Aeropuerto, TreeMap<Date, Integer>> getUso_historico() {
+    public HashMap<String, TreeMap<Date, Integer>> getUso_historico() {
         return uso_historico;
     }
 
     public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> plan,
-            HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> aeropuertos) {
+            HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> _aeropuertos) {
+        this.aeropuertos = _aeropuertos;
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
-        this.uso_historico = new HashMap<Aeropuerto, TreeMap<Date, Integer>>();
-
+        this.uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
+        ArrayList<String> aeropuertos = _aeropuertos.stream()
+                .map(aeropuerto -> aeropuerto.getUbicacion().getId())
+                .collect(Collectors.toCollection(ArrayList::new));
         // Inicializar el TreeMap para cada aeropuerto
-        for (Aeropuerto aeropuerto : aeropuertos) {
+        for (String aeropuerto : aeropuertos) {
             this.uso_historico.put(aeropuerto, new TreeMap<>());
         }
         for (Integer IdVuelo : capacidades.keySet()) {
             // Encuentra el aeropuerto de salida y llegada basado en el vuelo
-            Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
-                    vuelos.get(IdVuelo).getPlanVuelo().getCiudadOrigen(), aeropuertos);
-            Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
-                    vuelos.get(IdVuelo).getPlanVuelo().getCiudadDestino(), aeropuertos);
+            String aeropuertoSalida = vuelos.get(IdVuelo).getPlanVuelo().getCiudadOrigen().getId();
+            String aeropuertoLlegada = vuelos.get(IdVuelo).getPlanVuelo().getCiudadDestino().getId();
 
             // Registrar salida de paquete
             registrarCapacidad(aeropuertoSalida, vuelos.get(IdVuelo).getFechaSalida(), -capacidades.get(IdVuelo));
@@ -54,15 +57,13 @@ public class EstadoAlmacen {
         }
         for (int i = 0; i < paquetes.size(); i++) {
 
-            Aeropuerto aeropuertoSalida = encontrarAeropuertoPorUbicacion(
-                    paquetes.get(i).getEnvio().getUbicacionOrigen(), aeropuertos);
-            Aeropuerto aeropuertoLlegada = encontrarAeropuertoPorUbicacion(
-                    paquetes.get(i).getEnvio().getUbicacionDestino(), aeropuertos);
+            String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
+            String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
 
             registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
             registrarCapacidad(aeropuertoLlegada, removeTime(plan.get(i).getFin()), -1);
         }
-        for (Aeropuerto aeropuerto : aeropuertos) {
+        for (String aeropuerto : aeropuertos) {
             TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
             int sumaAcumulada = 0;
             for (Map.Entry<Date, Integer> entrada : capacidad.entrySet()) {
@@ -87,16 +88,16 @@ public class EstadoAlmacen {
     }
 
     // Métodos auxiliares para encontrar aeropuertos y registrar capacidades
-    private static Aeropuerto encontrarAeropuertoPorUbicacion(Ubicacion ubicacion, ArrayList<Aeropuerto> aeropuertos) {
-        for (Aeropuerto aeropuerto : aeropuertos) {
-            if (aeropuerto.getUbicacion().equals(ubicacion)) {
+    private Aeropuerto encontrarAeropuertoPorUbicacion(String ubicacion) {
+        for (Aeropuerto aeropuerto : this.aeropuertos) {
+            if (aeropuerto.getUbicacion().getId().equals(ubicacion)) {
                 return aeropuerto;
             }
         }
         return null; // Si no se encuentra ningún aeropuerto con la ubicación dada
     }
 
-    private void registrarCapacidad(Aeropuerto aeropuerto, Date fecha, int cambio) {
+    private void registrarCapacidad(String aeropuerto, Date fecha, int cambio) {
         if (aeropuerto == null) {
             throw new IllegalArgumentException("Aeropuerto no puede ser null");
         }
@@ -113,8 +114,8 @@ public class EstadoAlmacen {
     }
 
     public void consulta_historica() {
-        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
-            System.out.println("Aeropuerto: " + aeropuerto.getId());
+        for (String aeropuerto : uso_historico.keySet()) {
+            System.out.println("Ubicacion: " + aeropuerto);
             ArrayList<Date> fechasOrdenadas = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
             Collections.sort(fechasOrdenadas);
             for (Date fecha : fechasOrdenadas) {
@@ -129,8 +130,8 @@ public class EstadoAlmacen {
             PrintWriter writer = new PrintWriter(new File(filename));
 
             // Recorrer el mapa uso_historico
-            for (Aeropuerto aeropuerto : uso_historico.keySet()) {
-                writer.println("Aeropuerto: " + aeropuerto.getId());
+            for (String aeropuerto : uso_historico.keySet()) {
+                writer.println("Aeropuerto: " + aeropuerto);
                 ArrayList<Date> fechasOrdenadas = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
                 Collections.sort(fechasOrdenadas);
                 for (Date fecha : fechasOrdenadas) {
@@ -146,10 +147,10 @@ public class EstadoAlmacen {
         }
     }
 
-    public HashMap<Aeropuerto, Integer> verificar_capacidad_en(Date fecha) {
-        HashMap<Aeropuerto, Integer> capacidad_hasta = new HashMap<Aeropuerto, Integer>();
+    public HashMap<String, Integer> verificar_capacidad_en(Date fecha) {
+        HashMap<String, Integer> capacidad_hasta = new HashMap<String, Integer>();
         System.out.println(fecha);
-        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+        for (String aeropuerto : uso_historico.keySet()) {
             TreeMap<Date, Integer> registros = uso_historico.get(aeropuerto);
             Date fecha_cercana = null;
             for (Date fecha_historica : registros.keySet()) {
@@ -169,10 +170,10 @@ public class EstadoAlmacen {
         return capacidad_hasta;
     }
 
-    public HashMap<Aeropuerto, Integer> verificar_capacidad() {
-        HashMap<Aeropuerto, Integer> capacidad_actual = new HashMap<Aeropuerto, Integer>();
+    public HashMap<String, Integer> verificar_capacidad() {
+        HashMap<String, Integer> capacidad_actual = new HashMap<String, Integer>();
 
-        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+        for (String aeropuerto : uso_historico.keySet()) {
             ArrayList<Date> fechas = new ArrayList<Date>(uso_historico.get(aeropuerto).keySet());
             Collections.sort(fechas, new Comparator<Date>() {
                 public int compare(Date a, Date b) {
@@ -189,9 +190,10 @@ public class EstadoAlmacen {
 
     public boolean verificar_capacidad_maxima() {
 
-        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+        for (String aeropuerto : uso_historico.keySet()) {
             for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
-                if (uso_historico.get(aeropuerto).get(fecha) > aeropuerto.getCapacidadMaxima()) {
+                if (uso_historico.get(aeropuerto).get(fecha) > encontrarAeropuertoPorUbicacion(aeropuerto)
+                        .getCapacidadMaxima()) {
                     return false;
                 }
             }
@@ -208,9 +210,10 @@ public class EstadoAlmacen {
     public HashMap<Aeropuerto, Double> consultarPorcentajeUsoPromedioPorHora() {
         HashMap<Aeropuerto, Double> porcentajes_Uso_Por_hora = new HashMap<>();
 
-        for (Aeropuerto aeropuerto : uso_historico.keySet()) {
+        for (String aeropuerto : uso_historico.keySet()) {
             ArrayList<Date> fechasList = new ArrayList<>(uso_historico.get(aeropuerto).keySet());
             Collections.sort(fechasList);
+            Aeropuerto aeropuerto_onb = encontrarAeropuertoPorUbicacion(aeropuerto);
 
             if (!fechasList.isEmpty()) { // Verificar que la lista no esté vacía
                 long totalMinutos = calcular_minutos_entre(fechasList.get(0), fechasList.get(fechasList.size() - 1));
@@ -224,13 +227,12 @@ public class EstadoAlmacen {
 
                     totalUso += usoActual * lapso;
                 }
-
                 double promedioHoras = (totalUso / totalMinutos) / 60;
-                Double porcentaje = (Double) (promedioHoras / aeropuerto.getCapacidadMaxima());
-                porcentajes_Uso_Por_hora.put(aeropuerto, porcentaje);
+                Double porcentaje = (Double) (promedioHoras / aeropuerto_onb.getCapacidadMaxima());
+                porcentajes_Uso_Por_hora.put(aeropuerto_onb, porcentaje);
             } else {
                 // Manejar el caso donde no hay datos históricos para el aeropuerto
-                porcentajes_Uso_Por_hora.put(aeropuerto, 0.0); // Por ejemplo, asignar 0 como porcentaje
+                porcentajes_Uso_Por_hora.put(aeropuerto_onb, 0.0); // Por ejemplo, asignar 0 como porcentaje
             }
         }
 
