@@ -18,6 +18,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { CircleStop, Play, SkipBack, SkipForward } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
+import MapHeader from "../_components/map-header";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -133,66 +134,59 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
-			<MainContainer>
-				<BreadcrumbCustom items={breadcrumbItems} />
-				<div className="flex flex-row justify-between items-center">
+			<MainContainer className="relative">
+				<MapHeader>
+					<BreadcrumbCustom items={breadcrumbItems} />
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
-					<div className="flex items-center gap-5">
-						<PlaneLegend />
-						<div className="flex items-center gap-1">
-							<Button size={"icon"}>
-								<CircleStop className="w-5 h-5" />
-							</Button>
-							{/* <Button size={"icon"}>
-								<SkipBack className="w-5 h-5" />
-							</Button> */}
+				</MapHeader>
 
-							<Button size={"icon"}>
-								<Play className="w-5 h-5" />
-							</Button>
-							{/* <Button size={"icon"}>
-								<SkipForward className="w-5 h-5" />
-							</Button> */}
-						</div>
+				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
+					<PlaneLegend />
+					<div className="flex items-center gap-1">
+						<Button size={"icon"}>
+							<CircleStop className="w-5 h-5" />
+						</Button>
+
+						<Button size={"icon"}>
+							<Play className="w-5 h-5" />
+						</Button>
 					</div>
 				</div>
 
-				<section className="relative flex-1 mt-[8px] overflow-hidden">
-					<Map
-						isSimulation={true}
-						mapModalAttributes={mapModalAttributes}
-						attributes={attributes}
-						className="h-full w-full"
-						airports={airports}
-						flights={flights}
-						estadoAlmacen={estadoAlmacen}
-						simulation={simulation}
-					/>
-					<Sidebar
-						envios={envios}
-						vuelos={flights}
-						aeropuertos={airports}
-						onClickEnvio={(envio: Envio) => {
-							toast.error("Pendiente de implementar");
-						}}
-						onClicksAeropuerto={{
-							onClickLocation: (aeropuerto: Aeropuerto) => {
-								zoomToAirport(aeropuerto);
-							},
-							onClickInfo: (aeropuerto: Aeropuerto) => {
-								openAirportModal(aeropuerto);
-							},
-						}}
-						onClickVuelo={(vuelo: Vuelo) => {
-							lockToFlight(vuelo);
-							openFlightModal(vuelo);
-						}}
-						tiempoActual={currentTime}
-					/>
-				</section>
+				<Sidebar
+					envios={envios}
+					vuelos={flights}
+					aeropuertos={airports}
+					onClickEnvio={(envio: Envio) => {
+						toast.error("Pendiente de implementar");
+					}}
+					onClicksAeropuerto={{
+						onClickLocation: (aeropuerto: Aeropuerto) => {
+							zoomToAirport(aeropuerto);
+						},
+						onClickInfo: (aeropuerto: Aeropuerto) => {
+							openAirportModal(aeropuerto);
+						},
+					}}
+					onClickVuelo={(vuelo: Vuelo) => {
+						lockToFlight(vuelo);
+						openFlightModal(vuelo);
+					}}
+					tiempoActual={currentTime}
+				/>
+				<Map
+					isSimulation={true}
+					mapModalAttributes={mapModalAttributes}
+					attributes={attributes}
+					className="absolute top-1 bottom-3 left-3 right-3"
+					airports={airports}
+					flights={flights}
+					estadoAlmacen={estadoAlmacen}
+					simulation={simulation}
+				/>
 			</MainContainer>
 		</>
 	);

@@ -140,7 +140,7 @@ function Map({
 			/>
 			<div
 				className={cn(
-					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden z-[10]",
+					"border rounded-xl flex justify-center items-center  overflow-hidden z-[10]",
 					className
 				)}
 			>

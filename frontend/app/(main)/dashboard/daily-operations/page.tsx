@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
+import MapHeader from "../../_components/map-header";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -96,7 +97,7 @@ function DailyOperationsPage() {
 					setCurrentTimeNoSimulation();
 
 					console.log(data);
-					console.log(typeof data)
+					console.log(typeof data);
 					if (data === null) {
 						console.log("Data devuelta es NULL");
 						return;
@@ -132,48 +133,48 @@ function DailyOperationsPage() {
 	}, []);
 
 	return (
-		<MainContainer>
-			<BreadcrumbCustom items={breadcrumbItems} />
-			<div className="flex flex-row justify-between items-center">
+		<MainContainer className="relative">
+			<MapHeader>
+				<BreadcrumbCustom items={breadcrumbItems} />
 				<div className="flex flex-row gap-4 items-center ">
 					<h1 className="text-4xl font-bold font-poppins">Operaciones día a día</h1>
 					<CurrentTime currentTime={currentTime} />
 				</div>
-				<PlaneLegend />
-			</div>
-			<section className="relative mt-[10px] flex-1 flex overflow-hidden">
-				<Sidebar
-					aeropuertos={airports}
-					envios={envios}
-					vuelos={flights}
-					onClickEnvio={(envio: Envio) => {
-						toast.error("Pendiente de implementar");
-					}}
-					onClicksAeropuerto={{
-						onClickLocation: (aeropuerto: Aeropuerto) => {
-							zoomToAirport(aeropuerto);
-						},
-						onClickInfo: (aeropuerto: Aeropuerto) => {
-							openAirportModal(aeropuerto);
-						},
-					}}
-					onClickVuelo={(vuelo: Vuelo) => {
-						lockToFlight(vuelo);
-						openFlightModal(vuelo);
-					}}
-					tiempoActual={currentTime}
-				/>
-				<Map
-					isSimulation={false}
-					mapModalAttributes={mapModalAttributes}
-					attributes={attributes}
-					className="h-full w-full"
-					airports={airports}
-					flights={flights}
-					estadoAlmacen={estadoAlmacen}
-					simulation={undefined}
-				/>
-			</section>
+			</MapHeader>
+
+			<PlaneLegend className="absolute top-10 right-14 z-[20]" />
+
+			<Sidebar
+				aeropuertos={airports}
+				envios={envios}
+				vuelos={flights}
+				onClickEnvio={(envio: Envio) => {
+					toast.error("Pendiente de implementar");
+				}}
+				onClicksAeropuerto={{
+					onClickLocation: (aeropuerto: Aeropuerto) => {
+						zoomToAirport(aeropuerto);
+					},
+					onClickInfo: (aeropuerto: Aeropuerto) => {
+						openAirportModal(aeropuerto);
+					},
+				}}
+				onClickVuelo={(vuelo: Vuelo) => {
+					lockToFlight(vuelo);
+					openFlightModal(vuelo);
+				}}
+				tiempoActual={currentTime}
+			/>
+			<Map
+				isSimulation={false}
+				mapModalAttributes={mapModalAttributes}
+				attributes={attributes}
+				className="absolute top-1 bottom-3 left-3 right-3"
+				airports={airports}
+				flights={flights}
+				estadoAlmacen={estadoAlmacen}
+				simulation={undefined}
+			/>
 		</MainContainer>
 	);
 }
