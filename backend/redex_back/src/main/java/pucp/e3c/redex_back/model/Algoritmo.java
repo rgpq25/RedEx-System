@@ -67,6 +67,7 @@ public class Algoritmo {
             VueloService vueloService, PlanRutaService planRutaService,
             PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService, int SA, int TA) {
+        this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
         // SA y TA en segundos\
 
         /*
@@ -100,6 +101,7 @@ public class Algoritmo {
                 if (paquetes.size() == 0) {
                     System.out.println("No hay paquetes para procesar.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                    this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
                     long end = System.currentTimeMillis();
                     long sa_millis = SA * 1000 - (end - start);
                     if (sa_millis < 0)
@@ -122,7 +124,7 @@ public class Algoritmo {
                 paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
                 if (paquetes.size() == 0) {
                     System.out.println("No hay paquetes para procesar.");
-                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes para procesar.");
                     long end = System.currentTimeMillis();
                     long sa_millis = SA * 1000 - (end - start);
                     if (sa_millis < 0)
@@ -233,9 +235,12 @@ public class Algoritmo {
             respuestaAlgoritmo.setSimulacion(null);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+            this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
             System.out.println("Planificacion terminada hasta " + now);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                     "Planificacion terminada hasta " + now);
+            boolean primera_plani = true;
+            
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
