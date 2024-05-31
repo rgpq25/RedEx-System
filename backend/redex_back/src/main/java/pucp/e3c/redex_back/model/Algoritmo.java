@@ -49,6 +49,12 @@ public class Algoritmo {
         long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
         long milisegundosPausados = simulacion.getMilisegundosPausados();
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
+
+        System.out.println(
+                "Inicio simulacion: " + simulacion.getFechaInicioSim() + ", Tiempo Actual: " + new Date(tiempoActual)
+                        + ", Inicio sistema: " + simulacion.getFechaInicioSistema() + ", Milisegundos pausados: "
+                        + milisegundosPausados + ", Multiplicador: " + simulacion.getMultiplicadorTiempo());
+
         return new Date(inicioSimulacion
                 + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador);
     }
@@ -309,8 +315,9 @@ public class Algoritmo {
         boolean primera_iter = true;
 
         while (true) {
-
+            System.out.println("Iniciando loop, fecha actual " + tiempoEnSimulacion);
             simulacion = simulacionService.get(simulacion.getId());
+
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
             // Gestion de parado forzado
             if (simulacion.estado == 1) {
@@ -327,6 +334,12 @@ public class Algoritmo {
                 } catch (Exception e) {
                     System.out.println("Error en sleep");
                 }
+                if (primera_iter) {
+                    simulacion.setFechaInicioSistema(new Date());
+                    simulacion = simulacionService.update(simulacion);
+                    primera_iter = false;
+
+                }
                 continue;
             }
 
@@ -339,12 +352,19 @@ public class Algoritmo {
                 } catch (Exception e) {
                     System.out.println("Error en sleep");
                 }
+                if (primera_iter) {
+                    simulacion.setFechaInicioSistema(new Date());
+                    simulacion = simulacionService.update(simulacion);
+                    primera_iter = false;
+
+                }
                 continue;
             }
 
             // Calculo del limie de planificacion
             Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
             fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
+
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
 
@@ -353,24 +373,31 @@ public class Algoritmo {
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
                     fechaLimiteCalculo);
             int tamanhoPaquetes = paquetesProcesar.size();
-            System.out.println("Se filtraron los validos");
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
             List<Paquete> paquetesRest = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
-            System.out.println("Se filtraron los restantes");
 
             if (tamanhoPaquetes == 0) {
+                if (primera_iter) {
+                    simulacion.setFechaInicioSistema(new Date());
+                    simulacion = simulacionService.update(simulacion);
+                    primera_iter = false;
+
+                }
                 messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "No hay paquetes para la planificacion actual, esperando");
-                System.out.println("No hay paquetes para la planificacion actual, esperando");
+                        "No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
+                System.out.println(
+                        "No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
                 respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
 
                 messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
+
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+
                 continue;
             }
 
@@ -384,7 +411,6 @@ public class Algoritmo {
 
             // Filtrar paquetes que estan volando
             paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnSimulacion);
-            System.out.println("Se filtraron los paquetes volando");
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -419,6 +445,7 @@ public class Algoritmo {
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
+                simulacion = simulacionService.update(simulacion);
                 primera_iter = false;
 
             }
