@@ -9,6 +9,7 @@ public class RespuestaAlgoritmo {
     private Simulacion simulacion;
     private ArrayList<Paquete> paquetes;
     private boolean correcta;
+    private boolean iniciandoPrimeraPlanificacionDiaDia; 
 
     public RespuestaAlgoritmo() {
         this.vuelos = new ArrayList<>();
@@ -17,6 +18,7 @@ public class RespuestaAlgoritmo {
         this.simulacion = new Simulacion();
         this.paquetes = new ArrayList<Paquete>();
         this.correcta = true;
+        this.iniciandoPrimeraPlanificacionDiaDia = false;
     }
 
     public RespuestaAlgoritmo(ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen,
@@ -26,6 +28,7 @@ public class RespuestaAlgoritmo {
         this.planesRutas = planesRutas;
         this.simulacion = simulacion;
         this.correcta = true;
+        this.iniciandoPrimeraPlanificacionDiaDia = false;
     }
 
     public void filtrarVuelosSinPaquetes(){
@@ -103,4 +106,14 @@ public class RespuestaAlgoritmo {
             correcta = false;
         }
     }
+
+    public boolean isIniciandoPrimeraPlanificacionDiaDia() {
+        return iniciandoPrimeraPlanificacionDiaDia;
+    }
+
+    public void setIniciandoPrimeraPlanificacionDiaDia(boolean iniciandoPrimeraPlanificacionDiaDia) {
+        this.iniciandoPrimeraPlanificacionDiaDia = iniciandoPrimeraPlanificacionDiaDia;
+    }
+
+    
 }
