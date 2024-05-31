@@ -87,22 +87,22 @@ public class SimulacionController {
 
         ArrayList<Envio> envios = envioService.findBySimulacionActualID(1);
         Date fechaMinima = simulacion.getFechaInicioSim();
-        System.out.println("Se encontraron " + envios.size() + " envios");
-        System.out.println("La fecha minima es " + fechaMinima);
         envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
-        System.out.println("Tras quedaron " + envios.size() + " envios");
 
         for (Envio envio : envios) {
-            int antiguoEnvioId = envio.getId();
-            envio.setId(0);
-            envio.setSimulacionActual(simulacion);
-            envio = envioService.register(envio);
-            ArrayList<Paquete> paquetes = new ArrayList<>(paqueteService.findByEnvioId(antiguoEnvioId));
+            Envio nuevoEnvio = new Envio();
+            nuevoEnvio.fillData(envio.getUbicacionOrigen(), envio.getUbicacionDestino(), envio.getFechaRecepcion(),
+                    envio.getFechaLimiteEntrega());
+            nuevoEnvio.setSimulacionActual(simulacion);
+            nuevoEnvio = envioService.register(nuevoEnvio);
+            ArrayList<Paquete> paquetes = new ArrayList<>(paqueteService.findByEnvioId(envio.getId()));
             for (Paquete paquete : paquetes) {
-                paquete.setId(0);
-                paquete.setEnvio(envio);
-                paquete.setSimulacionActual(simulacion);
-                paquete = paqueteService.register(paquete);
+                Paquete nuevoPaquete = new Paquete();
+                nuevoPaquete.fillData(paquete.getAeropuertoActual(), paquete.getEnvio().getUbicacionOrigen(),
+                        paquete.getEnvio().getUbicacionDestino(), paquete.getEnvio().getFechaRecepcion());
+                nuevoPaquete.setEnvio(nuevoEnvio);
+                nuevoPaquete.setSimulacionActual(simulacion);
+                nuevoPaquete = paqueteService.register(nuevoPaquete);
             }
         }
 
