@@ -17,6 +17,7 @@ import pucp.e3c.redex_back.service.VueloService;
 public class SAImplementation {
         private ArrayList<Aeropuerto> aeropuertos;
         private ArrayList<PlanVuelo> planVuelos;
+        private ArrayList<PlanRutaNT> planRutas;
         private ArrayList<Paquete> paquetes;
         private HashMap<Integer, Integer> ocupacionInicial;
         private GrafoVuelos grafoVuelos;
@@ -46,10 +47,12 @@ public class SAImplementation {
                         ArrayList<Aeropuerto> aeropuertos,
                         ArrayList<PlanVuelo> planVuelos,
                         ArrayList<Paquete> paquetes,
+                        ArrayList<PlanRutaNT> planRutas,
                         HashMap<Integer, Integer> ocupacionInicial) {
                 this.aeropuertos = aeropuertos;
                 this.planVuelos = planVuelos;
                 this.paquetes = paquetes;
+                this.planRutas = planRutas;
                 this.ocupacionInicial = ocupacionInicial;
         }
 
@@ -204,6 +207,7 @@ public class SAImplementation {
                         RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
                                         new ArrayList<>(current.vuelos_hash.values()),
                                         current.estado, current.rutas, simulacion);
+                        respuestaAlgoritmo.setOcupacionVuelos(current.ocupacionVuelos);
                         return respuestaAlgoritmo;
                 } catch (Exception e) {
                         e.printStackTrace();

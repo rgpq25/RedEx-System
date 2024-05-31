@@ -1,6 +1,7 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RespuestaAlgoritmo {
     private ArrayList<Vuelo> vuelos;
@@ -8,8 +9,17 @@ public class RespuestaAlgoritmo {
     private ArrayList<PlanRutaNT> planesRutas;
     private Simulacion simulacion;
     private ArrayList<Paquete> paquetes;
+    private HashMap<Integer, Integer> ocupacionVuelos;
     private boolean correcta;
     private boolean iniciandoPrimeraPlanificacionDiaDia; 
+
+    public HashMap<Integer, Integer> getOcupacionVuelos() {
+        return ocupacionVuelos;
+    }
+
+    public void setOcupacionVuelos(HashMap<Integer, Integer> ocupacionVuelos) {
+        this.ocupacionVuelos = ocupacionVuelos;
+    }
 
     public RespuestaAlgoritmo() {
         this.vuelos = new ArrayList<>();
@@ -17,6 +27,7 @@ public class RespuestaAlgoritmo {
         this.planesRutas = new ArrayList<>();
         this.simulacion = new Simulacion();
         this.paquetes = new ArrayList<Paquete>();
+        this.ocupacionVuelos = new HashMap<>();
         this.correcta = true;
         this.iniciandoPrimeraPlanificacionDiaDia = false;
     }
@@ -31,10 +42,10 @@ public class RespuestaAlgoritmo {
         this.iniciandoPrimeraPlanificacionDiaDia = false;
     }
 
-    public void filtrarVuelosSinPaquetes(){
+    public void filtrarVuelosSinPaquetes() {
         ArrayList<Vuelo> vuelosFiltrados = new ArrayList<>();
         for (Vuelo vuelo : vuelos) {
-            if (vuelo.getCapacidadUtilizada()> 0) {
+            if (vuelo.getCapacidadUtilizada() > 0) {
                 vuelosFiltrados.add(vuelo);
             }
         }
