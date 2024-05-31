@@ -247,7 +247,6 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                     "Planificacion terminada hasta " + now);
             boolean primera_plani = true;
-            
 
             planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
@@ -395,7 +394,7 @@ public class Algoritmo {
             ArrayList<PlanRutaNT> planesRutaActuales = new ArrayList<>();
 
             for (int j = 0; j < paquetesProcesar.size(); j++) {
-                planesRutaActuales.add(planRutas.get(i));
+                planesRutaActuales.add(planRutas.get(j));
             }
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
@@ -764,7 +763,6 @@ public class Algoritmo {
         double promedioPonderadoTiempoAeropuertoWeight = 4;
 
         SAImplementation sa = new SAImplementation();
-        System.out.println("\nEl arreglo de rutas tiene longitud " + planRutaNTs.size() + "\n");
         sa.setData(
                 aeropuertos,
                 planVuelos,

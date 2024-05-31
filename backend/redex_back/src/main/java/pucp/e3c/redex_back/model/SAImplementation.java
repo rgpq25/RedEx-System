@@ -96,7 +96,7 @@ public class SAImplementation {
 
                         Solucion current = new Solucion(
                                         paquetes,
-                                        new ArrayList<PlanRutaNT>(),
+                                        planRutas,
                                         aeropuertos,
                                         ocupacionInicial,
                                         0,
