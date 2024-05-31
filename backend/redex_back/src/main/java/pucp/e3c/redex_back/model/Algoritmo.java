@@ -6,9 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.Thread;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -23,6 +27,8 @@ import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.VueloService;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Component
 @EnableAsync
@@ -169,6 +175,7 @@ public class Algoritmo {
 
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
+                    new ArrayList<>(),
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, messagingTemplate);
             respuestaAlgoritmo.filtrarVuelosSinPaquetes();
@@ -296,7 +303,9 @@ public class Algoritmo {
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
         boolean primera_iter = true;
+
         while (true) {
+
             simulacion = simulacionService.get(simulacion.getId());
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
             // Gestion de parado forzado
@@ -378,21 +387,31 @@ public class Algoritmo {
 
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + fechaLimiteCalculo);
 
-            // Limpiar ocupacion de vuelos de paquetes a replanificar
-            limpiarOcupacionVuelos(ocupacionVuelos, paquetesProcesar, vueloService);
+            ArrayList<PlanRutaNT> planesRutaActuales = new ArrayList<>();
 
+            for (int j = 0; j < paquetesProcesar.size(); j++) {
+                planesRutaActuales.add(planRutas.get(i));
+            }
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
+                    planesRutaActuales,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate);
             i++;
+            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+            // Imprimir ocupacionVuelos ordenado por sus claves
 
+            // printRutasAlgoritmo(respuestaAlgoritmo.getPlanesRutas(), paquetesProcesar,
+            // i);
             // Guardar resultados
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "algoritmo/estado");
-            respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
 
+            respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
+            // HashMap<Integer, Integer> hash = printPaquetes(paquetes, planRutas, i,
+            // vueloService);
+            // printOcupacion(hash, ocupacionVuelos, i);
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -413,22 +432,134 @@ public class Algoritmo {
 
     }
 
-    private void limpiarOcupacionVuelos(HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetesProcesar,
-            VueloService vueloService) {
+    private void printRutasAlgoritmo(ArrayList<PlanRutaNT> planRutas, ArrayList<Paquete> paquetes, int i) {
+        try {
+            FileWriter fw = new FileWriter("planRutas" + i + " .txt", true);
+            System.out.println("Guardando en el archivo " + "planRutas" + i + " .txt");
+            BufferedWriter bw = new BufferedWriter(fw);
+            int idx = 0;
+            for (PlanRutaNT planRutaNT : planRutas) {
+                try {
+                    bw.write("Para el paquete: " + paquetes.get(idx).getId());
+                    bw.newLine();
+                    for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                        bw.write("(" + vuelo.getId() + ") -> ");
 
-        for (Paquete paquete : paquetesProcesar) {
-            if (paquete.planRutaActual == null) {
-                continue;
+                    }
+                    bw.newLine();
+                    bw.write("------------------------");
+                    bw.newLine();
+                } catch (IOException e) {
+                    System.out.println("Error al escribir en el archivo: " + e.getMessage());
+                }
+                idx++;
             }
-            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
-            if (vuelos == null || vuelos.size() == 0) {
-                System.out.println("El paquete tiene planRuta pero no vuelos");
-                continue;
-            }
-            for (Vuelo vuelo : vuelos) {
-                ocupacionVuelos.put(vuelo.getId(), ocupacionVuelos.get(vuelo.getId()) - 1);
-            }
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
         }
+    }
+
+    private void printOcupacion(HashMap<Integer, Integer> hash, HashMap<Integer, Integer> ocupacionVuelos, int i) {
+        try {
+            FileWriter fw = new FileWriter("ocupacionVuelos" + i + " .txt", true);
+            System.out.println("Guardando en el archivo " + "ocupacionVuelos" + i + " .txt");
+            BufferedWriter bw = new BufferedWriter(fw);
+            Set<Integer> clavesRecorridas = new HashSet<>();
+            for (Map.Entry<Integer, Integer> entry : hash.entrySet()) {
+                clavesRecorridas.add(entry.getKey());
+                Integer key = entry.getKey();
+                Integer value = entry.getValue();
+                Integer otherValue = ocupacionVuelos.get(key);
+                try {
+                    bw.write("Clave: " + key + ", Valor en hash: " + value);
+                    if (otherValue != null) {
+                        bw.write(", Valor en ocupacionVuelos: " + otherValue);
+                        ocupacionVuelos.remove(key); // Remove the key from ocupacionVuelos to avoid duplicate entries
+                    }
+                    bw.newLine();
+                } catch (IOException e) {
+                    System.out.println("Error al escribir en el archivo: " + e.getMessage());
+                }
+            }
+            // Write the remaining entries in ocupacionVuelos
+            for (Map.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
+                Integer key = entry.getKey();
+                if (!clavesRecorridas.contains(key)) {
+                    Integer value = entry.getValue();
+                    try {
+                        bw.write("Clave: " + key + ", Valor en ocupacionVuelos: " + value);
+                        bw.newLine();
+                    } catch (IOException e) {
+                        System.out.println("Error al escribir en el archivo: " + e.getMessage());
+                    }
+                }
+            }
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
+        }
+    }
+
+    private HashMap<Integer, Integer> printPaquetes(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutas, int i,
+            VueloService vueloService) {
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        ArrayList<Paquete> paquetesOrdenados = new ArrayList<>(paquetes);
+        Collections.sort(paquetesOrdenados, Comparator.comparing(Paquete::getFechaRecepcion));
+
+        try {
+            FileWriter fw = new FileWriter("paquetes" + i + " .txt", true);
+            System.out.println("Guardando en el archivo " + "paquetes" + i + " .txt");
+            BufferedWriter bw = new BufferedWriter(fw);
+            int iter = 0;
+            for (Paquete paquete : paquetesOrdenados) {
+
+                bw.write("Para el paquete " + paquete.getId() + "\n");
+
+                if (paquete.planRutaActual == null) {
+                    bw.write("No tiene rutas\n");
+                    continue;
+                }
+                if (planRutas.get(iter) == null) {
+                    bw.write("Paquete tiene plan ruta pero no objeto planRutaNT\n");
+                }
+                /*
+                 * bw.write("Vuelos de planRutaNT\n");
+                 * 
+                 * for (Vuelo vuelo : planRutas.get(iter).getVuelos()) {
+                 * if (hashMap.get(vuelo.getId()) == null) {
+                 * hashMap.put(vuelo.getId(), 1);
+                 * } else {
+                 * hashMap.put(vuelo.getId(), hashMap.get(vuelo.getId()) + 1);
+                 * }
+                 * bw.write("(" + vuelo.getId() + ") -> ");
+                 * }
+                 * bw.write("\n");
+                 */
+
+                ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+                if (vuelos == null || vuelos.size() == 0) {
+                    bw.write("El paquete tiene planRuta pero no vuelos\n");
+                    continue;
+                }
+                // bw.write("Vuelos de api\n");
+
+                for (Vuelo vuelo : vuelos) {
+                    int ocupacion = hashMap.getOrDefault(vuelo.getId(), 0);
+                    hashMap.put(vuelo.getId(), ocupacion + 1);
+                    bw.write("(" + vuelo.getId() + ") -> ");
+                }
+                bw.write("\n");
+                iter++;
+                bw.write("------------------------\n");
+            }
+            bw.close();
+            return hashMap;
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
+            return null;
+        }
+
     }
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
@@ -495,11 +626,13 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo, Simulacion simulacion, PaqueteService paqueteService,
             PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService,
             String canal) {
+
         for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
 
             PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
             int index = paquetesTotal.indexOf(paquetesProcesar.get(idx));
             // Verificar si tenia ruta
+
             if (planRutaNTs.get(index) != null) {
                 // Eliminar antigua ruta del paquete
                 // planRutaService.delete(paquetesTotal.get(index).getPlanRutaActual().getId());
@@ -603,7 +736,7 @@ public class Algoritmo {
     }
 
     public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
-            HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes,
+            HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
             VueloService vueloService, PlanRutaService planRutaService, Simulacion simulacion,
             SimpMessagingTemplate messagingTemplate) {
@@ -626,11 +759,13 @@ public class Algoritmo {
         double promedioPonderadoTiempoAeropuertoWeight = 4;
 
         SAImplementation sa = new SAImplementation();
-
+        System.out.println("\nEl arreglo de rutas tiene longitud " + planRutaNTs.size() + "\n");
         sa.setData(
                 aeropuertos,
                 planVuelos,
-                paquetes, ocupacionVuelos);
+                paquetes,
+                planRutaNTs,
+                ocupacionVuelos);
 
         sa.setParameters(
                 stopWhenNoPackagesLeft,
