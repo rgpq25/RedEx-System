@@ -25,7 +25,6 @@ import MainContainer from "../_components/main-container";
 const twStyle = "w-5 h-5";
 
 function ManagePackagesPage() {
-
 	return (
 		<>
 			<MainContainer>
@@ -34,7 +33,7 @@ function ManagePackagesPage() {
 					<div className="flex flex-col items-start justify-center">
 						<h1 className="text-4xl font-semibold font-poppins">Bienvenido, operario</h1>
 						<div className="grid grid-cols-2 gap-[5px] w-[410px] mt-[6px]">
-							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/register-shipment"}>
+							<Link className={cn(buttonVariants(), "col-span-1")} href={"/dashboard/register-shipment"}>
 								<PackagePlus className={twStyle} />
 								<p>Registrar envio</p>
 							</Link>
