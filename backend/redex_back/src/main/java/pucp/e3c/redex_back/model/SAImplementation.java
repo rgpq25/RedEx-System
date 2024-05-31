@@ -163,24 +163,25 @@ public class SAImplementation {
 
                         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
                                         1000000000) + " segundos");
-                        Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
-                                        1000000000) + " segundos");
+                        // Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float)
+                        // (duration /
+                        // 1000000000) + " segundos");
 
                         System.out.println(
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
-                        Funciones.printLineInLog(
-                                        "Final cost: " + current.getSolutionCost() +
-                                                        " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                        " | Temperature: " + temperature);
+                        // Funciones.printLineInLog(
+                        // "Final cost: " + current.getSolutionCost() +
+                        // " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                        // " | Temperature: " + temperature);
 
                         // current.printCosts();
-                        current.printCostsInLog();
-                        Funciones.printLineInLog("");
-                        Funciones.printLineInLog("");
+                        // current.printCostsInLog();
+                        // Funciones.printLineInLog("");
+                        // Funciones.printLineInLog("");
 
-                        Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                         // current.printFlightOcupation("ocupacionVuelos.txt");
                         // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 

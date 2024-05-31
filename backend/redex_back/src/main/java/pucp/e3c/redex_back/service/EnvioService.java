@@ -1,5 +1,6 @@
 package pucp.e3c.redex_back.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +112,7 @@ public class EnvioService {
             paquete.setEntregado(false);
             paquete.setEnvio(envio);
             paquete.setSimulacionActual(simulacion);
-            Paquete _paquete = paqueteRepository.save(paquete);
+            paqueteRepository.save(paquete);
         }
         auxEnvio.setSimulacionActual(simulacion);
         return auxEnvio;
@@ -121,6 +122,24 @@ public class EnvioService {
         // return envioRepository.findByCodigoSeguridad(codigoSeguridad);
         try {
             return envioRepository.findByCodigoSeguridad(codigoSeguridad);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Envio> findBySimulacionActualID(Integer id) {
+        try {
+            return envioRepository.findBySimulacionActualId(id);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Envio> findSinSimulacionActual() {
+        try {
+            return envioRepository.findEnviosSinSimulacion();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
