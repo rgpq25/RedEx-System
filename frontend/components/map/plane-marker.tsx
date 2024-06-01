@@ -34,9 +34,15 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	}
 
 	const dotPositions = getTrayectory(vuelo);
+	const porcentajeUtilizado = (vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100;
 
 	const airplaneIcon = new Icon({
-		iconUrl: "/green-airplane_centered.png",
+		iconUrl:
+			porcentajeUtilizado >= 0 && porcentajeUtilizado <= 30
+				? "/green-airplane_centered.png"
+				: porcentajeUtilizado > 30 && porcentajeUtilizado <= 60
+				? "/yellow-airplane_centered.png"
+				: "/red-airplane_centered.png",
 		iconSize: [30, 30],
 		//iconAnchor: [15, 15],
 	});
@@ -63,17 +69,13 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				icon={airplaneIcon}
 				eventHandlers={{
 					click: () => onClick(vuelo),
-					mouseover: () => {
-						console.log("Setting mouse over");
-						setIsHovering(true);
-					},
-					mouseout: () => {
-						console.log("Setting mouse out");
-						setIsHovering(false);
-					},
+					mouseover: () => setIsHovering(true),
+					mouseout: () => setIsHovering(false),
 				}}
-				zIndexOffset={ 50}
-			></Marker>
+				zIndexOffset={50}
+			>
+				<Tooltip direction="top" offset={[0,-5]} className="w-[55px] font-bold text-center">{vuelo.capacidadUtilizada} / {vuelo.planVuelo.capacidadMaxima}</Tooltip>
+			</Marker>
 		</>
 	);
 }

@@ -1,6 +1,6 @@
 //@ts-ignore
 import { useMapContext } from "react-simple-maps";
-import { Vuelo } from "./types";
+import { HistoricoValores, Vuelo } from "./types";
 
 export function getFlightPosition(
 	departureTime: Date,
@@ -18,7 +18,7 @@ export function getFlightPosition(
 	if (currentTime > arrivalTime) {
 		return arrivalPosition;
 	}
-	
+
 	const [x1, y1] = departurePosition;
 	const [x2, y2] = arrivalPosition;
 
@@ -35,7 +35,6 @@ export function getFlightPosition(
 	return [currentX, currentY];
 }
 
-
 export function calculateAngle(coord1: [number, number], coord2: [number, number]) {
 	const { projection } = useMapContext();
 	const [x1, y1] = projection(coord1);
@@ -49,28 +48,26 @@ export function calculateAngle(coord1: [number, number], coord2: [number, number
 	return degrees + 45;
 }
 
-
 export function getTrayectory(vuelo: Vuelo) {
 	const dotPositions = [];
 	let steps = 50;
 
-	const originCoordinate = [
-		vuelo.planVuelo.ciudadOrigen.longitud,
-		vuelo.planVuelo.ciudadOrigen.latitud,
-	] as [number, number];
-	const destinationCoordinate = [
-		vuelo.planVuelo.ciudadDestino.longitud,
-		vuelo.planVuelo.ciudadDestino.latitud,
-	] as [number, number];
-
+	const originCoordinate = [vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
+		number,
+		number
+	];
+	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [
+		number,
+		number
+	];
 
 	const distance = Math.sqrt(
 		Math.pow(destinationCoordinate[0] - originCoordinate[0], 2) +
-		Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
+			Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
 	);
 
 	steps = Math.floor(distance / 2);
-	
+
 	//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array
 	for (let i = 0; i < steps; i++) {
 		const x = originCoordinate[0] + ((destinationCoordinate[0] - originCoordinate[0]) * i) / steps;
@@ -78,4 +75,35 @@ export function getTrayectory(vuelo: Vuelo) {
 		dotPositions.push([x, y]);
 	}
 	return dotPositions;
+}
+
+export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
+	if(fecha === undefined){
+		//console.log("Fecha no definida");
+		return 0;
+	}
+
+	const fechas = Object.keys(estadoAlmacen);
+
+	if (fechas.length === 0) {
+		//console.log("No hay fechas para este estadoAlmacen");
+		return 0; //basicamente no tiene historico
+	}
+
+	// Si la fecha dada es menor que la primera fecha en el arreglo
+	if (fecha < new Date(fechas[0])) {
+		//console.log("Fecha menor a la primera fecha en el arreglo");
+		return estadoAlmacen[fechas[0].toString()];
+	}
+
+	for (let i = 0; i < fechas.length - 1; i++) {
+		if (fecha >= new Date(fechas[i]) && fecha < new Date(fechas[i + 1])) {
+			//console.log("Fecha entre dos fechas en el arreglo");
+			return estadoAlmacen[fechas[i + 1]];
+		}
+	}
+
+	//console.log("Fecha mayor a la última fecha en el arreglo");
+	// Si la fecha es mayor o igual a la última fecha en el arreglo
+	return estadoAlmacen[fechas[fechas.length - 1]];
 }

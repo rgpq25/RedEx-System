@@ -8,7 +8,7 @@ import { Tooltip } from "react-tooltip";
 import { AnimationObject } from "../hooks/useAnimation";
 import PlaneMarker from "./plane-marker";
 import AirportMarker from "./airport-marker";
-import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, EstadoAlmacen, Simulacion, Vuelo } from "@/lib/types";
 import AirportModal from "./airport-modal";
 import FlightModal from "./flight-modal";
 
@@ -16,8 +16,7 @@ import { MapContainer, TileLayer, Popup, Marker, Circle } from "react-leaflet";
 import { Map as MapType } from "leaflet";
 import { MapZoomAttributes } from "../hooks/useMapZoom";
 import { MapModalAttributes } from "../hooks/useMapModals";
-
-
+import { getCurrentAirportOcupation } from "@/lib/map-utils";
 
 interface MapProps {
 	isSimulation: boolean;
@@ -25,6 +24,7 @@ interface MapProps {
 	attributes: MapZoomAttributes;
 	airports: Aeropuerto[];
 	flights: Vuelo[];
+	estadoAlmacen: EstadoAlmacen | null;
 	simulation: Simulacion | undefined;
 	className?: string;
 }
@@ -36,19 +36,12 @@ function Map({
 	airports,
 	flights,
 	simulation,
+	estadoAlmacen,
 	className,
 }: MapProps) {
+	if (typeof window === "undefined") return null;
 
-	if(typeof window === 'undefined') return null;
-
-
-	const {
-		currentTime,
-		map,
-		setMap,
-		zoomToAirport,
-		lockToFlight,
-	} = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight } = attributes;
 
 	const {
 		setCurrentAirportModal,
@@ -97,6 +90,9 @@ function Map({
 									zoomToAirport(aeropuerto);
 									openAirportModal(aeropuerto);
 								}}
+								usoHistorico={estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {}}
+								currentTime={currentTime}
+								//currentCapacity = {getCurrentAirportOcupation(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {}, currentTime)}
 							/>
 						);
 					})}
@@ -104,7 +100,7 @@ function Map({
 				{map &&
 					currentTime &&
 					flights
-						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0)
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada)
 						.map((vuelo, idx) => {
 							return (
 								<PlaneMarker
@@ -135,13 +131,16 @@ function Map({
 			<AirportModal
 				isSimulation={isSimulation}
 				isOpen={isAirportModalOpen}
-				setIsOpen={(isOpen: boolean) => setIsAirportModalOpen(isOpen)}
+				setIsOpen={(isOpen: boolean) => {
+					setCurrentFlightModal(null);
+					setIsAirportModalOpen(isOpen);
+				}}
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
 			/>
 			<div
 				className={cn(
-					"border rounded-xl flex justify-center items-center flex-1  overflow-hidden z-[10]",
+					"border rounded-xl flex justify-center items-center  overflow-hidden z-[10]",
 					className
 				)}
 			>

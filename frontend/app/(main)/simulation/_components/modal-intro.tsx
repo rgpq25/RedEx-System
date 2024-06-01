@@ -34,28 +34,31 @@ export function ModalIntro({
 	setIsModalOpen: (value: boolean) => void;
 	onSimulationRegister: (simulacion: Simulacion) => Promise<void>;
 }) {
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [file, setFile] = useState<File | undefined>();
+	//const fileInputRef = useRef<HTMLInputElement>(null);
+	//const [file, setFile] = useState<File | undefined>();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 	const [selectedTime, setSelectedTime] = useState<string>("");
 
-	const openFilePicker = () => {
-		if (fileInputRef.current) {
-			fileInputRef.current.click();
-		}
-	};
+	// const openFilePicker = () => {
+	// 	if (fileInputRef.current) {
+	// 		fileInputRef.current.click();
+	// 	}
+	// };
 
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0];
-		if (file) {
-			setFile(file);
-		} else {
-			setFile(undefined);
-		}
-	};
+	// const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	const file = event.target.files?.[0];
+	// 	if (file) {
+	// 		setFile(file);
+	// 	} else {
+	// 		setFile(undefined);
+	// 	}
+	// };
 
 	const handleStartSimulation = async () => {
-		if (!file || !selectedDate || !selectedTime) {
+		if (
+			//!file || 
+			!selectedDate || 
+			!selectedTime) {
 			toast.error("Complete todos los campos");
 			return;
 		}
@@ -76,7 +79,7 @@ export function ModalIntro({
 		console.log("Date is ", realDate)
 
 		//Register new simulation and all shipments
-		const simulacion = await startWeeklySimulation(file, realDate);
+		const simulacion = await startWeeklySimulation(realDate);
 
 		if (simulacion === undefined || simulacion.id === 0) {
 			toast.error("Error al registrar la simulación");
@@ -114,7 +117,7 @@ export function ModalIntro({
 							</SelectContent>
 						</Select>
 					</div>
-					<div className="flex flex-row items-center justify-end gap-4">
+					{/* <div className="flex flex-row items-center justify-end gap-4">
 						<Label className="text-right">Datos</Label>
 						<div className="flex items-center w-[77%] gap-1">
 							<Input
@@ -135,7 +138,7 @@ export function ModalIntro({
 								<FileUp className="w-5 h-5 shrink-0" />
 							</Button>
 						</div>
-					</div>
+					</div> */}
 					<div className="flex flex-row items-center justify-end gap-4">
 						<Label className="text-right">Fecha inicio</Label>
 						<div className="flex items-center w-[77%] gap-1">
@@ -161,7 +164,7 @@ export function ModalIntro({
 					<Button
 						className="w-[100px]"
 						onClick={() => handleStartSimulation()}
-						disabled={file === undefined || selectedDate === undefined}
+						disabled={selectedDate === undefined}
 					>
 						Iniciar
 					</Button>

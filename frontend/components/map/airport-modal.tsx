@@ -159,6 +159,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 					"GET",
 					`http://localhost:8080/back/aeropuerto/${aeropuerto.id}/paquetes`,
 					(data: Paquete[]) => {
+						console.log("Finished fetch")
 						console.log(data);
 						setPaquetes(data);
 						setFechaConsulta(new Date());

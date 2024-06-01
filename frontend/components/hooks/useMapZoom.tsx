@@ -60,8 +60,8 @@ const useMapZoom = (
 
 	const onAirportClick = useCallback(
 		(aeropuerto: Aeropuerto) => {
-			if (map === null) return ``;
-			console.log("Moving view");
+			if (map === null) return;
+			setCurrentlyLockedFlight(null);
 			map.setView([aeropuerto.ubicacion.latitud, aeropuerto.ubicacion.longitud], zoomFactor);
 		},
 		[map]

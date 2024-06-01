@@ -86,7 +86,7 @@ export default function Sidebar({
             <Button
                 onClick={() => setVisible(true)}
                 className={cn(
-                    "absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[20]",
+                    "absolute top-[105px] left-[45px] gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[20]",
                     visible ? "opacity-0" : "opacity-100"
                 )}
             >
@@ -95,8 +95,8 @@ export default function Sidebar({
             </Button>
             <Card
                 className={cn(
-                    "flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-5 bottom-5 left-5 z-[20]",
-                    visible ? "left-5" : "-left-[404px]"
+                    "flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-[105px] bottom-[43px] z-[20] border border-gray-300",
+                    visible ? "left-[43px]" : "-left-[404px]"
                 )}
             >
                 <CardHeader className='w-full'>

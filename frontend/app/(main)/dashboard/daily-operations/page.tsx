@@ -4,7 +4,7 @@ import useMapZoom from "@/components/hooks/useMapZoom";
 import Map from "@/components/map/map";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
 import { Clock } from "lucide-react";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
+import MapHeader from "../../_components/map-header";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -39,6 +40,8 @@ function DailyOperationsPage() {
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
+
 	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
@@ -67,14 +70,17 @@ function DailyOperationsPage() {
 					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
-					const newFlights = data.vuelos.map((vuelo: Vuelo) => {
-						const vueloActualizado = vuelo;
-						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-						return vueloActualizado;
-					});
+					const newFlights = data.vuelos
+						.map((vuelo: Vuelo) => {
+							const vueloActualizado = vuelo;
+							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+							return vueloActualizado;
+						})
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
 					setFlights(newFlights);
+					setEstadoAlmacen(data.estadoAlmacen);
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
 					console.log("MENSAJE DE /algoritmo/diaDiaEstado: ", msg.body);
@@ -82,22 +88,32 @@ function DailyOperationsPage() {
 			};
 
 			client.activate();
-			setClient(client)
+			setClient(client);
 
 			await api(
 				"GET",
 				"http://localhost:8080/back/operacionesDiaDia/diaDiaRespuesta",
 				(data: RespuestaAlgoritmo) => {
 					setCurrentTimeNoSimulation();
+
 					console.log(data);
-					const newFlights = data.vuelos.map((vuelo: Vuelo) => {
-						const vueloActualizado = vuelo;
-						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-						return vueloActualizado;
-					});
+					console.log(typeof data);
+					if (data === null) {
+						console.log("Data devuelta es NULL");
+						return;
+					}
+
+					const newFlights = data.vuelos
+						.map((vuelo: Vuelo) => {
+							const vueloActualizado = vuelo;
+							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+							return vueloActualizado;
+						})
+						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
 					setFlights(newFlights);
+					setEstadoAlmacen(data.estadoAlmacen);
 				},
 				(error) => {
 					console.log(error);
@@ -108,56 +124,57 @@ function DailyOperationsPage() {
 		getData();
 	}, []);
 
-	useEffect(()=>{
+	useEffect(() => {
 		return () => {
 			if (client) {
 				client.deactivate();
 			}
-		}
-	},[])
+		};
+	}, []);
 
 	return (
-		<MainContainer>
-			<BreadcrumbCustom items={breadcrumbItems} />
-			<div className="flex flex-row justify-between items-center">
+		<MainContainer className="relative">
+			<MapHeader>
+				<BreadcrumbCustom items={breadcrumbItems} />
 				<div className="flex flex-row gap-4 items-center ">
 					<h1 className="text-4xl font-bold font-poppins">Operaciones día a día</h1>
 					<CurrentTime currentTime={currentTime} />
 				</div>
-				<PlaneLegend />
-			</div>
-			<section className="relative mt-[10px] flex-1 flex overflow-hidden">
-				<Sidebar
-					aeropuertos={airports}
-					envios={envios}
-					vuelos={flights}
-					onClickEnvio={(envio: Envio) => {
-						toast.error("Pendiente de implementar");
-					}}
-					onClicksAeropuerto={{
-						onClickLocation: (aeropuerto: Aeropuerto) => {
-							zoomToAirport(aeropuerto);
-						},
-						onClickInfo: (aeropuerto: Aeropuerto) => {
-							openAirportModal(aeropuerto);
-						},
-					}}
-					onClickVuelo={(vuelo: Vuelo) => {
-						lockToFlight(vuelo);
-						openFlightModal(vuelo);
-					}}
-					tiempoActual={currentTime}
-				/>
-				<Map
-					isSimulation={false}
-					mapModalAttributes={mapModalAttributes}
-					attributes={attributes}
-					className="h-full w-full"
-					airports={airports}
-					flights={flights}
-					simulation={undefined}
-				/>
-			</section>
+			</MapHeader>
+
+			<PlaneLegend className="absolute top-10 right-14 z-[20]" />
+
+			<Sidebar
+				aeropuertos={airports}
+				envios={envios}
+				vuelos={flights}
+				onClickEnvio={(envio: Envio) => {
+					toast.error("Pendiente de implementar");
+				}}
+				onClicksAeropuerto={{
+					onClickLocation: (aeropuerto: Aeropuerto) => {
+						zoomToAirport(aeropuerto);
+					},
+					onClickInfo: (aeropuerto: Aeropuerto) => {
+						openAirportModal(aeropuerto);
+					},
+				}}
+				onClickVuelo={(vuelo: Vuelo) => {
+					lockToFlight(vuelo);
+					openFlightModal(vuelo);
+				}}
+				tiempoActual={currentTime}
+			/>
+			<Map
+				isSimulation={false}
+				mapModalAttributes={mapModalAttributes}
+				attributes={attributes}
+				className="absolute top-1 bottom-3 left-3 right-3"
+				airports={airports}
+				flights={flights}
+				estadoAlmacen={estadoAlmacen}
+				simulation={undefined}
+			/>
 		</MainContainer>
 	);
 }
