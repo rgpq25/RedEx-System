@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { H1, Large, Muted } from "@/components/ui/typography";
+import { H1, Large, Lead, Muted } from "@/components/ui/typography";
 import { FileUp } from "lucide-react";
 
 import { RowShipmentType } from "@/lib/types";
@@ -39,6 +39,8 @@ export default function FileShipment() {
                     const [origin, id, dateShipment, timeShipment, info] = line.split("-");
                     const [destination, amountPackages] = info?.split(":");
 
+                    const formattedId = origin + "-" + id;
+
                     const year = parseInt(dateShipment.substring(0, 4));
                     const month = parseInt(dateShipment.substring(4, 6)) - 1; // Months are 0-based in JS Date
                     const day = parseInt(dateShipment.substring(6, 8));
@@ -47,7 +49,7 @@ export default function FileShipment() {
                     const dateTimeShipment = new Date(year, month, day, hours, minutes);
 
                     return {
-                        id,
+                        id: formattedId,
                         origin,
                         dateTimeShipment,
                         destination,
@@ -105,6 +107,21 @@ export default function FileShipment() {
     return (
         <main className='w-3/5 mx-auto my-10 flex flex-col justify-start gap-4 h-full'>
             <H1>Archivo de envíos</H1>
+            <Large>
+                <strong>Formato de líneas:</strong> CORIEnvio-FORI-HORI-CDES:QQ
+            </Large>
+            <span className='grid grid-cols-2 gap-2 w-4/6'>
+                <Muted>CORI = Ciudad origen </Muted>
+                <Muted>CDES = Ciudad destino</Muted>
+                <Muted>Envio = Número de envío</Muted>
+                <Muted>FORI = Fecha de envío</Muted>
+                <Muted>HORI = Hora de envío</Muted>
+                <Muted>QQ = Cantidad de paquetes</Muted>
+                <Muted className='col-span-2'>
+                    <strong>Ejemplo:</strong> SKBO-000000001-20240103-01:02-SPIM:15
+                </Muted>
+            </span>
+
             <section className='flex flex-row items-center justify-between gap-4'>
                 <Input
                     placeholder='No ha seleccionado ningun archivo'
@@ -130,7 +147,13 @@ export default function FileShipment() {
                 </Button>
             </section>
             <ShipmentTable data={shipments} />
-            <div className='m-auto flex flex-row gap-4 pb-10'>
+            {file !== undefined && (
+                <Lead className='mx-auto'>
+                    Se han detectado <strong>{shipments.length}</strong> envios y{" "}
+                    <strong>{shipments.reduce((acc, shipment) => acc + shipment.amountPackages, 0)}</strong> paquetes
+                </Lead>
+            )}
+            <div className='mx-auto flex flex-row gap-4 pb-10'>
                 <Link
                     href='/dashboard'
                     className={cn(buttonVariants({ variant: "outline" }))}
