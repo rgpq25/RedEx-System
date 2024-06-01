@@ -50,11 +50,6 @@ public class Algoritmo {
         long milisegundosPausados = simulacion.getMilisegundosPausados();
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
 
-        System.out.println(
-                "Inicio simulacion: " + simulacion.getFechaInicioSim() + ", Tiempo Actual: " + new Date(tiempoActual)
-                        + ", Inicio sistema: " + simulacion.getFechaInicioSistema() + ", Milisegundos pausados: "
-                        + milisegundosPausados + ", Multiplicador: " + simulacion.getMultiplicadorTiempo());
-
         return new Date(inicioSimulacion
                 + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador);
     }
@@ -315,7 +310,6 @@ public class Algoritmo {
         boolean primera_iter = true;
 
         while (true) {
-            System.out.println("Iniciando loop, fecha actual " + tiempoEnSimulacion);
             simulacion = simulacionService.get(simulacion.getId());
 
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
@@ -436,7 +430,7 @@ public class Algoritmo {
             // Guardar resultados
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
-                    vueloService, planRutaXVueloService, "algoritmo/estado");
+                    vueloService, planRutaXVueloService, "/algoritmo/estado");
 
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             // HashMap<Integer, Integer> hash = printPaquetes(paquetes, planRutas, i,
@@ -452,7 +446,7 @@ public class Algoritmo {
 
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
-                    "algoritmo/respuesta");
+                    "/algoritmo/respuesta");
 
             System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
