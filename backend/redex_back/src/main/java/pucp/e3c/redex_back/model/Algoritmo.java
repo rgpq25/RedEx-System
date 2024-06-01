@@ -166,11 +166,11 @@ public class Algoritmo {
 
             //Crea el array rutas para los paquetes a procesar
             ArrayList<PlanRutaNT> planRutasPaquetesProcesar = new ArrayList<>();
-            ArrayList<Integer> indexPaquetesProcesar = new ArrayList<>();
+            ArrayList<Integer> idsPaquetesProcesar = new ArrayList<>();
             for(Paquete paquete: paquetesProcesar){
                 PlanRutaNT planRutaNT = hashPlanRutasNT.get(paquete.getId());
                 planRutasPaquetesProcesar.add(planRutaNT);
-                indexPaquetesProcesar.add(paquete.getId());
+                idsPaquetesProcesar.add(paquete.getId());
             }
 
             // Realizar planificacion
@@ -181,10 +181,14 @@ public class Algoritmo {
             //respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
+
             //Actualiza el hasmap rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
-            for(Integer index : indexPaquetesProcesar){
-                hashPlanRutasNT.put(index, planRutasRespuestaAlgoritmo.get(index));
+
+            int contador_index_respuesta = 0;
+            for(Integer idPaquete : idsPaquetesProcesar){
+                hashPlanRutasNT.put(idPaquete, planRutasRespuestaAlgoritmo.get(contador_index_respuesta));
+                contador_index_respuesta++;
             }
 
             i++;
