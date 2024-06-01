@@ -37,10 +37,10 @@ function ManagePackagesPage() {
 								<PackagePlus className={twStyle} />
 								<p>Registrar envio</p>
 							</Link>
-							<Button disabled>
+							<Link className={cn(buttonVariants(), "col-span-1")} href={"/dashboard/file-shipment"}>
 								<FileUp className={twStyle} />
 								<p>Carga de envíos</p>
-							</Button>
+							</Link>
 							<DialogReception twStyle={twStyle} />
 							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/daily-operations"}>
 								<Plane className={twStyle} />
