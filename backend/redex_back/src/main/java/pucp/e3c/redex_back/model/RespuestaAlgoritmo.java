@@ -80,7 +80,7 @@ public class RespuestaAlgoritmo {
         return this.vuelos;
     }
 
-    public void setOcupacionVuelos(ArrayList<Vuelo> vuelos) {
+    public void setVuelos(ArrayList<Vuelo> vuelos) {
         this.vuelos = vuelos;
     }
 
