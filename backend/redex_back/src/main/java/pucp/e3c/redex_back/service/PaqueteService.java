@@ -213,4 +213,13 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaquetesOperacionesDiaDia(){
+        try {
+            return paqueteRepository.findPaquetesOperacionesDiaDia();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }

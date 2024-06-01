@@ -206,7 +206,7 @@ public class DataInitializer {
         // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
-                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
+                    vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
                     120, 60);
         });
         /*
