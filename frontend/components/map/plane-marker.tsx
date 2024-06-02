@@ -1,11 +1,10 @@
 "use client";
 import { getFlightPosition, getTrayectory } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { Icon } from "leaflet";
 import { useState } from "react";
 import { Marker, Tooltip } from "react-leaflet";
-import RotateMarker from "./test";
+import RotateMarker from "./rotate-marker";
 
 interface PlaneMarkerProps {
 	vuelo: Vuelo;
