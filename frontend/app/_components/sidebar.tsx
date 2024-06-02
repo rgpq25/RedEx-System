@@ -39,7 +39,10 @@ interface SidebarProps {
     envios?: Envio[];
     aeropuertos?: Aeropuerto[];
     vuelos?: Vuelo[];
-    onClickEnvio: (envio: Envio) => void;
+    onClicksEnvio: {
+        onClickLocation: (envio: Envio) => void;
+        onClickInfo: (envio: Envio) => void;
+    };
     onClicksAeropuerto: {
         onClickLocation: (aeropuerto: Aeropuerto) => void;
         onClickInfo: (aeropuerto: Aeropuerto) => void;
@@ -53,7 +56,7 @@ export default function Sidebar({
     envios,
     aeropuertos,
     vuelos,
-    onClickEnvio,
+    onClicksEnvio,
     onClicksAeropuerto,
     onClickVuelo,
     tiempoActual,
@@ -125,7 +128,7 @@ export default function Sidebar({
                     {selectedOperation === Operacion.Envios && (
                         <Envios
                             envios={envios}
-                            onClick={onClickEnvio}
+                            onClicks={onClicksEnvio}
                             tiempoActual={tiempoActual}
                             ubicaciones={ubicaciones}
                         />
@@ -153,12 +156,15 @@ export default function Sidebar({
 
 function Envios({
     envios,
-    onClick,
+    onClicks,
     tiempoActual,
     ubicaciones,
 }: {
     envios: Envio[] | undefined;
-    onClick: (envio: Envio) => void;
+    onClicks: {
+        onClickLocation: (envio: Envio) => void;
+        onClickInfo: (envio: Envio) => void;
+    };
     tiempoActual?: Date | undefined;
     ubicaciones: Ubicacion[];
 }) {
@@ -246,7 +252,7 @@ function Envios({
             <Card
                 key={envio.id}
                 className='p-3 *:p-0 hover:bg-gray-100 cursor-pointer'
-                onClick={() => onClick(envio)}
+                onClick={() => onClicks.onClickInfo(envio)}
             >
                 <CardHeader>
                     <Large>{envio.id}</Large>
@@ -261,7 +267,7 @@ function Envios({
                 </CardContent>
             </Card>
         ),
-        [onClick]
+        [onClicks]
     );
 
     const renderFilters = useCallback(() => {

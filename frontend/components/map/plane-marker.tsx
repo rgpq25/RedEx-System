@@ -1,11 +1,11 @@
 "use client";
-import { calculateAngle, getFlightPosition, getTrayectory } from "@/lib/map-utils";
+import { getFlightPosition, getTrayectory } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Icon } from "leaflet";
 import { useState } from "react";
-// import { Marker } from "react-simple-maps";
 import { Marker, Tooltip } from "react-leaflet";
+import RotateMarker from "./test";
 
 interface PlaneMarkerProps {
 	vuelo: Vuelo;
@@ -39,13 +39,13 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	const airplaneIcon = new Icon({
 		iconUrl:
 			porcentajeUtilizado >= 0 && porcentajeUtilizado <= 30
-				? "/green-airplane_centered.png"
+				? "/green-airplane.png"
 				: porcentajeUtilizado > 30 && porcentajeUtilizado <= 60
-				? "/yellow-airplane_centered.png"
-				: "/red-airplane_centered.png",
-		iconSize: [30, 30],
-		//iconAnchor: [15, 15],
+				? "/yellow-airplane.png"
+				: "/red-airplane.png",
+		iconSize: [20, 20],
 	});
+
 
 	const trackIcon = new Icon({
 		iconUrl: "/tracking-dots.png",
@@ -64,7 +64,7 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 						autoPan={false}
 					/>
 				))}
-			<Marker
+			<RotateMarker
 				position={[coordinates[1], coordinates[0]] as [number, number]}
 				icon={airplaneIcon}
 				eventHandlers={{
@@ -73,25 +73,21 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 					mouseout: () => setIsHovering(false),
 				}}
 				zIndexOffset={50}
+				rotationAngle={vuelo.anguloAvion}
+				rotationOrigin="center"
 			>
 				<Tooltip direction="top" offset={[0,-5]} className="w-[55px] font-bold text-center">{vuelo.capacidadUtilizada} / {vuelo.planVuelo.capacidadMaxima}</Tooltip>
-			</Marker>
+			</RotateMarker>
 		</>
 	);
 }
 export default PlaneMarker;
 
 function Plane({
-	capacity,
-	originCoordinate,
-	destinationCoordinate,
+	vuelo
 }: {
-	capacity: number;
-	originCoordinate: [number, number];
-	destinationCoordinate: [number, number];
+	vuelo: Vuelo;
 }) {
-	//const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
-	const [color, setColor] = useState(mapCapacity(capacity));
 
 	function mapCapacity(_capacity: number) {
 		if (_capacity >= 0 && _capacity < 30) {
@@ -101,9 +97,11 @@ function Plane({
 		} else return "#FF0000";
 	}
 
+	const color = mapCapacity(vuelo.capacidadUtilizada);
+
 	return (
 		<>
-			{/* <g
+			<g
 				fill={color}
 				version="1.1"
 				id="Layer_1"
@@ -117,7 +115,7 @@ function Plane({
 					width: "10px",
 					height: "10px",
 					transform: "translate(-6.7px, -5.5px)",
-					rotate: rotation.toString() + "deg",
+					rotate: vuelo.anguloAvion.toString() + "deg",
 					zIndex: "2",
 				}}
 			>
@@ -131,8 +129,8 @@ function Plane({
                     L16.63,105.75z"
 					transform="scale(0.1)"
 				/>
-			</g> */}
-			<circle r={30} fill={color} className="" />
+			</g>
+			{/* <circle r={30} fill={color} className="" /> */}
 			<circle r={5} className="fill-transparent" />
 		</>
 	);

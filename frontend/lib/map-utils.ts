@@ -1,6 +1,5 @@
 //@ts-ignore
-import { useMapContext } from "react-simple-maps";
-import { HistoricoValores, Vuelo } from "./types";
+import { Envio, HistoricoValores, Paquete, RespuestaAlgoritmo, Vuelo } from "./types";
 
 export function getFlightPosition(
 	departureTime: Date,
@@ -36,16 +35,15 @@ export function getFlightPosition(
 }
 
 export function calculateAngle(coord1: [number, number], coord2: [number, number]) {
-	const { projection } = useMapContext();
-	const [x1, y1] = projection(coord1);
-	const [x2, y2] = projection(coord2);
+	const [x1, y1] = coord1;
+	const [x2, y2] = coord2;
 
 	const deltaX = x2 - x1;
 	const deltaY = y2 - y1;
 	const radians = Math.atan2(deltaY, deltaX);
 	const degrees = radians * (180 / Math.PI);
 
-	return degrees + 45;
+	return degrees * -1;
 }
 
 export function getTrayectory(vuelo: Vuelo) {
@@ -78,7 +76,7 @@ export function getTrayectory(vuelo: Vuelo) {
 }
 
 export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
-	if(fecha === undefined){
+	if (fecha === undefined) {
 		//console.log("Fecha no definida");
 		return 0;
 	}
@@ -106,4 +104,32 @@ export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fech
 	//console.log("Fecha mayor a la última fecha en el arreglo");
 	// Si la fecha es mayor o igual a la última fecha en el arreglo
 	return estadoAlmacen[fechas[fechas.length - 1]];
+}
+
+export function structureDataFromRespuestaAlgoritmo(data: RespuestaAlgoritmo) {
+	const newFlights = data.vuelos
+		.map((vuelo: Vuelo) => {
+			const vueloActualizado = vuelo;
+			vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+			vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+			vueloActualizado.anguloAvion = calculateAngle(
+				[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud],
+				[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud]
+			);
+			return vueloActualizado;
+		})
+		.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
+
+	const newEnvios: Envio[] = data.paquetes.map((paquete: Paquete) => {
+		const _envio = paquete.envio;
+		_envio.fechaLimiteEntrega = new Date(_envio.fechaLimiteEntrega);
+		_envio.fechaRecepcion = new Date(_envio.fechaRecepcion);
+		return _envio;
+	});
+
+	return {
+		db_vuelos: newFlights, 
+		db_envios: newEnvios, 
+		db_estadoAlmacen: data.estadoAlmacen
+	};
 }
