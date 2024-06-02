@@ -139,7 +139,6 @@ public class EnvioService {
         for (Ubicacion u : ubicaciones) {
             ubicacionMap.put(u.getId(), u);
         }
-        System.out.println("xxx");
         ArrayList<Envio> envios = new ArrayList<>();
         int aux = 0;
         for (RegistrarEnvio registrarEnvio : registrarEnvios) {
