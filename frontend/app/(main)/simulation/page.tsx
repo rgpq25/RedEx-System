@@ -1,9 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
-import Map from "@/components/map/map";
-
-import { envios } from "@/lib/sample";
 import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
@@ -16,9 +13,11 @@ import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-cus
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { CircleStop, Play, SkipBack, SkipForward } from "lucide-react";
+import { CircleStop, Play } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
+import { Map } from "@/components/map/map";
+import { structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -35,12 +34,12 @@ function SimulationPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
-	const { openFlightModal, openAirportModal } = mapModalAttributes;
+	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
-	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
+	const [envios, setEnvios] = useState<Envio[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
 
@@ -50,7 +49,7 @@ function SimulationPage() {
 		"GET",
 		"http://localhost:8080/back/aeropuerto/",
 		(data: Aeropuerto[]) => {
-			console.log(data);
+			console.log("Fetched airport data succesfully");
 			setAirports(data);
 		},
 		(error) => {
@@ -72,6 +71,7 @@ function SimulationPage() {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
+				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
 
 				const simulation = data.simulacion;
 				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
@@ -85,20 +85,11 @@ function SimulationPage() {
 
 				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
 
-				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
+				const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
-				const newFlights = data.vuelos
-					.map((vuelo: Vuelo) => {
-						const vueloActualizado = vuelo;
-						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-						return vueloActualizado;
-					})
-					.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
-
-				setFlights(newFlights);
-				setEstadoAlmacen(data.estadoAlmacen);
-				setPaquetes(data.paquetes);
+				setFlights(db_vuelos);
+				setEnvios(db_envios);
+				setEstadoAlmacen(db_estadoAlmacen);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
@@ -159,12 +150,14 @@ function SimulationPage() {
 				</div>
 
 				<Sidebar
-					paquetes={paquetes}
 					envios={envios}
 					vuelos={flights}
 					aeropuertos={airports}
-					onClickEnvio={(envio: Envio) => {
-						toast.error("Pendiente de implementar");
+					onClicksEnvio={{
+						onClickLocation: (envio: Envio) => {},
+						onClickInfo: (envio: Envio) => {
+							openEnvioModal(envio);
+						},
 					}}
 					onClicksAeropuerto={{
 						onClickLocation: (aeropuerto: Aeropuerto) => {
@@ -185,7 +178,7 @@ function SimulationPage() {
 					mapModalAttributes={mapModalAttributes}
 					attributes={attributes}
 					className="absolute top-1 bottom-3 left-3 right-3"
-					airports={airports}
+					//airports={airports}
 					flights={flights}
 					estadoAlmacen={estadoAlmacen}
 					simulation={simulation}

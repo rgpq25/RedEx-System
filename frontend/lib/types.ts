@@ -92,6 +92,7 @@ export type Vuelo = {
     planVuelo: PlanVuelo;
     fechaSalida: Date;
     fechaLlegada: Date;
+    anguloAvion: number;
     capacidadUtilizada: number;
     simulacionActual: Simulacion | null;
 };

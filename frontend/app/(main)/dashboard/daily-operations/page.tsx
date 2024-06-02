@@ -1,20 +1,18 @@
 "use client";
 import Sidebar from "@/app/_components/sidebar";
 import useMapZoom from "@/components/hooks/useMapZoom";
-import Map from "@/components/map/map";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
-import { envios } from "@/lib/sample";
 import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
-import { Clock } from "lucide-react";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../../_components/map-header";
+import { calculateAngle, structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
+import { Map } from "@/components/map/map";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -35,11 +33,11 @@ function DailyOperationsPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
-	const { openFlightModal, openAirportModal } = mapModalAttributes;
+	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
-	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
+	const [envios, setEnvios] = useState<Envio[]>([]);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
 
 	const [client, setClient] = useState<Client | null>(null);
@@ -52,7 +50,7 @@ function DailyOperationsPage() {
 				"GET",
 				"http://localhost:8080/back/aeropuerto/",
 				(data: Aeropuerto[]) => {
-					console.log(data);
+					console.log("Fetched airport data succesfully");
 					setAirports(data);
 				},
 				(error) => {
@@ -72,22 +70,15 @@ function DailyOperationsPage() {
 					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
-					if(data.iniciandoPrimeraPlanificacionDiaDia === false){
+					if (data.iniciandoPrimeraPlanificacionDiaDia === false) {
 						setIsLoadingFirstTime(false);
 					}
 
-					const newFlights = data.vuelos
-						.map((vuelo: Vuelo) => {
-							const vueloActualizado = vuelo;
-							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-							return vueloActualizado;
-						})
-						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
+					const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
-					setFlights(newFlights);
-					setEstadoAlmacen(data.estadoAlmacen);
-					setPaquetes(data.paquetes);
+					setFlights(db_vuelos);
+					setEnvios(db_envios);
+					setEstadoAlmacen(db_estadoAlmacen);
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
 					console.log("MENSAJE DE /algoritmo/diaDiaEstado: ", msg.body);
@@ -110,18 +101,11 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					const newFlights = data.vuelos
-						.map((vuelo: Vuelo) => {
-							const vueloActualizado = vuelo;
-							vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-							vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-							return vueloActualizado;
-						})
-						.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
+					const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
-					setFlights(newFlights);
-					setEstadoAlmacen(data.estadoAlmacen);
-					setPaquetes(data.paquetes);
+					setFlights(db_vuelos);
+					setEnvios(db_envios);
+					setEstadoAlmacen(db_estadoAlmacen);
 				},
 				(error) => {
 					console.log(error);
@@ -164,12 +148,14 @@ function DailyOperationsPage() {
 			)}
 
 			<Sidebar
-				paquetes={paquetes}
 				aeropuertos={airports}
 				envios={envios}
 				vuelos={flights}
-				onClickEnvio={(envio: Envio) => {
-					toast.error("Pendiente de implementar");
+				onClicksEnvio={{
+					onClickLocation: (envio: Envio) => {},
+					onClickInfo: (envio: Envio) => {
+						openEnvioModal(envio);
+					},
 				}}
 				onClicksAeropuerto={{
 					onClickLocation: (aeropuerto: Aeropuerto) => {
@@ -190,7 +176,7 @@ function DailyOperationsPage() {
 				mapModalAttributes={mapModalAttributes}
 				attributes={attributes}
 				className="absolute top-1 bottom-3 left-3 right-3"
-				airports={airports}
+				//airports={airports}
 				flights={flights}
 				estadoAlmacen={estadoAlmacen}
 				simulation={undefined}

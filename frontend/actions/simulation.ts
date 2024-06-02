@@ -17,7 +17,7 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 
 	await api(
 		"POST",
-		"http://localhost:8080/back/simulacion/inicializarSimulacion",
+		"http://localhost:8080/back/simulacion/inicializarSimulacionCargaVariable/media",
 		(data: Simulacion) => {
 			console.log(data);
 			idSimulacion = data.id;
