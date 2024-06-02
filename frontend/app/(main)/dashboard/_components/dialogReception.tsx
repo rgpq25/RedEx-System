@@ -1,9 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
-
-import useApi from "@/components/hooks/useApi";
 
 import { CopyCheck } from "lucide-react";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -14,9 +12,11 @@ import { toast } from "sonner";
 import { Envio } from "@/lib/types";
 
 import { api } from "@/lib/api";
+import { ReceptionPackageIdContext } from "@/components/hooks/useReceptionPackageId";
 
 function DialogReception({ twStyle }: { twStyle: string }) {
     const router = useRouter();
+    const { setReceptionPackageId } = useContext(ReceptionPackageIdContext);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handlePackageIdRedirect = async () => {
@@ -27,7 +27,10 @@ function DialogReception({ twStyle }: { twStyle: string }) {
             (data: Envio[]) => {
                 if(data.length > 0) {
                     if(data.find((envio) => envio.id.toString() === packageId)) {
-                        router.push(`/dashboard/reception-package/${packageId}`);
+                        if (packageId) {
+                            setReceptionPackageId(packageId);
+                            router.push(`/dashboard/reception-package`);
+                        }
                     }
                 } else {
                     toast.error("No se encontró el envío", {
