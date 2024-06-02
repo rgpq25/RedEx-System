@@ -170,7 +170,7 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = false;
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
         if (inicializar_paquetes_operaciones_dia_dia) {
             inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
         }
@@ -187,13 +187,8 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    120, 60);
+                    180, 120);
         });
-        /*
-         * algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService,
-         * planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-         * 120, 60);
-         */
 
     }
 
