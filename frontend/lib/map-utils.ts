@@ -127,9 +127,20 @@ export function structureDataFromRespuestaAlgoritmo(data: RespuestaAlgoritmo) {
 		return _envio;
 	});
 
+	//remove duplicates from newEnvios
+	const newEnviosSet = new Set(newEnvios.map((envio) => envio));
+	const newEnviosNoDuplicates = Array.from(newEnviosSet);
+
+	//assign data.paquetes to its corresponding envio
+	newEnviosNoDuplicates.forEach((envio) => {
+		envio.paquetes = data.paquetes.filter((paquete) => paquete.envio.id === envio.id) || [];
+		envio.cantidadPaquetes = envio.paquetes.length;
+		if(envio.cantidadPaquetes > 1) console.log("Envio con mas de un paquete", envio);
+	});
+
 	return {
-		db_vuelos: newFlights, 
-		db_envios: newEnvios, 
-		db_estadoAlmacen: data.estadoAlmacen
+		db_vuelos: newFlights,
+		db_envios: newEnviosNoDuplicates,
+		db_estadoAlmacen: data.estadoAlmacen,
 	};
 }

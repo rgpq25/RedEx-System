@@ -20,7 +20,6 @@ export interface MapProps {
 	isSimulation: boolean;
 	mapModalAttributes: MapModalAttributes;
 	attributes: MapZoomAttributes;
-	//airports: Aeropuerto[];
 	flights: Vuelo[];
 	estadoAlmacen: EstadoAlmacen | null;
 	simulation: Simulacion | undefined;
@@ -31,7 +30,6 @@ function ClientMap({
 	isSimulation,
 	mapModalAttributes,
 	attributes,
-	//airports,
 	flights,
 	simulation,
 	estadoAlmacen,
@@ -108,7 +106,6 @@ function ClientMap({
 								}}
 								usoHistorico={estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {}}
 								currentTime={currentTime}
-								//currentCapacity = {getCurrentAirportOcupation(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {}, currentTime)}
 							/>
 						);
 					})}

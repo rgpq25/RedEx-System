@@ -126,7 +126,7 @@ export type Envio = {
     estado: string;
     cantidadPaquetes: number;
     codigoSeguridad: string;
-    paquetes?: Paquete[];
+    paquetes: Paquete[];
 };
 
 export type Simulacion = {
