@@ -36,7 +36,6 @@ import { api } from "@/lib/api";
 const DEFAULT_RANGO_CAPACIDAD: [number, number] = [0, 1000];
 
 interface SidebarProps {
-    paquetes: Paquete[];
     envios?: Envio[];
     aeropuertos?: Aeropuerto[];
     vuelos?: Vuelo[];
@@ -51,7 +50,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-    paquetes,
     envios,
     aeropuertos,
     vuelos,
@@ -125,15 +123,9 @@ export default function Sidebar({
                 <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
                     <Separator />
                     {selectedOperation === Operacion.Envios && (
-                        // <Envios
-                        //     envios={envios}
-                        //     onClick={onClickEnvio}
-                        //     tiempoActual={tiempoActual}
-                        //     ubicaciones={ubicaciones}
-                        // />
-                        <Paquetes
-                            paquetes={paquetes}
-                            //onClick={onClickPaquete}
+                        <Envios
+                            envios={envios}
+                            onClick={onClickEnvio}
                             tiempoActual={tiempoActual}
                             ubicaciones={ubicaciones}
                         />
@@ -157,20 +149,6 @@ export default function Sidebar({
             </Card>
         </>
     );
-}
-
-function Paquetes({
-    paquetes,
-    onClick,
-    tiempoActual,
-    ubicaciones,
-}: {
-    paquetes: Paquete[];
-    onClick?: (paquete: Paquete) => void;
-    tiempoActual?: Date | undefined;
-    ubicaciones: Ubicacion[];
-}) {
-    return <p>test</p>
 }
 
 function Envios({
