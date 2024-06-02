@@ -8,17 +8,18 @@ import {
 	BreadcrumbSeparator,
 } from "./breadcrumb";
 import { Fragment } from "react";
+import { cn } from "@/lib/utils";
 
 export type BreadcrumbItem = {
 	label: string;
 	link: string;
 };
 
-function BreadcrumbCustom({ items }: { items: BreadcrumbItem[] }) {
+function BreadcrumbCustom({ items, className }: { items: BreadcrumbItem[]; className?: string}) {
 	if (items.length < 2) throw new Error("Breadcrumb must have atleast 2 items");
 
 	return (
-		<Breadcrumb>
+		<Breadcrumb className={cn(className)}>
 			<BreadcrumbList>
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>

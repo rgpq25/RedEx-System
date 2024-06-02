@@ -17,6 +17,7 @@ import pucp.e3c.redex_back.service.VueloService;
 public class SAImplementation {
         private ArrayList<Aeropuerto> aeropuertos;
         private ArrayList<PlanVuelo> planVuelos;
+        private ArrayList<PlanRutaNT> planRutas;
         private ArrayList<Paquete> paquetes;
         private HashMap<Integer, Integer> ocupacionInicial;
         private GrafoVuelos grafoVuelos;
@@ -46,10 +47,12 @@ public class SAImplementation {
                         ArrayList<Aeropuerto> aeropuertos,
                         ArrayList<PlanVuelo> planVuelos,
                         ArrayList<Paquete> paquetes,
+                        ArrayList<PlanRutaNT> planRutas,
                         HashMap<Integer, Integer> ocupacionInicial) {
                 this.aeropuertos = aeropuertos;
                 this.planVuelos = planVuelos;
                 this.paquetes = paquetes;
+                this.planRutas = planRutas;
                 this.ocupacionInicial = ocupacionInicial;
         }
 
@@ -93,7 +96,7 @@ public class SAImplementation {
 
                         Solucion current = new Solucion(
                                         paquetes,
-                                        new ArrayList<PlanRutaNT>(),
+                                        planRutas,
                                         aeropuertos,
                                         ocupacionInicial,
                                         0,
@@ -163,24 +166,25 @@ public class SAImplementation {
 
                         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
                                         1000000000) + " segundos");
-                        Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float) (duration /
-                                        1000000000) + " segundos");
+                        // Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float)
+                        // (duration /
+                        // 1000000000) + " segundos");
 
                         System.out.println(
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
-                        Funciones.printLineInLog(
-                                        "Final cost: " + current.getSolutionCost() +
-                                                        " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                        " | Temperature: " + temperature);
+                        // Funciones.printLineInLog(
+                        // "Final cost: " + current.getSolutionCost() +
+                        // " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                        // " | Temperature: " + temperature);
 
                         // current.printCosts();
-                        current.printCostsInLog();
-                        Funciones.printLineInLog("");
-                        Funciones.printLineInLog("");
+                        // current.printCostsInLog();
+                        // Funciones.printLineInLog("");
+                        // Funciones.printLineInLog("");
 
-                        Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                         // current.printFlightOcupation("ocupacionVuelos.txt");
                         // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
@@ -203,6 +207,7 @@ public class SAImplementation {
                         RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
                                         new ArrayList<>(current.vuelos_hash.values()),
                                         current.estado, current.rutas, simulacion);
+                        respuestaAlgoritmo.setOcupacionVuelos(current.ocupacionVuelos);
                         return respuestaAlgoritmo;
                 } catch (Exception e) {
                         e.printStackTrace();

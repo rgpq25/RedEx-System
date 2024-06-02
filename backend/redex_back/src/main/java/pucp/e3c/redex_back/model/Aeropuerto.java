@@ -26,7 +26,7 @@ public class Aeropuerto {
 
     public Aeropuerto() {
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -58,11 +58,11 @@ public class Aeropuerto {
         if (o == null || getClass() != o.getClass())
             return false;
         Aeropuerto that = (Aeropuerto) o;
-        return Objects.equals(ubicacion, that.ubicacion);
+        return Objects.equals(ubicacion.getId(), that.ubicacion.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ubicacion);
+        return Objects.hash(ubicacion.getId());
     }
 }

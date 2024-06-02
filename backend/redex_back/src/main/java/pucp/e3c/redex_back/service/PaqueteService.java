@@ -1,6 +1,5 @@
 package pucp.e3c.redex_back.service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,16 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pucp.e3c.redex_back.model.Paquete;
-import pucp.e3c.redex_back.model.PlanRuta;
 import pucp.e3c.redex_back.model.Vuelo;
 import pucp.e3c.redex_back.repository.PaqueteRepository;
-import pucp.e3c.redex_back.repository.PlanRutaRepository;
-import pucp.e3c.redex_back.repository.PlanRutaXVueloRepository;
-import pucp.e3c.redex_back.repository.VueloRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pucp.e3c.redex_back.model.PlanRutaXVuelo;
 
 @Service
 public class PaqueteService {
@@ -35,6 +29,15 @@ public class PaqueteService {
         // return paqueteRepository.save(paquete);
         try {
             return paqueteRepository.save(paquete);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Paquete> registerAll(ArrayList<Paquete> paquete) {
+        try {
+            return (ArrayList<Paquete>) paqueteRepository.saveAll(paquete);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
@@ -207,6 +210,15 @@ public class PaqueteService {
     public ArrayList<Paquete> findPaquetesWithoutPlanRuta(String idUbicacionOrigen, Date fechaCorte) {
         try {
             return paqueteRepository.findPaquetesWithoutPlanRuta(idUbicacionOrigen, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Paquete> findPaquetesOperacionesDiaDia(){
+        try {
+            return paqueteRepository.findPaquetesOperacionesDiaDia();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;

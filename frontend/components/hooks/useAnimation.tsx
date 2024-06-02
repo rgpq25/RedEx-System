@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) * (t - 1));
 
@@ -48,19 +48,22 @@ const useAnimation = (initialValue: UseAnimationProps): AnimationObject => {
 		};
 	}, [state]);
 
-	const setValue = (targetValue: number, duration: number) => {
-		setState({ ...state, targetValue, startTime: Date.now() });
-		animationRef.current = duration;
-	};
+	const setValue = useCallback(
+		(targetValue: number, duration: number) => {
+			setState({ ...state, targetValue, startTime: Date.now() });
+			animationRef.current = duration;
+		},
+		[setState, state, animationRef]
+	);
 
-	const setValueNoAnimation = (targetValue: number) => {
+	const setValueNoAnimation = useCallback((targetValue: number) => {
 		setState({ ...state, value: targetValue });
-	};
+	},[setState, state]);
 
-	const cancelAnimation = () => {
+	const cancelAnimation = useCallback(() => {
 		setState({ ...state, startTime: null });
 		animationRef.current = null;
-	};
+	}, [setState, state, animationRef]);
 
 	return {
 		value: state.value,

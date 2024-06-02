@@ -2,8 +2,10 @@
 import { calculateAngle, getFlightPosition, getTrayectory } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Icon } from "leaflet";
 import { useState } from "react";
-import { Marker } from "react-simple-maps";
+// import { Marker } from "react-simple-maps";
+import { Marker, Tooltip } from "react-leaflet";
 
 interface PlaneMarkerProps {
 	vuelo: Vuelo;
@@ -32,71 +34,47 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	}
 
 	const dotPositions = getTrayectory(vuelo);
+	const porcentajeUtilizado = (vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100;
+
+	const airplaneIcon = new Icon({
+		iconUrl:
+			porcentajeUtilizado >= 0 && porcentajeUtilizado <= 30
+				? "/green-airplane_centered.png"
+				: porcentajeUtilizado > 30 && porcentajeUtilizado <= 60
+				? "/yellow-airplane_centered.png"
+				: "/red-airplane_centered.png",
+		iconSize: [30, 30],
+		//iconAnchor: [15, 15],
+	});
+
+	const trackIcon = new Icon({
+		iconUrl: "/tracking-dots.png",
+		iconSize: [20, 20],
+	});
 
 	return (
 		<>
-			{dotPositions.map((dotPosition, idx) => (
-				<Marker
-					key={idx}
-					coordinates={dotPosition as [number, number]}
-					className={cn(
-						"transition-opacity duration-75 ease-in",
-						isHovering === true ? "opacity-100" : "opacity-0"
-					)}
-				>
-					<circle r={1} className="fill-red-600" />
-				</Marker>
-			))}
+			{isHovering &&
+				dotPositions.map((dotPosition, idx) => (
+					<Marker
+						key={idx}
+						position={[dotPosition[1], dotPosition[0]] as [number, number]}
+						icon={trackIcon}
+						zIndexOffset={10}
+						autoPan={false}
+					/>
+				))}
 			<Marker
-				coordinates={coordinates as [number, number]}
-				onClick={() => onClick(vuelo)}
-				onMouseEnter={() => {
-					setIsHovering(true);
+				position={[coordinates[1], coordinates[0]] as [number, number]}
+				icon={airplaneIcon}
+				eventHandlers={{
+					click: () => onClick(vuelo),
+					mouseover: () => setIsHovering(true),
+					mouseout: () => setIsHovering(false),
 				}}
-				onMouseLeave={() => {
-					setIsHovering(false);
-				}}
-				//z={1000}
+				zIndexOffset={50}
 			>
-				<Plane
-					capacity={vuelo.capacidadUtilizada}
-					originCoordinate={
-						[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
-							number,
-							number
-						]
-					}
-					destinationCoordinate={
-						[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [
-							number,
-							number
-						]
-					}
-				/>
-				{isHovering && (
-					<>
-						<rect
-							x={-10}
-							y={-18.4}
-							width="20"
-							height="9"
-							fill="black"
-							stroke="white"
-							strokeWidth="1"
-							rx={2}
-							ry={2}
-						/>
-						<text
-							textAnchor="middle"
-							y={-12}
-							x={0.5}
-							className="text-[5px] font-poppins fill-white bg-black"
-						>
-							{/* {((vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100).toFixed(2)}% */}
-							{vuelo.capacidadUtilizada + " / " + vuelo.planVuelo.capacidadMaxima}
-						</text>
-					</>
-				)}
+				<Tooltip direction="top" offset={[0,-5]} className="w-[55px] font-bold text-center">{vuelo.capacidadUtilizada} / {vuelo.planVuelo.capacidadMaxima}</Tooltip>
 			</Marker>
 		</>
 	);
@@ -112,7 +90,7 @@ function Plane({
 	originCoordinate: [number, number];
 	destinationCoordinate: [number, number];
 }) {
-	const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
+	//const [rotation, setRotation] = useState(calculateAngle(originCoordinate, destinationCoordinate));
 	const [color, setColor] = useState(mapCapacity(capacity));
 
 	function mapCapacity(_capacity: number) {
@@ -125,7 +103,7 @@ function Plane({
 
 	return (
 		<>
-			<g
+			{/* <g
 				fill={color}
 				version="1.1"
 				id="Layer_1"
@@ -153,8 +131,8 @@ function Plane({
                     L16.63,105.75z"
 					transform="scale(0.1)"
 				/>
-			</g>
-			{/* <circle r={1} fill={color}/> */}
+			</g> */}
+			<circle r={30} fill={color} className="" />
 			<circle r={5} className="fill-transparent" />
 		</>
 	);

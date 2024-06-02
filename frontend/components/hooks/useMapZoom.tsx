@@ -1,124 +1,128 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import useAnimation, { AnimationObject } from "./useAnimation";
-import { Vuelo } from "@/lib/types";
+import { Aeropuerto, Vuelo } from "@/lib/types";
 import { getFlightPosition } from "@/lib/map-utils";
+import { Map as MapType } from "leaflet";
+
+
+export type MapZoomAttributes = {
+	currentTime: Date | undefined;
+	setCurrentTime: (time: Date, fechaInicioSistema: Date, fechaInicioSim: Date, multiplicadorTiempo: number) => void;
+	setCurrentTimeNoSimulation: () => void;
+	map: MapType | null;
+	setMap: (map: MapType) => void;
+	zoomToAirport: (airport: Aeropuerto) => void;
+	lockToFlight: (flight: Vuelo) => void;
+}
 
 const useMapZoom = (
 	initialZoom = 1,
 	initialLongitude = 0,
 	initialLatitude = 0
-): {
-	currentTime: Date | undefined;
-	setCurrentTime: (time: Date, fechaInicioSistema: Date, fechaInicioSim: Date, multiplicadorTiempo: number) => void;
-	zoom: AnimationObject;
-	centerLongitude: AnimationObject;
-	centerLatitude: AnimationObject;
-	zoomIn: (coordinates: [number, number]) => void;
-	lockInFlight: (vuelo: Vuelo) => void;
-	unlockFlight: () => void;
-} => {
-	const zoomFactor = 4;
+): MapZoomAttributes => {
+	const zoomFactor = 7;
+	const curInterval = useRef<NodeJS.Timeout | null>(null);
+
+	const [map, setMap] = useState<MapType | null>(null);
 	const [currentTime, setCurrentTime] = useState<Date | undefined>(undefined);
-	const [currentlyLocked, setCurrentlyLocked] = useState<Vuelo | undefined>(undefined);
+	const [currentlyLockedFlight, setCurrentlyLockedFlight] = useState<Vuelo | null>(null);
+	const [isLockedToFlight, setIsLockedToFlight] = useState(false);
 
-	const zoom = useAnimation(initialZoom);
-	const centerLongitude = useAnimation(initialLongitude);
-	const centerLatitude = useAnimation(initialLatitude);
+	const handleSetTime = useCallback(
+		(time: Date, fechaInicioSistema: Date, fechaInicioSim: Date, multiplicadorTiempo: number) => {
+			if (curInterval.current !== null) return;
+			setCurrentTime(time);
+			const interval = setInterval(() => {
+				const newTime = new Date(
+					fechaInicioSim.getTime() +
+						multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime())
+				);
+				setCurrentTime(newTime);
+			}, 1000);
 
-	const handleSetTime = (time: Date, fechaInicioSistema: Date, fechaInicioSim: Date, multiplicadorTiempo: number) => {
-		setCurrentTime(time);
-		//const startTime = new Date().getTime();
+			curInterval.current = interval;
+		},
+		[curInterval, setCurrentTime]
+	);
+
+	const handleSetTimeNoSimulation = () => {
+		if (curInterval.current !== null) return;
+		const curDate = new Date();
+		setCurrentTime(curDate);
+
 		const interval = setInterval(() => {
-		// 	const currentTime = new Date().getTime();
-		// 	const elapsedTime = (currentTime - startTime) * 500;
-
-			const newTime = new Date(fechaInicioSim.getTime() + 500 * (new Date().getTime() - fechaInicioSistema.getTime()));
-			// setCurrentTime(new Date(startTime + elapsedTime));
-			setCurrentTime(newTime);
+			const newDate = new Date();
+			setCurrentTime(newDate);
 		}, 1000);
+
+		curInterval.current = interval;
 	};
 
-	// useEffect(() => {
-	// 	const startTime = new Date().getTime();
-	// 	const interval = setInterval(() => {
-	// 		const currentTime = new Date().getTime();
-	// 		const elapsedTime = (currentTime - startTime) * 500;
-	// 		setCurrentTime(new Date(startTime + elapsedTime));
-	// 	}, 1000);
+	const onAirportClick = useCallback(
+		(aeropuerto: Aeropuerto) => {
+			if (map === null) return;
+			setCurrentlyLockedFlight(null);
+			map.setView([aeropuerto.ubicacion.latitud, aeropuerto.ubicacion.longitud], zoomFactor);
+		},
+		[map]
+	);
 
-	// 	return () => {
-	// 		clearInterval(interval);
-	// 	};
-	// }, []);
+	const onFlightClick = useCallback(
+		(flight: Vuelo) => {
+			setCurrentlyLockedFlight(flight);
+			setTimeout(() => {
+				setIsLockedToFlight(true);
+			}, 500);
+		},
+		[map]
+	);
+
+	function onMove() {
+		if (isLockedToFlight && currentlyLockedFlight) {
+			console.log("Removing locked flight");
+			setCurrentlyLockedFlight(null);
+			setIsLockedToFlight(false);
+		}
+	}
 
 	useEffect(() => {
-		if (currentlyLocked && currentTime) {
-			const orgLongitude = currentlyLocked.planVuelo.ciudadOrigen.longitud;
-			const orgLatitude = currentlyLocked.planVuelo.ciudadOrigen.latitud;
-			const destLongitude = currentlyLocked.planVuelo.ciudadDestino.longitud;
-			const destLatitude = currentlyLocked.planVuelo.ciudadDestino.latitud;
+		if (currentlyLockedFlight && currentTime && map) {
+			//get current flight position and set it in the map.setView
+			const orgLongitude = currentlyLockedFlight.planVuelo.ciudadOrigen.longitud;
+			const orgLatitude = currentlyLockedFlight.planVuelo.ciudadOrigen.latitud;
+			const destLongitude = currentlyLockedFlight.planVuelo.ciudadDestino.longitud;
+			const destLatitude = currentlyLockedFlight.planVuelo.ciudadDestino.latitud;
 
 			const coordinates = getFlightPosition(
-				currentlyLocked.fechaSalida,
+				currentlyLockedFlight.fechaSalida,
 				[orgLongitude, orgLatitude] as [number, number],
-				currentlyLocked.fechaLlegada,
+				currentlyLockedFlight.fechaLlegada,
 				[destLongitude, destLatitude] as [number, number],
 				currentTime
 			);
-			zoom.setValueNoAnimation(zoomFactor);
-			centerLongitude.setValueNoAnimation(coordinates[0]);
-			centerLatitude.setValueNoAnimation(coordinates[1]);
+
+			map.setView([coordinates[1], coordinates[0]], zoomFactor);
 		}
-	}, [currentTime, currentlyLocked]);
+	}, [currentlyLockedFlight, currentTime, map]);
 
-	function zoomIn(coordinates: [number, number], duration = 1000) {
-		zoom.setValue(zoomFactor, duration);
-		centerLongitude.setValue(coordinates[0], duration);
-		centerLatitude.setValue(coordinates[1], duration);
-	}
-
-	function zoomInNoAnimation(coordinates: [number, number]) {
-		zoom.setValueNoAnimation(zoomFactor);
-		centerLongitude.setValueNoAnimation(coordinates[0]);
-		centerLatitude.setValueNoAnimation(coordinates[1]);
-	}
-
-	function lockInFlight(vuelo: Vuelo) {
-		if (currentTime === undefined) return;
-
-		setCurrentlyLocked(undefined);
-		const orgLongitude = vuelo.planVuelo.ciudadOrigen.longitud;
-		const orgLatitude = vuelo.planVuelo.ciudadOrigen.latitud;
-		const destLongitude = vuelo.planVuelo.ciudadDestino.longitud;
-		const destLatitude = vuelo.planVuelo.ciudadDestino.latitud;
-
-		const coordinates = getFlightPosition(
-			vuelo.fechaSalida,
-			[orgLongitude, orgLatitude] as [number, number],
-			vuelo.fechaLlegada,
-			[destLongitude, destLatitude] as [number, number],
-			currentTime
-		);
-		zoomIn(coordinates);
-
-		setTimeout(() => {
-			setCurrentlyLocked(vuelo);
-		}, 1100);
-	}
-
-	function unlockFlight() {
-		setCurrentlyLocked(undefined);
-	}
+	useEffect(() => {
+		if (map === null) return;
+		map.on("dragstart", onMove);
+		map.on("zoomstart", onMove);
+		return () => {
+			map.off("dragstart", onMove);
+			map.off("zoomstart", onMove);
+		};
+	}, [map, onMove]);
 
 	return {
 		currentTime,
 		setCurrentTime: handleSetTime,
-		zoom,
-		centerLongitude,
-		centerLatitude,
-		zoomIn,
-		lockInFlight,
-		unlockFlight,
+		setCurrentTimeNoSimulation: handleSetTimeNoSimulation,
+		map,
+		setMap,
+		zoomToAirport: onAirportClick,
+		lockToFlight: onFlightClick,
 	};
 };
 

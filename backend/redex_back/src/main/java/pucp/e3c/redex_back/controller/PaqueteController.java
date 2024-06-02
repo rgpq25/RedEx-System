@@ -63,6 +63,14 @@ public class PaqueteController {
         return paqueteService.findBySimulacionId(id);
     }
 
+    @GetMapping(value = "/envio_sin_simulacion/{id}")
+    public ArrayList<Paquete> getPaquetesDelEvioNoSimulacion(@PathVariable("id") Integer id) {
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findByEnvioId(id);
+        for (Paquete paquete : paquetes) {
+            paquete = paqueteService.getPaqueteNoSimulacion(paquete.getId());
+        }
+        return paquetes;
+    }
     /*
      * @GetMapping(value = "/simulacion/{idSimulacion}/{idUbicacionOrigen}")
      * public ArrayList<Paquete>
@@ -75,7 +83,7 @@ public class PaqueteController {
      * }
      */
 
-    @GetMapping(value = "/getPaqueteNoSimulacion/{id}")
+    @GetMapping(value = "/sin_simulacion/{id}")
     public Paquete getPaqueteNoSimulacion(@PathVariable("id") Integer id) {
         return paqueteService.getPaqueteNoSimulacion(id);
     }

@@ -4,7 +4,7 @@ import Sidebar from "@/app/_components/sidebar";
 import Map from "@/components/map/map";
 
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -15,6 +15,10 @@ import { toast } from "sonner";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { CircleStop, Play, SkipBack, SkipForward } from "lucide-react";
+import useMapModals from "@/components/hooks/useMapModals";
+import MapHeader from "../_components/map-header";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -29,15 +33,18 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 function SimulationPage() {
 	const attributes = useMapZoom();
-	const { currentTime, setCurrentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+	const mapModalAttributes = useMapModals();
+	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
+	const { openFlightModal, openAirportModal } = mapModalAttributes;
 
 	const [isModalOpen, setIsModalOpen] = useState(true);
-	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
-	const [currentFlightModal, setCurrentFlightModal] = useState<Vuelo | undefined>(undefined);
-
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
+	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
+
+	const [client, setClient] = useState<Client | null>(null);
 
 	const { isLoading } = useApi(
 		"GET",
@@ -64,24 +71,34 @@ function SimulationPage() {
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
-				const data : RespuestaAlgoritmo = JSON.parse(msg.body);
+				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 				const simulation = data.simulacion;
 				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
 				const fechaInicioSim: Date = new Date(simulation.fechaInicioSim);
 				const multiplicadorTiempo: number = simulation.multiplicadorTiempo;
 
-				const currentSimTime = new Date(fechaInicioSim.getTime() + multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime()));
+				const currentSimTime = new Date(
+					fechaInicioSim.getTime() +
+						multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime())
+				);
+
 				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
-				
+
 				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
-				
-				setFlights(data.vuelos.map((vuelo: Vuelo) => {
-					const vueloActualizado = vuelo;
-					vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
-					vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
-					return vueloActualizado;
-				}));
+
+				const newFlights = data.vuelos
+					.map((vuelo: Vuelo) => {
+						const vueloActualizado = vuelo;
+						vueloActualizado.fechaSalida = new Date(vuelo.fechaSalida);
+						vueloActualizado.fechaLlegada = new Date(vuelo.fechaLlegada);
+						return vueloActualizado;
+					})
+					.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
+
+				setFlights(newFlights);
+				setEstadoAlmacen(data.estadoAlmacen);
+				setPaquetes(data.paquetes);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
@@ -89,6 +106,7 @@ function SimulationPage() {
 		};
 
 		client.activate();
+		setClient(client);
 
 		//Call api to run algorithm
 		await api(
@@ -103,6 +121,14 @@ function SimulationPage() {
 		);
 	};
 
+	useEffect(() => {
+		return () => {
+			if (client) {
+				client.deactivate();
+			}
+		};
+	}, []);
+
 	return (
 		<>
 			<ModalIntro
@@ -110,53 +136,60 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
-			<MainContainer>
-				<BreadcrumbCustom items={breadcrumbItems} />
-				<div className="flex flex-row justify-between items-center">
+			<MainContainer className="relative">
+				<MapHeader>
+					<BreadcrumbCustom items={breadcrumbItems} />
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
+				</MapHeader>
+
+				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
 					<PlaneLegend />
+					<div className="flex items-center gap-1">
+						<Button size={"icon"}>
+							<CircleStop className="w-5 h-5" />
+						</Button>
+
+						<Button size={"icon"}>
+							<Play className="w-5 h-5" />
+						</Button>
+					</div>
 				</div>
 
-				<section className="relative flex-1 mt-[10px] overflow-hidden">
-					<Map
-						currentAirportModal={currentAirportModal}
-						currentFlightModal={currentFlightModal}
-						setCurrentAirportModal={setCurrentAirportModal}
-						setCurrentFlightModal={setCurrentFlightModal}
-						attributes={attributes}
-						className="h-full w-full"
-						airports={airports}
-						flights={flights}
-						simulation={simulation}
-					/>
-					<Sidebar
-						envios={envios}
-						vuelos={flights}
-						aeropuertos={airports}
-						onClickEnvio={(envio: Envio) => {
-							console.log("PENDIENTE HACER ZOOM EN VUELO DONDE SE ENCUENTRA PAQUETE");
-						}}
-						onClicksAeropuerto={{
-							onClickLocation: (aeropuerto: Aeropuerto) => {
-								unlockFlight();
-								zoomIn([aeropuerto.ubicacion.longitud, aeropuerto.ubicacion.latitud] as [
-									number,
-									number
-								]);
-							},
-							onClickInfo: (aeropuerto: Aeropuerto) => {
-								setCurrentAirportModal(aeropuerto);
-							},
-						}}
-						onClickVuelo={(vuelo) => {
-							lockInFlight(vuelo);
-							setCurrentFlightModal(vuelo);
-						}}
-					/>
-				</section>
+				<Sidebar
+					paquetes={paquetes}
+					envios={envios}
+					vuelos={flights}
+					aeropuertos={airports}
+					onClickEnvio={(envio: Envio) => {
+						toast.error("Pendiente de implementar");
+					}}
+					onClicksAeropuerto={{
+						onClickLocation: (aeropuerto: Aeropuerto) => {
+							zoomToAirport(aeropuerto);
+						},
+						onClickInfo: (aeropuerto: Aeropuerto) => {
+							openAirportModal(aeropuerto);
+						},
+					}}
+					onClickVuelo={(vuelo: Vuelo) => {
+						lockToFlight(vuelo);
+						openFlightModal(vuelo);
+					}}
+					tiempoActual={currentTime}
+				/>
+				<Map
+					isSimulation={true}
+					mapModalAttributes={mapModalAttributes}
+					attributes={attributes}
+					className="absolute top-1 bottom-3 left-3 right-3"
+					airports={airports}
+					flights={flights}
+					estadoAlmacen={estadoAlmacen}
+					simulation={simulation}
+				/>
 			</MainContainer>
 		</>
 	);

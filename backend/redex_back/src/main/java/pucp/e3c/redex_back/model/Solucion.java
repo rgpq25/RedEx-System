@@ -67,10 +67,19 @@ public class Solucion {
 
     public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService) {
         // We do 5 attempts to try to initialize the solution
+        ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
+        for (int idx = 0; idx < this.paquetes.size(); idx++) {
+            if (this.rutas.size() == 0) {
+                copiedRutas.add(new PlanRutaNT());
+            } else {
+
+                copiedRutas.add(this.rutas.get(idx));
+
+            }
+        }
+        this.rutas.clear();
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
-            // ArrayList<PlanRutaNT> av_rutas =
-            // grafoVuelos.generarRutasParaPaquetes(this.paquetes);
 
             for (int i = 0; i < paquetes.size(); i++) {
 
@@ -99,6 +108,18 @@ public class Solucion {
 
             }
             // if(this.isAirportCapacityAvailable() == true){
+            int h = 0;
+            for (PlanRutaNT planRutaNT : copiedRutas) {
+                if (planRutaNT.getVuelos().size() > 0) {
+                    // System.out.println(
+                    // "Habia una ruta previa en " + h + " con " + planRutaNT.getVuelos().size() + "
+                    // vuelos");
+                    this.rutas.set(h, planRutaNT);
+                } else {
+                    // System.out.println("No haba ruta previa en posicion " + h);
+                }
+                h++;
+            }
             return;
             // } else {
             // this.rutas.clear();

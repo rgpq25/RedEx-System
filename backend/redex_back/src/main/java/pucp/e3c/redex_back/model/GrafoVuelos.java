@@ -139,6 +139,27 @@ public class GrafoVuelos {
         fecha_fin = nuevaFechaFin;
     }
 
+    public void agregarVuelosParaPaquetes(ArrayList<PlanVuelo> planV, ArrayList<Paquete> nuevosPaquetes,
+            VueloService vueloService) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.fecha_fin);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date tempInicio = cal.getTime();
+
+        Optional<Paquete> maxEntregaPaquete = nuevosPaquetes.stream()
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+        Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
+        for (Vuelo vuelo : vuelos) {
+            vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+        }
+        fecha_fin = nuevaFechaFin;
+    }
+
     public GrafoVuelos() {
     }
 
