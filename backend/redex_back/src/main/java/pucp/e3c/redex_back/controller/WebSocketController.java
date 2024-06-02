@@ -2,6 +2,7 @@ package pucp.e3c.redex_back.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pucp.e3c.redex_back.model.Mensaje;
 
 @RestController
+@CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
 @RequestMapping("/api")
 public class WebSocketController {
 
