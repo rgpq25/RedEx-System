@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import pucp.e3c.redex_back.model.PlanRuta;
 import pucp.e3c.redex_back.service.PlanRutaService;
 
 @RestController
+@CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
 @RequestMapping("back/plan_ruta")
 public class PlanRutaController {
     @Autowired

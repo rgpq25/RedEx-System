@@ -1,8 +1,6 @@
 package pucp.e3c.redex_back.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.PlanVuelo;
 import pucp.e3c.redex_back.service.PlanVueloService;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
 @RequestMapping("back/plan_vuelo")
 public class PlanVueloController {
     @Autowired
