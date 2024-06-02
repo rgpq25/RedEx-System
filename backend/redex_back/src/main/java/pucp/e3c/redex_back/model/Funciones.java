@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Funciones {
 
@@ -266,6 +268,20 @@ public class Funciones {
         return aeropuertos_list;
     }
 
+    public static String formatearFecha(Date fecha) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        return sdf.format(fecha);
+    }
+
+    public static String asignarFechaAClave(String linea, Date fechaInicio, Date fechaFin) {
+        String[] partes = linea.split("-");
+        if (partes.length < 3) {
+            throw new IllegalArgumentException("La línea debe tener al menos tres partes separadas por guiones");
+        }
+        partes[2] = formatearFecha(Funciones.generarFechaAleatoria(fechaInicio, fechaFin));
+        return String.join("-", partes);
+    }
+
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, int idSimulacion,
             AeropuertoRepository aeropuertoRepository) {
         String[] parts = line.split("-");
@@ -317,6 +333,16 @@ public class Funciones {
 
         return paquetes;
 
+    }
+
+    public static Date generarFechaAleatoria(Date fechaInicio, Date fechaFin) {
+        if (fechaInicio.after(fechaFin)) {
+            throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin");
+        }
+        long diferenciaEnMillis = fechaFin.getTime() - fechaInicio.getTime();
+        Random random = new Random();
+        long milisAleatorios = (long) (random.nextDouble() * diferenciaEnMillis);
+        return new Date(fechaInicio.getTime() + milisAleatorios);
     }
 
     public static Date generateRandomDateTime(Date startDate, Date endDate) {

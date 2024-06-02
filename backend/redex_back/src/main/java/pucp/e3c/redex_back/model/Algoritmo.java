@@ -322,7 +322,6 @@ public class Algoritmo {
 
         while (true) {
             simulacion = simulacionService.get(simulacion.getId());
-
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
             // Gestion de parado forzado
             if (simulacion.estado == 1) {
@@ -442,8 +441,8 @@ public class Algoritmo {
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
-
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
+
             // HashMap<Integer, Integer> hash = printPaquetes(paquetes, planRutas, i,
             // vueloService);
             // printOcupacion(hash, ocupacionVuelos, i);

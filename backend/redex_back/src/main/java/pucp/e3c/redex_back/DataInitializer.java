@@ -155,15 +155,6 @@ public class DataInitializer {
          * System.out.println("Fecha maxima de recepcion de paquetes: " +
          * Funciones.getFormattedDate(maxDate));
          */
-        LocalDate hoy = LocalDate.of(2024, 1, 3);
-        LocalDateTime fecha = hoy.atTime(6, 0, 0);
-        Date fechaDate = java.sql.Timestamp.valueOf(fecha);
-        Simulacion simulacion = new Simulacion();
-        simulacion.fillData();
-        simulacion.setFechaInicioSim(fechaDate);
-        simulacion.setMultiplicadorTiempo(100.0);
-        simulacion = simulacionService.register(simulacion);
-        System.out.println(simulacion.toString());
 
         for (Aeropuerto aeropuerto : aeropuertos) {
             aeropuerto = aeropuertoService.register(aeropuerto);
@@ -179,25 +170,14 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
             inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
         }
 
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("src\\main\\resources\\dataFija\\pack_enviado_SKBO.txt"))) {
-            String line;
-            int cantidadPaquetes = 0;
-            while ((line = reader.readLine()) != null) {
-                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
-                registrarEnvio.setCodigo(line);
-                registrarEnvio.setSimulacion(simulacion);
-                Envio envio = envioService.registerByString(registrarEnvio);
-                cantidadPaquetes += envio.getCantidadPaquetes();
-            }
-            System.out.println("Se generaron " + cantidadPaquetes + " paquetes.");
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
+        boolean inicializar_paquetes_operaciones_simulacion = false;
+        if (inicializar_paquetes_operaciones_simulacion) {
+            inicializaPaquetesSimulacion(aeropuertos);
         }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
@@ -215,5 +195,40 @@ public class DataInitializer {
          * 120, 60);
          */
 
+    }
+
+    private void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos) {
+        LocalDate hoy = LocalDate.of(2024, 1, 3);
+        LocalDateTime fecha = hoy.atTime(6, 0, 0);
+        Date fechaDate = java.sql.Timestamp.valueOf(fecha);
+
+        Simulacion simulacion = new Simulacion();
+        simulacion.fillData();
+        simulacion.setFechaInicioSim(fechaDate);
+        simulacion.setMultiplicadorTiempo(100.0);
+        simulacion = simulacionService.register(simulacion);
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))) {
+            String line;
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+
+            while ((line = reader.readLine()) != null) {
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(simulacion);
+                registrarEnvios.add(registrarEnvio);
+            }
+            ArrayList<Envio> envios = envioService.registerAllByString(registrarEnvios, aeropuertoMap);
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
     }
 }
