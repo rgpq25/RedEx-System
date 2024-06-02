@@ -23,9 +23,18 @@ function DialogReception({ twStyle }: { twStyle: string }) {
         const packageId = inputRef.current?.value;
         await api(
             "GET",
-            `${process.env.NEXT_PUBLIC_API}/back/envio/codigo_seguridad/${packageId}`,
-            (data: Envio) => {
-                router.push(`/dashboard/reception-package/${packageId}`);
+            `${process.env.NEXT_PUBLIC_API}/back/envio/sin_simulacion`,
+            (data: Envio[]) => {
+                if(data.length > 0) {
+                    if(data.find((envio) => envio.id.toString() === packageId)) {
+                        router.push(`/dashboard/reception-package/${packageId}`);
+                    }
+                } else {
+                    toast.error("No se encontró el envío", {
+                        position: "bottom-right",
+                        duration: 3000,
+                    });
+                }
             },
             (error) => {
                 toast.error("No se encontró el envío", {

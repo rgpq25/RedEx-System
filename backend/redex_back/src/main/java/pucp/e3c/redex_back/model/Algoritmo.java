@@ -69,187 +69,147 @@ public class Algoritmo {
         return fechaActualizada;
     }
 
-    public ArrayList<PlanRutaNT> loopPrincipalDiaADia(ArrayList<Aeropuerto> aeropuertos,
+    public void loopPrincipalDiaADia(ArrayList<Aeropuerto> aeropuertos,
             ArrayList<PlanVuelo> planVuelos,
             VueloService vueloService, PlanRutaService planRutaService,
             PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
-            SimulacionService simulacionService, int SA, int TA) {
+            AeropuertoService aeropuertoService, int SA, int TA) {
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
         // SA y TA en segundos\
 
-        /*
-         * int aux = 2;
-         * if (aux == 2) {
-         * return null;
-         * }
-         */
-
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
 
-        ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
 
         if (planVuelos.size() == 0) {
             System.out.println("ERROR: No hay planes de vuelo para procesar.");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin planes vuelo");
-            return null;
+            return;
         }
         int i = 0;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
 
-        boolean primera_iteracion = true;
-        ArrayList<Paquete> paquetes = null;
+        boolean primera_iteracion_con_paquetes = true;
+        ArrayList<Paquete> paquetesDiaDia = null;
         GrafoVuelos grafoVuelos = null;
+        //ArrayList<PlanRutaNT> planRutaNTs = new ArrayList<>();
+        //ArrayList<PlanRutaNT> planRutaNTs = null;
+        HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
 
         while (true) {
             long start = System.currentTimeMillis();
             Date now = new Date();
-            if (primera_iteracion) {
-                paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
-                if (paquetes.size() == 0) {
-                    System.out.println("No hay paquetes para procesar.");
-                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
-                    this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
-                    long end = System.currentTimeMillis();
-                    long sa_millis = SA * 1000 - (end - start);
-                    if (sa_millis < 0)
-                        continue;
-                    try {
-                        Thread.sleep(sa_millis);
-                    } catch (Exception e) {
-                        System.out.println("Error en sleep");
-                    }
+            //TO DO ACTUALIZAR PAQUETES
+
+            //paquetesDiaDia = paqueteService.findPaquetesSinSimulacionYNoEntregados();
+            paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
+            if(paquetesDiaDia != null){
+                paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT,now,aeropuertoService,paqueteService);
+            }
+            List<Paquete> paquetesPrimerFiltro = paquetesDiaDia.stream()
+            .filter(p -> p.isEntregado() == false)
+            .filter(p -> p.getFechaRecepcion().before(now))
+            .collect(Collectors.toList());
+            ArrayList<Paquete> paquetes = new ArrayList<>(paquetesPrimerFiltro);
+            if (paquetes.size() == 0) {
+                System.out.println("No hay paquetes para procesar.");
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
+                long end = System.currentTimeMillis();
+                long sa_millis = SA * 1000 - (end - start);
+                if (sa_millis < 0)
                     continue;
+                try {
+                    Thread.sleep(sa_millis);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
                 }
+                continue;
+            }
+
+            if (primera_iteracion_con_paquetes) {
                 grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService);
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
                     System.out.println("ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
-                    return null;
+                    return;
                 }
-                primera_iteracion = false;
+                primera_iteracion_con_paquetes = false;
             } else {
-                paquetes = paqueteService.findPaquetesSinSimulacionYNoEntregados();
-                if (paquetes.size() == 0) {
-                    System.out.println("No hay paquetes para procesar.");
-                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes para procesar.");
-                    long end = System.currentTimeMillis();
-                    long sa_millis = SA * 1000 - (end - start);
-                    if (sa_millis < 0)
-                        continue;
-                    try {
-                        Thread.sleep(sa_millis);
-                    } catch (Exception e) {
-                        System.out.println("Error en sleep");
-                    }
-                    continue;
-                }
-                // fecha vuelo de ultimo paquete
-                // camibo de santiago, pasar paquetes
-                grafoVuelos.agregarVuelosHasta(planVuelos, now, vueloService);
+                grafoVuelos.agregarVuelosParaPaquetes(planVuelos,paquetes,vueloService);
             }
 
-            // Calculo del limie de planificacion
+            //Agrega planRutasNT para los paquetes que no tienen
+            for(Paquete paquete : paquetes){
+                if(hashPlanRutasNT.get(paquete.getId()) == null){
+                    PlanRutaNT planRutaNT = new PlanRutaNT();
+                    hashPlanRutasNT.put(paquete.getId(), planRutaNT);
+                }
+            }
+
             System.out.println("Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion iniciada");
 
-            // Filtrar paquetes a calcular
+            // Ordeno por fecha de recepcion
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
-
-            List<Paquete> paquetesTemp = paquetes.stream()
-                    // .filter(p -> p.getFechaDeEntrega() == null)
-                    .collect(Collectors.toList());
-            ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
-
+            
+            // Filtrar paquetes que estan volando
+            System.out.println("Filtrando vuelos");
+            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now);
+            System.out.println("Fin de filtrado de vuelos");
             int tamanhoPaquetes = paquetesProcesar.size();
 
             if (tamanhoPaquetes == 0) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
                 System.out.println("No hay paquetes que planificar");
-                break;
+                continue;
             }
-            // Filtrar paquetes que estan volando
-            System.out.println("Filtrando vuelos");
-            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, now);
-            System.out.println("Fin de filtrado de vuelos");
             // Recalcular el tamanho de paquetes
-            tamanhoPaquetes = paquetesProcesar.size();
-
             System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + now);
+
+            //Crea el array rutas para los paquetes a procesar
+            ArrayList<PlanRutaNT> planRutasPaquetesProcesar = new ArrayList<>();
+            ArrayList<Integer> idsPaquetesProcesar = new ArrayList<>();
+            for(Paquete paquete: paquetesProcesar){
+                PlanRutaNT planRutaNT = hashPlanRutasNT.get(paquete.getId());
+                planRutasPaquetesProcesar.add(planRutaNT);
+                idsPaquetesProcesar.add(paquete.getId());
+            }
 
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    new ArrayList<>(),
+            planRutasPaquetesProcesar,
                     aeropuertos, planVuelos,
-                    tamanhoPaquetes, i, vueloService, planRutaService, null, messagingTemplate);
-            respuestaAlgoritmo.filtrarVuelosSinPaquetes();
+                    tamanhoPaquetes, i, vueloService, planRutaService, null, messagingTemplate);        
+            //respuestaAlgoritmo.filtrarVuelosSinPaquetes();
+            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+
+
+            //Actualiza el hasmap rutas
+            ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
+
+            int contador_index_respuesta = 0;
+            for(Integer idPaquete : idsPaquetesProcesar){
+                hashPlanRutasNT.put(idPaquete, planRutasRespuestaAlgoritmo.get(contador_index_respuesta));
+                contador_index_respuesta++;
+            }
+
             i++;
             System.out.println("");
             System.out.println("Planificacion finalizada");
             System.out.println("");
-            // TO DO: reemplazar con lo de abajo realizarGuardado
-            for (int idx = 0; idx < respuestaAlgoritmo.getPlanesRutas().size(); idx++) {
-                PlanRutaNT planRutaNT = respuestaAlgoritmo.getPlanesRutas().get(idx);
 
-                // Crear y guardar PlanRuta
-                planRutaNT.updateCodigo();
-                PlanRuta planRuta = new PlanRuta();
-                planRuta.setCodigo(planRutaNT.getCodigo());
+            realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService, vueloService, planRutaXVueloService);
 
-                try {
-                    planRuta = planRutaService.register(planRuta);
-                } catch (PersistenceException e) {
-                    // Manejo de errores si algo sale mal durante la operación de guardado
-                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                            "Error al guardar algun plan ruta: " + e.getMessage());
-                }
-
-                // Actualizar paquete
-                paquetesProcesar.get(idx).setFechaDeEntrega(planRutaNT.getFin());
-                paquetesProcesar.get(idx).setPlanRutaActual(planRuta);
-
-                try {
-                    paqueteService.update(paquetesProcesar.get(idx));
-                } catch (Exception e) {
-                    // Manejo de errores si algo sale mal durante la operación de guardado
-                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                            "Error al guardar algun paquete: " + e.getMessage());
-                }
-
-                // Asociar cada PlanRuta con sus vuelos
-                for (Vuelo vuelo : planRutaNT.getVuelos()) {
-                    vuelo = vueloService.register(vuelo);
-                    PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
-                    planRutaXVuelo.setPlanRuta(planRuta);
-                    planRutaXVuelo.setVuelo(vuelo);
-                    planRutaXVuelo.setIndiceDeOrden(planRutaNT.getVuelos().indexOf(vuelo));
-
-                    try {
-                        planRutaXVueloService.register(planRutaXVuelo);
-                    } catch (PersistenceException e) {
-                        // Manejo de errores si algo sale mal durante la operación de guardado
-                        System.err.println("Error al guardar en la base de datos: " + e.getMessage());
-                        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                                "Error al guardar algun plan ruta x vuelo: " + e.getMessage());
-                    }
-                }
-
-            }
-
-            // TO DO: reutilzar funcion enviarRespuesta
 
             // Formar respuesta a front
             respuestaAlgoritmo.setSimulacion(null);
+            respuestaAlgoritmo.setOcupacionVuelos(null);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
             this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
             System.out.println("Planificacion terminada hasta " + now);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                     "Planificacion terminada hasta " + now);
-            boolean primera_plani = true;
-
-            planRutas.addAll(respuestaAlgoritmo.getPlanesRutas());
 
             long end = System.currentTimeMillis();
             long sa_millis = SA * 1000 - (end - start);
@@ -262,8 +222,59 @@ public class Algoritmo {
             }
 
         }
-        return planRutas;
+    }
 
+    public void realizarGuardadoDiaDia(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,  PaqueteService paqueteService,
+    PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService){
+        for (int idx = 0; idx < planRutaNTs.size(); idx++) {
+            PlanRutaNT planRutaNT = planRutaNTs.get(idx);
+
+            // Crear y guardar PlanRuta
+            planRutaNT.updateCodigo();
+            PlanRuta planRuta = new PlanRuta();
+            planRuta.setCodigo(planRutaNT.getCodigo());
+
+            try {
+                planRuta = planRutaService.register(planRuta);
+            } catch (PersistenceException e) {
+                // Manejo de errores si algo sale mal durante la operación de guardado
+                System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                        "Error al guardar algun plan ruta: " + e.getMessage());
+            }
+
+            // Actualizar paquete
+            paquetes.get(idx).setFechaDeEntrega(planRutaNT.getFin());
+            paquetes.get(idx).setPlanRutaActual(planRuta);
+
+            try {
+                paqueteService.update(paquetes.get(idx));
+            } catch (Exception e) {
+                // Manejo de errores si algo sale mal durante la operación de guardado
+                System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                        "Error al guardar algun paquete: " + e.getMessage());
+            }
+
+            // Asociar cada PlanRuta con sus vuelos
+            for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                vuelo = vueloService.register(vuelo);
+                PlanRutaXVuelo planRutaXVuelo = new PlanRutaXVuelo();
+                planRutaXVuelo.setPlanRuta(planRuta);
+                planRutaXVuelo.setVuelo(vuelo);
+                planRutaXVuelo.setIndiceDeOrden(planRutaNT.getVuelos().indexOf(vuelo));
+
+                try {
+                    planRutaXVueloService.register(planRutaXVuelo);
+                } catch (PersistenceException e) {
+                    // Manejo de errores si algo sale mal durante la operación de guardado
+                    System.err.println("Error al guardar en la base de datos: " + e.getMessage());
+                    messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                            "Error al guardar algun plan ruta x vuelo: " + e.getMessage());
+                }
+            }
+
+        }
     }
 
     public ArrayList<PlanRutaNT> loopPrincipal(ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos,
@@ -710,6 +721,47 @@ public class Algoritmo {
             }
 
         }
+    }
+
+    private ArrayList<Paquete> actualizarPaquetesDiaDia(ArrayList<Paquete> paquetes, HashMap<Integer, PlanRutaNT> hashPlanRutasNT,
+            Date fechaCorte, AeropuertoService aeropuertoService, PaqueteService paqueteService) {
+        for (int i = 0; i < paquetes.size(); i++) {
+            if (hashPlanRutasNT != null) {
+                boolean primero = true;
+                PlanRutaNT planRutaNT = hashPlanRutasNT.get(paquetes.get(i).getId());
+                if(planRutaNT != null){
+                    for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                        if (vuelo.getFechaSalida().after(fechaCorte)) {
+    
+                            paquetes.get(i).setAeropuertoActual(
+                                    aeropuertoService.findByUbicacion(vuelo.getPlanVuelo().getCiudadOrigen().getId()));
+                            paquetes.get(i).setEnAeropuerto(true);
+                            if (primero) {
+                                paquetes.get(i).setEstado("En aeropuerto origen");
+                            } else {
+                                paquetes.get(i).setEstado("En espera");
+    
+                            }
+                        } else if (vuelo.getFechaLlegada().after(fechaCorte)) {
+                            paquetes.get(i).setEstado("En vuelo");
+                            paquetes.get(i).setAeropuertoActual(null);
+                            paquetes.get(i).setEnAeropuerto(false);
+                        } else {
+                            paquetes.get(i).setEstado("Entregado");
+                            paquetes.get(i).setEntregado(true);
+                            paquetes.get(i).setAeropuertoActual(null);
+                            paquetes.get(i).setEnAeropuerto(false);
+                            paqueteService.update(paquetes.get(i));
+                        }
+    
+                        primero = false;
+                    }
+                }
+                
+            }
+
+        }
+        return paquetes;
     }
 
     private ArrayList<Paquete> actualizarPaquetes(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,

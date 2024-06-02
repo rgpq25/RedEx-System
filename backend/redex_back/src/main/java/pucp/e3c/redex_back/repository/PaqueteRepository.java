@@ -29,4 +29,7 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
 
     @Query("SELECT p FROM Paquete p WHERE p.simulacionActual IS NULL AND p.entregado = false")
     public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados();
+
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual IS NULL")
+    public ArrayList<Paquete> findPaquetesOperacionesDiaDia();
 }
