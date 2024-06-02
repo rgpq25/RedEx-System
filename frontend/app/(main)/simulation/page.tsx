@@ -4,7 +4,7 @@ import Sidebar from "@/app/_components/sidebar";
 import Map from "@/components/map/map";
 
 import { envios } from "@/lib/sample";
-import { Aeropuerto, Envio, EstadoAlmacen, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -40,6 +40,7 @@ function SimulationPage() {
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
+	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
 
@@ -97,6 +98,7 @@ function SimulationPage() {
 
 				setFlights(newFlights);
 				setEstadoAlmacen(data.estadoAlmacen);
+				setPaquetes(data.paquetes);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
@@ -157,6 +159,7 @@ function SimulationPage() {
 				</div>
 
 				<Sidebar
+					paquetes={paquetes}
 					envios={envios}
 					vuelos={flights}
 					aeropuertos={airports}

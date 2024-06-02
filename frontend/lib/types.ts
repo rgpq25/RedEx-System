@@ -104,15 +104,16 @@ export type PlanRuta = {
 };
 
 export type Paquete = {
-    id: number;
-    aeropuertoActual: Aeropuerto;
-    enAeropuerto: boolean;
-    fechaRecepcion: Date;
-    fechaDeEntrega: Date | null;
-    entregado: boolean;
-    envio: Envio;
-    simulacionActual: Simulacion | null;
-    planRutaActual: PlanRuta | null;
+	id: number;
+	aeropuertoActual: Aeropuerto;
+	enAeropuerto: boolean;
+	fechaRecepcion: Date;
+	fechaDeEntrega: Date | null;
+	entregado: boolean;
+	envio: Envio;
+	simulacionActual: Simulacion | null;
+	planRutaActual: PlanRuta | null;
+	estado: string;
 };
 
 export type Envio = {
@@ -138,11 +139,13 @@ export type Simulacion = {
 };
 
 export type RespuestaAlgoritmo = {
-    correcta: boolean;
-    estadoAlmacen: EstadoAlmacen;
-    planesRutas: PlanRuta[];
-    simulacion: Simulacion;
-    vuelos: Vuelo[];
+	correcta: boolean;
+	estadoAlmacen: EstadoAlmacen;
+	planesRutas: PlanRuta[];
+	simulacion: Simulacion;
+	vuelos: Vuelo[];
+	paquetes: Paquete[];
+	iniciandoPrimeraPlanificacionDiaDia: boolean;
 };
 
 export type EstadoAlmacen = {

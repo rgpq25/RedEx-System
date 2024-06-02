@@ -27,7 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Large, Muted, Small } from "@/components/ui/typography";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion } from "@/lib/types";
+import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion, Paquete } from "@/lib/types";
 import { continentes } from "@/lib/sample";
 import { formatDateShort } from "@/lib/date";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,7 @@ import { api } from "@/lib/api";
 const DEFAULT_RANGO_CAPACIDAD: [number, number] = [0, 1000];
 
 interface SidebarProps {
+    paquetes: Paquete[];
     envios?: Envio[];
     aeropuertos?: Aeropuerto[];
     vuelos?: Vuelo[];
@@ -50,6 +51,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
+    paquetes,
     envios,
     aeropuertos,
     vuelos,
@@ -123,9 +125,15 @@ export default function Sidebar({
                 <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
                     <Separator />
                     {selectedOperation === Operacion.Envios && (
-                        <Envios
-                            envios={envios}
-                            onClick={onClickEnvio}
+                        // <Envios
+                        //     envios={envios}
+                        //     onClick={onClickEnvio}
+                        //     tiempoActual={tiempoActual}
+                        //     ubicaciones={ubicaciones}
+                        // />
+                        <Paquetes
+                            paquetes={paquetes}
+                            //onClick={onClickPaquete}
                             tiempoActual={tiempoActual}
                             ubicaciones={ubicaciones}
                         />
@@ -149,6 +157,20 @@ export default function Sidebar({
             </Card>
         </>
     );
+}
+
+function Paquetes({
+    paquetes,
+    onClick,
+    tiempoActual,
+    ubicaciones,
+}: {
+    paquetes: Paquete[];
+    onClick?: (paquete: Paquete) => void;
+    tiempoActual?: Date | undefined;
+    ubicaciones: Ubicacion[];
+}) {
+    return <p>test</p>
 }
 
 function Envios({
@@ -677,7 +699,6 @@ function Vuelos({
 
     const filteredItems = useMemo(() => {
         let filteredVuelos = vuelos;
-        console.log("Tiempo actual: ", tiempoActual);
         if (tiempoActual) {
             filteredVuelos = filteredVuelos?.filter(
                 (vuelo) => vuelo.fechaSalida.getTime() <= tiempoActual.getTime() && vuelo.fechaLlegada.getTime() >= tiempoActual.getTime()

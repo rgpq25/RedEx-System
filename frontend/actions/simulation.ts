@@ -12,7 +12,7 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 		fechaInicioSim: startDate,
 		fechaFinSim: finishDate,
 		fechaInicioSistema: new Date(),
-		multiplicadorTiempo: 100,
+		multiplicadorTiempo: 200,
 	};
 
 	await api(
