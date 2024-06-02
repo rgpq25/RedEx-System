@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRuta;
@@ -51,14 +52,35 @@ public class VueloController {
         }
     }
 
-    @GetMapping("paquete/{id}")
+    @GetMapping("/paquete/{id}")
     public ResponseEntity<ArrayList<Vuelo>> findByPaqueteId(@PathVariable("id") int id) {
         ArrayList<Vuelo> vuelo = vueloService.findVuelosByPaqueteId(id);
         if (vuelo != null) {
             return new ResponseEntity<ArrayList<Vuelo>>(vuelo, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/paqueteAll")
+    public ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>> findByAllPaqueteId(
+            @RequestBody ArrayList<Paquete> paquetes) {
+        HashMap<Integer, ArrayList<Vuelo>> hashVuelosXPaquete = new HashMap<>();
+        if (paquetes.size() <= 0) {
+            return new ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>>(new HashMap<Integer, ArrayList<Vuelo>>(),
+                    HttpStatus.BAD_REQUEST);
+        }
+        for (Paquete paquete : paquetes) {
+            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+            if (vuelos != null) {
+                hashVuelosXPaquete.put(paquete.getId(), vuelos);
+            } else {
+                hashVuelosXPaquete.put(paquete.getId(), new ArrayList<Vuelo>());
+            }
+        }
+
+        return new ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>>(hashVuelosXPaquete, HttpStatus.OK);
+
     }
 
     @PutMapping("/")
