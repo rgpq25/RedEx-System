@@ -2,9 +2,8 @@
 
 import { cn } from "@/lib/utils";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,26 +11,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Large, Muted } from "@/components/ui/typography";
+import { Large, Muted, Small } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 import { Envio, Paquete, Aeropuerto, Ubicacion, Vuelo, PlanRuta } from "@/lib/types";
 import { api } from "@/lib/api";
-import { formatDateLong } from "@/lib/date";
+import { formatDateTimeLongShort } from "@/lib/date";
 import { format, parseISO } from "date-fns";
 
+import { ReceptionPackageIdContext } from "@/components/hooks/useReceptionPackageId";
+
 export default function ReceptionPackage() {
-    const params = useParams<{ packageId: string }>();
-    const packageId = params.packageId;
+    const { receptionPackageId } = useContext(ReceptionPackageIdContext);
     const [envio, setEnvio] = useState<Envio>();
     const [paquetes, setPaquetes] = useState<Paquete[]>();
     const [selectedIdPaquete, setSelectedIdPaquete] = useState<number>();
 
+    const selectedPaquete = paquetes?.find((paquete) => paquete.id === selectedIdPaquete);
+
     const getEnvio = useCallback(async () => {
         await api(
             "GET",
-            `${process.env.NEXT_PUBLIC_API}/back/envio/${packageId}`,
+            `${process.env.NEXT_PUBLIC_API}/back/envio/${receptionPackageId}`,
             (data: Envio) => {
                 setEnvio(data);
             },
@@ -42,11 +44,11 @@ export default function ReceptionPackage() {
                 });
             }
         );
-    }, [packageId]);
+    }, [receptionPackageId]);
     const getPaquetesEnvio = useCallback(async () => {
         await api(
             "GET",
-            `${process.env.NEXT_PUBLIC_API}/back/paquete/envio_sin_simulacion/${packageId}`,
+            `${process.env.NEXT_PUBLIC_API}/back/paquete/envio_sin_simulacion/${receptionPackageId}`,
             (data: Paquete[]) => {
                 setPaquetes(data);
             },
@@ -57,7 +59,7 @@ export default function ReceptionPackage() {
                 });
             }
         );
-    }, [packageId]);
+    }, [receptionPackageId]);
 
     const handleReceptionData = useCallback(async () => {
         try {
@@ -94,15 +96,17 @@ export default function ReceptionPackage() {
         };
 
         if (paquetes) {
-            for (const paquete of paquetes) {
+            paquetes.forEach((paquete) => {
                 getVuelosPaquetes(paquete);
-            }
+            });
         }
     }, [paquetes]);
 
     useEffect(() => {
         handleReceptionData();
-    }, [handleReceptionData, envio, paquetes]);
+    }, [handleReceptionData]);
+
+    console.log(paquetes);
 
     return (
         <div className='flex flex-col mx-auto gap-8 w-11/12 h-full p-8'>
@@ -205,8 +209,8 @@ export default function ReceptionPackage() {
                                     <Label>Fecha de recepción</Label>
                                     <Input
                                         disabled
-                                        type='name'
-                                        defaultValue={format(parseISO(envio.fechaRecepcion.toString()).toString(), "dd/MM/yyyy")}
+                                        type='text'
+                                        defaultValue={format(parseISO(envio.fechaRecepcion), "dd/MM/yyyy HH:mm:ss")}
                                     />
                                 </div>
                                 <div>
@@ -231,7 +235,7 @@ export default function ReceptionPackage() {
                             <CardHeader>
                                 <CardTitle>Ruta de paquetes</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className='w-full'>
                                 <Select
                                     key={selectedIdPaquete}
                                     onValueChange={(value) => setSelectedIdPaquete(parseInt(value))}
@@ -254,23 +258,27 @@ export default function ReceptionPackage() {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
-                                <ScrollArea>
-                                    {paquetes
-                                        ?.find((paquete) => paquete.id === selectedIdPaquete)
-                                        ?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
-                                            <Card key={vuelo.id}>
-                                                <CardContent className='flex flex-wrap gap-4 justify-between *:flex *:flex-col'>
-                                                    <div>
-                                                        <Large>Origen</Large>
-                                                        <Muted>{vuelo.planVuelo.ciudadOrigen.ciudad}</Muted>
-                                                    </div>
-                                                    <div>
-                                                        <Large>Destino</Large>
-                                                        <Muted>{vuelo.planVuelo.ciudadDestino.ciudad}</Muted>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+
+                                <div className='mt-4 flex flex-row justify-between'>
+                                    <Large className='text-left'>Origen</Large>
+                                    <Large className='text-right'>Destino</Large>
+                                </div>
+                                <ScrollArea className='h-28'>
+                                    {selectedPaquete?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
+                                        <section
+                                            key={vuelo.id}
+                                            className='flex flex-wrap gap-4 my-4 justify-between *:flex *:flex-col px-2'
+                                        >
+                                            <div>
+                                                <Small className='text-left'>{vuelo.planVuelo.ciudadOrigen.ciudad}</Small>
+                                                <Muted className='text-left'>{formatDateTimeLongShort(vuelo.fechaSalida)}</Muted>
+                                            </div>
+                                            <div>
+                                                <Small className='text-right'>{vuelo.planVuelo.ciudadDestino.ciudad}</Small>
+                                                <Muted className='text-right'>{formatDateTimeLongShort(vuelo.fechaLlegada)}</Muted>
+                                            </div>
+                                        </section>
+                                    ))}
                                 </ScrollArea>
                             </CardContent>
                         </Card>
