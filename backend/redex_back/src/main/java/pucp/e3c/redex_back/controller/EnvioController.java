@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,35 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Envio;
-import pucp.e3c.redex_back.model.Funciones;
-import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
-import pucp.e3c.redex_back.model.Simulacion;
-import pucp.e3c.redex_back.model.Ubicacion;
-import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
-import pucp.e3c.redex_back.service.PaqueteService;
-import pucp.e3c.redex_back.service.SimulacionService;
-import pucp.e3c.redex_back.service.UbicacionService;
 
 @RestController
+@CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
 @RequestMapping("back/envio")
 public class EnvioController {
 
     @Autowired
     private EnvioService envioService;
-
-    @Autowired
-    private UbicacionService ubicacionService;
-
-    @Autowired
-    private AeropuertoService aeropuertoService;
-
-    @Autowired
-    private PaqueteService paqueteService;
-
-    @Autowired
-    private SimulacionService simulacionService;
 
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {

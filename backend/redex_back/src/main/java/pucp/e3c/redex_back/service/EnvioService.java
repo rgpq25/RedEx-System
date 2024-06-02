@@ -1,15 +1,20 @@
 package pucp.e3c.redex_back.service;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
@@ -45,6 +50,15 @@ public class EnvioService {
         // return envioRepository.save(envio);
         try {
             return envioRepository.save(envio);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Envio> registerAll(ArrayList<Envio> envios) {
+        try {
+            return (ArrayList<Envio>) envioRepository.saveAll(envios);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
@@ -104,6 +118,7 @@ public class EnvioService {
         Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
                 registrarEnvio.getSimulacion().getId(),
                 aeropuertoRepository);
+        envio.setSimulacionActual(simulacion);
         Envio auxEnvio = envioRepository.save(envio);
         for (int i = 0; i < auxEnvio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
@@ -114,8 +129,90 @@ public class EnvioService {
             paquete.setSimulacionActual(simulacion);
             paqueteRepository.save(paquete);
         }
-        auxEnvio.setSimulacionActual(simulacion);
         return auxEnvio;
+    }
+
+    public ArrayList<Envio> registerAllByStringEsp(ArrayList<RegistrarEnvio> registrarEnvios,
+            HashMap<String, Aeropuerto> hashAeropuertos, Date fechaInicio, Date fechaFin, int cantidad) {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+        ArrayList<Envio> envios = new ArrayList<>();
+        int aux = 0;
+        for (RegistrarEnvio registrarEnvio : registrarEnvios) {
+            if (aux >= cantidad) {
+                break;
+            }
+
+            String clave = registrarEnvio.getCodigo();
+
+            clave = Funciones.asignarFechaAClave(clave, fechaInicio, fechaFin);
+            registrarEnvio.setCodigo(clave);
+
+            Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                    registrarEnvio.getSimulacion().getId(),
+                    aeropuertoRepository);
+
+            envio.setSimulacionActual(registrarEnvio.getSimulacion());
+            envios.add(envio);
+            aux++;
+        }
+        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            Paquete paquete = new Paquete();
+            paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+            paquete.setEnAeropuerto(true);
+            paquete.setEntregado(false);
+            paquete.setEnvio(envio);
+            paquete.setSimulacionActual(envio.getSimulacionActual());
+            paquetes.add(paquete);
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
+    }
+
+    public ArrayList<Envio> registerAllByString(ArrayList<RegistrarEnvio> registrarEnvios,
+            HashMap<String, Aeropuerto> hashAeropuertos) {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+
+        ArrayList<Envio> envios = new ArrayList<>();
+        for (RegistrarEnvio registrarEnvio : registrarEnvios) {
+
+            Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                    registrarEnvio.getSimulacion().getId(),
+                    aeropuertoRepository);
+
+            envio.setSimulacionActual(registrarEnvio.getSimulacion());
+            envios.add(envio);
+        }
+        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            Paquete paquete = new Paquete();
+            paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+            paquete.setEnAeropuerto(true);
+            paquete.setEntregado(false);
+            paquete.setEnvio(envio);
+            paquete.setSimulacionActual(envio.getSimulacionActual());
+            paquetes.add(paquete);
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
     }
 
     public Envio findByCodigo_seguridad(String codigoSeguridad) {
