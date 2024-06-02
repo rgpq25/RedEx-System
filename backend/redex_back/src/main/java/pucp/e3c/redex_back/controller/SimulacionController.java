@@ -1,7 +1,14 @@
 package pucp.e3c.redex_back.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -24,6 +31,7 @@ import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRutaNT;
 import pucp.e3c.redex_back.model.PlanVuelo;
+import pucp.e3c.redex_back.model.RegistrarEnvio;
 import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
@@ -104,6 +112,57 @@ public class SimulacionController {
                 nuevoPaquete.setSimulacionActual(simulacion);
                 nuevoPaquete = paqueteService.register(nuevoPaquete);
             }
+        }
+
+        return new ResponseEntity<>(simulacion, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/inicializarSimulacionCargaVariable/{carga}")
+    public ResponseEntity<Simulacion> inicializarSimulacionCargaVariable(@RequestBody Simulacion simulacion,
+            @PathVariable("carga") String carga) {
+        if (!carga.equals("chica") && !carga.equals("media") && !carga.equals("grande")) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        System.out.println(simulacion.getFechaInicioSim() + ", " + simulacion.getFechaFinSim());
+
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+        // Registrar una nueva simulacion
+        simulacion.setId(0);
+        simulacion.setMilisegundosPausados(0);
+        simulacion = simulacionService.register(simulacion);
+
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))) {
+            String line;
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            while ((line = reader.readLine()) != null) {
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(simulacion);
+                registrarEnvios.add(registrarEnvio);
+            }
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+            int cantidadEnvios = (int) Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))
+                    .count();
+            System.out.println("El archivo tiene " + cantidadEnvios + " envios");
+            int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
+                    : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;
+
+            ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
+                    simulacion.getFechaInicioSim(), simulacion.getFechaFinSim(), nuevaCantidad);
+            // Filtrar envios
+            Date fechaMinima = simulacion.getFechaInicioSim();
+            envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
         }
 
         return new ResponseEntity<>(simulacion, HttpStatus.CREATED);
@@ -190,11 +249,12 @@ public class SimulacionController {
     }
 
     @GetMapping("/runAlgorithm/{id}")
-    public String correrSimulacion(@PathVariable("id") int id) {
+    public Simulacion correrSimulacion(@PathVariable("id") int id) {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
         // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+
         Simulacion simulacion = simulacionService.get(id);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
@@ -203,7 +263,7 @@ public class SimulacionController {
                     30, 10);
         });
 
-        return "Simulacion iniciada";
+        return simulacion;
 
     }
 
