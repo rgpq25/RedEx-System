@@ -64,7 +64,7 @@ public class VueloController {
         }
     }
 
-    @GetMapping("/paqueteAll")
+    @PostMapping("/paqueteAll")
     public ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>> findByAllPaqueteId(
             @RequestBody ArrayList<Paquete> paquetes) {
         HashMap<Integer, ArrayList<Vuelo>> hashVuelosXPaquete = new HashMap<>();
