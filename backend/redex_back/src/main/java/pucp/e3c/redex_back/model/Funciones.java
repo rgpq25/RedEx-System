@@ -10,20 +10,33 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+
 import pucp.e3c.redex_back.repository.AeropuertoRepository;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Component
 public class Funciones {
+
+    @Autowired
+    ResourceLoader resourceLoader;
+
 
     public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -240,11 +253,14 @@ public class Funciones {
         return ubicacionMap;
     }
 
-    public static ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) {
+    public ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) throws IOException {
         ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
+        Resource resource = resourceLoader.getResource("classpath:static/aeropuertos.csv");
+        InputStream input = resource.getInputStream();
 
-        try {
-            File file = new File(inputPath + "/aeropuertos.csv");
+        /*try {
+            //File file = new File(inputPath + "/aeropuertos.csv");
+            File file = resource.getFile();
             Scanner scanner = new Scanner(file);
             scanner.useDelimiter(",");
 
@@ -265,6 +281,23 @@ public class Funciones {
             System.out.println("File not found.");
             e.printStackTrace();
         }
+        return aeropuertos_list;*/
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+
+                Aeropuerto aeropuerto = new Aeropuerto();
+
+                aeropuerto.setUbicacion(ubicacionMap.get(parts[0].trim()));
+                aeropuerto.setCapacidadMaxima(Integer.parseInt(parts[1].trim()));
+                aeropuertos_list.add(aeropuerto);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return aeropuertos_list;
     }
 
@@ -378,12 +411,14 @@ public class Funciones {
         }
     }
 
-    public static ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath) {
+    public ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath) throws IOException {
         // Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
+        Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo.txt");
         ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
+        InputStream input = resource.getInputStream();
 
-        try {
-            File file = new File(inputPath + "/planes_vuelo.txt");
+        /*try {
+            File file = resource.getFile();
             Scanner scanner = new Scanner(file);
             // delimiter must be EOL
             scanner.useDelimiter("\n");
@@ -409,6 +444,30 @@ public class Funciones {
             System.out.println("File not found.");
             e.printStackTrace();
         }
+        return vuelos_list;*/
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            String line;
+            int id = 1;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("-");
+    
+                PlanVuelo planVuelo = new PlanVuelo();
+                planVuelo.setId(id);
+                planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+                planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+                planVuelo.setCapacidadMaxima(Integer.parseInt(parts[4].trim()));
+                planVuelo.setHoraCiudadOrigen(parts[2].trim());
+                planVuelo.setHoraCiudadDestino(parts[3].trim());
+    
+                vuelos_list.add(planVuelo);
+                id++;
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    
         return vuelos_list;
     }
 

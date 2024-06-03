@@ -90,3 +90,247 @@
 2024-06-02 12:19:35.420 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-06-02 12:19:35.422 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2024-06-02 12:19:35.426 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-06-02 14:05:07.973 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 8836 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:05:07.979 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:05:08.002 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:05:08.003 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:05:08.467 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:05:08.521 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 50 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:05:08.955 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:05:08.965 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:05:08.968 [restartedMain] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 14:05:08.969 [restartedMain] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 14:05:09.016 [restartedMain] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 14:05:09.017 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1013 ms
+2024-06-02 14:05:09.055 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:05:09.175 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:05:09.176 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:05:09.183 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:05:09.307 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:05:09.366 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:05:09.393 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:05:09.564 [restartedMain] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:05:10.214 [restartedMain] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:05:10.272 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:05:10.524 [restartedMain] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:05:12.209 [restartedMain] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-02 14:05:12.658 [restartedMain] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-06-02 14:05:12.676 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:05:12.707 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2024-06-02 14:05:12.710 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2024-06-02 14:05:12.710 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1d5a48ea]]
+2024-06-02 14:05:12.714 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2024-06-02 14:05:12.721 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Started RedexBackApplication in 4.941 seconds (process running for 5.428)
+2024-06-02 14:06:12.680 [MessageBroker-1] INFO  org.springframework.web.socket.config.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2024-06-02 14:16:14.090 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 20332 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:16:14.096 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:16:14.120 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:16:14.120 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:16:14.587 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:16:14.639 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:16:15.089 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:16:15.099 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:16:15.101 [restartedMain] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 14:16:15.101 [restartedMain] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 14:16:15.150 [restartedMain] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 14:16:15.151 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1030 ms
+2024-06-02 14:16:15.197 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:16:15.320 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:16:15.322 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:16:15.328 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:16:15.493 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:16:15.553 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:16:15.577 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:16:15.744 [restartedMain] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:16:16.385 [restartedMain] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:16:16.440 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:16:16.639 [restartedMain] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:16:17.273 [restartedMain] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataInitializer': Invocation of init method failed
+2024-06-02 14:16:17.274 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:16:17.277 [restartedMain] WARN  org.springframework.beans.factory.support.DisposableBeanAdapter - Invocation of destroy method failed on bean with name 'inMemoryDatabaseShutdownExecutor': org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
+2024-06-02 14:16:17.277 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-02 14:16:17.279 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-06-02 14:16:17.281 [restartedMain] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2024-06-02 14:16:17.289 [restartedMain] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-06-02 14:16:17.303 [restartedMain] ERROR org.springframework.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataInitializer': Invocation of init method failed
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:222) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1778) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:962) ~[spring-context-6.1.6.jar:6.1.6]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.6.jar:6.1.6]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.2.5.jar:3.2.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) [spring-boot-3.2.5.jar:3.2.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) [spring-boot-3.2.5.jar:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) [spring-boot-3.2.5.jar:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354) [spring-boot-3.2.5.jar:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343) [spring-boot-3.2.5.jar:3.2.5]
+	at pucp.e3c.redex_back.RedexBackApplication.main(RedexBackApplication.java:13) [classes/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578) ~[?:?]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) [spring-boot-devtools-3.2.5.jar:3.2.5]
+Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.core.io.ResourceLoader.getResource(String)" because "pucp.e3c.redex_back.model.Funciones.resourceLoader" is null
+	at pucp.e3c.redex_back.model.Funciones.leerAeropuertos(Funciones.java:256) ~[classes/:?]
+	at pucp.e3c.redex_back.DataInitializer.initData(DataInitializer.java:124) ~[classes/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578) ~[?:?]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401) ~[spring-beans-6.1.6.jar:6.1.6]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219) ~[spring-beans-6.1.6.jar:6.1.6]
+	... 21 more
+2024-06-02 14:20:36.522 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 12136 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:20:36.529 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:20:36.553 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:20:36.554 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:20:37.014 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:20:37.065 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:20:37.513 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:20:37.526 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:20:37.527 [restartedMain] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 14:20:37.528 [restartedMain] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 14:20:37.573 [restartedMain] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 14:20:37.574 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1019 ms
+2024-06-02 14:20:37.623 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:20:37.746 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:20:37.747 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:20:37.754 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:20:37.930 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:20:37.993 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:20:38.019 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:20:38.170 [restartedMain] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:20:38.811 [restartedMain] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:20:38.867 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:20:39.076 [restartedMain] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:20:40.714 [restartedMain] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-02 14:20:41.170 [restartedMain] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-06-02 14:20:41.198 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:20:41.228 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2024-06-02 14:20:41.231 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2024-06-02 14:20:41.231 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@4fb0a05e]]
+2024-06-02 14:20:41.234 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2024-06-02 14:20:41.241 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Started RedexBackApplication in 4.926 seconds (process running for 5.441)
+2024-06-02 14:21:01.238 [http-nio-8080-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-02 14:21:01.238 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-06-02 14:21:01.239 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-06-02 14:21:45.694 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 18700 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:21:45.701 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:21:45.728 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:21:45.728 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:21:46.193 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:21:46.244 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:21:46.679 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:21:46.689 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:21:46.691 [restartedMain] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 14:21:46.692 [restartedMain] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 14:21:46.734 [restartedMain] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 14:21:46.736 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1006 ms
+2024-06-02 14:21:46.782 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:21:46.901 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:21:46.902 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:21:46.909 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:21:47.053 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:21:47.117 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:21:47.148 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:21:47.306 [restartedMain] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:21:47.950 [restartedMain] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:21:48.003 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:21:48.227 [restartedMain] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:21:49.871 [restartedMain] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-02 14:21:50.333 [restartedMain] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-06-02 14:21:50.361 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:21:50.388 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2024-06-02 14:21:50.391 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2024-06-02 14:21:50.391 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1ca1b8ac]]
+2024-06-02 14:21:50.394 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2024-06-02 14:21:50.401 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Started RedexBackApplication in 4.913 seconds (process running for 5.434)
+2024-06-02 14:22:50.356 [MessageBroker-1] INFO  org.springframework.web.socket.config.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2024-06-02 14:23:01.437 [http-nio-8080-exec-1] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-02 14:23:01.438 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-06-02 14:23:01.439 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2024-06-02 14:24:48.438 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 41532 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:24:48.445 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:24:48.470 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:24:48.471 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:24:48.957 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:24:49.015 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 54 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:24:49.485 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:24:49.539 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1067 ms
+2024-06-02 14:24:49.574 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:24:49.698 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:24:49.699 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:24:49.705 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:24:49.831 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:24:49.890 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:24:49.917 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:24:53.556 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication using Java 20.0.2 with PID 12004 (C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back\target\classes started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:24:53.562 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:24:53.585 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-02 14:24:53.585 [restartedMain] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-02 14:24:54.048 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:24:54.104 [restartedMain] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:24:54.537 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 14:24:54.549 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:24:54.551 [restartedMain] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 14:24:54.551 [restartedMain] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 14:24:54.588 [restartedMain] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 14:24:54.590 [restartedMain] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1003 ms
+2024-06-02 14:24:54.634 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:24:54.752 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:24:54.754 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:24:54.761 [restartedMain] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:24:54.922 [restartedMain] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:24:54.972 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:24:54.997 [restartedMain] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:24:55.159 [restartedMain] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:24:55.842 [restartedMain] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:24:55.899 [restartedMain] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:24:56.143 [restartedMain] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:24:57.744 [restartedMain] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-02 14:24:58.210 [restartedMain] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-06-02 14:24:58.228 [restartedMain] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-06-02 14:24:58.259 [restartedMain] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2024-06-02 14:24:58.261 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2024-06-02 14:24:58.262 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7ff2f091]]
+2024-06-02 14:24:58.266 [restartedMain] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2024-06-02 14:24:58.274 [restartedMain] INFO  pucp.e3c.redex_back.RedexBackApplication - Started RedexBackApplication in 4.92 seconds (process running for 5.443)
+2024-06-02 14:25:19.024 [http-nio-8080-exec-2] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-02 14:25:19.025 [http-nio-8080-exec-2] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-06-02 14:25:19.026 [http-nio-8080-exec-2] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-06-02 14:26:18.191 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pucp.e3c.redex_back.RedexBackApplicationTests]: RedexBackApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-06-02 14:26:18.248 [main] INFO  org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pucp.e3c.redex_back.RedexBackApplication for test class pucp.e3c.redex_back.RedexBackApplicationTests
+2024-06-02 14:26:18.344 [main] INFO  org.springframework.boot.devtools.restart.RestartApplicationListener - Restart disabled due to context in which it is running
+2024-06-02 14:26:18.486 [main] INFO  pucp.e3c.redex_back.RedexBackApplicationTests - Starting RedexBackApplicationTests using Java 20.0.2 with PID 13708 (started by Usuario in C:\Users\Usuario\Documents\GitHub\RedEx-System\backend\redex_back)
+2024-06-02 14:26:18.488 [main] INFO  pucp.e3c.redex_back.RedexBackApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2024-06-02 14:26:18.923 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 14:26:18.979 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 49 ms. Found 13 JPA repository interfaces.
+2024-06-02 14:26:19.311 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 14:26:19.364 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 14:26:19.392 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 14:26:19.598 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 14:26:19.623 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 14:26:19.743 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 14:26:19.744 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 14:26:20.422 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 14:26:20.480 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:26:20.876 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 14:26:22.558 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-02 14:26:23.144 [main] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 14:26:23.201 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2024-06-02 14:26:23.201 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@ff6d02e]]
+2024-06-02 14:26:23.205 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2024-06-02 14:26:23.211 [main] INFO  pucp.e3c.redex_back.RedexBackApplicationTests - Started RedexBackApplicationTests in 4.874 seconds (process running for 5.648)
+2024-06-02 14:26:24.008 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Stopping...
+2024-06-02 14:26:24.008 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@ff6d02e]]
+2024-06-02 14:26:24.008 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Stopped.
+2024-06-02 14:26:24.010 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 14:26:24.013 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-02 14:26:24.017 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

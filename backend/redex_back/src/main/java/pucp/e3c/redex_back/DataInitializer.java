@@ -67,6 +67,9 @@ public class DataInitializer {
     private PlanRutaXVueloService planRutaXVueloService;
 
     @Autowired
+    private Funciones funciones;
+
+    @Autowired
     private EnvioService envioService;
 
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
@@ -110,9 +113,10 @@ public class DataInitializer {
     }
 
     @PostConstruct
-    public void initData() {
+    public void initData() throws IOException {
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
+        //String inputPath = "/home/inf226.981.3c/resources";
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
@@ -120,8 +124,8 @@ public class DataInitializer {
         for (Ubicacion ubicacion : ubicacionMap.values()) {
             ubicacion = ubicacionService.register(ubicacion);
         }
-        aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-        planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
+        aeropuertos = funciones.leerAeropuertos(inputPath, ubicacionMap);
+        planVuelos = funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
         /*
          * LocalDate today = LocalDate.of(2024, 1, 3);

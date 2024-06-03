@@ -1,0 +1,73 @@
+2024-06-02 17:36:38.976 [main] INFO  pucp.e3c.redex_back.RedexBackApplication - Starting RedexBackApplication v0.0.1-SNAPSHOT using Java 21.0.3 with PID 3162 (/home/inf226.981.3c/app/app.jar started by inf226.981.3c in /)
+2024-06-02 17:36:39.000 [main] INFO  pucp.e3c.redex_back.RedexBackApplication - The following 1 profile is active: "prod"
+2024-06-02 17:36:40.158 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-02 17:36:40.282 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114 ms. Found 13 JPA repository interfaces.
+2024-06-02 17:36:41.048 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-06-02 17:36:41.055 [main] INFO  org.apache.catalina.core.AprLifecycleListener - An older version [1.2.35] of the Apache Tomcat Native library is installed, while Tomcat recommends a minimum version of [2.0.5]
+2024-06-02 17:36:41.055 [main] INFO  org.apache.catalina.core.AprLifecycleListener - Loaded Apache Tomcat Native library [1.2.35] using APR version [1.7.2].
+2024-06-02 17:36:41.060 [main] INFO  org.apache.catalina.core.AprLifecycleListener - OpenSSL successfully initialized [OpenSSL 3.0.13 30 Jan 2024]
+2024-06-02 17:36:41.068 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-06-02 17:36:41.071 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-02 17:36:41.071 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-06-02 17:36:41.106 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-02 17:36:41.108 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1998 ms
+2024-06-02 17:36:41.161 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-02 17:36:41.443 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-06-02 17:36:41.445 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-02 17:36:41.459 [main] INFO  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration - H2 console available at '/h2-ui'. Database available at 'jdbc:h2:mem:testdb'
+2024-06-02 17:36:41.614 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-02 17:36:41.675 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-02 17:36:41.712 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-06-02 17:36:41.967 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-02 17:36:43.268 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-02 17:36:43.408 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 17:36:43.817 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-02 17:36:45.083 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataInitializer': Invocation of init method failed
+2024-06-02 17:36:45.085 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-02 17:36:45.087 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-02 17:36:45.090 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-06-02 17:36:45.092 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2024-06-02 17:36:45.105 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-06-02 17:36:45.126 [main] ERROR org.springframework.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataInitializer': Invocation of init method failed
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:222) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1778) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:962) ~[spring-context-6.1.6.jar!/:6.1.6]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624) ~[spring-context-6.1.6.jar!/:6.1.6]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.2.5.jar!/:3.2.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754) [spring-boot-3.2.5.jar!/:3.2.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) [spring-boot-3.2.5.jar!/:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334) [spring-boot-3.2.5.jar!/:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354) [spring-boot-3.2.5.jar!/:3.2.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343) [spring-boot-3.2.5.jar!/:3.2.5]
+	at pucp.e3c.redex_back.RedexBackApplication.main(RedexBackApplication.java:13) [!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:91) [app.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:53) [app.jar:0.0.1-SNAPSHOT]
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:58) [app.jar:0.0.1-SNAPSHOT]
+Caused by: java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:100) ~[?:?]
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:106) ~[?:?]
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:302) ~[?:?]
+	at java.base/java.util.Objects.checkIndex(Objects.java:385) ~[?:?]
+	at java.base/java.util.ArrayList.get(ArrayList.java:427) ~[?:?]
+	at pucp.e3c.redex_back.model.Funciones.generarPaquetes(Funciones.java:325) ~[!/:0.0.1-SNAPSHOT]
+	at pucp.e3c.redex_back.DataInitializer.inicializaPaquetesDiaDia(DataInitializer.java:89) ~[!/:0.0.1-SNAPSHOT]
+	at pucp.e3c.redex_back.DataInitializer.initData(DataInitializer.java:175) ~[!/:0.0.1-SNAPSHOT]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219) ~[spring-beans-6.1.6.jar!/:6.1.6]
+	... 23 more
