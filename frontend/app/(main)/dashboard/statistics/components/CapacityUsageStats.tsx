@@ -10,6 +10,25 @@ const CapacityUsageStats = () => {
         <li>Madrid - España: 33%</li>
         <li>Vancouver, Canadá: 62%</li>
         <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+        <li>Madrid - España: 33%</li>
+        <li>Vancouver, Canadá: 62%</li>
+        <li>Amsterdam, Países Bajos: 82%</li>
+
         {/* Más ciudades */}
       </ul>
     </div>

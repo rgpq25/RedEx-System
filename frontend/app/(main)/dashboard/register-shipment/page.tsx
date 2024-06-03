@@ -118,7 +118,7 @@ function RegisterShipmentPage() {
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
       cantidadPaquetes: packagesCount,
-      codigoSeguridad: '123456',
+      codigoSeguridad: '146918',
       simulacionActual: null
     };
 
