@@ -139,7 +139,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 
 				await api(
 					"GET",
-					`http://localhost:8080/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation/${simulacion.id}`,
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation/${simulacion.id}`,
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);
@@ -157,7 +157,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 				setIsLoading(true);
 				await api(
 					"GET",
-					`http://localhost:8080/back/aeropuerto/${aeropuerto.id}/paquetes`,
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetes`,
 					(data: Paquete[]) => {
 						console.log("Finished fetch")
 						console.log(data);

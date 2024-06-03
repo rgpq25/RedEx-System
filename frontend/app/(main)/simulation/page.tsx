@@ -47,7 +47,7 @@ function SimulationPage() {
 
 	const { isLoading } = useApi(
 		"GET",
-		"http://localhost:8080/back/aeropuerto/",
+		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 		(data: Aeropuerto[]) => {
 			console.log("Fetched airport data succesfully");
 			setAirports(data);
@@ -102,7 +102,7 @@ function SimulationPage() {
 		//Call api to run algorithm
 		await api(
 			"GET",
-			"http://localhost:8080/back/simulacion/runAlgorithm/" + simulacion.id,
+			`${process.env.NEXT_PUBLIC_API}/back/simulacion/runAlgorithm/` + simulacion.id,
 			(data) => {
 				console.log(data);
 			},

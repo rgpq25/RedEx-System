@@ -8,59 +8,51 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
-const columns: ColumnDef<Paquete>[] = [
-	{
-		accessorKey: "numero",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center w-[40px]">
-					<p className="text-center w-full">Paquete</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
-	},
-	{
-		accessorKey: "envio",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center gap-1">
-					<p>Ubicación actual</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => <div className="text-start">PENDING</div>,
-	},
-	{
-		accessorKey: "Origen",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center ">
-					<p>Proximo destino</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => <div className="truncate">PENDING</div>,
-	},
-	{
-		accessorKey: "statusAlmacen",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center ">
-					<p>Estado</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => (
-			<div className="">
-				<p>Pendiente</p>
-				{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
-			</div>
-		),
-	},
-];
+function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date) {
+	const vuelo = planRutaVuelos.find(
+		(vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime
+	);
+
+	if (vuelo !== undefined) {
+		return vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais;
+	} else {
+		return "En aeropuerto";
+	}
+}
+
+function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
+	if (
+		planRutaVuelos.find(
+			(vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime
+		) !== undefined
+	) {
+		return "En vuelo";
+	}
+
+	if (_currentTime <= new Date(planRutaVuelos[0].fechaSalida)) {
+		return planRutaVuelos[0].planVuelo.ciudadOrigen.pais;
+	}
+
+	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
+		return planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais;
+	}
+
+	for (let i = 0; i < planRutaVuelos.length; i++) {
+		const vuelo = planRutaVuelos[i];
+		const nextVuelo = planRutaVuelos[i + 1];
+
+		if (
+			nextVuelo &&
+			new Date(vuelo.fechaLlegada) <= _currentTime &&
+			new Date(nextVuelo.fechaSalida) >= _currentTime
+		) {
+			return vuelo.planVuelo.ciudadDestino.pais;
+		}
+	}
+}
 
 interface EnvioModalProps {
+	currentTime: Date | undefined;
 	isSimulation: boolean;
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
@@ -68,9 +60,77 @@ interface EnvioModalProps {
 	simulacion: Simulacion | undefined;
 }
 
-function EnvioModal({ isSimulation, isOpen, setIsOpen, envio, simulacion }: EnvioModalProps) {
+type DataType = {
+	[key: number]: Vuelo[];
+};
+
+function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simulacion }: EnvioModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [planesRuta, setPlanesRuta] = useState<Vuelo[]>([]);
+	const [planeMap, setPlaneMap] = useState<DataType | null>(null);
+
+	const columns: ColumnDef<Paquete>[] = [
+		{
+			accessorKey: "numero",
+			header: ({ column }) => {
+				return (
+					<div className="flex items-center w-[40px]">
+						<p className="text-center w-full">Paquete</p>
+					</div>
+				);
+			},
+			cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
+		},
+		{
+			accessorKey: "planRutaVuelos",
+			header: ({ column }) => {
+				return (
+					<div className="flex items-center gap-1">
+						<p>Vuelo actual</p>
+					</div>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="text-start">
+					{planeMap !== null && currentTime !== undefined
+						? getCurrentLocation(planeMap[row.original.id], currentTime)
+						: "---"}
+				</div>
+			),
+		},
+		{
+			accessorKey: "Origen",
+			header: ({ column }) => {
+				return (
+					<div className="flex items-center ">
+						<p>Aeropuerto actual</p>
+					</div>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="truncate">
+					{planeMap !== null && currentTime !== undefined
+						? getCurrentAirport(planeMap[row.original.id], currentTime)
+						: "---"}
+				</div>
+			),
+		},
+		{
+			accessorKey: "statusAlmacen",
+			header: ({ column }) => {
+				return (
+					<div className="flex items-center ">
+						<p>Estado</p>
+					</div>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="">
+					<p>Pendiente</p>
+					{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
+				</div>
+			),
+		},
+	];
 
 	useEffect(() => {
 		async function getPlanRutaPaquetes() {
@@ -85,16 +145,19 @@ function EnvioModal({ isSimulation, isOpen, setIsOpen, envio, simulacion }: Envi
 				};
 			});
 
-			console.log(packagesIds)
+			console.log(packagesIds);
 
 			console.log(`Fetching packages of envio with id ${envio.id}`);
 			setIsLoading(true);
 
 			await api(
-				"GET",
-				`http://localhost:8080/back/vuelo/paqueteAll`,
-				(data: Paquete[]) => {
+				"POST",
+				`${process.env.NEXT_PUBLIC_API}/back/vuelo/paqueteAll`,
+				(data: DataType) => {
 					console.log(data);
+
+					setPlaneMap(data);
+
 					setIsLoading(false);
 				},
 				(error) => {
