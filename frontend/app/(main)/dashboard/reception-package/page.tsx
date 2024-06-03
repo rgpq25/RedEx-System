@@ -210,7 +210,7 @@ export default function ReceptionPackage() {
                                     <Input
                                         disabled
                                         type='text'
-                                        defaultValue={format(parseISO(envio.fechaRecepcion), "dd/MM/yyyy HH:mm:ss")}
+                                        defaultValue={format(parseISO(envio.fechaRecepcion.toString()), "dd/MM/yyyy HH:mm:ss")}
                                     />
                                 </div>
                                 <div>
