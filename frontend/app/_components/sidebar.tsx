@@ -69,7 +69,7 @@ export default function Sidebar({
     const getUbicaciones = useCallback(async () => {
         const ubicaciones = await api(
             "GET",
-            "http://localhost:8080/back/ubicacion/",
+            `${process.env.NEXT_PUBLIC_API}/back/ubicacion/`,
             (data: Ubicacion[]) => {
                 setUbicaciones(data);
             },

@@ -3,13 +3,15 @@ import { useState } from "react";
 import CurrentStateBox from "./_components/current-state-box";
 import { Aeropuerto, PackageStatusName, PackageStatusVariant, Vuelo } from "@/lib/types";
 import { PackageRouteTable } from "./_components/package-route-table";
-import Map from "@/components/map/map";
 import CardInfo from "./_components/card-info";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import MainContainer from "../_components/main-container";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
 import PlaneLegend from "@/app/_components/plane-legend";
 import useApi from "@/components/hooks/useApi";
+import { Map } from "@/components/map/map";
+import useMapModals from "@/components/hooks/useMapModals";
+import MapHeader from "../_components/map-header";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -22,9 +24,10 @@ const breadcrumbItems: BreadcrumbItem[] = [
 	},
 ];
 
-function TrackingPage({ params }: { params: { packageId: string } }) {
+function TrackingPage() {
+	const mapModalAttributes = useMapModals();
 	const attributes = useMapZoom();
-	const { currentTime, zoom, centerLongitude, centerLatitude, zoomIn, lockInFlight, unlockFlight } = attributes;
+	//const { } = attributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [currentAirportModal, setCurrentAirportModal] = useState<Aeropuerto | undefined>(undefined);
@@ -42,7 +45,7 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 
 	const { isLoading } = useApi(
 		"GET",
-		"http://localhost:8080/back/aeropuerto/",
+		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 		(data: Aeropuerto[]) => {
 			console.log(data);
 			setAirports(data);
@@ -53,27 +56,27 @@ function TrackingPage({ params }: { params: { packageId: string } }) {
 	);
 
 	return (
-		<MainContainer>
-			<BreadcrumbCustom items={breadcrumbItems} />
-			<div className="flex flex-row justify-between items-center">
+		<MainContainer className="relative">
+			<MapHeader>
+				<BreadcrumbCustom items={breadcrumbItems} />
 				<div className="flex flex-row gap-4 items-center ">
 					<h1 className="text-4xl font-bold font-poppins">Envío en tiempo real</h1>
 				</div>
-				<PlaneLegend />
-			</div>
-			<div className="w-full h-full flex flex-row gap-5 relative overflow-hidden mt-[10px]">
+				{/* <PlaneLegend /> */}
+			</MapHeader>
+			{/* <div className="w-full h-full flex flex-row gap-5 relative overflow-hidden mt-[10px]"> */}
 				<CardInfo shipment={shipment} />
 
 				<Map
-					currentAirportModal={currentAirportModal}
-					currentFlightModal={currentFlightModal}
-					setCurrentAirportModal={setCurrentAirportModal}
-					setCurrentFlightModal={setCurrentFlightModal}
-					className="max-h-full"
+					className="absolute top-1 bottom-3 left-3 right-3"
 					attributes={attributes}
-					airports={airports}
+					estadoAlmacen={null}
+					flights={[]}
+					isSimulation={false}
+					mapModalAttributes={mapModalAttributes}
+					simulation={undefined}
 				/>
-			</div>
+			{/* </div> */}
 		</MainContainer>
 	);
 }

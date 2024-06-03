@@ -114,6 +114,7 @@ export type Paquete = {
 	envio: Envio;
 	simulacionActual: Simulacion | null;
 	planRutaActual: PlanRuta | null;
+    planRutaVuelos?: Vuelo[];
 	estado: string;
 };
 

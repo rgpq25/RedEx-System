@@ -34,7 +34,7 @@ function SecurityCodeLoginPage() {
                 router.push("/dashboard");
             } else {
                 localStorage.setItem("role", "user");
-                router.push(`/${code}`);
+                router.push(`/package-view`);
             }
         }, 1000)
     }
