@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env: {
-      NEXT_PUBLIC_API: "https://inf226-981-3c.inf.pucp.edu.pe"
+      NEXT_PUBLIC_API: "http://localhost:8080"
     },
     images: { unoptimized: true },
     output: "export",
