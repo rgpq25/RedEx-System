@@ -164,13 +164,16 @@ public class EnvioService {
         ArrayList<Paquete> paquetes = new ArrayList<>();
 
         for (Envio envio : envios) {
-            Paquete paquete = new Paquete();
-            paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
-            paquete.setEnAeropuerto(true);
-            paquete.setEntregado(false);
-            paquete.setEnvio(envio);
-            paquete.setSimulacionActual(envio.getSimulacionActual());
-            paquetes.add(paquete);
+            for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+                Paquete paquete = new Paquete();
+                paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+                paquete.setEnAeropuerto(true);
+                paquete.setEntregado(false);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(envio.getSimulacionActual());
+                paquetes.add(paquete);
+            }
+
         }
 
         paqueteRepository.saveAll(paquetes);
