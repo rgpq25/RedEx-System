@@ -170,25 +170,6 @@ public class SimulacionController {
         return new ResponseEntity<>(simulacion, HttpStatus.CREATED);
     }
 
-    @PostMapping("/registrarAllByString")
-    public ResponseEntity<ArrayList<Envio>> registrarEnvios(@RequestBody ArrayList<String> enviosString) {
-        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
-
-        HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
-        for (Aeropuerto aeropuerto : aeropuertos) {
-            aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
-        }
-
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
-
-        int totalPaquetes = envios.stream()
-                .mapToInt(envio -> envio.getCantidadPaquetes())
-                .sum();
-        System.out.println("Se generaron " + totalPaquetes + " paquetes.");
-
-        return new ResponseEntity<>(envios, HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Simulacion> get(@PathVariable("id") int id) {
         Simulacion Simulacion = simulacionService.get(id);
