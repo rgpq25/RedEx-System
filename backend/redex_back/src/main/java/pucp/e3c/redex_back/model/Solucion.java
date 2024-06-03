@@ -367,6 +367,20 @@ public class Solucion {
         return cost;
     }
 
+    public ArrayList<Paquete> getPaquetesSinSentido() {
+        ArrayList<Paquete> paquetesSinSentido = new ArrayList<>();
+
+        for (int i = 0; i < this.paquetes.size(); i++) {
+            double[] costAndConteo = getCostoPaquete(i);
+            double conteoSinSentido = costAndConteo[1];
+
+            if (conteoSinSentido > 0.0) {
+                paquetesSinSentido.add(this.paquetes.get(i));
+            }
+        }
+        return paquetesSinSentido;
+    }
+
     public void printCosts() {
         double cost = 0;
         double conteoSinSentido = 0;
