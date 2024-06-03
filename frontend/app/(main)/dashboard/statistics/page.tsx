@@ -23,24 +23,24 @@ const StatisticsPage = () => {
       </div>
 
       <div className="grid grid-cols-5 gap-4">
-        <div className="col-span-1">
+        <div className="col-span-1 row-span-2">
           <CapacityUsageStats />
         </div>
         <div className="col-span-4 grid grid-cols-4 gap-4">
-          <div className="max-h-56 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
+          <div className="max-h-64 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
             <StorageTimeStats />
           </div>
-          <div className="max-h-56 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
+          <div className="max-h-64 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
             <DistanceStats />
           </div>
-          <div className="max-h-56 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
+          <div className="max-h-64 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
             <DailyPackageStats />
           </div>
-          <div className="max-h-56 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
+          <div className="max-h-64 bg-white p-4 shadow rounded-lg flex flex-col justify-center">
             <RouteEfficiencyStats />
           </div>
         </div>
-        <div className="col-span-5 grid grid-cols-2 gap-4">
+        <div className="col-start-2 col-span-4 grid grid-cols-2 gap-4 mt-4">
           <CityRankings />
           <ShipmentStatusChart />
         </div>
