@@ -42,9 +42,9 @@ function AirportMarker({
 				<Tooltip direction="top" offset={[0, -35]} className="font-bold text-md text-center">
 					{aeropuerto.ubicacion.id + " (" + currentCapacity + "/" + aeropuerto.capacidadMaxima + ")"}
 				</Tooltip>
-				<Tooltip permanent direction="bottom" >
+				{/* <Tooltip permanent direction="bottom" >
 					{currentCapacity}
-				</Tooltip>
+				</Tooltip> */}
 			</Marker>
 		</>
 	);

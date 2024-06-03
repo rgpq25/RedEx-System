@@ -92,6 +92,7 @@ export type Vuelo = {
     planVuelo: PlanVuelo;
     fechaSalida: Date;
     fechaLlegada: Date;
+    anguloAvion: number;
     capacidadUtilizada: number;
     simulacionActual: Simulacion | null;
 };
@@ -125,7 +126,7 @@ export type Envio = {
     estado: string;
     cantidadPaquetes: number;
     codigoSeguridad: string;
-    paquetes?: Paquete[];
+    paquetes: Paquete[];
 };
 
 export type Simulacion = {
