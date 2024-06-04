@@ -121,8 +121,8 @@ function RegisterShipmentPage() {
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
     const dataToSend = {
-      ubicacionOrigen: { id: originLocationId },
-      ubicacionDestino: { id: destinationLocationId },
+      ubicacionOrigen: originLocationId ,
+      ubicacionDestino: destinationLocationId,
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
@@ -130,6 +130,8 @@ function RegisterShipmentPage() {
       codigoSeguridad: '146918',
       simulacionActual: null
     };
+
+    console.log("dataToSend:", dataToSend); // Agrega este console.log
 
     api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
     setIsConfirmDialogOpen(false);  // Close the dialog after confirming
@@ -142,6 +144,7 @@ function RegisterShipmentPage() {
 
   const handleSuccess = (data : ApiResponse) => {
     console.log('Registro completado:', data);
+    console.log('Objeto recibido de la API:', data); // Agrega esta línea
     toast.success("Registro completado con éxito!");
   };
 
