@@ -121,8 +121,8 @@ function RegisterShipmentPage() {
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
     const dataToSend = {
-      ubicacionOrigen: originLocationId ,
-      ubicacionDestino: destinationLocationId,
+      ubicacionOrigen: { id: originLocationId },
+      ubicacionDestino: { id: destinationLocationId },
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
