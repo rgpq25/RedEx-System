@@ -27,7 +27,7 @@ function CardInfo({ shipment }: { shipment: any }) {
 			<Button
 				onClick={() => setVisible(true)}
 				className={cn(
-					"absolute top-8 left-8 gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[100]",
+					"absolute top-[105px] left-[45px] gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[100]",
 					visible ? "opacity-0" : "opacity-100"
 				)}
 			>
@@ -36,9 +36,9 @@ function CardInfo({ shipment }: { shipment: any }) {
 			</Button>
 			<Card
 				className={cn(
-					"w-[450px] flex flex-col absolute top-5 bottom-5 left-5 z-[100]",
+					"w-[450px] flex flex-col absolute top-[105px] bottom-[43px] z-[100]",
 					"transition-all duration-300 ease-in-out",
-					visible ? "left-5" : "-left-[470px]"
+					visible ? "left-[43px]" : "-left-[470px]"
 				)}
 			>
 				<CardHeader className="font-poppins relative">

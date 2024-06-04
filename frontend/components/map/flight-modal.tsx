@@ -136,7 +136,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 				setIsLoading(true);
 				await api(
 					"GET",
-					`http://localhost:8080/back/vuelo/${vuelo.id}/paquetes`,
+					`${process.env.NEXT_PUBLIC_API}/back/vuelo/${vuelo.id}/paquetes`,
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);
@@ -153,7 +153,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 				setIsLoading(true);
 				await api(
 					"GET",
-					`http://localhost:8080/back/vuelo/${vuelo.id}/paquetes`,
+					`${process.env.NEXT_PUBLIC_API}/back/vuelo/${vuelo.id}/paquetes`,
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);

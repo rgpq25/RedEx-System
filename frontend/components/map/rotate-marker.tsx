@@ -29,4 +29,6 @@ const RotateMarker = forwardRef(({ children, ...props }:any, forwardRef:any) => 
     );
 });
 
+RotateMarker.displayName = "RotateMarker";
+
 export default RotateMarker;

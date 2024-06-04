@@ -39,7 +39,7 @@ function ClientMap({
 
 	const { isLoading } = useApi(
 		"GET",
-		"http://localhost:8080/back/aeropuerto/",
+		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 		(data: Aeropuerto[]) => {
 			console.log("Fetched airport data succesfully");
 			setAirports(data);
@@ -157,6 +157,7 @@ function ClientMap({
 				simulacion={simulation}
 			/>
 			<EnvioModal
+				currentTime={currentTime}
 				isSimulation={isSimulation}
 				isOpen={isEnvioModalOpen}
 				setIsOpen={(isOpen: boolean) => setIsEnvioModalOpen(isOpen)}

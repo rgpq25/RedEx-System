@@ -48,7 +48,7 @@ function DailyOperationsPage() {
 		async function getData() {
 			await api(
 				"GET",
-				"http://localhost:8080/back/aeropuerto/",
+				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 				(data: Aeropuerto[]) => {
 					console.log("Fetched airport data succesfully");
 					setAirports(data);
@@ -91,7 +91,7 @@ function DailyOperationsPage() {
 			console.log("Getting data");
 			await api(
 				"GET",
-				"http://localhost:8080/back/operacionesDiaDia/diaDiaRespuesta",
+				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
 				(data: RespuestaAlgoritmo) => {
 					console.log("DATA DE operacionesDiaDia/diaDiaRespuesta: ", data);
 					setCurrentTimeNoSimulation();
