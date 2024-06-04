@@ -116,7 +116,7 @@ public class EnvioService {
         Simulacion simulacion = simulacionRepository.findById(registrarEnvio.getSimulacion().getId()).get();
 
         Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
-                registrarEnvio.getSimulacion().getId(),
+                registrarEnvio.getSimulacion(),
                 aeropuertoRepository);
         envio.setSimulacionActual(simulacion);
         Envio auxEnvio = envioRepository.save(envio);
@@ -152,12 +152,50 @@ public class EnvioService {
             registrarEnvio.setCodigo(clave);
 
             Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
-                    registrarEnvio.getSimulacion().getId(),
+                    registrarEnvio.getSimulacion(),
                     aeropuertoRepository);
 
             envio.setSimulacionActual(registrarEnvio.getSimulacion());
             envios.add(envio);
             aux++;
+        }
+        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+                Paquete paquete = new Paquete();
+                paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+                paquete.setEnAeropuerto(true);
+                paquete.setEntregado(false);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(envio.getSimulacionActual());
+                paquetes.add(paquete);
+            }
+
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
+    }
+
+    public ArrayList<Envio> registerAllEnviosByString(ArrayList<String> enviosString,
+            HashMap<String, Aeropuerto> hashAeropuertos) {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+        ArrayList<Envio> envios = new ArrayList<>();
+        for (String envioString : enviosString) {
+
+            Envio envio = Funciones.stringToEnvio(envioString, ubicacionMap,
+                    null,
+                    aeropuertoRepository);
+
+            envios.add(envio);
         }
         envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
@@ -193,7 +231,7 @@ public class EnvioService {
         for (RegistrarEnvio registrarEnvio : registrarEnvios) {
 
             Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
-                    registrarEnvio.getSimulacion().getId(),
+                    registrarEnvio.getSimulacion(),
                     aeropuertoRepository);
 
             envio.setSimulacionActual(registrarEnvio.getSimulacion());
