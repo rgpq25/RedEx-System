@@ -67,6 +67,9 @@ public class DataInitializer {
     private PlanRutaXVueloService planRutaXVueloService;
 
     @Autowired
+    private Funciones funciones;
+
+    @Autowired
     private EnvioService envioService;
 
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
@@ -110,9 +113,10 @@ public class DataInitializer {
     }
 
     @PostConstruct
-    public void initData() {
+    public void initData() throws IOException {
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
+        //String inputPath = "/home/inf226.981.3c/resources";
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
@@ -120,8 +124,8 @@ public class DataInitializer {
         for (Ubicacion ubicacion : ubicacionMap.values()) {
             ubicacion = ubicacionService.register(ubicacion);
         }
-        aeropuertos = Funciones.leerAeropuertos(inputPath, ubicacionMap);
-        planVuelos = Funciones.leerPlanesVuelo(ubicacionMap, inputPath);
+        aeropuertos = funciones.leerAeropuertos(inputPath, ubicacionMap);
+        planVuelos = funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
         /*
          * LocalDate today = LocalDate.of(2024, 1, 3);
@@ -177,7 +181,8 @@ public class DataInitializer {
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
         if (inicializar_paquetes_operaciones_simulacion) {
-            inicializaPaquetesSimulacion(aeropuertos);
+            funciones.inicializaPaquetesSimulacion(aeropuertos,simulacionService,envioService);
+            //System.out.println("Lei paquetes sim");
         }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
@@ -187,48 +192,10 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    120, 60);
+                    120, 80);
         });
-        /*
-         * algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,vueloService,
-         * planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-         * 120, 60);
-         */
 
     }
 
-    private void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos) {
-        LocalDate hoy = LocalDate.of(2024, 1, 3);
-        LocalDateTime fecha = hoy.atTime(6, 0, 0);
-        Date fechaDate = java.sql.Timestamp.valueOf(fecha);
-
-        Simulacion simulacion = new Simulacion();
-        simulacion.fillData();
-        simulacion.setFechaInicioSim(fechaDate);
-        simulacion.setMultiplicadorTiempo(100.0);
-        simulacion = simulacionService.register(simulacion);
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))) {
-            String line;
-            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
-            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
-            for (Aeropuerto aeropuerto : aeropuertos) {
-                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
-            }
-
-            while ((line = reader.readLine()) != null) {
-                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
-                registrarEnvio.setCodigo(line);
-                registrarEnvio.setSimulacion(simulacion);
-                registrarEnvios.add(registrarEnvio);
-            }
-            ArrayList<Envio> envios = envioService.registerAllByString(registrarEnvios, aeropuertoMap);
-            int totalPaquetes = envios.stream()
-                    .mapToInt(envio -> envio.getCantidadPaquetes())
-                    .sum();
-            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-        }
-    }
+   
 }
