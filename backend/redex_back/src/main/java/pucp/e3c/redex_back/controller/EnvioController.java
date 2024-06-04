@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Envio;
+import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
@@ -36,6 +37,11 @@ public class EnvioController {
 
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {
+        envio = envioService.register(envio);
+        for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+            Paquete paquete = new Paquete();
+            paquete.setEnvio(envio);
+        }
         return envioService.register(envio);
     }
 
