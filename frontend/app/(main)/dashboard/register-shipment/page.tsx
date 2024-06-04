@@ -120,9 +120,12 @@ function RegisterShipmentPage() {
 
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
+
+
+
     const dataToSend = {
-      ubicacionOrigen: { id: originLocationId },
-      ubicacionDestino: { id: destinationLocationId },
+      ubicacionOrigen: { id: "UMMS" },
+      ubicacionDestino: { id: "WSSS" },
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
@@ -223,8 +226,8 @@ function RegisterShipmentPage() {
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de origen</SelectLabel>
               {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
-              ))}
+                <SelectItem key={location.id} value={location.id} onClick={() => setOriginLocationId(location.id)}>{location.ciudad}</SelectItem>
+            ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -238,8 +241,8 @@ function RegisterShipmentPage() {
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de destino</SelectLabel>
               {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
-              ))}
+                <SelectItem key={location.id} value={location.id} onClick={() => setDestinationLocationId(location.id)}>{location.ciudad}</SelectItem>
+            ))}
             </SelectGroup>
           </SelectContent>
         </Select>
