@@ -12,6 +12,19 @@ import { useState, useEffect } from 'react';
 import { Ubicacion , Envio} from "@/lib/types";
 import { formatISO } from "date-fns"
 import { api } from "@/lib/api";
+import { toast } from "sonner";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 import {
   Popover,
@@ -42,24 +55,22 @@ import { Progress } from "@/components/ui/progress"
 
 const twStyle = "w-5 h-5";
 
-function NavigationButtons({ api, currentStep, handleConfirm }) {
+interface NavigationButtonsProps {
+  api: CarouselApi;
+  currentStep: number;
+  openConfirmDialog: () => void;
+}
+
+function NavigationButtons({ api, currentStep, openConfirmDialog  }: NavigationButtonsProps) { 
+  const apiInstance = api ? api : null;
   return (
     <div className="flex justify-center items-center space-x-4 absolute bottom-40 w-full">
-      <Button 
-        className="bg-red-800 text-white px-8 py-6 rounded shadow"
-        onClick={() => api.scrollPrev()}
-      >
+      <Button className="bg-red-800 text-white px-8 py-6 rounded shadow" onClick={() => apiInstance && apiInstance.scrollPrev()}>
         Cancelar
       </Button>
-      <Button 
+      <Button
         className="bg-red-800 text-white px-8 py-6 rounded shadow"
-        onClick={() => {
-          if (currentStep === 2) {
-            handleConfirm();
-          } else {
-            api.scrollNext();
-          }
-        }}
+        onClick={() => currentStep === 2 ? openConfirmDialog() : apiInstance && apiInstance.scrollNext()}
       >
         {currentStep === 2 ? "Confirmar" : "Siguiente"}
       </Button>
@@ -78,6 +89,8 @@ function RegisterShipmentPage() {
   const [originLocationId, setOriginLocationId] = useState('');
   const [destinationLocationId, setDestinationLocationId] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
 
   useEffect(() => {
     fetch('http://localhost:8080/back/ubicacion/')
@@ -95,7 +108,9 @@ function RegisterShipmentPage() {
       };
   
       carouselApi.on("select", updateProgressAndStep);
-      return () => carouselApi.off("select", updateProgressAndStep);
+      return () => {
+        carouselApi.off("select", updateProgressAndStep);
+      };
     }
   }, [carouselApi]);
 
@@ -105,30 +120,43 @@ function RegisterShipmentPage() {
 
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
+
+
+
     const dataToSend = {
-      ubicacionOrigen: { id: originLocationId },
-      ubicacionDestino: { id: destinationLocationId },
+      ubicacionOrigen: { id: "UMMS" },
+      ubicacionDestino: { id: "WSSS" },
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
       cantidadPaquetes: packagesCount,
-      codigoSeguridad: '123456',
+      codigoSeguridad: '146918',
       simulacionActual: null
     };
 
+    console.log("dataToSend:", dataToSend); // Agrega este console.log
+
     api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+    setIsConfirmDialogOpen(false);  // Close the dialog after confirming
   };
 
-  const handleSuccess = (data) => {
+  interface ApiResponse {
+    message: string;
+    [key: string]: any; // Asume datos adicionales de forma dinámica
+  }
+
+  const handleSuccess = (data : ApiResponse) => {
     console.log('Registro completado:', data);
-    alert("Registro completado con éxito!");
+    console.log('Objeto recibido de la API:', data); // Agrega esta línea
+    toast.success("Registro completado con éxito!");
   };
 
-  const handleError = (error) => {
+  const handleError = (error: string) => {
     console.error('Error registrando el envío:', error);
-    alert("Error en el registro: " + error);
+    toast.error("Error en el registro: " + error);
   };
-  
+
+  const openConfirmDialog = () => setIsConfirmDialogOpen(true);
 
   const SenderCard = () => (
     <div className="p-8">
@@ -198,8 +226,8 @@ function RegisterShipmentPage() {
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de origen</SelectLabel>
               {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
-              ))}
+                <SelectItem key={location.id} value={location.id} onClick={() => setOriginLocationId(location.id)}>{location.ciudad}</SelectItem>
+            ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -213,8 +241,8 @@ function RegisterShipmentPage() {
             <SelectGroup>
               <SelectLabel>Seleccione la ciudad de destino</SelectLabel>
               {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id}>{location.ciudad}</SelectItem>
-              ))}
+                <SelectItem key={location.id} value={location.id} onClick={() => setDestinationLocationId(location.id)}>{location.ciudad}</SelectItem>
+            ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -240,7 +268,9 @@ function RegisterShipmentPage() {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(newDate: Date | undefined) => {
+                    if (newDate) setDate(newDate); // Asegurarse de que sólo se llama a setDate si newDate no es undefined
+                  }}
                 initialFocus
               />
             </PopoverContent>
@@ -256,10 +286,8 @@ function RegisterShipmentPage() {
       </form>
     </div>
   );
-
   
 	return (
-    
     <div className="flex flex-col justify-center items-center h-screen space-y-5">
       <div className="progress-container"></div>
       <Label htmlFor="proceso-registro" className="font-semibold text-base">Proceso de Registro</Label>
@@ -284,8 +312,28 @@ function RegisterShipmentPage() {
           </CarouselItem>
         </CarouselContent>  
       </Carousel>
-      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} handleConfirm={handleConfirm} />}
+      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} openConfirmDialog={openConfirmDialog} />}
 
+      {isConfirmDialogOpen && (
+        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <AlertDialogTrigger asChild>
+            <Button className="hidden">Open</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Registro</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              ¿Estás seguro que deseas confirmar el registro con los datos actuales?
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={handleConfirm}>Confirmar</AlertDialogAction>
+              <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>Cancelar</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+      
     </div>
   );
 }
