@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Link from "next/link";
 
-import { CopyCheck, FileUp, PackagePlus, Plane } from "lucide-react";
+import { CopyCheck, FileUp, PackagePlus, Plane, BarChart} from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import {
@@ -45,6 +45,10 @@ function ManagePackagesPage() {
 							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/daily-operations"}>
 								<Plane className={twStyle} />
 								<p>Ver operaciones día a día</p>
+							</Link>
+							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/statistics"}>
+								<BarChart className={twStyle} />
+								<p>Estadísticas de envíos</p>
 							</Link>
 						</div>
 					</div>

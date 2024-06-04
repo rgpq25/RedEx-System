@@ -13,6 +13,8 @@ import { FileUp } from "lucide-react";
 import { RowShipmentType } from "@/lib/types";
 import { ShipmentTable } from "../_components/shipment-table";
 
+import { api } from "@/lib/api";
+
 export default function FileShipment() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | undefined>(undefined);
@@ -84,16 +86,34 @@ export default function FileShipment() {
     const handleSubmit = useCallback(async () => {
         try {
             setLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate API call
-            toast.success("Envíos registrados correctamente", {
-                position: "bottom-right",
-                duration: 3000,
+            const formattedShipments = shipments.map((shipment) => {
+                const dateString = shipment.dateTimeShipment.toISOString().split("T")[0].replace(/-/g, "");
+                const timeString = shipment.dateTimeShipment.toTimeString().split(" ")[0].substring(0, 5);
+                return `${shipment.origin}-${shipment.id.split("-")[1]}-${dateString}-${timeString}-${shipment.destination}:${shipment.amountPackages.toString().padStart(2, "0")}`;
             });
-            setFile(undefined);
-            setShipments([]);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-            }
+
+            await api(
+                "POST",
+                `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll`,
+                (response) => {
+                    toast.success("Envíos registrados correctamente", {
+                        position: "bottom-right",
+                        duration: 3000,
+                    });
+                    setFile(undefined);
+                    setShipments([]);
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                    }
+                },
+                (error) => {
+                    toast.error(`Error al registrar los envíos: ${error}`, {
+                        position: "bottom-right",
+                        duration: 3000,
+                    });
+                },
+                formattedShipments
+            );
         } catch {
             toast.error("Error al registrar los envíos", {
                 position: "bottom-right",
@@ -102,7 +122,7 @@ export default function FileShipment() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [shipments]);
 
     return (
         <main className='w-3/5 mx-auto my-10 flex flex-col justify-start gap-4 h-full'>
