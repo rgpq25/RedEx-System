@@ -209,6 +209,9 @@ public class Algoritmo {
             // Formar respuesta a front
             respuestaAlgoritmo.setSimulacion(null);
             respuestaAlgoritmo.setOcupacionVuelos(null);
+            // Temporal
+            respuestaAlgoritmo.setPaquetes(null);
+
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
             LOGGER.info("Respuesta algoritmo enviada");
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;

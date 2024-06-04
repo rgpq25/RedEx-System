@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -144,30 +145,32 @@ public class SimulacionController {
         InputStream input1 = resource.getInputStream();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
-            String line;
-            int cantidadEnvios = (int) reader.lines().count();
+            List<String> lines = reader.lines().collect(Collectors.toList());
+            int cantidadEnvios = lines.size();
+
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
-            while ((line = reader.readLine()) != null) {
+            for (String line : lines) {
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
+
             HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
             for (Aeropuerto aeropuerto : aeropuertos) {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
-            //int cantidadEnvios = (int) Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt")).count();
-            System.out.println("El archivo tiene " + cantidadEnvios + " envios");
+            // int cantidadEnvios = (int)
+            // Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt")).count();
             int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
                     : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;
 
             ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
                     simulacion.getFechaInicioSim(), simulacion.getFechaFinSim(), nuevaCantidad);
+
             // Filtrar envios
             Date fechaMinima = simulacion.getFechaInicioSim();
             envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
-
             int totalPaquetes = envios.stream()
                     .mapToInt(envio -> envio.getCantidadPaquetes())
                     .sum();
