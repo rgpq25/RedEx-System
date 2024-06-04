@@ -443,7 +443,6 @@ public class Algoritmo {
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
-
             // HashMap<Integer, Integer> hash = printPaquetes(paquetes, planRutas, i,
             // vueloService);
             // printOcupacion(hash, ocupacionVuelos, i);
@@ -649,6 +648,9 @@ public class Algoritmo {
         respuestaAlgoritmo.setSimulacion(simulacion);
 
         respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
+        System.out.println("Se filtraron los vuelos");
+        respuestaAlgoritmo.setOcupacionVuelos(null);
+        respuestaAlgoritmo.setPaquetes(null);
         messagingTemplate.convertAndSend(canal, respuestaAlgoritmo);
         System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
         messagingTemplate.convertAndSend("/algoritmo/estado",
