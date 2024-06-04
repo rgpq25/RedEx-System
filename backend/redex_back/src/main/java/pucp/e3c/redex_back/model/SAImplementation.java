@@ -177,6 +177,24 @@ public class SAImplementation {
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
+                        /*
+                         * ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
+                         * 
+                         * List<Vuelo> vuelosOrdenados = new ArrayList<>(current.vuelos_hash.values());
+                         * vuelosOrdenados.sort(Comparator.comparing(Vuelo::getFechaSalida));
+                         * 
+                         * try (PrintWriter writer = new PrintWriter("vuelosOrdenados.txt")) {
+                         * for (Vuelo vuelo : vuelosOrdenados) {
+                         * writer.println(vuelo.toString());
+                         * }
+                         * } catch (FileNotFoundException e) {
+                         * e.printStackTrace();
+                         * }
+                         * 
+                         * for (Paquete paquete : paquetesSinSentido) {
+                         * System.out.println("Paquete sin sentido: " + paquete.toString());
+                         * }
+                         */
 
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
