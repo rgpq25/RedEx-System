@@ -13,7 +13,7 @@ const PieChart = () => {
   const radius = 100; // Radio del gráfico
   let cumulativePercentage = 0;
 
-  function getCoordinatesForPercent(percent) {
+  function getCoordinatesForPercent(percent: number) {
     const x = Math.cos(2 * Math.PI * percent);
     const y = Math.sin(2 * Math.PI * percent);
     return [x, y];
@@ -21,8 +21,8 @@ const PieChart = () => {
 
   return (
     <div>
-      <h2>Gráfica de estado de envíos</h2>
-      <svg width="200" height="200" viewBox="-1 -1 2 2" style={{ transform: "rotate(-90deg)" }}>
+      <h2 className="text-lg font-semibold mb-2">Gráfica de estado de envíos</h2>
+      <svg width="700" height="620" viewBox="-1 -1 2 2" style={{ transform: "rotate(-90deg)" }}>
         {data.map(slice => {
           // Calcula el porcentaje del segmento
           const [startX, startY] = getCoordinatesForPercent(cumulativePercentage);

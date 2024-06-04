@@ -55,15 +55,22 @@ import { Progress } from "@/components/ui/progress"
 
 const twStyle = "w-5 h-5";
 
-function NavigationButtons({ api, currentStep, openConfirmDialog  }) {
+interface NavigationButtonsProps {
+  api: CarouselApi;
+  currentStep: number;
+  openConfirmDialog: () => void;
+}
+
+function NavigationButtons({ api, currentStep, openConfirmDialog  }: NavigationButtonsProps) { 
+  const apiInstance = api ? api : null;
   return (
     <div className="flex justify-center items-center space-x-4 absolute bottom-40 w-full">
-      <Button className="bg-red-800 text-white px-8 py-6 rounded shadow" onClick={() => api.scrollPrev()}>
+      <Button className="bg-red-800 text-white px-8 py-6 rounded shadow" onClick={() => apiInstance && apiInstance.scrollPrev()}>
         Cancelar
       </Button>
       <Button
         className="bg-red-800 text-white px-8 py-6 rounded shadow"
-        onClick={() => currentStep === 2 ? openConfirmDialog() : api.scrollNext()}
+        onClick={() => currentStep === 2 ? openConfirmDialog() : apiInstance && apiInstance.scrollNext()}
       >
         {currentStep === 2 ? "Confirmar" : "Siguiente"}
       </Button>
@@ -101,7 +108,9 @@ function RegisterShipmentPage() {
       };
   
       carouselApi.on("select", updateProgressAndStep);
-      return () => carouselApi.off("select", updateProgressAndStep);
+      return () => {
+        carouselApi.off("select", updateProgressAndStep);
+      };
     }
   }, [carouselApi]);
 
@@ -126,12 +135,17 @@ function RegisterShipmentPage() {
     setIsConfirmDialogOpen(false);  // Close the dialog after confirming
   };
 
-  const handleSuccess = (data) => {
+  interface ApiResponse {
+    message: string;
+    [key: string]: any; // Asume datos adicionales de forma dinámica
+  }
+
+  const handleSuccess = (data : ApiResponse) => {
     console.log('Registro completado:', data);
     toast.success("Registro completado con éxito!");
   };
 
-  const handleError = (error) => {
+  const handleError = (error: string) => {
     console.error('Error registrando el envío:', error);
     toast.error("Error en el registro: " + error);
   };
@@ -248,7 +262,9 @@ function RegisterShipmentPage() {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(newDate: Date | undefined) => {
+                    if (newDate) setDate(newDate); // Asegurarse de que sólo se llama a setDate si newDate no es undefined
+                  }}
                 initialFocus
               />
             </PopoverContent>
