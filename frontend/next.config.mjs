@@ -2,6 +2,7 @@
 const nextConfig = {
     env: {
         NEXT_PUBLIC_API: "https://inf226-981-3c.inf.pucp.edu.pe",
+        NEXT_PUBLIC_SOCKET: "inf226-981-3c.inf.pucp.edu.pe:8080",
     },
     images: { unoptimized: true },
     output: "export",
