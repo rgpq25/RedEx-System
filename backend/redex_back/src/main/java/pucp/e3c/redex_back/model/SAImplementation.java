@@ -174,6 +174,10 @@ public class SAImplementation {
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
+                        ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
+                        for (Paquete paquete : paquetesSinSentido) {
+                                System.out.println("Paquete sin sentido: " + paquete.toString());
+                        }
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
                         // " | Packages left: " + current.costoDePaquetesYRutasErroneas +

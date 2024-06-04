@@ -315,7 +315,7 @@ public class Funciones {
         return String.join("-", partes);
     }
 
-    public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, int idSimulacion,
+    public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository) {
         String[] parts = line.split("-");
         Envio envio = new Envio();
@@ -341,9 +341,10 @@ public class Funciones {
 
         envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
         envio.setCantidadPaquetes(cantidadPaquetes);
-        envio.setCodigoSeguridad("123456");
-        Simulacion simulacion = new Simulacion();
-        simulacion.setId(idSimulacion);
+        Random random = new Random();
+        int randomNumber = random.nextInt(900000) + 100000;
+        envio.setCodigoSeguridad(Integer.toString(randomNumber));
+
         envio.setSimulacionActual(simulacion);
 
         return envio;
