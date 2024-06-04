@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import pucp.e3c.redex_back.service.PlanRutaService;
@@ -39,6 +41,8 @@ public class SAImplementation {
         private double sumaPaquetesWeight;
         private double sumaVuelosWeight;
         private double promedioPonderadoTiempoAeropuertoWeight;
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(SAImplementation.class);
 
         public SAImplementation() {
         }
@@ -157,6 +161,9 @@ public class SAImplementation {
                                                                 + current.costoDePaquetesYRutasErroneas +
                                                                 " | Temperature: " + temperature);
 
+                                LOGGER.info("Current cost: " + current.getSolutionCost() + " | Packages left: "
+                                                + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+
                         }
 
                         endTime = System.nanoTime();
@@ -174,6 +181,7 @@ public class SAImplementation {
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
+                        LOGGER.info("Current cost: " + current.getSolutionCost() + " | Packages left: " + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
                         ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
                         for (Paquete paquete : paquetesSinSentido) {
                                 System.out.println("Paquete sin sentido: " + paquete.toString());

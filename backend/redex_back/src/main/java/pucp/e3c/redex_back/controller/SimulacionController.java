@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -77,6 +81,9 @@ public class SimulacionController {
     @Autowired
     private EnvioService envioService;
 
+    @Autowired
+    ResourceLoader resourceLoader;
+
     public SimulacionController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
@@ -121,7 +128,7 @@ public class SimulacionController {
 
     @PostMapping("/inicializarSimulacionCargaVariable/{carga}")
     public ResponseEntity<Simulacion> inicializarSimulacionCargaVariable(@RequestBody Simulacion simulacion,
-            @PathVariable("carga") String carga) {
+            @PathVariable("carga") String carga) throws IOException {
         if (!carga.equals("chica") && !carga.equals("media") && !carga.equals("grande")) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -133,9 +140,12 @@ public class SimulacionController {
         simulacion.setMilisegundosPausados(0);
         simulacion = simulacionService.register(simulacion);
 
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))) {
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
+        InputStream input1 = resource.getInputStream();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
             String line;
+            int cantidadEnvios = (int) reader.lines().count();
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
@@ -147,8 +157,7 @@ public class SimulacionController {
             for (Aeropuerto aeropuerto : aeropuertos) {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
-            int cantidadEnvios = (int) Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))
-                    .count();
+            //int cantidadEnvios = (int) Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt")).count();
             System.out.println("El archivo tiene " + cantidadEnvios + " envios");
             int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
                     : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;

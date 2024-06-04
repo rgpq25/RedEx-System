@@ -35,6 +35,7 @@ public class Solucion {
     public GrafoVuelos grafoVuelos;
 
     HashMap<Integer, Vuelo> vuelos_hash;
+    
 
     public Solucion(
             ArrayList<Paquete> paquetes,

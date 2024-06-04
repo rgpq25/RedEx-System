@@ -16,11 +16,14 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import pucp.e3c.redex_back.repository.AeropuertoRepository;
+import pucp.e3c.redex_back.service.EnvioService;
+import pucp.e3c.redex_back.service.SimulacionService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +32,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Component
@@ -258,30 +262,6 @@ public class Funciones {
         Resource resource = resourceLoader.getResource("classpath:static/aeropuertos.csv");
         InputStream input = resource.getInputStream();
 
-        /*try {
-            //File file = new File(inputPath + "/aeropuertos.csv");
-            File file = resource.getFile();
-            Scanner scanner = new Scanner(file);
-            scanner.useDelimiter(",");
-
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                String[] parts = line.split(",");
-
-                Aeropuerto aeropuerto = new Aeropuerto();
-
-                aeropuerto.setUbicacion(ubicacionMap.get(parts[0].trim()));
-                aeropuerto.setCapacidadMaxima(Integer.parseInt(parts[1].trim()));
-                aeropuertos_list.add(aeropuerto);
-            }
-
-            scanner.close();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
-            e.printStackTrace();
-        }
-        return aeropuertos_list;*/
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -299,6 +279,44 @@ public class Funciones {
         }
 
         return aeropuertos_list;
+    }
+
+    public void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos, SimulacionService simulacionService, EnvioService envioService) throws IOException { 
+        LocalDate hoy = LocalDate.of(2024, 1, 3);
+        LocalDateTime fecha = hoy.atTime(6, 0, 0);
+        Date fechaDate = java.sql.Timestamp.valueOf(fecha);
+
+        Simulacion simulacion = new Simulacion();
+        simulacion.fillData();
+        simulacion.setFechaInicioSim(fechaDate);
+        simulacion.setMultiplicadorTiempo(100.0);
+
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
+        InputStream input = resource.getInputStream();
+
+        simulacion = simulacionService.register(simulacion);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            String line;
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+        
+            while ((line = reader.readLine()) != null) {
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(simulacion);
+                registrarEnvios.add(registrarEnvio);
+            }
+            ArrayList<Envio> envios = envioService.registerAllByString(registrarEnvios, aeropuertoMap);
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes para simulacion.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }        
     }
 
     public static String formatearFecha(Date fecha) {

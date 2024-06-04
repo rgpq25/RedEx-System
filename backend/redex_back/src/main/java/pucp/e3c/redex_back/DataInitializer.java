@@ -179,9 +179,10 @@ public class DataInitializer {
             inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
         }
 
-        boolean inicializar_paquetes_operaciones_simulacion = true;
+        boolean inicializar_paquetes_operaciones_simulacion = false;
         if (inicializar_paquetes_operaciones_simulacion) {
-            inicializaPaquetesSimulacion(aeropuertos);
+            funciones.inicializaPaquetesSimulacion(aeropuertos,simulacionService,envioService);
+            //System.out.println("Lei paquetes sim");
         }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
@@ -196,38 +197,5 @@ public class DataInitializer {
 
     }
 
-    private void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos) {
-        LocalDate hoy = LocalDate.of(2024, 1, 3);
-        LocalDateTime fecha = hoy.atTime(6, 0, 0);
-        Date fechaDate = java.sql.Timestamp.valueOf(fecha);
-
-        Simulacion simulacion = new Simulacion();
-        simulacion.fillData();
-        simulacion.setFechaInicioSim(fechaDate);
-        simulacion.setMultiplicadorTiempo(100.0);
-        simulacion = simulacionService.register(simulacion);
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("src\\main\\resources\\dataFija\\envios_semanal_V2.txt"))) {
-            String line;
-            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
-            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
-            for (Aeropuerto aeropuerto : aeropuertos) {
-                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
-            }
-
-            while ((line = reader.readLine()) != null) {
-                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
-                registrarEnvio.setCodigo(line);
-                registrarEnvio.setSimulacion(simulacion);
-                registrarEnvios.add(registrarEnvio);
-            }
-            ArrayList<Envio> envios = envioService.registerAllByString(registrarEnvios, aeropuertoMap);
-            int totalPaquetes = envios.stream()
-                    .mapToInt(envio -> envio.getCantidadPaquetes())
-                    .sum();
-            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-        }
-    }
+   
 }
