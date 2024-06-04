@@ -179,7 +179,7 @@ public class DataInitializer {
             inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
         }
 
-        boolean inicializar_paquetes_operaciones_simulacion = false;
+        boolean inicializar_paquetes_operaciones_simulacion = true;
         if (inicializar_paquetes_operaciones_simulacion) {
             inicializaPaquetesSimulacion(aeropuertos);
         }
@@ -191,7 +191,7 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    180, 120);
+                    120, 80);
         });
 
     }

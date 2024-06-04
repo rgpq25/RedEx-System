@@ -15,6 +15,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Thread;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,8 @@ import java.util.TreeMap;
 public class Algoritmo {
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Algoritmo.class);
 
     RespuestaAlgoritmo ultimaRespuestaOperacionDiaDia;
 
@@ -78,6 +82,7 @@ public class Algoritmo {
         // SA y TA en segundos\
 
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
+        LOGGER.info("Iniciando loop principal");
 
         if (planVuelos.size() == 0) {
             System.out.println("ERROR: No hay planes de vuelo para procesar.");
@@ -205,6 +210,7 @@ public class Algoritmo {
             respuestaAlgoritmo.setSimulacion(null);
             respuestaAlgoritmo.setOcupacionVuelos(null);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+            LOGGER.info("Respuesta algoritmo enviada");
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
             this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
             System.out.println("Planificacion terminada hasta " + now);
@@ -285,6 +291,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
+        LOGGER.info("Iniciando loop principal de simulacion");
 
         Date fechaMinima = simulacion.getFechaInicioSim();
         paquetes.removeIf(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaMinima));
@@ -458,6 +465,7 @@ public class Algoritmo {
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
+            LOGGER.info("Respuesta algoritmo enviada de simulacion");
 
             System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
