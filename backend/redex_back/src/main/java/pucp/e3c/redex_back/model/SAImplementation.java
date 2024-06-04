@@ -1,6 +1,9 @@
 package pucp.e3c.redex_back.model;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -174,10 +177,25 @@ public class SAImplementation {
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                                                         " | Temperature: " + temperature);
-                        ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
-                        for (Paquete paquete : paquetesSinSentido) {
-                                System.out.println("Paquete sin sentido: " + paquete.toString());
-                        }
+                        /*
+                         * ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
+                         * 
+                         * List<Vuelo> vuelosOrdenados = new ArrayList<>(current.vuelos_hash.values());
+                         * vuelosOrdenados.sort(Comparator.comparing(Vuelo::getFechaSalida));
+                         * 
+                         * try (PrintWriter writer = new PrintWriter("vuelosOrdenados.txt")) {
+                         * for (Vuelo vuelo : vuelosOrdenados) {
+                         * writer.println(vuelo.toString());
+                         * }
+                         * } catch (FileNotFoundException e) {
+                         * e.printStackTrace();
+                         * }
+                         * 
+                         * for (Paquete paquete : paquetesSinSentido) {
+                         * System.out.println("Paquete sin sentido: " + paquete.toString());
+                         * }
+                         */
+
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
                         // " | Packages left: " + current.costoDePaquetesYRutasErroneas +
