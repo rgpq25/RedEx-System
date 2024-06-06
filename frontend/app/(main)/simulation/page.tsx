@@ -36,6 +36,9 @@ function SimulationPage() {
 	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
+	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
+	const [loadingMessages, setLoadingMessages] = useState<string[]>(["Cargando simulación"]);
+
 	const [isModalOpen, setIsModalOpen] = useState(true);
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
@@ -59,6 +62,7 @@ function SimulationPage() {
 	);
 
 	const onSimulationRegister = async (simulacion: Simulacion) => {
+		setIsSimulationLoading(true);
 		setSimulation(simulacion);
 
 		//Connect to the socket
@@ -70,8 +74,13 @@ function SimulationPage() {
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
+				setIsSimulationLoading(false);
+				console.log("Comparando ids: ", (JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id, simulacion.id);
+				if((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
+
+				
+				console.log("MENSAJE DE /algoritmo/respuesta: ", (JSON.parse(msg.body) as RespuestaAlgoritmo));
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
-				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
 
 				const simulation = data.simulacion;
 				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
@@ -93,6 +102,7 @@ function SimulationPage() {
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
+				setLoadingMessages((prev) => [...prev, msg.body]);
 			});
 		};
 
@@ -148,6 +158,21 @@ function SimulationPage() {
 						</Button>
 					</div>
 				</div>
+
+				{isSimulationLoading && (
+					<>
+						<div className="absolute top-1 bottom-3 left-3 right-3 bg-black z-[30] opacity-70 rounded-md flex justify-center items-center"></div>
+
+						<div className="absolute top-1 bottom-3 left-3 right-3 flex flex-col justify-center items-center z-[100] gap-1">
+							<img src="/plane_loading.gif" className="w-[10%] opacity-100" />
+							{loadingMessages.map((msg, index) => (
+								<p key={index} className="font-bold text-md text-white">
+									{msg}
+								</p>
+							))}
+						</div>
+					</>
+				)}
 
 				<Sidebar
 					envios={envios}
