@@ -281,4 +281,17 @@ public class SimulacionController {
 
     }
 
+    @GetMapping("/obtenerFechaSimulada/{id}")
+    public Date obtenerFechaSimulada(@PathVariable("id") int id){
+        Simulacion simulacion = simulacionService.get(id);
+        long tiempoActual = new Date().getTime();
+        long inicioSistema = simulacion.getFechaInicioSistema().getTime();
+        long inicioSimulacion = simulacion.getFechaInicioSim().getTime();
+        long milisegundosPausados = simulacion.getMilisegundosPausados();
+        long multiplicador = (long) simulacion.getMultiplicadorTiempo();
+
+        return new Date(inicioSimulacion
+                + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador);
+    }
+
 }
