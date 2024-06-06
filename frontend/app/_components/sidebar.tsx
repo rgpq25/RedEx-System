@@ -382,7 +382,7 @@ function Envios({
                 <>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <p>No hay envíos disponibles</p>
+                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay envíos disponibles</p></div>
                     ) : (
                         <>
                             <ScrollArea className='h-screen'>
@@ -646,7 +646,7 @@ function Aeropuertos({
                 <>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <p>No hay aeropuertos disponibles</p>
+                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay aeropuertos disponibles</p></div>
                     ) : (
                         <ScrollArea className='flex-1 pr-3'>
                             <section className='flex flex-col gap-4'>{items.map(renderCard)}</section>
@@ -915,7 +915,7 @@ function Vuelos({
                 <>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <p>No hay vuelos disponibles</p>
+                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay vuelos disponibles</p></div>
                     ) : (
                         <>
                             <ScrollArea className='h-screen'>

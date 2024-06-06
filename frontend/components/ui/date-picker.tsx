@@ -15,11 +15,13 @@ export function DatePicker({
 	date,
 	setDate,
 	placeholder,
+	disabled = false
 }: {
 	className?: string;
 	date: Date | undefined;
 	setDate: (date: Date | undefined) => void;
 	placeholder?: string;
+	disabled: boolean;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
@@ -32,6 +34,7 @@ export function DatePicker({
 						!date && "text-muted-foreground",
 						className
 					)}
+					disabled={disabled}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
 					{date ? format(date, "PPP", { locale: es }) : <span>{placeholder || "Pick a date"}</span>}
