@@ -821,7 +821,7 @@ public class Algoritmo {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 5;
+        int neighbourCount = 2;
         int windowSize = tamanhoPaquetes / 5;
         boolean stopWhenNoPackagesLeft = true;
 
