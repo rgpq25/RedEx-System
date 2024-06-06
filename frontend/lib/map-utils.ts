@@ -120,27 +120,27 @@ export function structureDataFromRespuestaAlgoritmo(data: RespuestaAlgoritmo) {
 		})
 		.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
 
-	const newEnvios: Envio[] = data.paquetes.map((paquete: Paquete) => {
-		const _envio = paquete.envio;
-		_envio.fechaLimiteEntrega = new Date(_envio.fechaLimiteEntrega);
-		_envio.fechaRecepcion = new Date(_envio.fechaRecepcion);
-		return _envio;
-	});
+	// const newEnvios: Envio[] = data.paquetes.map((paquete: Paquete) => {
+	// 	const _envio = paquete.envio;
+	// 	_envio.fechaLimiteEntrega = new Date(_envio.fechaLimiteEntrega);
+	// 	_envio.fechaRecepcion = new Date(_envio.fechaRecepcion);
+	// 	return _envio;
+	// });
 
 	//remove duplicates from newEnvios
-	const newEnviosSet = new Set(newEnvios.map((envio) => envio));
-	const newEnviosNoDuplicates = Array.from(newEnviosSet);
+	// const newEnviosSet = new Set(newEnvios.map((envio) => envio));
+	// const newEnviosNoDuplicates = Array.from(newEnviosSet);
 
 	//assign data.paquetes to its corresponding envio
-	newEnviosNoDuplicates.forEach((envio) => {
-		envio.paquetes = data.paquetes.filter((paquete) => paquete.envio.id === envio.id) || [];
-		envio.cantidadPaquetes = envio.paquetes.length;
-		if(envio.cantidadPaquetes > 1) console.log("Envio con mas de un paquete", envio);
-	});
+	// newEnviosNoDuplicates.forEach((envio) => {
+	// 	envio.paquetes = data.paquetes.filter((paquete) => paquete.envio.id === envio.id) || [];
+	// 	envio.cantidadPaquetes = envio.paquetes.length;
+	// 	if(envio.cantidadPaquetes > 1) console.log("Envio con mas de un paquete", envio);
+	// });
 
 	return {
 		db_vuelos: newFlights,
-		db_envios: newEnviosNoDuplicates,
+		db_envios: [],
 		db_estadoAlmacen: data.estadoAlmacen,
 	};
 }

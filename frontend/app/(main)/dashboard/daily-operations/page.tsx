@@ -59,7 +59,7 @@ function DailyOperationsPage() {
 			);
 
 			//Connect to the socket
-			const socket = new WebSocket("ws://localhost:8080/websocket");
+			const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}/websocket`);
 			const client = new Client({
 				webSocketFactory: () => socket,
 			});
