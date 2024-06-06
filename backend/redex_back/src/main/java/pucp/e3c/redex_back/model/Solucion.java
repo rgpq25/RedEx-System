@@ -35,7 +35,6 @@ public class Solucion {
     public GrafoVuelos grafoVuelos;
 
     HashMap<Integer, Vuelo> vuelos_hash;
-    
 
     public Solucion(
             ArrayList<Paquete> paquetes,
@@ -121,11 +120,24 @@ public class Solucion {
                 }
                 h++;
             }
+            HashMap<Integer, Integer> nuevoHash = new HashMap<>();
+
+            for (int i = 0; i < paquetes.size(); i++) {
+                for (Vuelo vuelo : this.rutas.get(i).getVuelos()) {
+                    if (nuevoHash.get(vuelo.getId()) == null) {
+                        nuevoHash.put(vuelo.getId(), 1);
+                    } else {
+                        nuevoHash.put(vuelo.getId(), nuevoHash.get(vuelo.getId()) + 1);
+                    }
+                }
+            }
+            this.ocupacionVuelos = nuevoHash;
             return;
             // } else {
             // this.rutas.clear();
-            // this.ocupacionVuelos.clear();
-            // }
+            // t
+
+            
         }
 
         throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");
