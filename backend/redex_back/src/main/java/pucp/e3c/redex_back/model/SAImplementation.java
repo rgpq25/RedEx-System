@@ -90,7 +90,7 @@ public class SAImplementation {
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
-                        SimpMessagingTemplate messagingTemplate) {
+                        SimpMessagingTemplate messagingTemplate, String tipoOperacion) {
 
                 try {
                         HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
@@ -100,6 +100,8 @@ public class SAImplementation {
                         long duration = endTime - startTime;
                         System.out.println("Tiempo de ejecución de la ordenación: " + (float) (duration / 1000000000)
                                         + " segundos");
+                        LOGGER.info(tipoOperacion + "|| Tiempo de ejecución de la ordenación: " + (float) (duration
+                                        / 1000000000) + " segundos");
 
                         Solucion current = new Solucion(
                                         paquetes,
@@ -117,6 +119,8 @@ public class SAImplementation {
                         current.force_initialize(todasLasRutas, vueloService);
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                         System.out.println("Finished solution initialization in "
+                                        + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
+                        LOGGER.info(tipoOperacion + "|| Finished solution initialization in "
                                         + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
                         startTime = System.nanoTime();
 
@@ -158,13 +162,13 @@ public class SAImplementation {
 
                                 temperature *= 1 - coolingRate;
 
-                                System.out.println(
+                                /*System.out.println(
                                                 "Current cost: " + current.getSolutionCost() +
                                                                 " | Packages left: "
                                                                 + current.costoDePaquetesYRutasErroneas +
-                                                                " | Temperature: " + temperature);
+                                                                " | Temperature: " + temperature);*/
 
-                                LOGGER.info("Current cost: " + current.getSolutionCost() + " | Packages left: "
+                                LOGGER.info(tipoOperacion + "|| Current cost: " + current.getSolutionCost() + " | Packages left: "
                                                 + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
 
                         }
@@ -172,19 +176,21 @@ public class SAImplementation {
                         endTime = System.nanoTime();
                         duration = endTime - startTime;
 
-                        System.out.println("=====================================");
+                        /*System.out.println("=====================================");
 
                         System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
+                                        1000000000) + " segundos");*/
+                        LOGGER.info(tipoOperacion + "|| Tiempo de ejecución de algoritmo: " + (float) (duration /
                                         1000000000) + " segundos");
                         // Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float)
                         // (duration /
                         // 1000000000) + " segundos");
 
-                        System.out.println(
+                        /*System.out.println(
                                         "Final cost: " + current.getSolutionCost() +
                                                         " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                        " | Temperature: " + temperature);
-                         LOGGER.info("Final cost: " + current.getSolutionCost() + " | Packages left: " + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+                                                        " | Temperature: " + temperature);*/
+                         LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: " + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
                         /*
                          * ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
                          * 
@@ -203,7 +209,15 @@ public class SAImplementation {
                          * System.out.println("Paquete sin sentido: " + paquete.toString());
                          * }
                          */
-
+                        ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
+                        if(paquetesSinSentido!=null){
+                                for (Paquete paquete : paquetesSinSentido) {
+                                        //System.out.println("Paquete sin sentido: " + paquete.toString());
+                                        LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
+                                }
+                        }
+                        
+                        
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
                         // " | Packages left: " + current.costoDePaquetesYRutasErroneas +

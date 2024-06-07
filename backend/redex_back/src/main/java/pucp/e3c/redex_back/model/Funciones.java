@@ -362,7 +362,7 @@ public class Funciones {
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
         envio.setCodigoSeguridad(Integer.toString(randomNumber));
-
+        //envio.setCodigoSeguridad(parts[0].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;

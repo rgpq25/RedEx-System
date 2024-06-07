@@ -71,7 +71,7 @@ public class PlanRutaNT {
     }
 
     public String toString() {
-        StringBuilder descripcion = new StringBuilder("Ruta " + id + ": ");
+        StringBuilder descripcion = new StringBuilder("Ruta (ID)" + id + " (CODIGO) " + codigo + " : ");
         for (Vuelo vuelo : vuelos) {
             descripcion
                     .append(vuelo.getPlanVuelo().getCiudadOrigen().getId())

@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,16 +80,13 @@ public class DataInitializer {
 
     private void inicializaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
             ArrayList<PlanVuelo> planVuelos) {
-        LocalDate today = LocalDate.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        // Sumar 3 días a la fecha de hoy
-        LocalDate startDate = today.plusDays(0);// 1
-        LocalDate endDate = today.plusDays(0);// 3
+        ZonedDateTime startDate = now.minusHours(3);
 
-        // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startPackagesDate = startDate.atStartOfDay().format(formatter);
-        String endPackagesDate = endDate.atTime(14, 59, 59).format(formatter);
+        String startPackagesDate = startDate.format(formatter);
+        String endPackagesDate = now.format(formatter);
 
         ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
                 500,
@@ -192,7 +191,7 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    120, 80);
+                    300, 80);
         });
 
     }

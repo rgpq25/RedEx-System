@@ -154,7 +154,9 @@ public class Paquete {
     }
 
     public String toString() {
-        return "Paquete: id" + id + " - " + envio.toString();
+        return "Paquete: (ID) " + id + " - (ENVIO) " + envio.toString();
+        //return all atributtes of paquete
+        //return "Paquete: (ID)" + id + " - (enAeropuerto) " + enAeropuerto + " - (entregado) " + entregado + " - (fechaDeEntrega) " + fechaDeEntrega + " - (estado) " + estado + " - (simulacionActual) " + simulacionActual + " - (planRutaActual)" + planRutaActual.toString() + " - (ENVIO) " + envio.toString() + " - (AEROPUERTO) " + aeropuertoActual.toString(); 
     }
 
     public Simulacion getSimulacionActual() {
