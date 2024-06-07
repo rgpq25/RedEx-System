@@ -301,4 +301,10 @@ public class SimulacionController {
                 + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador);
     }
 
+    @GetMapping("/obtenerPaquetesSimulacionEnCurso")
+    public ResponseEntity<List<Paquete>> obtenerPaquetesSimulacionEnCurso(){
+        List<Paquete> paquetes = algoritmo.getRespuesta_paquetes_simulacion();
+        return new ResponseEntity<>(paquetes, HttpStatus.OK);
+    }
+
 }

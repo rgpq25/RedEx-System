@@ -44,10 +44,16 @@ public class Algoritmo {
 
     private boolean terminarPlanificacionDiaDia;
 
+    private List<Paquete> respuesta_paquetes_simulacion;
+
+    private List<Paquete> respuesta_paquetes_dia_dia;
+
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
+        this.respuesta_paquetes_simulacion = new ArrayList<>();
+        this.respuesta_paquetes_dia_dia = new ArrayList<>();
     }
 
     
@@ -135,6 +141,11 @@ public class Algoritmo {
                     .filter(p -> p.isEntregado() == false)
                     .filter(p -> p.getFechaRecepcion().before(now))
                     .collect(Collectors.toList());
+
+            this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
+                    .filter(p -> p.getFechaRecepcion().before(now) && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+                    .collect(Collectors.toList()); 
+
             ArrayList<Paquete> paquetes = new ArrayList<>(paquetesPrimerFiltro);
             if (paquetes.size() == 0) {
                 //System.out.println("No hay paquetes para procesar.");
@@ -433,6 +444,11 @@ public class Algoritmo {
             List<Paquete> paquetesRest = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || p.getFechaRecepcion().before(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
+
+            this.respuesta_paquetes_simulacion = paquetes.stream()
+            .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
+            && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
+            .collect(Collectors.toList());
 
             if (tamanhoPaquetes == 0) {
                 if (primera_iter) {
@@ -932,5 +948,31 @@ public class Algoritmo {
     public RespuestaAlgoritmo getUltimaRespuestaOperacionDiaDia() {
         return ultimaRespuestaOperacionDiaDia;
     }
+
+
+
+    public List<Paquete> getRespuesta_paquetes_simulacion() {
+        return respuesta_paquetes_simulacion;
+    }
+
+
+
+    public void setRespuesta_paquetes_simulacion(List<Paquete> respuesta_paquetes_simulacion) {
+        this.respuesta_paquetes_simulacion = respuesta_paquetes_simulacion;
+    }
+
+
+
+    public List<Paquete> getRespuesta_paquetes_dia_dia() {
+        return respuesta_paquetes_dia_dia;
+    }
+
+
+
+    public void setRespuesta_paquetes_dia_dia(List<Paquete> respuesta_paquetes_dia_dia) {
+        this.respuesta_paquetes_dia_dia = respuesta_paquetes_dia_dia;
+    }
+
+    
 
 }

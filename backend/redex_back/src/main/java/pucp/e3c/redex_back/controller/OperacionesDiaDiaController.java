@@ -2,6 +2,7 @@ package pucp.e3c.redex_back.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,4 +99,9 @@ public class OperacionesDiaDiaController {
         Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         return algoritmo.unaPlanificacionDiaDia(aeropuertos, planVuelos, vueloService, planRutaService, paqueteService, planRutaXVueloService);        
     }*/
+
+    @GetMapping("/obtenerPaquetes")
+    public List<Paquete> obtenerPaquetes(){
+        return algoritmo.getRespuesta_paquetes_dia_dia();
+    }
 }
