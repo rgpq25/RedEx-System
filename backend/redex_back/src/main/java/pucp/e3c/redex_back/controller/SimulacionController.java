@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -85,6 +87,8 @@ public class SimulacionController {
     @Autowired
     ResourceLoader resourceLoader;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulacionController.class);
+
     public SimulacionController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
@@ -137,9 +141,11 @@ public class SimulacionController {
 
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         // Registrar una nueva simulacion
-        simulacion.setId(0);
+        //LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID"  + simulacion.getId());
+        //simulacion.setId(0);
         simulacion.setMilisegundosPausados(0);
         simulacion = simulacionService.register(simulacion);
+        LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID"  + simulacion.getId());
 
         Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
         InputStream input1 = resource.getInputStream();
@@ -154,6 +160,7 @@ public class SimulacionController {
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
+                //System.out.println("LINE: " + line);
             }
 
             HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();

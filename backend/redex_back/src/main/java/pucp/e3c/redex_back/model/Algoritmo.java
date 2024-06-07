@@ -736,14 +736,14 @@ public class Algoritmo {
             // Crear y guardar PlanRuta
             planRutaNT.updateCodigo();
 
-            LOGGER.info("GUARDADO || SIMULACION SEMANAL || PlanRutaNT: " + planRutaNT.toString());
+            //LOGGER.info("GUARDADO || SIMULACION SEMANAL || PlanRutaNT: " + planRutaNT.toString());
 
             PlanRuta planRuta = new PlanRuta();
             planRuta.setCodigo(planRutaNT.getCodigo());
             planRuta.setSimulacionActual(simulacion);
             try {
                 planRuta = planRutaService.register(planRuta);
-                LOGGER.info("GUARDADO || SIMULACION SEMANAL || PlanRuta: " + planRuta.toString());
+                //LOGGER.info("GUARDADO || SIMULACION SEMANAL || PlanRuta: " + planRuta.toString());
             } catch (PersistenceException e) {
                 // Manejo de errores si algo sale mal durante la operación de guardado
                 System.err.println("Error al guardar en la base de datos: " + e.getMessage());
@@ -759,11 +759,11 @@ public class Algoritmo {
             paquete.setFechaDeEntrega(planRutaNT.getFin());
             paquete.setSimulacionActual(simulacion);
             paquete.setPlanRutaActual(planRuta);
-            LOGGER.info("GUARDADO || SIMULACION SEMANAL || Paquete: " + paquete.toString());
+            //LOGGER.info("GUARDADO || SIMULACION SEMANAL || Paquete: " + paquete.toString());
 
             try {
                 Paquete paqueteBD = paqueteService.update(paquete);
-                LOGGER.info("GUARDADO || SIMULACION SEMANAL || (PAQUETE) " + paqueteBD.toString() + " || (PlanRutaActual) " + paqueteBD.getPlanRutaActual().toString() + " || (SimulacionActual) " + paqueteBD.getSimulacionActual().getId() + " || (FechaDeEntrega) " + paqueteBD.getFechaDeEntrega()); 
+                //LOGGER.info("GUARDADO || SIMULACION SEMANAL || (PAQUETE) " + paqueteBD.toString() + " || (PlanRutaActual) " + paqueteBD.getPlanRutaActual().toString() + " || (SimulacionActual) " + paqueteBD.getSimulacionActual().getId() + " || (FechaDeEntrega) " + paqueteBD.getFechaDeEntrega()); 
             } catch (Exception e) {
                 // Manejo de errores si algo sale mal durante la operación de guardado
                 System.err.println("Error al guardar en la base de datos: " + e.getMessage());
