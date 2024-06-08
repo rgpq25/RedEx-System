@@ -250,38 +250,57 @@ public class AeropuertoController {
     }
 
     private List<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Date fechaCorte, Simulacion simulacion) {
-        return paqueteService.findBySimulacionId(simulacion.getId()).stream()
-                .filter(paquete -> {
-                    List<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
-                    if (vuelos == null || vuelos.isEmpty()) {
-                        // Verifica si fue recibido antes de la fecha de corte y aún está en el
-                        // aeropuerto de origen
-                        return paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId) &&
-                                paquete.getEnvio().getFechaRecepcion().before(fechaCorte);
-                    } else {
-
-                        for (int i = 0; i < vuelos.size(); i++) {
-                            // Verifica si el paquete estaba en vuelo durante la fecha de corte
-                            if (vuelos.get(i).getFechaSalida().before(fechaCorte)
-                                    && vuelos.get(i).getFechaLlegada().after(fechaCorte)) {
-                                return false;
-                            }
-                            // Verifica si llego el ultimo vuelo
-                            if (i == vuelos.size() - 1
-                                    && vuelos.get(vuelos.size() - 1).getFechaLlegada().before(fechaCorte)) {
-                                return false;
-                            }
-                            // verifica el aeropuerto actual del paquete
-                            if (vuelos.get(i).getFechaLlegada().before(fechaCorte)
-                                    && vuelos.get(i + 1).getFechaSalida().after(fechaCorte)) {
-                                return vuelos.get(i).getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId);
-                            }
-                        }
-
-                    }
-                    return false;
-                })
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService
+                .findBySimulacionId(simulacion.getId());
+        // Filtrar los paquetes cuya fecharecepcion sea menor a la fecha Corte
+        paquetes = (ArrayList<Paquete>) paquetes.stream()
+                .filter(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaCorte)
+                        && paquete.getFechaRecepcion().after(simulacion.getFechaInicioSim()))
                 .collect(Collectors.toList());
+
+        ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
+        if (paquetes == null || paquetes.isEmpty() || paquetes.size() == 0) {
+            System.out.println("No se encontraron paquetes");
+            return null;
+        }
+        System.out.println("Paquetes encontrados: " + paquetes.size());
+        int j = 0;
+        for (Paquete paquete : paquetes) {
+            // System.out.println("Iteracion " + j);
+            j++;
+            List<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
+            if (vuelos == null || vuelos.isEmpty()) {
+                // Verifica si fue recibido antes de la fecha de corte y aún está en el
+                // aeropuerto de origen
+                if (paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId) &&
+                        paquete.getEnvio().getFechaRecepcion().before(fechaCorte)) {
+                    paquetesEnAeropuerto.add(paquete);
+                }
+            } else {
+                for (int i = 0; i < vuelos.size(); i++) {
+                    // Verifica si el paquete estaba en vuelo durante la fecha de corte
+                    if (vuelos.get(i).getFechaSalida().before(fechaCorte)
+                            && vuelos.get(i).getFechaLlegada().after(fechaCorte)) {
+                        break;
+                    }
+                    // Verifica si llego el ultimo vuelo
+                    if (i == vuelos.size() - 1
+                            && vuelos.get(vuelos.size() - 1).getFechaLlegada().before(fechaCorte)) {
+                        break;
+                    }
+                    // verifica el aeropuerto actual del paquete
+                    if (vuelos.get(i).getFechaLlegada().before(fechaCorte)
+                            && vuelos.get(i + 1).getFechaSalida().after(fechaCorte)) {
+                        if (vuelos.get(i).getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId)) {
+                            paquetesEnAeropuerto.add(paquete);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("La cantidad de paquetes en el aeropuerto " + aeropuertoId + " en la fecha " + fechaCorte
+                + " es " + paquetesEnAeropuerto.size());
+        return paquetesEnAeropuerto;
     }
 
     public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {

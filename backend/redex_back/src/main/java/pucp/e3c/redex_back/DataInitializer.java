@@ -115,7 +115,7 @@ public class DataInitializer {
     public void initData() throws IOException {
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
-        //String inputPath = "/home/inf226.981.3c/resources";
+        // String inputPath = "/home/inf226.981.3c/resources";
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
@@ -173,15 +173,15 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
             inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
         if (inicializar_paquetes_operaciones_simulacion) {
-            funciones.inicializaPaquetesSimulacion(aeropuertos,simulacionService,envioService);
-            //System.out.println("Lei paquetes sim");
+            funciones.inicializaPaquetesSimulacion(aeropuertos, simulacionService, envioService);
+            // System.out.println("Lei paquetes sim");
         }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
@@ -196,5 +196,4 @@ public class DataInitializer {
 
     }
 
-   
 }

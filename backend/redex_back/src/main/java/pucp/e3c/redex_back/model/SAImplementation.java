@@ -238,7 +238,7 @@ public class SAImplementation {
 
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
                         // current.printFlightOcupation("ocupacionVuelos.txt");
-                        // current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+                        current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {
@@ -249,7 +249,7 @@ public class SAImplementation {
                                 }
                                 vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                                 try {
-                                        //Pendiente revisar
+                                        // Pendiente revisar
                                         vueloService.update(vuelo);
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
