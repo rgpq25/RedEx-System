@@ -78,6 +78,7 @@ public class Solucion {
             }
         }
         this.rutas.clear();
+
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
 
@@ -114,30 +115,19 @@ public class Solucion {
                     // System.out.println(
                     // "Habia una ruta previa en " + h + " con " + planRutaNT.getVuelos().size() + "
                     // vuelos");
+                    this.deocupyRouteFlights(this.rutas.get(h));
                     this.rutas.set(h, planRutaNT);
                 } else {
                     // System.out.println("No haba ruta previa en posicion " + h);
                 }
                 h++;
             }
-            HashMap<Integer, Integer> nuevoHash = new HashMap<>();
 
-            for (int i = 0; i < paquetes.size(); i++) {
-                for (Vuelo vuelo : this.rutas.get(i).getVuelos()) {
-                    if (nuevoHash.get(vuelo.getId()) == null) {
-                        nuevoHash.put(vuelo.getId(), 1);
-                    } else {
-                        nuevoHash.put(vuelo.getId(), nuevoHash.get(vuelo.getId()) + 1);
-                    }
-                }
-            }
-            this.ocupacionVuelos = nuevoHash;
             return;
             // } else {
             // this.rutas.clear();
             // t
 
-            
         }
 
         throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");
