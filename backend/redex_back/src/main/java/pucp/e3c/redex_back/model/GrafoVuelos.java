@@ -96,7 +96,8 @@ public class GrafoVuelos {
 
     }
 
-    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService) {
+    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
+            Simulacion simulacion) {
         // Encuentra el paquete con la fecha de recepción más temprana
         Optional<Paquete> minRecepcionPaquete = paquetes.stream()
                 .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
@@ -114,6 +115,7 @@ public class GrafoVuelos {
         for (Vuelo vuelo : vuelos) {
             vuelo = vueloService.register(vuelo);
             vuelo = vueloService.get(vuelo.getId());
+            vuelo.setSimulacionActual(simulacion);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
