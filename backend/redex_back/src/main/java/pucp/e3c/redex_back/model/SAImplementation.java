@@ -162,35 +162,44 @@ public class SAImplementation {
 
                                 temperature *= 1 - coolingRate;
 
-                                /*System.out.println(
-                                                "Current cost: " + current.getSolutionCost() +
-                                                                " | Packages left: "
-                                                                + current.costoDePaquetesYRutasErroneas +
-                                                                " | Temperature: " + temperature);*/
+                                /*
+                                 * System.out.println(
+                                 * "Current cost: " + current.getSolutionCost() +
+                                 * " | Packages left: "
+                                 * + current.costoDePaquetesYRutasErroneas +
+                                 * " | Temperature: " + temperature);
+                                 */
 
-                                LOGGER.info(tipoOperacion + "|| Current cost: " + current.getSolutionCost() + " | Packages left: "
-                                                + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+                                LOGGER.info(tipoOperacion + "|| Current cost: " + current.getSolutionCost()
+                                                + " | Packages left: "
+                                                + current.costoDePaquetesYRutasErroneas + " | Temperature: "
+                                                + temperature);
 
                         }
 
                         endTime = System.nanoTime();
                         duration = endTime - startTime;
 
-                        /*System.out.println("=====================================");
-
-                        System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
-                                        1000000000) + " segundos");*/
+                        /*
+                         * System.out.println("=====================================");
+                         * 
+                         * System.out.println("Tiempo de ejecución de algoritmo: " + (float) (duration /
+                         * 1000000000) + " segundos");
+                         */
                         LOGGER.info(tipoOperacion + "|| Tiempo de ejecución de algoritmo: " + (float) (duration /
                                         1000000000) + " segundos");
                         // Funciones.printLineInLog("Tiempo de ejecucion de algoritmo: " + (float)
                         // (duration /
                         // 1000000000) + " segundos");
 
-                        /*System.out.println(
-                                        "Final cost: " + current.getSolutionCost() +
-                                                        " | Packages left: " + current.costoDePaquetesYRutasErroneas +
-                                                        " | Temperature: " + temperature);*/
-                         LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: " + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+                        /*
+                         * System.out.println(
+                         * "Final cost: " + current.getSolutionCost() +
+                         * " | Packages left: " + current.costoDePaquetesYRutasErroneas +
+                         * " | Temperature: " + temperature);
+                         */
+                        LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: "
+                                        + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
                         /*
                          * ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
                          * 
@@ -210,14 +219,13 @@ public class SAImplementation {
                          * }
                          */
                         ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
-                        if(paquetesSinSentido!=null){
+                        if (paquetesSinSentido != null) {
                                 for (Paquete paquete : paquetesSinSentido) {
-                                        //System.out.println("Paquete sin sentido: " + paquete.toString());
+                                        // System.out.println("Paquete sin sentido: " + paquete.toString());
                                         LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
                                 }
                         }
-                        
-                        
+
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
                         // " | Packages left: " + current.costoDePaquetesYRutasErroneas +
@@ -241,7 +249,8 @@ public class SAImplementation {
                                 }
                                 vuelo.setCapacidadUtilizada(current.ocupacionVuelos.get(id));
                                 try {
-                                        // vueloService.update(vuelo);
+                                        //Pendiente revisar
+                                        vueloService.update(vuelo);
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                                         messagingTemplate.convertAndSend("/algoritmo/estado",
