@@ -13,7 +13,7 @@ import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-cus
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { CircleStop, Play } from "lucide-react";
+import { CircleStop, Pause, Play } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
@@ -33,7 +33,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 function SimulationPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
+	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
@@ -75,24 +75,18 @@ function SimulationPage() {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
 				setIsSimulationLoading(false);
-				console.log("Comparando ids: ", (JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id, simulacion.id);
-				if((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
+				console.log(
+					"Comparando ids: ",
+					(JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id,
+					simulacion.id
+				);
+				if ((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
 
-				
-				console.log("MENSAJE DE /algoritmo/respuesta: ", (JSON.parse(msg.body) as RespuestaAlgoritmo));
+				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 				const simulation = data.simulacion;
-				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
-				const fechaInicioSim: Date = new Date(simulation.fechaInicioSim);
-				const multiplicadorTiempo: number = simulation.multiplicadorTiempo;
-
-				const currentSimTime = new Date(
-					fechaInicioSim.getTime() +
-						multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime())
-				);
-
-				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
+				setCurrentTime(simulation);
 
 				const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
@@ -148,15 +142,21 @@ function SimulationPage() {
 
 				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
 					<PlaneLegend />
-					<div className="flex items-center gap-1">
-						<Button size={"icon"}>
-							<CircleStop className="w-5 h-5" />
-						</Button>
+					{simulation !== null && simulation !== undefined && (
+						<div className="flex items-center gap-1">
+							<Button size={"icon"}>
+								<CircleStop className="w-5 h-5" />
+							</Button>
 
-						<Button size={"icon"}>
-							<Play className="w-5 h-5" />
-						</Button>
-					</div>
+							<Button size={"icon"} onClick={pauseSimulation}>
+								<Pause className="w-5 h-5" />
+							</Button>
+
+							<Button size={"icon"} onClick={() => playSimulation(simulation, setSimulation)}>
+								<Play className="w-5 h-5" />
+							</Button>
+						</div>
+					)}
 				</div>
 
 				{isSimulationLoading && (
