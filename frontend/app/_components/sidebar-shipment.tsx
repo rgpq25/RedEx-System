@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CurrentStateBox from "./current-state-box";
-import { PackageRouteTable } from "./package-route-table";
+import { useState } from "react";
+
+import { ChevronsRight, ChevronsLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { H1, H2, H3, Muted, Small } from "@/components/ui/typography";
-import { Envio, Paquete, Vuelo } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
+import { H2, H3, Muted, Small } from "@/components/ui/typography";
+
+import { Envio, Paquete, Vuelo } from "@/lib/types";
 import { formatDateTimeLongShort } from "@/lib/date";
 
-function CardInfo({ shipment }: { shipment: Envio }) {
+const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
     const [visible, setVisible] = useState<boolean>(true);
     const [selectedIdPackage, setSelectedIdPackage] = useState<number>();
     const selectedPackage = shipment?.paquetes?.find((pkg: Paquete) => pkg.id === selectedIdPackage);
@@ -25,7 +25,7 @@ function CardInfo({ shipment }: { shipment: Envio }) {
             <Button
                 onClick={() => setVisible(true)}
                 className={cn(
-                    "absolute top-[105px] left-[45px] gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[100]",
+                    "absolute top-[105px] left-[45px] gap-1 transition-opacity duration-500 ease-in-out delay-200 z-[20]",
                     visible ? "opacity-0" : "opacity-100"
                 )}
             >
@@ -34,24 +34,21 @@ function CardInfo({ shipment }: { shipment: Envio }) {
             </Button>
             <Card
                 className={cn(
-                    "w-[450px] flex flex-col absolute top-[105px] bottom-[43px] z-[100]",
-                    "transition-all duration-300 ease-in-out",
-                    visible ? "left-[43px]" : "-left-[470px]"
+                    "flex w-96 flex-col items-center overflow-hidden transition-all duration-300 ease-in-out absolute top-[105px] bottom-[43px] z-[20] border border-gray-300",
+                    visible ? "left-[43px]" : "-left-[404px]"
                 )}
             >
-                <CardHeader className='relative'>
-                    <div className='flex flex-row items-center justify-between'>
-                        <H2>{`ID: ${shipment.id}`}</H2>
-                        <ChevronsLeft
-                            className='cursor-pointer w-10 h-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out'
-                            onClick={() => {
-                                console.log("Clckng");
-                                setVisible(false);
-                            }}
-                        >
-                            Cerrar
-                        </ChevronsLeft>
-                    </div>
+                <CardHeader className='relative flex flex-row w-full items-center justify-between'>
+                    <H2 className='flex-1'>{`ID: ${shipment.id}`}</H2>
+                    <ChevronsLeft
+                        className='cursor-pointer w-10 h-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out'
+                        onClick={() => {
+                            console.log("Clckng");
+                            setVisible(false);
+                        }}
+                    >
+                        Cerrar
+                    </ChevronsLeft>
                 </CardHeader>
                 <CardContent className='w-full flex space-y-4 flex-col *:w-full overflow-hidden'>
                     {/* <div className='text-center flex flex-col justify-center items-center'>
@@ -94,7 +91,7 @@ function CardInfo({ shipment }: { shipment: Envio }) {
                             </SelectContent>
                         </Select>
                     </div>
-                    <H3>Ruta de paquetes</H3>
+                    <H3>Ruta del paquete</H3>
                     <ScrollArea className='flex flex-col'>
                         {/* <CurrentStateBox
                             className=''
@@ -108,25 +105,32 @@ function CardInfo({ shipment }: { shipment: Envio }) {
                             <h2 className='text-3xl font-semibold tracking-wide font-poppins'>27 de marzo - 14:40</h2>
                         </div> */}
 
-                        {selectedPackage?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
-                            <section
-                                key={vuelo.id}
-                                className='flex flex-row my-4 justify-between *:flex *:flex-col px-2'
-                            >
-                                <div className='*:text-left'>
-                                    <Small>{vuelo.planVuelo.ciudadOrigen.ciudad}</Small>
-                                    <Muted>{formatDateTimeLongShort(vuelo.fechaSalida)}</Muted>
-                                </div>
-                                <div className='*:text-right'>
-                                    <Small>{vuelo.planVuelo.ciudadDestino.ciudad}</Small>
-                                    <Muted>{formatDateTimeLongShort(vuelo.fechaLlegada)}</Muted>
-                                </div>
-                            </section>
-                        ))}
+                        {selectedPackage === undefined || selectedPackage?.planRutaActual === undefined ? (
+                            <Muted>No hay planeamiento activo.</Muted>
+                        ) : (
+                            <>
+                                {selectedPackage?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
+                                    <section
+                                        key={vuelo.id}
+                                        className='flex flex-row my-4 justify-between *:flex *:flex-col px-2'
+                                    >
+                                        <div className='*:text-left'>
+                                            <Small>{vuelo.planVuelo.ciudadOrigen.ciudad}</Small>
+                                            <Muted>{formatDateTimeLongShort(vuelo.fechaSalida)}</Muted>
+                                        </div>
+                                        <div className='*:text-right'>
+                                            <Small>{vuelo.planVuelo.ciudadDestino.ciudad}</Small>
+                                            <Muted>{formatDateTimeLongShort(vuelo.fechaLlegada)}</Muted>
+                                        </div>
+                                    </section>
+                                ))}
+                            </>
+                        )}
                     </ScrollArea>
                 </CardContent>
             </Card>
         </>
     );
-}
-export default CardInfo;
+};
+
+export default SidebarShipment;
