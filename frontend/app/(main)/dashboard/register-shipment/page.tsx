@@ -123,6 +123,9 @@ function RegisterShipmentPage() {
   const [destinationLocationId, setDestinationLocationId] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
+  const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+  const [showDashboardLink, setShowDashboardLink] = useState(false);
 
 
     
@@ -136,8 +139,9 @@ function RegisterShipmentPage() {
 
 
 
+
    // Validación de correo electrónico
-   const isValidEmail = email => /\S+@\S+\.\S+/.test(email);
+   const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
    // Validación de los campos del emisor
    const validateSenderCard = () => {
@@ -149,8 +153,10 @@ function RegisterShipmentPage() {
   };
 
   const validatePackageCard = () => {
-    const validDate = date instanceof Date && !isNaN(date); // Verifica que la fecha sea válida
-    const validTime = document.getElementById('register-time').value.trim() !== ''; // Asegúrate de que la hora no esté vacía
+    const validDate = date instanceof Date && !isNaN(date.getTime()); // Correctly check if the date object is valid
+
+    const timeElement = document.getElementById('register-time') as HTMLInputElement;
+    const validTime = timeElement ? timeElement.value.trim() !== '' : false; // Check if the time input is not empty
     return originLocationId && destinationLocationId && packagesCount > 0 && validDate && validTime;
   };
 
@@ -182,12 +188,9 @@ function RegisterShipmentPage() {
 
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
-
-
-
     const dataToSend = {
-      ubicacionOrigen: { id: "SEQM"  },
-      ubicacionDestino: { id: "SEQM" },
+      ubicacionOrigen: { id: originLocationId  },
+      ubicacionDestino: { id: destinationLocationId },
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
@@ -199,7 +202,6 @@ function RegisterShipmentPage() {
     console.log("dataToSend:", dataToSend); // Agrega este console.log
 
     api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
-    setIsConfirmDialogOpen(false);  // Close the dialog after confirming
   };
 
   interface ApiResponse {
@@ -210,6 +212,8 @@ function RegisterShipmentPage() {
   const handleSuccess = (data : ApiResponse) => {
     console.log('Registro completado:', data);
     console.log('Objeto recibido de la API:', data); // Agrega esta línea
+    setIsConfirmDialogOpen(false);  // Close the dialog after confirming
+    setIsSecondDialogOpen(true);    // Abre el segundo diálogo
     toast.success("Registro completado con éxito!");
   };
 
@@ -222,7 +226,36 @@ function RegisterShipmentPage() {
 
   const openConfirmDialog = () => setIsConfirmDialogOpen(true);
 
+
+  const handleSecondDialogChoice = (choice: string) => {
+    setIsSecondDialogOpen(false); // Cierra el segundo diálogo
+    if (choice === "yes") {
+        resetForm(); // Resetea el formulario para nuevo ingreso
+        window.location.reload(); // Refresca la página
+    } else {
+        setRedirectToDashboard(true); // Establece el estado para redirigir al dashboard
+    }
+  };
   
+  if (redirectToDashboard) {
+    window.location.href = '/dashboard';
+    return null; // Renderiza nada mientras se procesa la redirección
+  }
+
+  const resetForm = () => {
+    // Resetea todos los campos del formulario
+    setSenderEmail('');
+    setSenderNames('');
+    setSenderSurnames('');
+    setReceiverEmail('');
+    setReceiverNames('');
+    setReceiverSurnames('');
+    setPackagesCount(1);
+    setOriginLocationId('');
+    setDestinationLocationId('');
+    setDate(new Date()); // O cualquier otra lógica de reseteo
+  };
+
   const SenderCard = () => (
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-4">Información del Emisor</h2>
@@ -377,7 +410,7 @@ function RegisterShipmentPage() {
           </CarouselItem>
         </CarouselContent>  
       </Carousel>
-      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} openConfirmDialog={openConfirmDialog} validateSenderCard={validateSenderCard}  validateReceiverCard={validateReceiverCard}   validatePackageCard={validatePackageCard}/>}
+      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} openConfirmDialog={openConfirmDialog} validateSenderCard={validateSenderCard as () => boolean}  validateReceiverCard={validateReceiverCard as () => boolean}   validatePackageCard={validatePackageCard as () => boolean}/>}
 
       {isConfirmDialogOpen && (
         <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
@@ -394,6 +427,23 @@ function RegisterShipmentPage() {
             <AlertDialogFooter>
               <AlertDialogAction onClick={handleConfirm}>Confirmar</AlertDialogAction>
               <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>Cancelar</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {isSecondDialogOpen && (
+        <AlertDialog open={isSecondDialogOpen} onOpenChange={setIsSecondDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿El cliente desea hacer otro envío?</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              Esta acción permitirá iniciar un nuevo registro de envío.
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => handleSecondDialogChoice("yes")}>Sí</AlertDialogAction>
+              <AlertDialogCancel onClick={() => handleSecondDialogChoice("no")}>No</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
