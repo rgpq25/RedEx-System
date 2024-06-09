@@ -1,6 +1,8 @@
 package pucp.e3c.redex_back.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,9 +57,20 @@ public class OperacionesDiaDiaController {
     @Autowired
     private Algoritmo algoritmo;
 
-    @GetMapping("/diaDiaRespuesta")
+    @GetMapping(value = "/diaDiaRespuesta")
     public RespuestaAlgoritmo resendLastMessage() {
         return algoritmo.getUltimaRespuestaOperacionDiaDia();
+    }
+
+    @PostMapping(value = "/pararPlanificacionDiaDia")
+    public String pararPlanificacionDiaDia(){
+        algoritmo.setTerminarPlanificacionDiaDia(true);
+        return "Planificacion detenida";
+    }
+
+    @GetMapping(value = "/fechaActual")
+    public Date getFechaActual(){
+        return new Date();
     }
 
     /*public RespuestaAlgoritmo obtenerUltimaRespuesta(){
@@ -85,4 +99,9 @@ public class OperacionesDiaDiaController {
         Algoritmo algoritmo = new Algoritmo(messagingTemplate);
         return algoritmo.unaPlanificacionDiaDia(aeropuertos, planVuelos, vueloService, planRutaService, paqueteService, planRutaXVueloService);        
     }*/
+
+    @GetMapping("/obtenerPaquetes")
+    public List<Paquete> obtenerPaquetes(){
+        return algoritmo.getRespuesta_paquetes_dia_dia();
+    }
 }

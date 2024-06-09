@@ -172,6 +172,7 @@ public class EnvioService {
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
                 paquetes.add(paquete);
+                //LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
             }
 
         }

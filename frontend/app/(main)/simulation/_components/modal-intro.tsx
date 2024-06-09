@@ -80,8 +80,6 @@ export function ModalIntro({
 		realDate.setSeconds(0);
 		realDate.setMilliseconds(0);
 
-		console.log("Date is ", realDate);
-
 		//Register new simulation and all shipments
 		const simulacion = await startWeeklySimulation(realDate);
 

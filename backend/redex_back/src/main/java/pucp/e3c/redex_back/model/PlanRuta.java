@@ -43,7 +43,7 @@ public class PlanRuta {
     }
 
     public String toString() {
-        StringBuilder descripcion = new StringBuilder("Ruta " + id + ": " + codigo);
+        StringBuilder descripcion = new StringBuilder("Ruta (ID)" + id + ": (CODIGO)" + codigo);
         return descripcion.toString();
     }
 

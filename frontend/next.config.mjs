@@ -9,7 +9,6 @@ const nextConfig = {
     images: { unoptimized: true },
     output: "export",
     trailingSlash: true,
-    swcMinify: false,
     typescript: {
         ignoreBuildErrors: true,
     },
@@ -19,3 +18,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+  

@@ -19,7 +19,6 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 		"POST",
 		`${process.env.NEXT_PUBLIC_API}/back/simulacion/inicializarSimulacionCargaVariable/media`,
 		(data: Simulacion) => {
-			console.log(data);
 			idSimulacion = data.id;
 			simulacion = data;
 		},
@@ -28,8 +27,6 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 		},
 		simuData
 	);
-
-	console.log("Se usara el idSimulacion ", idSimulacion);
 	if (simulacion === undefined) throw new Error("Error al crear simulacion");
 	return simulacion;
 };
