@@ -3,6 +3,7 @@ import useAnimation, { AnimationObject } from "./useAnimation";
 import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
 import { getFlightPosition } from "@/lib/map-utils";
 import { Map as MapType } from "leaflet";
+import { api } from "@/lib/api";
 
 export type MapZoomAttributes = {
 	currentTime: Date | undefined;
@@ -12,8 +13,8 @@ export type MapZoomAttributes = {
 	setMap: (map: MapType) => void;
 	zoomToAirport: (airport: Aeropuerto) => void;
 	lockToFlight: (flight: Vuelo) => void;
-	pauseSimulation: () => void;
-	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => void;
+	pauseSimulation: (_simu: Simulacion) => Promise<void>;
+	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => Promise<void>;
 };
 
 const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0): MapZoomAttributes => {
@@ -21,7 +22,6 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 	const curInterval = useRef<NodeJS.Timeout | null>(null);
 	const pausingTime = useRef<number | null>(null);
 	const isTimerPaused = useRef<boolean>(false);
-	const time_miliPaused = useRef<number>(0);
 
 	const [map, setMap] = useState<MapType | null>(null);
 	const [currentTime, setCurrentTime] = useState<Date | undefined>(undefined);
@@ -36,9 +36,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 			const fechaInicioSistema: Date = new Date(_simu.fechaInicioSistema);
 			const fechaInicioSim: Date = new Date(_simu.fechaInicioSim);
 			const multiplicadorTiempo: number = _simu.multiplicadorTiempo;
-			// const milisegundosPausados: number = _simu.milisegundosPausados;
-			const milisegundosPausados: number = time_miliPaused.current;
-			console.log("Miliseconds paused in handleSetTime: " + milisegundosPausados);
+			const milisegundosPausados: number = _simu.milisegundosPausados;
 
 			const currentSimTime = new Date(
 				fechaInicioSim.getTime() + multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime() - milisegundosPausados)
@@ -48,10 +46,6 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		}
 
 		const currentSimTime = getNewTime(simulacion);
-
-		console.log("Previous time was: ", currentTime);
-		console.log("Setting new time: ", currentSimTime);
-
 		setCurrentTime(currentSimTime);
 
 		const interval = setInterval(() => {
@@ -97,36 +91,56 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		[map]
 	);
 
-	const pauseSimulation = () => {
+	const pauseSimulation = async (_simulation: Simulacion) => {
 		//we stop the timer
 		if (curInterval.current) {
 			console.log("Pausing simulation");
 			clearInterval(curInterval.current);
 			curInterval.current = null;
-			pausingTime.current = (new Date()).getTime();
+			pausingTime.current = new Date().getTime();
 			isTimerPaused.current = true;
+
+			await api(
+				"PUT",
+				`${process.env.NEXT_PUBLIC_API}/back/simulacion/pausar`,
+				(data: Simulacion) => {
+					console.log("Respuesta de /back/simulacion/pausar: ", data);
+				},
+				(error) => {
+					console.log("Error en /back/simulacion/pausar: ", error);
+				},
+				_simulation
+			);
 		}
 	};
 
-	const playSimulation = (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => {
+	const playSimulation = async (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => {
 		//set the new simulation object with the new milisegundosPausados;
 		if (pausingTime.current !== null) {
 			console.log("Playing simulation");
 
 			isTimerPaused.current = false;
-
 			const pauseDate: number = pausingTime.current;
-			const currentDate = (new Date()).getTime();
-
+			const currentDate = new Date().getTime();
 			const milisecondsPaused = currentDate - pauseDate;
-			console.log("Miliseconds paused: ", milisecondsPaused);
 
 			const newSimulation = { ...oldSimulation };
 			newSimulation.milisegundosPausados += milisecondsPaused;
-			time_miliPaused.current += milisecondsPaused;
-			console.log("See the new simulation object: ", newSimulation);
-			setSimulation(newSimulation);
 			pausingTime.current = null;
+
+			await api(
+				"PUT",
+				`${process.env.NEXT_PUBLIC_API}/back/simulacion/reanudar`,
+				(data: Simulacion) => {
+					console.log("Respuesta de /back/simulacion/reanudar: ", data);
+				},
+				(error) => {
+					console.log("Error en /back/simulacion/reanudar: ", error);
+				},
+				newSimulation
+			);
+
+			setSimulation(newSimulation);
 			handleSetTime(newSimulation);
 		}
 	};

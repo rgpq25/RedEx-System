@@ -18,6 +18,7 @@ import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
 import { structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
+import ModalStopSimulation from "./_components/modal-stop-simulation";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -39,7 +40,12 @@ function SimulationPage() {
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
 	const [loadingMessages, setLoadingMessages] = useState<string[]>(["Cargando simulación"]);
 
+	const [isPaused, setIsPaused] = useState<boolean>(false);
+	const [isPauseLoading, setIsPauseLoading] = useState<boolean>(false);
+
 	const [isModalOpen, setIsModalOpen] = useState(true);
+	const [isStoppingModalOpen, setIsStoppingModalOpen] = useState(false);
+
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [envios, setEnvios] = useState<Envio[]>([]);
@@ -63,7 +69,6 @@ function SimulationPage() {
 
 	const onSimulationRegister = async (simulacion: Simulacion) => {
 		setIsSimulationLoading(true);
-		setSimulation(simulacion);
 
 		//Connect to the socket
 		const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}/websocket`);
@@ -75,18 +80,22 @@ function SimulationPage() {
 			console.log("Connected to WebSocket");
 			client.subscribe("/algoritmo/respuesta", (msg) => {
 				setIsSimulationLoading(false);
-				console.log(
-					"Comparando ids: ",
-					(JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id,
-					simulacion.id
-				);
 				if ((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
 
 				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
-				const simulation = data.simulacion;
-				setCurrentTime(simulation);
+				setSimulation((prev) => {
+					if (prev === undefined) {
+						console.log("Setting simulation");
+						return { ...data.simulacion };
+					} else {
+						console.log("Simulation already set, not updating it again.");
+						return prev;
+					}
+				});
+
+				setCurrentTime(data.simulacion);
 
 				const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
@@ -131,6 +140,11 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
+			<ModalStopSimulation
+				isOpen={isStoppingModalOpen}
+				setIsModalOpen={setIsStoppingModalOpen}
+				simulation={simulation}
+			/>
 			<MainContainer className="relative">
 				<MapHeader>
 					<BreadcrumbCustom items={breadcrumbItems} />
@@ -144,17 +158,39 @@ function SimulationPage() {
 					<PlaneLegend />
 					{simulation !== null && simulation !== undefined && (
 						<div className="flex items-center gap-1">
-							<Button size={"icon"}>
+							<Button size={"icon"} onClick={() => setIsStoppingModalOpen(true)}>
 								<CircleStop className="w-5 h-5" />
 							</Button>
 
-							<Button size={"icon"} onClick={pauseSimulation}>
-								<Pause className="w-5 h-5" />
-							</Button>
-
-							<Button size={"icon"} onClick={() => playSimulation(simulation, setSimulation)}>
-								<Play className="w-5 h-5" />
-							</Button>
+							{isPaused === true ? (
+								<Button
+									size={"icon"}
+									onClick={async () => {
+										setIsPauseLoading(true);
+										await playSimulation(simulation, setSimulation);
+										setIsPauseLoading(false);
+										setIsPaused(false);
+									}}
+									disabled={isPauseLoading}
+									isLoading={isPauseLoading}
+								>
+									<Play className="w-5 h-5" />
+								</Button>
+							) : (
+								<Button
+									size={"icon"}
+									onClick={async () => {
+										setIsPauseLoading(true);
+										await pauseSimulation(simulation);
+										setIsPauseLoading(false);
+										setIsPaused(true);
+									}}
+									disabled={isPauseLoading}
+									isLoading={isPauseLoading}
+								>
+									<Pause className="w-5 h-5" />
+								</Button>
+							)}
 						</div>
 					)}
 				</div>
