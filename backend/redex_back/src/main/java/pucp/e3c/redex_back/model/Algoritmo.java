@@ -512,19 +512,16 @@ public class Algoritmo {
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate, tipoOperacion);
             i++;
-            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
-            // Imprimir ocupacionVuelos ordenado por sus claves
 
-            // printRutasAlgoritmo(respuestaAlgoritmo.getPlanesRutas(), paquetesProcesar,
-            // i);
             // Guardar resultados
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
+
+            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
-            // HashMap<Integer, Integer> hash = printPaquetes(paquetes, planRutas, i,
-            // vueloService);
-            // printOcupacion(hash, ocupacionVuelos, i);
+
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -555,6 +552,7 @@ public class Algoritmo {
             System.out.println("Guardando en el archivo " + "planRutas" + i + " .txt");
             BufferedWriter bw = new BufferedWriter(fw);
             int idx = 0;
+
             for (PlanRutaNT planRutaNT : planRutas) {
                 try {
                     bw.write("Para el paquete: " + paquetes.get(idx).getId());
@@ -948,7 +946,6 @@ public class Algoritmo {
                 planVuelos,
                 paquetes,
                 planRutaNTs,
-
                 ocupacionVuelos);
 
         sa.setParameters(

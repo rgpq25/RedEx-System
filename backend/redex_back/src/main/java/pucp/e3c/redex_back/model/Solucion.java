@@ -92,7 +92,10 @@ public class Solucion {
                             vueloService);
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
-                    if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
+                    if (copiedRutas.get(i).getVuelos().size() > 0) {
+                        this.rutas.add(copiedRutas.get(i));
+                        break;
+                    } else if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
                             && this.isRouteFlightsCapacityAvailable(randomRoute) == true) {
                         this.rutas.add(randomRoute);
                         this.ocupyRouteFlights(randomRoute);
@@ -107,20 +110,6 @@ public class Solucion {
                     }
                 }
 
-            }
-            // if(this.isAirportCapacityAvailable() == true){
-            int h = 0;
-            for (PlanRutaNT planRutaNT : copiedRutas) {
-                if (planRutaNT.getVuelos().size() > 0) {
-                    // System.out.println(
-                    // "Habia una ruta previa en " + h + " con " + planRutaNT.getVuelos().size() + "
-                    // vuelos");
-                    this.deocupyRouteFlights(this.rutas.get(h));
-                    this.rutas.set(h, planRutaNT);
-                } else {
-                    // System.out.println("No haba ruta previa en posicion " + h);
-                }
-                h++;
             }
 
             return;

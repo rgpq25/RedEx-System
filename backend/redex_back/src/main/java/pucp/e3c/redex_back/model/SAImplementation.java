@@ -236,7 +236,8 @@ public class SAImplementation {
                         // Funciones.printLineInLog("");
                         // Funciones.printLineInLog("");
 
-                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal.txt");
+                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal" +
+                        // iteracion + ".txt");
                         // current.printFlightOcupation("ocupacionVuelos.txt");
                         current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
 

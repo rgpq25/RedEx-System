@@ -41,7 +41,6 @@ public class Funciones {
     @Autowired
     ResourceLoader resourceLoader;
 
-
     public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
@@ -75,7 +74,7 @@ public class Funciones {
                 Date fecha_recepcion = paquetes.get(i).getEnvio().getFechaRecepcion();
                 Date fecha_maxima = paquetes.get(i).getEnvio().getFechaLimiteEntrega();
                 out.println(
-                        "Paquete " + (i + 1) + " - " + origen_paquete + "-" + destino_paquete + "  |  "
+                        "Paquete " + paquetes.get(i).getId() + " - " + origen_paquete + "-" + destino_paquete + "  |  "
                                 + Funciones.getFormattedDate(fecha_recepcion) + " => "
                                 + Funciones.getFormattedDate(fecha_maxima));
                 for (int j = 0; j < rutas.get(i).length(); j++) {
@@ -257,7 +256,8 @@ public class Funciones {
         return ubicacionMap;
     }
 
-    public ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap) throws IOException {
+    public ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap)
+            throws IOException {
         ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
         Resource resource = resourceLoader.getResource("classpath:static/aeropuertos.csv");
         InputStream input = resource.getInputStream();
@@ -281,7 +281,8 @@ public class Funciones {
         return aeropuertos_list;
     }
 
-    public void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos, SimulacionService simulacionService, EnvioService envioService) throws IOException { 
+    public void inicializaPaquetesSimulacion(ArrayList<Aeropuerto> aeropuertos, SimulacionService simulacionService,
+            EnvioService envioService) throws IOException {
         LocalDate hoy = LocalDate.of(2024, 1, 3);
         LocalDateTime fecha = hoy.atTime(6, 0, 0);
         Date fechaDate = java.sql.Timestamp.valueOf(fecha);
@@ -302,7 +303,7 @@ public class Funciones {
             for (Aeropuerto aeropuerto : aeropuertos) {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
-        
+
             while ((line = reader.readLine()) != null) {
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
                 registrarEnvio.setCodigo(line);
@@ -316,7 +317,7 @@ public class Funciones {
             System.out.println("Se generaron " + totalPaquetes + " paquetes para simulacion.");
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
-        }        
+        }
     }
 
     public static String formatearFecha(Date fecha) {
@@ -362,7 +363,7 @@ public class Funciones {
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
         envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        //envio.setCodigoSeguridad(parts[0].trim());
+        // envio.setCodigoSeguridad(parts[0].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;
@@ -430,47 +431,50 @@ public class Funciones {
         }
     }
 
-    public ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath) throws IOException {
+    public ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath)
+            throws IOException {
         // Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
         Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo.txt");
         ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
         InputStream input = resource.getInputStream();
 
-        /*try {
-            File file = resource.getFile();
-            Scanner scanner = new Scanner(file);
-            // delimiter must be EOL
-            scanner.useDelimiter("\n");
-
-            int id = 1;
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                String[] parts = line.split("-");
-
-                PlanVuelo planVuelo = new PlanVuelo();
-                planVuelo.setId(id);
-                planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
-                planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
-                planVuelo.setCapacidadMaxima(Integer.parseInt(parts[4].trim()));
-                planVuelo.setHoraCiudadOrigen(parts[2].trim());
-                planVuelo.setHoraCiudadDestino(parts[3].trim());
-
-                vuelos_list.add(planVuelo);
-                id++;
-            }
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
-            e.printStackTrace();
-        }
-        return vuelos_list;*/
+        /*
+         * try {
+         * File file = resource.getFile();
+         * Scanner scanner = new Scanner(file);
+         * // delimiter must be EOL
+         * scanner.useDelimiter("\n");
+         * 
+         * int id = 1;
+         * while (scanner.hasNextLine()) {
+         * String line = scanner.nextLine();
+         * String[] parts = line.split("-");
+         * 
+         * PlanVuelo planVuelo = new PlanVuelo();
+         * planVuelo.setId(id);
+         * planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
+         * planVuelo.setCiudadDestino(ubicacionMap.get(parts[1].trim()));
+         * planVuelo.setCapacidadMaxima(Integer.parseInt(parts[4].trim()));
+         * planVuelo.setHoraCiudadOrigen(parts[2].trim());
+         * planVuelo.setHoraCiudadDestino(parts[3].trim());
+         * 
+         * vuelos_list.add(planVuelo);
+         * id++;
+         * }
+         * scanner.close();
+         * } catch (FileNotFoundException e) {
+         * System.out.println("File not found.");
+         * e.printStackTrace();
+         * }
+         * return vuelos_list;
+         */
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
             int id = 1;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("-");
-    
+
                 PlanVuelo planVuelo = new PlanVuelo();
                 planVuelo.setId(id);
                 planVuelo.setCiudadOrigen(ubicacionMap.get(parts[0].trim()));
@@ -478,7 +482,7 @@ public class Funciones {
                 planVuelo.setCapacidadMaxima(Integer.parseInt(parts[4].trim()));
                 planVuelo.setHoraCiudadOrigen(parts[2].trim());
                 planVuelo.setHoraCiudadDestino(parts[3].trim());
-    
+
                 vuelos_list.add(planVuelo);
                 id++;
             }
@@ -486,7 +490,7 @@ public class Funciones {
             System.out.println("Error reading file: " + e.getMessage());
             e.printStackTrace();
         }
-    
+
         return vuelos_list;
     }
 
