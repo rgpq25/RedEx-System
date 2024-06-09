@@ -141,11 +141,12 @@ public class SimulacionController {
 
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         // Registrar una nueva simulacion
-        //LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID"  + simulacion.getId());
-        //simulacion.setId(0);
+        // LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion -
+        // Simulacion ID" + simulacion.getId());
+        // simulacion.setId(0);
         simulacion.setMilisegundosPausados(0);
         simulacion = simulacionService.register(simulacion);
-        LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID"  + simulacion.getId());
+        LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID" + simulacion.getId());
 
         Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
         InputStream input1 = resource.getInputStream();
@@ -160,7 +161,7 @@ public class SimulacionController {
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
-                //System.out.println("LINE: " + line);
+                // System.out.println("LINE: " + line);
             }
 
             HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
@@ -271,12 +272,15 @@ public class SimulacionController {
 
     @GetMapping("/runAlgorithm/{id}")
     public Simulacion correrSimulacion(@PathVariable("id") int id) {
+        Simulacion simulacion = simulacionService.get(id);
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
-        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id);
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id).stream()
+                .filter(paquete -> paquete.getFechaRecepcion().after(simulacion.getFechaInicioSim()))
+                .collect(Collectors.toList());
+        ;
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
         // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
 
-        Simulacion simulacion = simulacionService.get(id);
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                     vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
@@ -289,7 +293,7 @@ public class SimulacionController {
     }
 
     @GetMapping("/obtenerFechaSimulada/{id}")
-    public Date obtenerFechaSimulada(@PathVariable("id") int id){
+    public Date obtenerFechaSimulada(@PathVariable("id") int id) {
         Simulacion simulacion = simulacionService.get(id);
         long tiempoActual = new Date().getTime();
         long inicioSistema = simulacion.getFechaInicioSistema().getTime();
@@ -302,7 +306,7 @@ public class SimulacionController {
     }
 
     @GetMapping("/obtenerPaquetesSimulacionEnCurso")
-    public ResponseEntity<List<Paquete>> obtenerPaquetesSimulacionEnCurso(){
+    public ResponseEntity<List<Paquete>> obtenerPaquetesSimulacionEnCurso() {
         List<Paquete> paquetes = algoritmo.getRespuesta_paquetes_simulacion();
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }

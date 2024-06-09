@@ -78,6 +78,7 @@ public class Solucion {
             }
         }
         this.rutas.clear();
+
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
 
@@ -91,7 +92,10 @@ public class Solucion {
                             vueloService);
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
-                    if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
+                    if (copiedRutas.get(i).getVuelos().size() > 0) {
+                        this.rutas.add(copiedRutas.get(i));
+                        break;
+                    } else if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
                             && this.isRouteFlightsCapacityAvailable(randomRoute) == true) {
                         this.rutas.add(randomRoute);
                         this.ocupyRouteFlights(randomRoute);
@@ -107,37 +111,12 @@ public class Solucion {
                 }
 
             }
-            // if(this.isAirportCapacityAvailable() == true){
-            int h = 0;
-            for (PlanRutaNT planRutaNT : copiedRutas) {
-                if (planRutaNT.getVuelos().size() > 0) {
-                    // System.out.println(
-                    // "Habia una ruta previa en " + h + " con " + planRutaNT.getVuelos().size() + "
-                    // vuelos");
-                    this.rutas.set(h, planRutaNT);
-                } else {
-                    // System.out.println("No haba ruta previa en posicion " + h);
-                }
-                h++;
-            }
-            HashMap<Integer, Integer> nuevoHash = new HashMap<>();
 
-            for (int i = 0; i < paquetes.size(); i++) {
-                for (Vuelo vuelo : this.rutas.get(i).getVuelos()) {
-                    if (nuevoHash.get(vuelo.getId()) == null) {
-                        nuevoHash.put(vuelo.getId(), 1);
-                    } else {
-                        nuevoHash.put(vuelo.getId(), nuevoHash.get(vuelo.getId()) + 1);
-                    }
-                }
-            }
-            this.ocupacionVuelos = nuevoHash;
             return;
             // } else {
             // this.rutas.clear();
             // t
 
-            
         }
 
         throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");

@@ -70,7 +70,11 @@ public class EstadoAlmacen {
                 sumaAcumulada += entrada.getValue();
                 // Actualizar el TreeMap con el valor acumulado
                 capacidad.put(entrada.getKey(), sumaAcumulada);
+                if (sumaAcumulada < 0) {
+                    throw new IllegalArgumentException("sumaAcumulada cannot be negative");
+                }
             }
+
         }
     }
 

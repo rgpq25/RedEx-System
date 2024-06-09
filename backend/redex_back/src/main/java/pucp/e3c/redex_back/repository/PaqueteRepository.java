@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import pucp.e3c.redex_back.model.Paquete;
+import pucp.e3c.redex_back.model.Vuelo;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -35,4 +37,8 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
 
     @Query("SELECT p FROM Paquete p WHERE p.simulacionActual IS NULL")
     public ArrayList<Paquete> findPaquetesOperacionesDiaDia();
+
+    // AND (p.fechaDeEntrega > :fechaCorte OR p.fechaDeEntrega IS NULL)
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte ")
+    public ArrayList<Paquete> findPaqueteSimulacionFechaCorte(int idSimulacion, Date fechaCorte);
 }
