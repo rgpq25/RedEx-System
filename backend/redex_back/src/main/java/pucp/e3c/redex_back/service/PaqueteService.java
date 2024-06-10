@@ -198,6 +198,18 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaqueteSimulacionFechaCorte(int idSimulacion, Date fechaCorte) {
+        // return
+        // paqueteRepository.findPaquetesWithoutPlanRutaSimulacion(idUbicacionOrigen,
+        // idSimulacion, fechaCorte);
+        try {
+            return paqueteRepository.findPaqueteSimulacionFechaCorte(idSimulacion, fechaCorte);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
     public ArrayList<Paquete> findPaquetesSinSimulacionYNoEntregados() {
         try {
             return paqueteRepository.findPaquetesSinSimulacionYNoEntregados();
@@ -216,7 +228,7 @@ public class PaqueteService {
         }
     }
 
-    public ArrayList<Paquete> findPaquetesOperacionesDiaDia(){
+    public ArrayList<Paquete> findPaquetesOperacionesDiaDia() {
         try {
             return paqueteRepository.findPaquetesOperacionesDiaDia();
         } catch (Exception e) {

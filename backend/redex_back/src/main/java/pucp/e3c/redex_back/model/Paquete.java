@@ -1,6 +1,7 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,8 +29,8 @@ public class Paquete {
     private boolean entregado;
     @Column(nullable = true)
     private Date fechaDeEntrega;
-    //@Column(nullable = true)
-    private String estado; //en almacen origen, volando, en espera , en almacen destino, entregado
+    // @Column(nullable = true)
+    private String estado; // en almacen origen, volando, en espera , en almacen destino, entregado
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_envio", referencedColumnName = "id")
@@ -154,7 +155,13 @@ public class Paquete {
     }
 
     public String toString() {
-        return "Paquete: id" + id + " - " + envio.toString();
+        return "Paquete: (ID) " + id + " - (ENVIO) " + envio.toString();
+        // return all atributtes of paquete
+        // return "Paquete: (ID)" + id + " - (enAeropuerto) " + enAeropuerto + " -
+        // (entregado) " + entregado + " - (fechaDeEntrega) " + fechaDeEntrega + " -
+        // (estado) " + estado + " - (simulacionActual) " + simulacionActual + " -
+        // (planRutaActual)" + planRutaActual.toString() + " - (ENVIO) " +
+        // envio.toString() + " - (AEROPUERTO) " + aeropuertoActual.toString();
     }
 
     public Simulacion getSimulacionActual() {
@@ -181,6 +188,19 @@ public class Paquete {
         this.estado = estado;
     }
 
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Paquete paquete = (Paquete) obj;
+        return id == paquete.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }

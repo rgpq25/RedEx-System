@@ -3,15 +3,25 @@ package pucp.e3c.redex_back;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -72,22 +82,24 @@ public class DataInitializer {
     @Autowired
     private EnvioService envioService;
 
+    @Autowired
+    ResourceLoader resourceLoader;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataInitializer.class);
+
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
     private void inicializaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
             ArrayList<PlanVuelo> planVuelos) {
-        LocalDate today = LocalDate.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        // Sumar 3 días a la fecha de hoy
-        LocalDate startDate = today.plusDays(0);// 1
-        LocalDate endDate = today.plusDays(0);// 3
+        ZonedDateTime startDate = now.minusHours(3);
 
-        // Formatear las fechas como strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startPackagesDate = startDate.atStartOfDay().format(formatter);
-        String endPackagesDate = endDate.atTime(14, 59, 59).format(formatter);
+        String startPackagesDate = startDate.format(formatter);
+        String endPackagesDate = now.format(formatter);
 
         ArrayList<Paquete> paquetes = Funciones.generarPaquetes(
                 500,
@@ -112,11 +124,59 @@ public class DataInitializer {
         }
     }
 
+    private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
+    ArrayList<PlanVuelo> planVuelos, int nEnvios) throws IOException{
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+
+        ZonedDateTime startDate = now.minusHours(1);
+
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
+        InputStream input1 = resource.getInputStream();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
+            List<String> lines = reader.lines().collect(Collectors.toList());
+
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            for (String line : lines) {
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(null);
+                registrarEnvios.add(registrarEnvio);
+                // System.out.println("LINE: " + line);
+            }
+
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+
+            //LOGGER.info("Fecha inicio " + Date.from(startDate.toInstant()));
+            //LOGGER.info("Fecha fin " + Date.from(now.toInstant()));
+            ArrayList<Envio> envios = envioService.registerAllByStringEspInicioFijo(registrarEnvios, aeropuertoMap,
+                    Date.from(startDate.toInstant()), Date.from(now.toInstant()), nEnvios);
+
+            // Filtrar envios
+            LOGGER.info("Cantidad de envios ANTES: " + envios.size());
+            Date fechaMinima =  Date.from(startDate.toInstant());
+            envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+            LOGGER.info("Cantidad de envios DESPUES: " + envios.size());
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            LOGGER.info("DATA INIT || Se generaron " + totalPaquetes + " paquetes.");
+            //System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+            LOGGER.error("Error al leer el archivo: " + e.getMessage());
+        }
+    }
+
     @PostConstruct
     public void initData() throws IOException {
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
-        //String inputPath = "/home/inf226.981.3c/resources";
+        // String inputPath = "/home/inf226.981.3c/resources";
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
@@ -174,15 +234,16 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
-            inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+            //inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); //100,250,500
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
         if (inicializar_paquetes_operaciones_simulacion) {
-            funciones.inicializaPaquetesSimulacion(aeropuertos,simulacionService,envioService);
-            //System.out.println("Lei paquetes sim");
+            funciones.inicializaPaquetesSimulacion(aeropuertos, simulacionService, envioService);
+            // System.out.println("Lei paquetes sim");
         }
 
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
@@ -192,10 +253,9 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    120, 80);
+                    300, 80);
         });
 
     }
 
-   
 }
