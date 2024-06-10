@@ -44,7 +44,9 @@ public class Algoritmo {
 
     private boolean terminarPlanificacionDiaDia;
 
-    private List<Paquete> respuesta_paquetes_simulacion;
+    //private List<Paquete> respuesta_paquetes_simulacion;
+    //HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+    private HashMap<Integer,List<Paquete>> paquetes_por_simulacion;
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
@@ -52,8 +54,8 @@ public class Algoritmo {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
-        this.respuesta_paquetes_simulacion = new ArrayList<>();
         this.respuesta_paquetes_dia_dia = new ArrayList<>();
+        this.paquetes_por_simulacion = new HashMap<>();
     }
 
     public boolean isTerminarPlanificacionDiaDia() {
@@ -329,10 +331,11 @@ public class Algoritmo {
     }
 
     private boolean inicializarLoop(ArrayList<Paquete> paquetes, Date fechaMinima, ArrayList<PlanRutaNT> planRutas,
-            ArrayList<PlanVuelo> planVuelos, GrafoVuelos grafoVuelos, String tipoOperacion) {
+            ArrayList<PlanVuelo> planVuelos, GrafoVuelos grafoVuelos, String tipoOperacion, Simulacion simulacion) {
         paquetes.removeIf(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaMinima));
 
-        messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
+        messagingTemplate.convertAndSend("/algoritmo/estado", 
+        new RespuestaAlgoritmoEstado("Iniciando loop principal", simulacion));
         LOGGER.info(tipoOperacion + "Iniciando loop principal de simulacion");
 
         for (int i = 0; i < paquetes.size(); i++) {
@@ -343,20 +346,23 @@ public class Algoritmo {
         if (paquetes.size() == 0) {
             // System.out.println("ERROR: No hay paquetes para procesar.");
             LOGGER.error(tipoOperacion + " ERROR: No hay paquetes para procesar.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, sin paquetes");
+            messagingTemplate.convertAndSend("/algoritmo/estado", 
+            new RespuestaAlgoritmoEstado("Detenido, sin paquetes", simulacion));
             return false;
         }
         if (planVuelos.size() == 0) {
             // System.out.println("ERROR: No hay planes de vuelo para procesar.");
             LOGGER.error(tipoOperacion + " ERROR: No hay planes de vuelo para procesar.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, sin planes vuelo");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Detenido, sin planes vuelo", simulacion) );
             return false;
         }
 
         if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
             // System.out.println("ERROR: No se generaron vuelos.");
             LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en generar vuelos");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Detenido, error en generar vuelos", simulacion)  );
             return false;
         }
         return true;
@@ -364,7 +370,7 @@ public class Algoritmo {
 
     private void enviarRespuestaVacia(Date tiempoEnSimulacion, Simulacion simulacion, String tipoOperacion) {
         messagingTemplate.convertAndSend("/algoritmo/estado",
-                "No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
+        new RespuestaAlgoritmoEstado("No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando", simulacion));
         LOGGER.info(tipoOperacion + " No hay paquetes para la planificacion actual en " + tiempoEnSimulacion
                 + ", esperando");
         // System.out.println("No hay paquetes para la planificacion actual en " +
@@ -395,7 +401,7 @@ public class Algoritmo {
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
         boolean primera_iter = true;
         // Inicializar simulacion
-        boolean iniciar = inicializarLoop(paquetes, fechaMinima, planRutas, planVuelos, grafoVuelos, tipoOperacion);
+        boolean iniciar = inicializarLoop(paquetes, fechaMinima, planRutas, planVuelos, grafoVuelos, tipoOperacion,simulacion);
 
         while (iniciar) {
             simulacion = simulacionService.get(simulacion.getId());
@@ -405,7 +411,8 @@ public class Algoritmo {
             if (simulacion.estado == 1) {
                 // System.out.println("Simulacion terminada");
                 LOGGER.info(tipoOperacion + " Simulacion terminada");
-                messagingTemplate.convertAndSend("/algoritmo/estado", "Simulacion terminada");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                new RespuestaAlgoritmoEstado("Simulacion terminada", simulacion) );
                 break;
             }
 
@@ -454,7 +461,8 @@ public class Algoritmo {
             fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
@@ -464,11 +472,16 @@ public class Algoritmo {
             List<Paquete> paquetesRest = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || p.getFechaDeEntrega().after(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
-            this.respuesta_paquetes_simulacion = paquetes.stream()
+            /*this.respuesta_paquetes_simulacion = paquetes.stream()
                     .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
                             && (p.getFechaDeEntrega() == null
                                     || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
+            this.paquetes_por_simulacion.put(simulacion.getId(),paquetes.stream()
+            .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
+                    && (p.getFechaDeEntrega() == null
+                            || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
+            .collect(Collectors.toList()));
 
             if (tamanhoPaquetes == 0) {
                 if (primera_iter) {
@@ -483,7 +496,8 @@ public class Algoritmo {
             }
 
             if (paquetesRest.size() == 0) {
-                messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                new RespuestaAlgoritmoEstado("No hay mas paquetes, terminando", simulacion) );
                 LOGGER.info(tipoOperacion + " No hay mas paquetes, terminando");
                 simulacion.setEstado(1);
                 simulacionService.update(simulacion);
@@ -737,7 +751,7 @@ public class Algoritmo {
         messagingTemplate.convertAndSend(canal, respuestaAlgoritmo);
         System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
         messagingTemplate.convertAndSend("/algoritmo/estado",
-                "Planificacion terminada hasta " + fechaLimiteCalculo);
+                new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + fechaLimiteCalculo, simulacion) );
 
         System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
     }
@@ -975,12 +989,18 @@ public class Algoritmo {
         return ultimaRespuestaOperacionDiaDia;
     }
 
-    public List<Paquete> getRespuesta_paquetes_simulacion() {
-        return respuesta_paquetes_simulacion;
+    
+
+    public HashMap<Integer, List<Paquete>> getPaquetes_por_simulacion() {
+        return paquetes_por_simulacion;
     }
 
-    public void setRespuesta_paquetes_simulacion(List<Paquete> respuesta_paquetes_simulacion) {
-        this.respuesta_paquetes_simulacion = respuesta_paquetes_simulacion;
+    public List<Paquete> obtener_paquetes_simulacion(Integer id_simulacion) {
+        return paquetes_por_simulacion.get(id_simulacion);
+    }
+
+    public void setPaquetes_por_simulacion(HashMap<Integer, List<Paquete>> paquetes_por_simulacion) {
+        this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
     public List<Paquete> getRespuesta_paquetes_dia_dia() {
