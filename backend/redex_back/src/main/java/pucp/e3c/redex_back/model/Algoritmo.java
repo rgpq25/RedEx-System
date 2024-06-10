@@ -260,6 +260,7 @@ public class Algoritmo {
                     "Planificacion terminada hasta " + now);
 
             long end = System.currentTimeMillis();
+            LOGGER.info(tipoOperacion + "|| Planificacion terminada en " + (end - start) + " milisegundos");
             long sa_millis = SA * 1000 - (end - start);
             if (sa_millis < 0)
                 continue;
@@ -951,7 +952,7 @@ public class Algoritmo {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
-        int neighbourCount = 2;
+        int neighbourCount = 0;
         int windowSize = tamanhoPaquetes / 5;
         boolean stopWhenNoPackagesLeft = true;
 

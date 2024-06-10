@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -83,6 +85,8 @@ public class DataInitializer {
     @Autowired
     ResourceLoader resourceLoader;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataInitializer.class);
+
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
@@ -120,23 +124,18 @@ public class DataInitializer {
         }
     }
 
-    /*private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
-    ArrayList<PlanVuelo> planVuelos, int nPaquetes){
+    private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
+    ArrayList<PlanVuelo> planVuelos, int nEnvios) throws IOException{
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
         ZonedDateTime startDate = now.minusHours(3);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startPackagesDate = startDate.format(formatter);
-        String endPackagesDate = now.format(formatter);
 
         Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
         InputStream input1 = resource.getInputStream();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            int cantidadEnvios = lines.size();
 
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             for (String line : lines) {
@@ -151,25 +150,27 @@ public class DataInitializer {
             for (Aeropuerto aeropuerto : aeropuertos) {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
-            // int cantidadEnvios = (int)
-            // Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt")).count();
-            int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
-                    : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;
 
+            //LOGGER.info("Fecha inicio " + Date.from(startDate.toInstant()));
+            //LOGGER.info("Fecha fin " + Date.from(now.toInstant()));
             ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
-                    simulacion.getFechaInicioSim(), simulacion.getFechaFinSim(), nuevaCantidad);
+                    Date.from(startDate.toInstant()), Date.from(now.toInstant()), nEnvios);
 
             // Filtrar envios
-            Date fechaMinima = simulacion.getFechaInicioSim();
-            envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+            //LOGGER.info("Cantidad de envios ANTES: " + envios.size());
+            Date fechaMinima =  Date.from(startDate.toInstant());
+            //envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+            //LOGGER.info("Cantidad de envios DESPUES: " + envios.size());
             int totalPaquetes = envios.stream()
                     .mapToInt(envio -> envio.getCantidadPaquetes())
                     .sum();
-            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+            LOGGER.info("DATA INIT || Se generaron " + totalPaquetes + " paquetes.");
+            //System.out.println("Se generaron " + totalPaquetes + " paquetes.");
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
+            LOGGER.error("Error al leer el archivo: " + e.getMessage());
         }
-    }*/
+    }
 
     @PostConstruct
     public void initData() throws IOException {
@@ -233,9 +234,10 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = false;
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
         if (inicializar_paquetes_operaciones_dia_dia) {
-            inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+            //inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); //100,250,500
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
