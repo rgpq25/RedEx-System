@@ -56,7 +56,9 @@ public class EstadoAlmacen {
             registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFechaLlegada(), capacidades.get(IdVuelo));
         }
         for (int i = 0; i < paquetes.size(); i++) {
-
+            if (plan.get(i).getVuelos().size() == 0) {
+                continue;
+            }
             String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
             String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
 
@@ -70,7 +72,12 @@ public class EstadoAlmacen {
                 sumaAcumulada += entrada.getValue();
                 // Actualizar el TreeMap con el valor acumulado
                 capacidad.put(entrada.getKey(), sumaAcumulada);
+                if (sumaAcumulada < 0) {
+                    // throw new IllegalArgumentException("sumaAcumulada cannot be negative");
+                    // System.out.println("Suma acumulada cannot be negative");
+                }
             }
+
         }
     }
 

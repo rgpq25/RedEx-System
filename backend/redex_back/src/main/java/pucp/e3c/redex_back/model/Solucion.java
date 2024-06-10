@@ -65,7 +65,8 @@ public class Solucion {
         this.grafoVuelos = grafoVuelos;
     }
 
-    public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService) {
+    public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService,
+            Date tiempoEnSimulacion) {
         // We do 5 attempts to try to initialize the solution
         ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
         for (int idx = 0; idx < this.paquetes.size(); idx++) {
@@ -78,6 +79,7 @@ public class Solucion {
             }
         }
         this.rutas.clear();
+
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
 
@@ -88,10 +90,13 @@ public class Solucion {
                     ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                     tempPaquetesArray.add(paquetes.get(i));
                     ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                            vueloService);
+                            vueloService, tiempoEnSimulacion);
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
-                    if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
+                    if (copiedRutas.get(i).getVuelos().size() > 0) {
+                        this.rutas.add(copiedRutas.get(i));
+                        break;
+                    } else if (this.isCurrentRouteValid(paquetes.get(i), randomRoute) == true
                             && this.isRouteFlightsCapacityAvailable(randomRoute) == true) {
                         this.rutas.add(randomRoute);
                         this.ocupyRouteFlights(randomRoute);
@@ -107,37 +112,12 @@ public class Solucion {
                 }
 
             }
-            // if(this.isAirportCapacityAvailable() == true){
-            int h = 0;
-            for (PlanRutaNT planRutaNT : copiedRutas) {
-                if (planRutaNT.getVuelos().size() > 0) {
-                    // System.out.println(
-                    // "Habia una ruta previa en " + h + " con " + planRutaNT.getVuelos().size() + "
-                    // vuelos");
-                    this.rutas.set(h, planRutaNT);
-                } else {
-                    // System.out.println("No haba ruta previa en posicion " + h);
-                }
-                h++;
-            }
-            HashMap<Integer, Integer> nuevoHash = new HashMap<>();
 
-            for (int i = 0; i < paquetes.size(); i++) {
-                for (Vuelo vuelo : this.rutas.get(i).getVuelos()) {
-                    if (nuevoHash.get(vuelo.getId()) == null) {
-                        nuevoHash.put(vuelo.getId(), 1);
-                    } else {
-                        nuevoHash.put(vuelo.getId(), nuevoHash.get(vuelo.getId()) + 1);
-                    }
-                }
-            }
-            this.ocupacionVuelos = nuevoHash;
             return;
             // } else {
             // this.rutas.clear();
             // t
 
-            
         }
 
         throw new Error("Se excedio la capacidad maxima de los aeropuertos en inicializacion");
@@ -155,7 +135,7 @@ public class Solucion {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(paquetes.get(i));
                 ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                        vueloService);
+                        vueloService, null);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // this.rutas.add(av_rutas.get(i));
@@ -180,7 +160,7 @@ public class Solucion {
 
     }
 
-    public Solucion generateNeighbour(int windowSize, VueloService vueloService) {
+    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion) {
 
         Solucion neighbour = new Solucion(
                 new ArrayList<>(this.paquetes),
@@ -222,7 +202,7 @@ public class Solucion {
                 tempPaquetesArray.add(randomPackages.get(j));
 
                 ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                        vueloService);
+                        vueloService, tiempoEnSimulacion);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // check if origin and destiny is different
