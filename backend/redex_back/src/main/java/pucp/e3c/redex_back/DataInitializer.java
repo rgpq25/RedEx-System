@@ -3,6 +3,8 @@ package pucp.e3c.redex_back;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,9 +13,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -74,6 +80,9 @@ public class DataInitializer {
     @Autowired
     private EnvioService envioService;
 
+    @Autowired
+    ResourceLoader resourceLoader;
+
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
@@ -110,6 +119,57 @@ public class DataInitializer {
             paqueteService.register(paquete);
         }
     }
+
+    /*private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
+    ArrayList<PlanVuelo> planVuelos, int nPaquetes){
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+
+        ZonedDateTime startDate = now.minusHours(3);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startPackagesDate = startDate.format(formatter);
+        String endPackagesDate = now.format(formatter);
+
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
+        InputStream input1 = resource.getInputStream();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
+            List<String> lines = reader.lines().collect(Collectors.toList());
+            int cantidadEnvios = lines.size();
+
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            for (String line : lines) {
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(null);
+                registrarEnvios.add(registrarEnvio);
+                // System.out.println("LINE: " + line);
+            }
+
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+            // int cantidadEnvios = (int)
+            // Files.lines(Paths.get("src\\main\\resources\\dataFija\\envios_semanal_V2.txt")).count();
+            int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
+                    : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;
+
+            ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
+                    simulacion.getFechaInicioSim(), simulacion.getFechaFinSim(), nuevaCantidad);
+
+            // Filtrar envios
+            Date fechaMinima = simulacion.getFechaInicioSim();
+            envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
+    }*/
 
     @PostConstruct
     public void initData() throws IOException {

@@ -44,7 +44,9 @@ public class Algoritmo {
 
     private boolean terminarPlanificacionDiaDia;
 
-    private List<Paquete> respuesta_paquetes_simulacion;
+    //private List<Paquete> respuesta_paquetes_simulacion;
+    //HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+    private HashMap<Integer,List<Paquete>> paquetes_por_simulacion;
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
@@ -52,8 +54,8 @@ public class Algoritmo {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
-        this.respuesta_paquetes_simulacion = new ArrayList<>();
         this.respuesta_paquetes_dia_dia = new ArrayList<>();
+        this.paquetes_por_simulacion = new HashMap<>();
     }
 
     public boolean isTerminarPlanificacionDiaDia() {
@@ -470,11 +472,16 @@ public class Algoritmo {
             List<Paquete> paquetesRest = paquetes.stream()
                     .filter(p -> p.getFechaDeEntrega() == null || p.getFechaDeEntrega().after(finalTiempoEnSimulacion))
                     .collect(Collectors.toList());
-            this.respuesta_paquetes_simulacion = paquetes.stream()
+            /*this.respuesta_paquetes_simulacion = paquetes.stream()
                     .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
                             && (p.getFechaDeEntrega() == null
                                     || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
+            this.paquetes_por_simulacion.put(simulacion.getId(),paquetes.stream()
+            .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
+                    && (p.getFechaDeEntrega() == null
+                            || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
+            .collect(Collectors.toList()));
 
             if (tamanhoPaquetes == 0) {
                 if (primera_iter) {
@@ -982,12 +989,18 @@ public class Algoritmo {
         return ultimaRespuestaOperacionDiaDia;
     }
 
-    public List<Paquete> getRespuesta_paquetes_simulacion() {
-        return respuesta_paquetes_simulacion;
+    
+
+    public HashMap<Integer, List<Paquete>> getPaquetes_por_simulacion() {
+        return paquetes_por_simulacion;
     }
 
-    public void setRespuesta_paquetes_simulacion(List<Paquete> respuesta_paquetes_simulacion) {
-        this.respuesta_paquetes_simulacion = respuesta_paquetes_simulacion;
+    public List<Paquete> obtener_paquetes_simulacion(Integer id_simulacion) {
+        return paquetes_por_simulacion.get(id_simulacion);
+    }
+
+    public void setPaquetes_por_simulacion(HashMap<Integer, List<Paquete>> paquetes_por_simulacion) {
+        this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
     public List<Paquete> getRespuesta_paquetes_dia_dia() {
