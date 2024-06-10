@@ -477,11 +477,19 @@ public class Algoritmo {
                             && (p.getFechaDeEntrega() == null
                                     || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
                     .collect(Collectors.toList());*/
-            this.paquetes_por_simulacion.put(simulacion.getId(),paquetes.stream()
+             List<Paquete> filteredPaquetes = paquetes.stream()
             .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
                     && (p.getFechaDeEntrega() == null
                             || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+            if(primera_iter){
+                this.paquetes_por_simulacion.put(simulacion.getId(),paquetesProcesar);
+            }
+            else{
+                this.paquetes_por_simulacion.put(simulacion.getId(),filteredPaquetes);
+            }
+            //this.paquetes_por_simulacion.put(simulacion.getId(),filteredPaquetes);
+            LOGGER.info(tipoOperacion + " Paquetes guardados en memoria: "+ this.paquetes_por_simulacion.get(simulacion.getId()).size());
 
             if (tamanhoPaquetes == 0) {
                 if (primera_iter) {
