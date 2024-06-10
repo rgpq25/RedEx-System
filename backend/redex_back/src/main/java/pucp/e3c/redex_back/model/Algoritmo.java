@@ -335,7 +335,8 @@ public class Algoritmo {
             PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
-        messagingTemplate.convertAndSend("/algoritmo/estado", "Iniciando loop principal");
+        messagingTemplate.convertAndSend("/algoritmo/estado", 
+        new RespuestaAlgoritmoEstado("Iniciando loop principal", simulacion));
         String tipoOperacion = "SIMULACION SEMANAL";
         LOGGER.info(tipoOperacion + "Iniciando loop principal de simulacion");
 
@@ -352,13 +353,15 @@ public class Algoritmo {
         if (paquetes.size() == 0) {
             //System.out.println("ERROR: No hay paquetes para procesar.");
             LOGGER.error(tipoOperacion + " ERROR: No hay paquetes para procesar.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, sin paquetes");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Detenido, sin paquetes", simulacion) );
             return null;
         }
         if (planVuelos.size() == 0) {
             //System.out.println("ERROR: No hay planes de vuelo para procesar.");
             LOGGER.error(tipoOperacion + " ERROR: No hay planes de vuelo para procesar.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, sin planes vuelo");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Detenido, sin planes vuelo", simulacion) );
             return null;
         }
 
@@ -367,7 +370,8 @@ public class Algoritmo {
         if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
             //System.out.println("ERROR: No se generaron vuelos.");
             LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Detenido, error en generar vuelos");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Detenido, error en generar vuelos", simulacion) );
             return null;
         }
 
@@ -385,7 +389,8 @@ public class Algoritmo {
             if (simulacion.estado == 1) {
                 //System.out.println("Simulacion terminada");
                 LOGGER.info(tipoOperacion + " Simulacion terminada");
-                messagingTemplate.convertAndSend("/algoritmo/estado", "Simulacion terminada");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                new RespuestaAlgoritmoEstado("Simulacion terminada", simulacion) );
                 break;
             }
 
@@ -433,7 +438,8 @@ public class Algoritmo {
 
             //System.out.println("Planificacion iniciada");
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
-            messagingTemplate.convertAndSend("/algoritmo/estado", "Planificacion iniciada");
+            messagingTemplate.convertAndSend("/algoritmo/estado",
+            new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
 
             // Filtrar paquetes a calcular
 
@@ -458,7 +464,7 @@ public class Algoritmo {
 
                 }
                 messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
+                new RespuestaAlgoritmoEstado("No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando", simulacion));
                 LOGGER.info(tipoOperacion + " No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
                 //System.out.println("No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando");
                 RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
@@ -474,7 +480,8 @@ public class Algoritmo {
             }
 
             if (paquetesRest.size() == 0) {
-                messagingTemplate.convertAndSend("/algoritmo/estado", "No hay mas paquetes, terminando");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                new RespuestaAlgoritmoEstado("No hay mas paquetes, terminando", simulacion) );
                 LOGGER.info(tipoOperacion + " No hay mas paquetes, terminando");
                 //System.out.println("No hay mas paquetes, terminando");
                 simulacion.setEstado(1);
@@ -726,7 +733,7 @@ public class Algoritmo {
         messagingTemplate.convertAndSend(canal, respuestaAlgoritmo);
         System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
         messagingTemplate.convertAndSend("/algoritmo/estado",
-                "Planificacion terminada hasta " + fechaLimiteCalculo);
+                new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + fechaLimiteCalculo, simulacion) );
 
         System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
     }
