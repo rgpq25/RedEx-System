@@ -369,6 +369,43 @@ public class Funciones {
         return envio;
     }
 
+    public static Envio stringToEnvioInicioFijo(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
+            AeropuertoRepository aeropuertoRepository, Date fecha_inicio) {
+        String[] parts = line.split("-");
+        Envio envio = new Envio();
+        String origenCode = parts[0].trim();
+        //String fechaRecibo = parts[2].trim();
+        //String horaRecibo = parts[3].trim() + ":00";
+        String[] destinoWithPackageCount = parts[4].trim().split(":");
+        String destinoCode = destinoWithPackageCount[0].trim();
+        int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
+
+        Ubicacion origen = ubicacionMap.get(origenCode);
+        Ubicacion destino = ubicacionMap.get(destinoCode);
+        /*String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
+                fechaRecibo.substring(4, 6) + "-" +
+                fechaRecibo.substring(6, 8);*/
+        //Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
+        //Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
+        //parse utc 0 to origin timezone
+        Date fecha_recepcion_GMTOrigin = convertTimeZone(fecha_inicio, "UTC", origen.getZonaHoraria());
+        Date fecha_recepcion_GMT0 = fecha_inicio;
+        Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
+                                                                                      // destino
+        Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino, destino.getZonaHoraria(),
+                "UTC");
+
+        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        envio.setCantidadPaquetes(cantidadPaquetes);
+        Random random = new Random();
+        int randomNumber = random.nextInt(900000) + 100000;
+        envio.setCodigoSeguridad(Integer.toString(randomNumber));
+        // envio.setCodigoSeguridad(parts[0].trim());
+        envio.setSimulacionActual(simulacion);
+
+        return envio;
+    }
+
     public static ArrayList<Paquete> generarPaquetes(int n, List<Aeropuerto> aeropuertos, Date fechaInicio,
             Date fechaFin) {
 

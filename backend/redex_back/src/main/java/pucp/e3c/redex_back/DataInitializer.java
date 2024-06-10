@@ -129,7 +129,7 @@ public class DataInitializer {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        ZonedDateTime startDate = now.minusHours(3);
+        ZonedDateTime startDate = now.minusHours(1);
 
         Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
         InputStream input1 = resource.getInputStream();
@@ -153,14 +153,14 @@ public class DataInitializer {
 
             //LOGGER.info("Fecha inicio " + Date.from(startDate.toInstant()));
             //LOGGER.info("Fecha fin " + Date.from(now.toInstant()));
-            ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
+            ArrayList<Envio> envios = envioService.registerAllByStringEspInicioFijo(registrarEnvios, aeropuertoMap,
                     Date.from(startDate.toInstant()), Date.from(now.toInstant()), nEnvios);
 
             // Filtrar envios
-            //LOGGER.info("Cantidad de envios ANTES: " + envios.size());
+            LOGGER.info("Cantidad de envios ANTES: " + envios.size());
             Date fechaMinima =  Date.from(startDate.toInstant());
-            //envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
-            //LOGGER.info("Cantidad de envios DESPUES: " + envios.size());
+            envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+            LOGGER.info("Cantidad de envios DESPUES: " + envios.size());
             int totalPaquetes = envios.stream()
                     .mapToInt(envio -> envio.getCantidadPaquetes())
                     .sum();
