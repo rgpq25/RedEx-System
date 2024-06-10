@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import pucp.e3c.redex_back.service.PlanRutaService;
+import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.VueloService;
 
 public class SAImplementation {
@@ -44,7 +46,7 @@ public class SAImplementation {
         private double sumaPaquetesWeight;
         private double sumaVuelosWeight;
         private double promedioPonderadoTiempoAeropuertoWeight;
-
+        private Date tiempoEnSimulacion;
         private static final Logger LOGGER = LoggerFactory.getLogger(SAImplementation.class);
 
         public SAImplementation() {
@@ -55,12 +57,14 @@ public class SAImplementation {
                         ArrayList<PlanVuelo> planVuelos,
                         ArrayList<Paquete> paquetes,
                         ArrayList<PlanRutaNT> planRutas,
-                        HashMap<Integer, Integer> ocupacionInicial) {
+                        HashMap<Integer, Integer> ocupacionInicial,
+                        Date tiempoEnSimulacion) {
                 this.aeropuertos = aeropuertos;
                 this.planVuelos = planVuelos;
                 this.paquetes = paquetes;
                 this.planRutas = planRutas;
                 this.ocupacionInicial = ocupacionInicial;
+                this.tiempoEnSimulacion = tiempoEnSimulacion;
         }
 
         public void setParameters(
@@ -89,6 +93,7 @@ public class SAImplementation {
         }
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
+                        SimulacionService simulacionService,
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
                         SimpMessagingTemplate messagingTemplate, String tipoOperacion) {
 
@@ -116,7 +121,7 @@ public class SAImplementation {
                                         grafoVuelos);
 
                         long startTimeInitialization = System.nanoTime();
-                        current.force_initialize(todasLasRutas, vueloService);
+                        current.force_initialize(todasLasRutas, vueloService, tiempoEnSimulacion);
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                         System.out.println("Finished solution initialization in "
                                         + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
@@ -131,10 +136,18 @@ public class SAImplementation {
 
                         while (temperature > 1) {
                                 // System.out.println("\nIteracion en loop\n");
+                                if (simulacionService != null) {
+                                        simulacion = simulacionService.get(simulacion.getId());
+                                        if (simulacion.getEstado() == 2) {
+                                                Thread.sleep(10);
+                                                continue;
+                                        }
+                                }
                                 ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
                                 for (int i = 0; i < neighbourCount; i++) {
                                         neighbours.add(
-                                                        current.generateNeighbour(windowSize, vueloService));
+                                                        current.generateNeighbour(windowSize, vueloService,
+                                                                        tiempoEnSimulacion));
                                         // System.out.println("Vecino generado");
                                 }
                                 // System.out.println("\nNeighbours iterados\n");
@@ -236,10 +249,9 @@ public class SAImplementation {
                         // Funciones.printLineInLog("");
                         // Funciones.printLineInLog("");
 
-                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "rutasFinal" +
-                        // iteracion + ".txt");
-                        // current.printFlightOcupation("ocupacionVuelos.txt");
-                        current.printAirportHistoricOcupation("ocupacionAeropuertos.txt");
+                        Funciones.printRutasTXT(current.paquetes, current.rutas, "paquetes" + iteracion + ".txt");
+                        current.printFlightOcupation("ocupacionVuelos" + iteracion + ".txt");
+                        current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion + ".txt");
 
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {

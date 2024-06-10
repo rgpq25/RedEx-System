@@ -219,7 +219,8 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar,
                     aeropuertos, planVuelos,
-                    tamanhoPaquetes, i, vueloService, planRutaService, null, messagingTemplate, tipoOperacion);
+                    tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
+                    tipoOperacion, null);
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
             respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
@@ -508,9 +509,8 @@ public class Algoritmo {
 
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    planesRutaActuales,
-                    aeropuertos, planVuelos,
-                    tamanhoPaquetes, i, vueloService, planRutaService, simulacion, messagingTemplate, tipoOperacion);
+                    planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
+                    simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion);
             i++;
 
             // Guardar resultados
@@ -519,9 +519,12 @@ public class Algoritmo {
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
 
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
-
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
 
+            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
+                    ocupacionVuelos,
+                    aeropuertos);
+            respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -920,8 +923,9 @@ public class Algoritmo {
     public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
             HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
-            VueloService vueloService, PlanRutaService planRutaService, Simulacion simulacion,
-            SimpMessagingTemplate messagingTemplate, String tipoOperacion) {
+            VueloService vueloService, PlanRutaService planRutaService, SimulacionService simulacionService,
+            Simulacion simulacion,
+            SimpMessagingTemplate messagingTemplate, String tipoOperacion, Date tiempoEnSimulacion) {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
@@ -946,7 +950,8 @@ public class Algoritmo {
                 planVuelos,
                 paquetes,
                 planRutaNTs,
-                ocupacionVuelos);
+                ocupacionVuelos,
+                tiempoEnSimulacion);
 
         sa.setParameters(
                 stopWhenNoPackagesLeft,
@@ -961,7 +966,8 @@ public class Algoritmo {
                 sumaVuelosWeight,
                 promedioPonderadoTiempoAeropuertoWeight);
 
-        return sa.startAlgorithm(grafoVuelos, vueloService, planRutaService, simulacion, iteracion, messagingTemplate,
+        return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
+                messagingTemplate,
                 tipoOperacion);
     }
 
