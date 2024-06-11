@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -133,7 +135,7 @@ public class SimulacionController {
 
     @PostMapping("/inicializarSimulacionCargaVariable/{carga}")
     public ResponseEntity<Simulacion> inicializarSimulacionCargaVariable(@RequestBody Simulacion simulacion,
-            @PathVariable("carga") String carga) throws IOException {
+            @PathVariable("carga") String carga) throws IOException, ParseException {
         if (!carga.equals("chica") && !carga.equals("media") && !carga.equals("grande")) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -154,6 +156,11 @@ public class SimulacionController {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
             int cantidadEnvios = lines.size();
+            // extrae la fecha de la primera linea
+            String primeraFechaStr = lines.get(0).split("-")[2];
+            // convertir el string a fecha
+            SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
+            Date primeraFecha = formato.parse(primeraFechaStr);
 
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             for (String line : lines) {
@@ -173,8 +180,8 @@ public class SimulacionController {
             int nuevaCantidad = (carga.equals("chica")) ? cantidadEnvios / 10
                     : (carga.equals("media")) ? cantidadEnvios / 2 : cantidadEnvios;
 
-            ArrayList<Envio> envios = envioService.registerAllByStringEsp(registrarEnvios, aeropuertoMap,
-                    simulacion.getFechaInicioSim(), simulacion.getFechaFinSim(), nuevaCantidad);
+            ArrayList<Envio> envios = envioService.registerAllByStringBloqueFecha(registrarEnvios, aeropuertoMap,
+                    simulacion.getFechaInicioSim(), primeraFecha, nuevaCantidad);
 
             // Filtrar envios
             Date fechaMinima = simulacion.getFechaInicioSim();
@@ -310,7 +317,5 @@ public class SimulacionController {
         List<Paquete> paquetes = algoritmo.obtener_paquetes_simulacion(id);
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
-
-    
 
 }
