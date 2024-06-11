@@ -170,6 +170,6 @@ export type HistoricoValores = {
 export type ChipColors = "gray" | "blue" | "yellow" | "purple" | "green" | "red";
 
 export type EstadoPaquete = {
-    descripcion: "En aeropuerto origen" | "En aeropuerto destino" | "En vuelo" | "En espera";
+    descripcion: "En aeropuerto origen" | "En aeropuerto destino" | "En vuelo" | "En espera" | "Entregado";
     color: ChipColors;
 };

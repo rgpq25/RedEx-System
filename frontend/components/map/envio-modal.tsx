@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Envio, EstadoAlmacen, EstadoPaquete, Paquete, PlanRuta, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, EstadoPaquete, Paquete, PlanRuta, Simulacion, Ubicacion, Vuelo } from "@/lib/types";
 import { ArrowUpDown, Eye, Loader2 } from "lucide-react";
 import { EnvioTable } from "./envio-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -9,14 +9,14 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import Chip from "../ui/chip";
 
-function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date) {
+function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
 	const vuelo = planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime);
 
 	if (vuelo !== undefined) {
 		return (
 			<>
 				<p>{vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais}</p>
-				<Button size="icon" className="w-7 h-7" variant="outline">
+				<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => lockToFlight(vuelo)}>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -26,7 +26,7 @@ function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date) {
 	}
 }
 
-function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
+function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUbicacion: (ubicacion: Ubicacion) => void) {
 	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime) !== undefined) {
 		return <p>---</p>;
 	}
@@ -35,7 +35,7 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
 		return (
 			<>
 				<p>{planRutaVuelos[0].planVuelo.ciudadOrigen.pais}</p>
-				<Button size="icon" className="w-7 h-7" variant="outline">
+				<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => zoomToUbicacion(planRutaVuelos[0].planVuelo.ciudadOrigen)}>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -46,7 +46,12 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
 		return (
 			<>
 				<p>{planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais}</p>
-				<Button size="icon" className="w-7 h-7" variant="outline">
+				<Button
+					size="icon"
+					className="w-7 h-7"
+					variant="outline"
+					onClick={() => zoomToUbicacion(planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino)}
+				>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -61,7 +66,7 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
 			return (
 				<>
 					<p>{vuelo.planVuelo.ciudadDestino.pais}</p>
-					<Button size="icon" className="w-7 h-7" variant="outline">
+					<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => zoomToUbicacion(vuelo.planVuelo.ciudadDestino)}>
 						<Eye className="w-4 h-4" />
 					</Button>
 				</>
@@ -79,6 +84,12 @@ function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaq
 	}
 
 	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
+		if (_currentTime.getTime() >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000) {
+			return {
+				descripcion: "Entregado",
+				color: "green",
+			};
+		}
 		return {
 			descripcion: "En aeropuerto destino",
 			color: "purple",
@@ -109,13 +120,15 @@ interface EnvioModalProps {
 	setIsOpen: (isOpen: boolean) => void;
 	envio: Envio | null;
 	simulacion: Simulacion | undefined;
+	zoomToUbicacion: (ubicacion: Ubicacion) => void;
+	lockToFlight: (vuelo: Vuelo) => void;
 }
 
 type DataType = {
 	[key: number]: Vuelo[];
 };
 
-function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simulacion }: EnvioModalProps) {
+function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simulacion, zoomToUbicacion, lockToFlight }: EnvioModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [planeMap, setPlaneMap] = useState<DataType | null>(null);
 
@@ -142,7 +155,12 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			},
 			cell: ({ row }) => (
 				<div className="text-start flex flex-row gap-2 items-center">
-					{planeMap !== null && currentTime !== undefined ? getCurrentLocation(planeMap[row.original.id], currentTime) : "---"}
+					{planeMap !== null && currentTime !== undefined
+						? getCurrentLocation(planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
+								lockToFlight(vuelo);
+								setIsOpen(false);
+						  })
+						: "---"}
 				</div>
 			),
 		},
@@ -157,7 +175,12 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			},
 			cell: ({ row }) => (
 				<div className="truncate flex flex-row gap-2 items-center">
-					{planeMap !== null && currentTime !== undefined ? getCurrentAirport(planeMap[row.original.id], currentTime) : "---"}
+					{planeMap !== null && currentTime !== undefined
+						? getCurrentAirport(planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
+								zoomToUbicacion(ubicacion);
+								setIsOpen(false);
+						  })
+						: "---"}
 				</div>
 			),
 		},

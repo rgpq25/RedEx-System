@@ -9,12 +9,12 @@ export function getFlightPosition(
 	currentTime: Date
 ): [number, number] {
 	// If the current time is before the departure time, return the departure position
-	if (currentTime < departureTime) {
+	if (currentTime < new Date(departureTime)) {
 		return departurePosition;
 	}
 
 	// If the current time is after the arrival time, return the arrival position
-	if (currentTime > arrivalTime) {
+	if (currentTime > new Date(arrivalTime)) {
 		return arrivalPosition;
 	}
 
@@ -22,8 +22,8 @@ export function getFlightPosition(
 	const [x2, y2] = arrivalPosition;
 
 	// Calculate the position based on the time
-	const totalDuration = arrivalTime.getTime() - departureTime.getTime();
-	const elapsed = currentTime.getTime() - departureTime.getTime();
+	const totalDuration = new Date(arrivalTime).getTime() - new Date(departureTime).getTime();
+	const elapsed = currentTime.getTime() - new Date(departureTime).getTime();
 
 	const deltaX = x2 - x1;
 	const deltaY = y2 - y1;

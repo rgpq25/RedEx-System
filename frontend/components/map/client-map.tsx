@@ -50,7 +50,7 @@ function ClientMap({
 		}
 	);
 
-	const { currentTime, map, setMap, zoomToAirport, lockToFlight, currentlyLockedFlight } = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight } = attributes;
 
 	const {
 		isAirportModalOpen,
@@ -164,6 +164,8 @@ function ClientMap({
 				setIsOpen={(isOpen: boolean) => setIsEnvioModalOpen(isOpen)}
 				envio={currentEnvioModal}
 				simulacion={simulation}
+				lockToFlight={lockToFlight}
+				zoomToUbicacion={zoomToUbicacion}
 			/>
 			<div
 				className={cn("border rounded-xl flex justify-center items-center  overflow-hidden z-[10]", className)}

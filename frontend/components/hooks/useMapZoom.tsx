@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import useAnimation, { AnimationObject } from "./useAnimation";
-import { Aeropuerto, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Simulacion, Ubicacion, Vuelo } from "@/lib/types";
 import { getFlightPosition } from "@/lib/map-utils";
 import { Map as MapType } from "leaflet";
 import { api } from "@/lib/api";
@@ -16,6 +16,7 @@ export type MapZoomAttributes = {
 	setMap: (map: MapType) => void;
 	zoomToAirport: (airport: Aeropuerto) => void;
 	lockToFlight: (flight: Vuelo) => void;
+	zoomToUbicacion: (ubicacion: Ubicacion) => void;
 	pauseSimulation: (_simu: Simulacion) => Promise<void>;
 	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => Promise<void>;
 };
@@ -109,8 +110,18 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		[map]
 	);
 
+	const zoomToUbicacion = useCallback(
+		(ubicacion: Ubicacion) => {
+			if (map === null) return;
+			setCurrentlyLockedFlight(null);
+			map.setView([ubicacion.latitud, ubicacion.longitud], zoomFactor);
+		},
+		[map]
+	);
+
 	const onFlightClick = useCallback(
 		(flight: Vuelo) => {
+			console.log("About to lock to flight: ", flight);
 			setCurrentlyLockedFlight(flight);
 			setTimeout(() => {
 				setIsLockedToFlight(true);
@@ -222,6 +233,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		setMap,
 		zoomToAirport: onAirportClick,
 		lockToFlight: onFlightClick,
+		zoomToUbicacion,
 		pauseSimulation,
 		playSimulation,
 	};
