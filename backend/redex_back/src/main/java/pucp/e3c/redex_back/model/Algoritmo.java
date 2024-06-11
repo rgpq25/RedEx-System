@@ -50,7 +50,7 @@ public class Algoritmo {
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
-    //private EstadoAlmacen estadoAlmacenDiaDia;
+    // private EstadoAlmacen estadoAlmacenDiaDia;
 
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
@@ -1042,7 +1042,7 @@ public class Algoritmo {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estadoAlmacenDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                    "Estado Almacen actualizado");
+                "Estado Almacen actualizado");
     }
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Date fechaCorte, Simulacion simulacion) {
@@ -1052,8 +1052,9 @@ public class Algoritmo {
             ArrayList<Vuelo> vuelos = planRutasSimulacion.get(i).getVuelos();
 
             boolean enAeropuerto = false;
-            if (vuelos.isEmpty()) {
-                // No hay vuelos asignados, verificar la ciudad de origen y la fecha de
+            if (vuelos.isEmpty() || vuelos.size() == 0 || vuelos.get(0).getFechaSalida().after(fechaCorte)) {
+                // No hay vuelos asignados, o aun no ha tomado vuelos, verificar la ciudad de
+                // origen y la fecha de
                 // recepción
                 if (paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId)
                         && !paquete.getFechaRecepcion().after(fechaCorte)) {
@@ -1065,8 +1066,7 @@ public class Algoritmo {
                     // siguiente
                     if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&
                             !vuelo.getFechaLlegada().after(fechaCorte) &&
-                            (vuelos.indexOf(vuelo) == vuelos.size() - 1
-                                    || vuelos.get(vuelos.indexOf(vuelo) + 1).getFechaSalida().after(fechaCorte))) {
+                            (vuelos.get(vuelos.indexOf(vuelo) + 1).getFechaSalida().after(fechaCorte))) {
                         enAeropuerto = true;
                         break;
                     }
