@@ -50,11 +50,11 @@ export function getTrayectory(vuelo: Vuelo) {
 	const dotPositions = [];
 	let steps = 50;
 
-	const originCoordinate = [vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud] as [
+	const originCoordinate = [vuelo.planVuelo.ciudadOrigen.latitud, vuelo.planVuelo.ciudadOrigen.longitud] as [
 		number,
 		number
 	];
-	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [
+	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.latitud, vuelo.planVuelo.ciudadDestino.longitud] as [
 		number,
 		number
 	];
@@ -66,13 +66,16 @@ export function getTrayectory(vuelo: Vuelo) {
 
 	steps = Math.floor(distance / 2);
 
+	dotPositions.push(originCoordinate);
 	//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array
 	for (let i = 0; i < steps; i++) {
 		const x = originCoordinate[0] + ((destinationCoordinate[0] - originCoordinate[0]) * i) / steps;
 		const y = originCoordinate[1] + ((destinationCoordinate[1] - originCoordinate[1]) * i) / steps;
 		dotPositions.push([x, y]);
 	}
-	return dotPositions;
+	dotPositions.push(destinationCoordinate);
+
+	return dotPositions as [number,number][];
 }
 
 export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
@@ -116,27 +119,10 @@ export function structureDataFromRespuestaAlgoritmo(data: RespuestaAlgoritmo) {
 				[vuelo.planVuelo.ciudadOrigen.longitud, vuelo.planVuelo.ciudadOrigen.latitud],
 				[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud]
 			);
+			vueloActualizado.posicionesRuta = getTrayectory(vuelo);
 			return vueloActualizado;
 		})
 		.filter((flight: Vuelo) => flight.capacidadUtilizada !== 0);
-
-	// const newEnvios: Envio[] = data.paquetes.map((paquete: Paquete) => {
-	// 	const _envio = paquete.envio;
-	// 	_envio.fechaLimiteEntrega = new Date(_envio.fechaLimiteEntrega);
-	// 	_envio.fechaRecepcion = new Date(_envio.fechaRecepcion);
-	// 	return _envio;
-	// });
-
-	//remove duplicates from newEnvios
-	// const newEnviosSet = new Set(newEnvios.map((envio) => envio));
-	// const newEnviosNoDuplicates = Array.from(newEnviosSet);
-
-	//assign data.paquetes to its corresponding envio
-	// newEnviosNoDuplicates.forEach((envio) => {
-	// 	envio.paquetes = data.paquetes.filter((paquete) => paquete.envio.id === envio.id) || [];
-	// 	envio.cantidadPaquetes = envio.paquetes.length;
-	// 	if(envio.cantidadPaquetes > 1) console.log("Envio con mas de un paquete", envio);
-	// });
 
 	return {
 		db_vuelos: newFlights,

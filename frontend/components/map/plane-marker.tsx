@@ -3,7 +3,7 @@ import { getFlightPosition, getTrayectory } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
 import { Icon } from "leaflet";
 import { useState } from "react";
-import { Marker, Tooltip } from "react-leaflet";
+import { Marker, Polyline, Tooltip } from "react-leaflet";
 import RotateMarker from "./rotate-marker";
 
 interface PlaneMarkerProps {
@@ -31,7 +31,6 @@ function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMark
 		return null;
 	}
 
-	const dotPositions = getTrayectory(vuelo);
 	const porcentajeUtilizado = (vuelo.capacidadUtilizada / vuelo.planVuelo.capacidadMaxima) * 100;
 
 	const airplaneIcon = new Icon({
@@ -57,16 +56,8 @@ function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMark
 
 	return (
 		<>
-			{isHovering &&
-				dotPositions.map((dotPosition, idx) => (
-					<Marker
-						key={idx}
-						position={[dotPosition[1], dotPosition[0]] as [number, number]}
-						icon={trackIcon}
-						zIndexOffset={10}
-						autoPan={false}
-					/>
-				))}
+			{isHovering && <Polyline positions={vuelo.posicionesRuta} lineJoin="round" />}
+
 			{vuelo.id === focusedAirplane?.id && (
 				<Marker position={[coordinates[1], coordinates[0]] as [number, number]} icon={airplaneIndicator} zIndexOffset={52} />
 			)}

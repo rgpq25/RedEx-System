@@ -26,6 +26,7 @@ function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToF
 	}
 }
 
+
 function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUbicacion: (ubicacion: Ubicacion) => void) {
 	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime) !== undefined) {
 		return <p>---</p>;

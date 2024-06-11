@@ -95,6 +95,7 @@ export type Vuelo = {
     anguloAvion: number;
     capacidadUtilizada: number;
     simulacionActual: Simulacion | null;
+    posicionesRuta: [number,number][];
 };
 
 export type PlanRuta = {
