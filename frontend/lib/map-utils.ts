@@ -78,7 +78,7 @@ export function getTrayectory(vuelo: Vuelo) {
 	return dotPositions as [number,number][];
 }
 
-export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
+export function getCurrentAirportOcupation_Old(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
 	if (fecha === undefined) {
 		//console.log("Fecha no definida");
 		return 0;
@@ -101,6 +101,41 @@ export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fech
 		if (fecha >= new Date(fechas[i]) && fecha < new Date(fechas[i + 1])) {
 			//console.log("Fecha entre dos fechas en el arreglo");
 			return estadoAlmacen[fechas[i + 1]];
+		}
+	}
+
+	//console.log("Fecha mayor a la última fecha en el arreglo");
+	// Si la fecha es mayor o igual a la última fecha en el arreglo
+	return estadoAlmacen[fechas[fechas.length - 1]];
+}
+
+export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
+	if (fecha === undefined) {
+		//console.log("Fecha no definida");
+		return 0;
+	}
+
+	const fechas = Object.keys(estadoAlmacen);
+
+	if (fechas.length === 0) {
+		//console.log("No hay fechas para este estadoAlmacen");
+		return 0; //basicamente no tiene historico
+	}
+
+	// Si la fecha dada es menor que la primera fecha en el arreglo
+	if (fecha < new Date(fechas[0])) {
+		//console.log("Fecha menor a la primera fecha en el arreglo");
+		return 0;
+	}
+
+	if(fecha >= new Date(fechas[fechas.length - 1])) {
+		return estadoAlmacen[fechas[fechas.length - 1]];
+	}
+
+	for (let i = 0; i < fechas.length - 1; i++) {
+		if (fecha >= new Date(fechas[i]) && fecha < new Date(fechas[i + 1])) {
+			//console.log("Fecha entre dos fechas en el arreglo");
+			return estadoAlmacen[fechas[i]];
 		}
 	}
 
