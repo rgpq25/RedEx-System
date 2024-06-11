@@ -124,8 +124,9 @@ public class DataInitializer {
         }
     }
 
-    private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos, HashMap<String, Ubicacion> ubicacionMap,
-    ArrayList<PlanVuelo> planVuelos, int nEnvios) throws IOException{
+    private void incializacionFijaPaquetesDiaDia(ArrayList<Aeropuerto> aeropuertos,
+            HashMap<String, Ubicacion> ubicacionMap,
+            ArrayList<PlanVuelo> planVuelos, int nEnvios) throws IOException {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
@@ -151,43 +152,43 @@ public class DataInitializer {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
 
-            //LOGGER.info("Fecha inicio " + Date.from(startDate.toInstant()));
-            //LOGGER.info("Fecha fin " + Date.from(now.toInstant()));
+            // LOGGER.info("Fecha inicio " + Date.from(startDate.toInstant()));
+            // LOGGER.info("Fecha fin " + Date.from(now.toInstant()));
             ArrayList<Envio> envios = envioService.registerAllByStringEspInicioFijo(registrarEnvios, aeropuertoMap,
                     Date.from(startDate.toInstant()), Date.from(now.toInstant()), nEnvios);
 
             // Filtrar envios
             LOGGER.info("Cantidad de envios ANTES: " + envios.size());
-            Date fechaMinima =  Date.from(startDate.toInstant());
+            Date fechaMinima = Date.from(startDate.toInstant());
             envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
             LOGGER.info("Cantidad de envios DESPUES: " + envios.size());
             int totalPaquetes = envios.stream()
                     .mapToInt(envio -> envio.getCantidadPaquetes())
                     .sum();
             LOGGER.info("DATA INIT || Se generaron " + totalPaquetes + " paquetes.");
-            //System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+            // System.out.println("Se generaron " + totalPaquetes + " paquetes.");
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
             LOGGER.error("Error al leer el archivo: " + e.getMessage());
         }
     }
 
-    private void eliminarRegistrosBaseDeDatos(){
-        //1. Planruta x vuelo
+    private void eliminarRegistrosBaseDeDatos() {
+        // 1. Planruta x vuelo
         planRutaXVueloService.deleteAll();
-        //2. vuelo
+        // 2. vuelo
         vueloService.deleteAll();
-        //3. paquete
+        // 3. paquete
         paqueteService.deleteAll();
-        //4. envio
+        // 4. envio
         envioService.deleteAll();
-        //5. plan ruta
+        // 5. plan ruta
         planRutaService.deleteAll();
-        //6. plan vuelo
+        // 6. plan vuelo
         planVueloService.deleteAll();
-        //7. aeropuerto
+        // 7. aeropuerto
         aeropuertoService.deleteAll();
-        //8. ubicacion
+        // 8. ubicacion
         ubicacionService.deleteAll();
     }
 
@@ -254,10 +255,10 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = true;
+        boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
-            //inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
-            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); //100,250,500
+            // inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
+            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); // 100,250,500
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
