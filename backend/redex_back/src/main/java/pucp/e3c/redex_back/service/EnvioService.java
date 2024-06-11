@@ -335,4 +335,13 @@ public class EnvioService {
         }
     }
 
+    public void deleteAll() {
+        try {
+            envioRepository.deleteAll();
+            envioRepository.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
 }

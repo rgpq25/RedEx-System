@@ -237,4 +237,14 @@ public class PaqueteService {
         }
     }
 
+    public void deleteAll(){
+        try{
+            paqueteRepository.deleteAll();
+            paqueteRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
+
 }

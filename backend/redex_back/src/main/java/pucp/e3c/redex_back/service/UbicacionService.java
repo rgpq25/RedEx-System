@@ -74,4 +74,14 @@ public class UbicacionService {
             return null;
         }
     }
+
+    public void deleteAll() {
+        try{
+            ubicacionRepository.deleteAll();
+            ubicacionRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

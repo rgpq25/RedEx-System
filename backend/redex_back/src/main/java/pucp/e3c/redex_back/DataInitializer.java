@@ -172,8 +172,28 @@ public class DataInitializer {
         }
     }
 
+    private void eliminarRegistrosBaseDeDatos(){
+        //1. Planruta x vuelo
+        planRutaXVueloService.deleteAll();
+        //2. vuelo
+        vueloService.deleteAll();
+        //3. paquete
+        paqueteService.deleteAll();
+        //4. envio
+        envioService.deleteAll();
+        //5. plan ruta
+        planRutaService.deleteAll();
+        //6. plan vuelo
+        planVueloService.deleteAll();
+        //7. aeropuerto
+        aeropuertoService.deleteAll();
+        //8. ubicacion
+        ubicacionService.deleteAll();
+    }
+
     @PostConstruct
     public void initData() throws IOException {
+        eliminarRegistrosBaseDeDatos();
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
         // String inputPath = "/home/inf226.981.3c/resources";
@@ -234,7 +254,7 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = false;
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
         if (inicializar_paquetes_operaciones_dia_dia) {
             //inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
             incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); //100,250,500

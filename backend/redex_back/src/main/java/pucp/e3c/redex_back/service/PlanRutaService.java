@@ -122,4 +122,13 @@ public class PlanRutaService {
             return null;
         }
     }
+
+    public void deleteAll() {
+        try {
+            planRutaRepository.deleteAll();
+            planRutaRepository.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

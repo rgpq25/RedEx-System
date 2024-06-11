@@ -266,4 +266,13 @@ public class VueloService {
             return null;
         }
     }
+
+    public void deleteAll() {
+        try {
+            vueloRepository.deleteAll();
+            vueloRepository.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

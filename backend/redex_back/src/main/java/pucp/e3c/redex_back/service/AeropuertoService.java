@@ -90,4 +90,14 @@ public class AeropuertoService {
         }
         //return aeropuertoRepository.findByUbicacionId(idUbicacion);
     }
+
+    public void deleteAll() {
+        try{
+            aeropuertoRepository.deleteAll();
+            aeropuertoRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
 }
