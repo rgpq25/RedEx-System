@@ -108,6 +108,6 @@ public class OperacionesDiaDiaController {
 
     @GetMapping("/obtenerEstadoAlmacen")
     public EstadoAlmacen obtenerEstadoAlmacen(){
-        return algoritmo.getEstadoAlmacenDiaDia();
+        return algoritmo.obtenerEstadoAlmacenDiaDia();
     }
 }
