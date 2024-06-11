@@ -104,7 +104,7 @@ public class EstadoAlmacen {
         return null; // Si no se encuentra ningún aeropuerto con la ubicación dada
     }
 
-    private void registrarCapacidad(String aeropuerto, Date fecha, int cambio) {
+    public void registrarCapacidad(String aeropuerto, Date fecha, int cambio) {
         if (aeropuerto == null) {
             throw new IllegalArgumentException("Aeropuerto no puede ser null");
         }
