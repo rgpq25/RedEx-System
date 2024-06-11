@@ -129,7 +129,23 @@ export type Envio = {
     cantidadPaquetes: number;
     codigoSeguridad: string;
     paquetes: Paquete[];
+    emisor: Cliente;
+    receptor: Cliente;
 };
+
+export type Cliente = {
+    id: number;
+    usuario: Usuario;
+    informacionContacto: string;
+    preferenciasNotificacion: string;
+}
+
+export type Usuario = {
+    id: number;
+    nombre: string;
+    correo: string;
+    tipo: string;
+}
 
 export type Simulacion = {
     id: number;

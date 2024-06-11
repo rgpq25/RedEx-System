@@ -29,8 +29,14 @@ function SecurityCodeLoginPage() {
                         if (packageId) {
                             setShipmentId(packageId);
                             router.push(`/package-view`);
+                        } else {
+                            throw new Error("No se encontró el envío");
                         }
+                    } else {
+                        throw new Error("No se encontró el envío");
                     }
+                } else {
+                    throw new Error("No se encontró el envío");
                 }
             },
             (error) => {
@@ -66,9 +72,9 @@ function SecurityCodeLoginPage() {
                         position: "bottom-right",
                         duration: 3000,
                     });
-                    return;
                 } finally {
                     setIsLoading(false);
+                    return;
                 }
             }
         }, 1000);
@@ -104,7 +110,7 @@ function SecurityCodeLoginPage() {
                         />
                         <Button
                             className=' mt-2 w-[120px]'
-                            disabled={inputRef.current?.value === "" || isLoading}
+                            disabled={isLoading}
                             onClick={verifiyCode}
                             isLoading={isLoading}
                         >

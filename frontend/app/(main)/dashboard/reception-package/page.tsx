@@ -15,7 +15,7 @@ import { Large, Muted, Small } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
-import { Envio, Paquete, Aeropuerto, Ubicacion, Vuelo, PlanRuta } from "@/lib/types";
+import { Envio, Paquete, Aeropuerto, Ubicacion, Vuelo, PlanRuta, Cliente, Usuario } from "@/lib/types";
 import { api } from "@/lib/api";
 import { formatDateTimeLongShort } from "@/lib/date";
 import { format, parseISO } from "date-fns";
@@ -120,62 +120,59 @@ export default function ReceptionPackage() {
             ) : (
                 <>
                     <section className='grid grid-cols-1 lg:grid-cols-2 flex-wrap gap-4 m-auto *:bg-muted *:max-h-fit'>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Información personal (emisor)</CardTitle>
-                            </CardHeader>
-                            <CardContent className='space-y-2 *:space-y-1'>
-                                <div>
-                                    <Label>Nombres</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Apellidos</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Correo</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Información personal (receptor)</CardTitle>
-                            </CardHeader>
-                            <CardContent className='space-y-2 *:space-y-1'>
-                                <div>
-                                    <Label>Nombres</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Apellidos</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Correo</Label>
-                                    <Input
-                                        disabled
-                                        type='name'
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        {envio?.emisor && envio?.receptor ? (
+                            <>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Información personal (emisor)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='space-y-2 *:space-y-1'>
+                                        <div>
+                                            <Label>Nombre</Label>
+                                            <Input
+                                                disabled
+                                                type='name'
+                                                defaultValue={envio.emisor.usuario.nombre}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label>Correo</Label>
+                                            <Input
+                                                disabled
+                                                type='name'
+                                                defaultValue={envio.emisor.usuario.correo}
+                                            />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Información personal (receptor)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='space-y-2 *:space-y-1'>
+                                        <div>
+                                            <Label>Nombres</Label>
+                                            <Input
+                                                disabled
+                                                type='name'
+                                                defaultValue={envio.receptor.usuario.nombre}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label>Correo</Label>
+                                            <Input
+                                                disabled
+                                                type='name'
+                                                defaultValue={envio.receptor.usuario.correo}
+                                            />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </>
+                        ) : (
+                            <>
+                            </>
+                        )}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Información del envío</CardTitle>
