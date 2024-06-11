@@ -190,6 +190,8 @@ public class DataInitializer {
         aeropuertoService.deleteAll();
         // 8. ubicacion
         ubicacionService.deleteAll();
+        //9. simulacion
+        simulacionService.deleteAll();
     }
 
     @PostConstruct

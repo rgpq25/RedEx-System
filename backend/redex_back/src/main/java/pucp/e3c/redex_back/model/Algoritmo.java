@@ -50,7 +50,8 @@ public class Algoritmo {
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
-    private EstadoAlmacen estadoAlmacenDiaDia;
+    //private EstadoAlmacen estadoAlmacenDiaDia;
+
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
@@ -61,7 +62,6 @@ public class Algoritmo {
         this.terminarPlanificacionDiaDia = false;
         this.respuesta_paquetes_dia_dia = new ArrayList<>();
         this.paquetes_por_simulacion = new HashMap<>();
-        this.estadoAlmacenDiaDia = new EstadoAlmacen();
     }
 
     public boolean isTerminarPlanificacionDiaDia() {
@@ -229,7 +229,6 @@ public class Algoritmo {
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
                     tipoOperacion, null);
-            this.estadoAlmacenDiaDia = respuestaAlgoritmo.getEstadoAlmacen();
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
             respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
@@ -1035,12 +1034,15 @@ public class Algoritmo {
         this.respuesta_paquetes_dia_dia = respuesta_paquetes_dia_dia;
     }
 
-    public EstadoAlmacen getEstadoAlmacenDiaDia() {
-        return estadoAlmacenDiaDia;
+    public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
+        return this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
     }
 
-    public void setEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
-        this.estadoAlmacenDiaDia = estadoAlmacenDiaDia;
+    public void actualizarEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estadoAlmacenDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                    "Estado Almacen actualizado");
     }
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Date fechaCorte, Simulacion simulacion) {
