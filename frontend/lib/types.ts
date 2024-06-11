@@ -150,6 +150,11 @@ export type RespuestaAlgoritmo = {
 	iniciandoPrimeraPlanificacionDiaDia: boolean;
 };
 
+export type RespuestaEstado = {
+    estado: string;
+    simulacion: Simulacion;
+}
+
 export type EstadoAlmacen = {
     uso_historico: UsoHistorico;
 };
@@ -160,4 +165,11 @@ export type UsoHistorico = {
 
 export type HistoricoValores = {
     [key: string]: number;
+};
+
+export type ChipColors = "gray" | "blue" | "yellow" | "purple" | "green" | "red";
+
+export type EstadoPaquete = {
+    descripcion: "En aeropuerto origen" | "En aeropuerto destino" | "En vuelo" | "En espera";
+    color: ChipColors;
 };

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
-import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -17,7 +17,7 @@ import { CircleStop, Pause, Play } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
-import { structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
+import { structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
 import ModalStopSimulation from "./_components/modal-stop-simulation";
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -34,7 +34,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 function SimulationPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } = attributes;
+	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
@@ -78,7 +78,7 @@ function SimulationPage() {
 
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
-			client.subscribe("/algoritmo/respuesta", (msg) => {
+			client.subscribe("/algoritmo/respuesta", async (msg) => {
 				setIsSimulationLoading(false);
 				if ((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
 
@@ -97,15 +97,34 @@ function SimulationPage() {
 
 				setCurrentTime(data.simulacion);
 
-				const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
+				let _paquetes: Paquete[] = [];
+				await api(
+					"GET",
+					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}`,
+					(data: Paquete[]) => {
+						console.log(`Data from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, data);
+						_paquetes = [...data];
+					},
+					(error) => {
+						console.log(`Error from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, error);
+						_paquetes = [];
+					}
+				);
+
+
+				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
 				setEstadoAlmacen(db_estadoAlmacen);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
-				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
-				setLoadingMessages((prev) => [...prev, msg.body]);
+				if ((JSON.parse(msg.body) as RespuestaEstado).simulacion.id !== simulacion.id) return;
+
+				console.log("MENSAJE DE /algoritmo/estado: ", JSON.parse(msg.body) as RespuestaEstado);
+				const data: RespuestaEstado = JSON.parse(msg.body);
+				setLoadingMessages((prev) => [...prev, data.estado]);
 			});
 		};
 
@@ -126,7 +145,17 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+			event.returnValue = 'Mensaje de prueba'; // Standard for most browsers
+			return 'Mensaje de prueba'; // Some browsers may require this for the dialog to show up
+		  };
+	  
+		  window.addEventListener('beforeunload', handleBeforeUnload);
+
 		return () => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+
 			if (client) {
 				client.deactivate();
 			}
@@ -140,11 +169,7 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
-			<ModalStopSimulation
-				isOpen={isStoppingModalOpen}
-				setIsModalOpen={setIsStoppingModalOpen}
-				simulation={simulation}
-			/>
+			<ModalStopSimulation isOpen={isStoppingModalOpen} setIsModalOpen={setIsStoppingModalOpen} simulation={simulation} />
 			<MainContainer className="relative">
 				<MapHeader>
 					<BreadcrumbCustom items={breadcrumbItems} />
@@ -155,7 +180,8 @@ function SimulationPage() {
 				</MapHeader>
 
 				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
-					<PlaneLegend />
+					{/* <PlaneLegend /> */}
+					<p className="text-lg font-medium">{elapsedRealTime}</p>
 					{simulation !== null && simulation !== undefined && (
 						<div className="flex items-center gap-1">
 							<Button size={"icon"} onClick={() => setIsStoppingModalOpen(true)}>

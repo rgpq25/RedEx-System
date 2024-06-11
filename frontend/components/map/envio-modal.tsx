@@ -1,55 +1,106 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Envio, Paquete, PlanRuta, Simulacion, Vuelo } from "@/lib/types";
-import { ArrowUpDown, Loader2 } from "lucide-react";
+import { Envio, EstadoAlmacen, EstadoPaquete, Paquete, PlanRuta, Simulacion, Vuelo } from "@/lib/types";
+import { ArrowUpDown, Eye, Loader2 } from "lucide-react";
 import { EnvioTable } from "./envio-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import Chip from "../ui/chip";
 
 function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date) {
-	const vuelo = planRutaVuelos.find(
-		(vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime
-	);
+	const vuelo = planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime);
 
 	if (vuelo !== undefined) {
-		return vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais;
+		return (
+			<>
+				<p>{vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais}</p>
+				<Button size="icon" className="w-7 h-7" variant="outline">
+					<Eye className="w-4 h-4" />
+				</Button>
+			</>
+		);
 	} else {
-		return "En aeropuerto";
+		return <p>---</p>;
 	}
 }
 
 function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date) {
-	if (
-		planRutaVuelos.find(
-			(vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime
-		) !== undefined
-	) {
-		return "En vuelo";
+	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime) !== undefined) {
+		return <p>---</p>;
 	}
 
 	if (_currentTime <= new Date(planRutaVuelos[0].fechaSalida)) {
-		return planRutaVuelos[0].planVuelo.ciudadOrigen.pais;
+		return (
+			<>
+				<p>{planRutaVuelos[0].planVuelo.ciudadOrigen.pais}</p>
+				<Button size="icon" className="w-7 h-7" variant="outline">
+					<Eye className="w-4 h-4" />
+				</Button>
+			</>
+		);
 	}
 
 	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
-		return planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais;
+		return (
+			<>
+				<p>{planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais}</p>
+				<Button size="icon" className="w-7 h-7" variant="outline">
+					<Eye className="w-4 h-4" />
+				</Button>
+			</>
+		);
 	}
 
 	for (let i = 0; i < planRutaVuelos.length; i++) {
 		const vuelo = planRutaVuelos[i];
 		const nextVuelo = planRutaVuelos[i + 1];
 
-		if (
-			nextVuelo &&
-			new Date(vuelo.fechaLlegada) <= _currentTime &&
-			new Date(nextVuelo.fechaSalida) >= _currentTime
-		) {
-			return vuelo.planVuelo.ciudadDestino.pais;
+		if (nextVuelo && new Date(vuelo.fechaLlegada) <= _currentTime && new Date(nextVuelo.fechaSalida) >= _currentTime) {
+			return (
+				<>
+					<p>{vuelo.planVuelo.ciudadDestino.pais}</p>
+					<Button size="icon" className="w-7 h-7" variant="outline">
+						<Eye className="w-4 h-4" />
+					</Button>
+				</>
+			);
 		}
 	}
 }
+
+function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
+	if (_currentTime <= new Date(planRutaVuelos[0].fechaSalida)) {
+		return {
+			descripcion: "En aeropuerto origen",
+			color: "gray",
+		};
+	}
+
+	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
+		return {
+			descripcion: "En aeropuerto destino",
+			color: "purple",
+		};
+	}
+
+	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && _currentTime <= new Date(vuelo.fechaLlegada)) !== undefined) {
+		return {
+			descripcion: "En vuelo",
+			color: "blue",
+		};
+	}
+
+	return {
+		descripcion: "En espera",
+		color: "yellow",
+	};
+}
+
+const renderStatusChip = (status: EstadoPaquete) => {
+	return <Chip color={status.color}>{status.descripcion}</Chip>;
+};
 
 interface EnvioModalProps {
 	currentTime: Date | undefined;
@@ -84,16 +135,14 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			accessorKey: "planRutaVuelos",
 			header: ({ column }) => {
 				return (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center">
 						<p>Vuelo actual</p>
 					</div>
 				);
 			},
 			cell: ({ row }) => (
-				<div className="text-start">
-					{planeMap !== null && currentTime !== undefined
-						? getCurrentLocation(planeMap[row.original.id], currentTime)
-						: "---"}
+				<div className="text-start flex flex-row gap-2 items-center">
+					{planeMap !== null && currentTime !== undefined ? getCurrentLocation(planeMap[row.original.id], currentTime) : "---"}
 				</div>
 			),
 		},
@@ -107,10 +156,8 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 				);
 			},
 			cell: ({ row }) => (
-				<div className="truncate">
-					{planeMap !== null && currentTime !== undefined
-						? getCurrentAirport(planeMap[row.original.id], currentTime)
-						: "---"}
+				<div className="truncate flex flex-row gap-2 items-center">
+					{planeMap !== null && currentTime !== undefined ? getCurrentAirport(planeMap[row.original.id], currentTime) : "---"}
 				</div>
 			),
 		},
@@ -125,8 +172,9 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			},
 			cell: ({ row }) => (
 				<div className="">
-					<p>Pendiente</p>
-					{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
+					{planeMap !== null && currentTime !== undefined
+						? renderStatusChip(getPackageState(planeMap[row.original.id], currentTime))
+						: "---"}
 				</div>
 			),
 		},
@@ -184,16 +232,13 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 				) : (
 					<>
 						<DialogHeader>
-							<DialogTitle className="text-2xl">Información de vuelo</DialogTitle>
+							<DialogTitle className="text-2xl">Información de envío</DialogTitle>
 						</DialogHeader>
 						<div className="flex-1 flex flex-col">
 							<p>{"Origen: " + envio?.ubicacionOrigen.ciudad + ", " + envio?.ubicacionOrigen.pais}</p>
 							<p>{"Destino: " + envio?.ubicacionDestino.ciudad + ", " + envio?.ubicacionDestino.pais}</p>
 							<p>
-								{"Fecha recepcion: " +
-									envio?.fechaRecepcion.toLocaleDateString() +
-									" " +
-									envio?.fechaRecepcion.toLocaleTimeString()}
+								{"Fecha recepcion: " + envio?.fechaRecepcion.toLocaleDateString() + " " + envio?.fechaRecepcion.toLocaleTimeString()}
 							</p>
 							<p>
 								{"Fecha limite entrega: " +

@@ -50,7 +50,7 @@ function ClientMap({
 		}
 	);
 
-	const { currentTime, map, setMap, zoomToAirport, lockToFlight } = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight, currentlyLockedFlight } = attributes;
 
 	const {
 		isAirportModalOpen,
@@ -129,6 +129,7 @@ function ClientMap({
 										lockToFlight(vuelo);
 										openFlightModal(vuelo);
 									}}
+									focusedAirplane={currentlyLockedFlight}
 								/>
 							);
 						})}

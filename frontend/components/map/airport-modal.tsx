@@ -36,11 +36,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px] gap-1">
 					<p>Envío asociado</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -54,11 +50,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px]">
 					<p>Origen</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -66,9 +58,7 @@ const columns: ColumnDef<Paquete>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionOrigen.pais}
+				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais}
 			</div>
 		),
 	},
@@ -78,11 +68,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px]">
 					<p>Destino</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -90,9 +76,7 @@ const columns: ColumnDef<Paquete>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionDestino.pais}
+				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais}
 			</div>
 		),
 	},
@@ -132,9 +116,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 					return;
 				}
 
-				console.log(
-					`Fetching airport data with airport id ${aeropuerto.id} and simulation id ${simulacion.id}`
-				);
+				console.log(`Fetching airport data with airport id ${aeropuerto.id} and simulation id ${simulacion.id}`);
 				setIsLoading(true);
 
 				await api(
@@ -159,7 +141,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 					"GET",
 					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetes`,
 					(data: Paquete[]) => {
-						console.log("Finished fetch")
+						console.log("Finished fetch");
 						console.log(data);
 						setPaquetes(data);
 						setFechaConsulta(new Date());
@@ -184,25 +166,30 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[617.5px] min-h-[617.5px] max-h-[617.5px]  flex flex-col gap-2">
 				{isLoading ? (
 					<div className="flex-1 flex justify-center items-center">
-						<Loader2 className="animate-spin stroke-gray-400"/>
+						<Loader2 className="animate-spin stroke-gray-400" />
 					</div>
 				) : (
 					<>
 						<DialogHeader>
 							<DialogTitle className="text-2xl">
-								Información de aeropuerto (al{" "}
-								{fechaConsulta?.toLocaleDateString() + "-" + fechaConsulta?.toLocaleTimeString()})
+								Información de aeropuerto (al {fechaConsulta?.toLocaleDateString() + "-" + fechaConsulta?.toLocaleTimeString()})
 							</DialogTitle>
 						</DialogHeader>
 						<div className="text-black flex-1 flex flex-col">
 							<div>
-								<p>
-									{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}
-								</p>
+								<p>{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}</p>
 							</div>
 							<div className="flex flex-row items-center gap-1">
 								<p>{`Capacidad actual: ${paquetes.length}/${aeropuerto?.capacidadMaxima}`} </p>
 								<Chip color="green">Bueno</Chip>
+								{aeropuerto &&
+									(paquetes.length / aeropuerto?.capacidadMaxima <= 0.3 ? (
+										<Chip color="green">Bajo</Chip>
+									) : paquetes.length / aeropuerto?.capacidadMaxima <= 0.6 ? (
+										<Chip color="yellow">Medio</Chip>
+									) : (
+										<Chip color="red">Alto</Chip>
+									))}
 							</div>
 							<AirportTable data={paquetes} columns={columns} />
 						</div>

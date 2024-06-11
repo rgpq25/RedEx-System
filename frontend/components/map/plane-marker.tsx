@@ -10,9 +10,10 @@ interface PlaneMarkerProps {
 	vuelo: Vuelo;
 	currentTime: Date;
 	onClick: (vuelo: Vuelo) => void;
+	focusedAirplane: Vuelo | null;
 }
 
-function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
+function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMarkerProps) {
 	const [isHovering, setIsHovering] = useState(false);
 
 	const coordinates = getFlightPosition(
@@ -24,10 +25,8 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 	);
 
 	if (
-		(coordinates[0] === vuelo.planVuelo.ciudadDestino.longitud &&
-			coordinates[1] === vuelo.planVuelo.ciudadDestino.latitud) ||
-		(coordinates[0] === vuelo.planVuelo.ciudadOrigen.longitud &&
-			coordinates[1] === vuelo.planVuelo.ciudadOrigen.latitud)
+		(coordinates[0] === vuelo.planVuelo.ciudadDestino.longitud && coordinates[1] === vuelo.planVuelo.ciudadDestino.latitud) ||
+		(coordinates[0] === vuelo.planVuelo.ciudadOrigen.longitud && coordinates[1] === vuelo.planVuelo.ciudadOrigen.latitud)
 	) {
 		return null;
 	}
@@ -45,10 +44,15 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 		iconSize: [20, 20],
 	});
 
-
 	const trackIcon = new Icon({
 		iconUrl: "/tracking-dots.png",
 		iconSize: [20, 20],
+	});
+
+	const airplaneIndicator = new Icon({
+		iconUrl: "/airplane-indicator.png",
+		iconSize: [25, 25],
+		iconAnchor: [12.5, -20],
 	});
 
 	return (
@@ -63,6 +67,9 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 						autoPan={false}
 					/>
 				))}
+			{vuelo.id === focusedAirplane?.id && (
+				<Marker position={[coordinates[1], coordinates[0]] as [number, number]} icon={airplaneIndicator} zIndexOffset={52} />
+			)}
 			<RotateMarker
 				position={[coordinates[1], coordinates[0]] as [number, number]}
 				icon={airplaneIcon}
@@ -75,19 +82,16 @@ function PlaneMarker({ vuelo, currentTime, onClick }: PlaneMarkerProps) {
 				rotationAngle={vuelo.anguloAvion}
 				rotationOrigin="center"
 			>
-				<Tooltip direction="top" offset={[0,-5]} className="w-[55px] font-bold text-center">{vuelo.capacidadUtilizada} / {vuelo.planVuelo.capacidadMaxima}</Tooltip>
+				<Tooltip direction="top" offset={[0, -5]} className="w-[55px] font-bold text-center">
+					{vuelo.capacidadUtilizada} / {vuelo.planVuelo.capacidadMaxima}
+				</Tooltip>
 			</RotateMarker>
 		</>
 	);
 }
 export default PlaneMarker;
 
-function Plane({
-	vuelo
-}: {
-	vuelo: Vuelo;
-}) {
-
+function Plane({ vuelo }: { vuelo: Vuelo }) {
 	function mapCapacity(_capacity: number) {
 		if (_capacity >= 0 && _capacity < 30) {
 			return "#61DC00";

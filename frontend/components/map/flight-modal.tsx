@@ -37,11 +37,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px] gap-1">
 					<p>Envío asociado</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -55,11 +51,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px]">
 					<p>Origen</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -67,9 +59,7 @@ const columns: ColumnDef<Paquete>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionOrigen.pais}
+				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais}
 			</div>
 		),
 	},
@@ -79,11 +69,7 @@ const columns: ColumnDef<Paquete>[] = [
 			return (
 				<div className="flex items-center w-[150px]">
 					<p>Destino</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
 					</Button>
 				</div>
@@ -91,9 +77,7 @@ const columns: ColumnDef<Paquete>[] = [
 		},
 		cell: ({ row }) => (
 			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionDestino.pais}
+				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais}
 			</div>
 		),
 	},
@@ -132,7 +116,9 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					return;
 				}
 
-				console.log(`Fetching airport data with flight id ${vuelo.id}, current used capacity ${vuelo.capacidadUtilizada} and simulation id ${simulacion.id}`);
+				console.log(
+					`Fetching airport data with flight id ${vuelo.id}, current used capacity ${vuelo.capacidadUtilizada} and simulation id ${simulacion.id}`
+				);
 				setIsLoading(true);
 				await api(
 					"GET",
@@ -196,27 +182,14 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 									", " +
 									vuelo?.planVuelo.ciudadDestino.pais}
 							</p>
-							<p>
-								{"Fecha salida: " +
-									vuelo?.fechaSalida.toLocaleDateString() +
-									" " +
-									vuelo?.fechaSalida.toLocaleTimeString()}
-							</p>
-							<p>
-								{"Fecha llegada: " +
-									vuelo?.fechaLlegada.toLocaleDateString() +
-									" " +
-									vuelo?.fechaLlegada.toLocaleTimeString()}
-							</p>
+							<p>{"Fecha salida: " + vuelo?.fechaSalida.toLocaleDateString() + " " + vuelo?.fechaSalida.toLocaleTimeString()}</p>
+							<p>{"Fecha llegada: " + vuelo?.fechaLlegada.toLocaleDateString() + " " + vuelo?.fechaLlegada.toLocaleTimeString()}</p>
 							<div className="flex flex-row items-center gap-1">
-								<p>
-									Capacidad actual:{" "}
-									{vuelo?.capacidadUtilizada + " / " + vuelo?.planVuelo.capacidadMaxima}
-								</p>
+								<p>Capacidad actual: {vuelo?.capacidadUtilizada + " / " + vuelo?.planVuelo.capacidadMaxima}</p>
 								{vuelo?.capacidadUtilizada &&
-									(vuelo?.capacidadUtilizada <= 30 ? (
+									(vuelo?.capacidadUtilizada / vuelo?.planVuelo.capacidadMaxima <= 0.3 ? (
 										<Chip color="green">Bajo</Chip>
-									) : vuelo?.capacidadUtilizada <= 60 ? (
+									) : vuelo?.capacidadUtilizada / vuelo?.planVuelo.capacidadMaxima <= 0.6 ? (
 										<Chip color="yellow">Medio</Chip>
 									) : (
 										<Chip color="red">Alto</Chip>

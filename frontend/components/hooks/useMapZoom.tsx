@@ -7,6 +7,9 @@ import { api } from "@/lib/api";
 
 export type MapZoomAttributes = {
 	currentTime: Date | undefined;
+	elapsedRealTime: number;
+	elapsedSimulationTime: number;
+	currentlyLockedFlight: Vuelo | null;
 	setCurrentTime: (simulacion: Simulacion) => void;
 	setCurrentTimeNoSimulation: () => void;
 	map: MapType | null;
@@ -25,6 +28,8 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 
 	const [map, setMap] = useState<MapType | null>(null);
 	const [currentTime, setCurrentTime] = useState<Date | undefined>(undefined);
+	const [elapsedSimulationTime, setElapsedSimulationTime] = useState<number>(0);
+	const [elapsedRealTime, setElapsedRealTime] = useState<number>(0);
 	const [currentlyLockedFlight, setCurrentlyLockedFlight] = useState<Vuelo | null>(null);
 	const [isLockedToFlight, setIsLockedToFlight] = useState(false);
 
@@ -45,12 +50,35 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 			return currentSimTime;
 		}
 
+		function getElapsedTime(_simu: Simulacion) {
+			const fechaInicioSistema: Date = new Date(_simu.fechaInicioSistema);
+			const fechaInicioSim: Date = new Date(_simu.fechaInicioSim);
+			const multiplicadorTiempo: number = _simu.multiplicadorTiempo;
+			const milisegundosPausados: number = _simu.milisegundosPausados;
+
+			const elapsedSimulatedTime = new Date(
+				multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime() - milisegundosPausados)
+			).getTime();
+
+			const elapsedRealTime = new Date(new Date().getTime() - fechaInicioSim.getTime() - milisegundosPausados).getTime();
+
+			return { elapsedRealTime, elapsedSimulatedTime };
+		}
+
 		const currentSimTime = getNewTime(simulacion);
 		setCurrentTime(currentSimTime);
+
+		const elapsedTimes = getElapsedTime(simulacion);
+		setElapsedRealTime(elapsedTimes.elapsedRealTime);
+		setElapsedSimulationTime(elapsedTimes.elapsedSimulatedTime);
 
 		const interval = setInterval(() => {
 			const newTime = getNewTime(simulacion);
 			setCurrentTime(newTime);
+
+			const newElapsedTimes = getElapsedTime(simulacion);
+			setElapsedRealTime(newElapsedTimes.elapsedRealTime);
+			setElapsedSimulationTime(newElapsedTimes.elapsedSimulatedTime);
 		}, 300);
 
 		curInterval.current = interval;
@@ -185,6 +213,9 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 
 	return {
 		currentTime,
+		elapsedRealTime,
+		elapsedSimulationTime,
+		currentlyLockedFlight,
 		setCurrentTime: handleSetTime,
 		setCurrentTimeNoSimulation: handleSetTimeNoSimulation,
 		map,
