@@ -257,6 +257,9 @@ function RegisterShipmentPage() {
         receptor: { id: receiverClientResponse.id }, // Suponemos que tienes el ID del receptor de alguna manera
       };
       
+
+      console.log("data enviada al back/envio", dataToSend);
+
       // Registrar el envío
       api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
   
@@ -309,7 +312,7 @@ function RegisterShipmentPage() {
     setReceiverEmail('');
     setReceiverNames('');
     setReceiverSurnames('');
-    setPackagesCount(1);
+    setPackagesCount(0);
     setOriginLocationId('');
     setDestinationLocationId('');
     setDate(new Date()); // O cualquier otra lógica de reseteo
@@ -348,26 +351,27 @@ function RegisterShipmentPage() {
     </div>
   );
 
+  
   const PackageCard = () => (
+
+    
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-4">Detalles del Paquete</h2>
       <form>
         <Label htmlFor="amount-package" className="font-semibold text-base">Cantidad de paquetes *</Label>
-        <Select>
+        <Select
+          onValueChange={value => setPackagesCount(Number(value))}
+          value={packagesCount.toString()}
+        >
           <SelectTrigger className="w-[885px]">
             <SelectValue placeholder="Seleccione la cantidad de paquetes" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Seleccione la cantidad de paquetes</SelectLabel>
-              <SelectItem value="un-paquete">1</SelectItem>
-              <SelectItem value="dos-paquete">2</SelectItem>
-              <SelectItem value="tres-paquete">3</SelectItem>
-              <SelectItem value="cuatro-paquete">4</SelectItem>
-              <SelectItem value="cinco-paquete">5</SelectItem>
-              <SelectItem value="seis-paquete">6</SelectItem>
-              <SelectItem value="siete-paquete">7</SelectItem>
-              <SelectItem value="ocho-paquete">8</SelectItem>
+              {Array.from({ length: 8 }, (_, i) => (
+                <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
