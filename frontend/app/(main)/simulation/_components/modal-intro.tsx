@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { currentTimeString } from "@/lib/date";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { api } from "@/lib/api";
@@ -37,7 +38,7 @@ export function ModalIntro({
 	//const fileInputRef = useRef<HTMLInputElement>(null);
 	//const [file, setFile] = useState<File | undefined>();
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-	const [selectedTime, setSelectedTime] = useState<string>("");
+	const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
 	const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
 
 	// const openFilePicker = () => {
