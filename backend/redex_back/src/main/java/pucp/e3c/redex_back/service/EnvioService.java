@@ -3,6 +3,7 @@ package pucp.e3c.redex_back.service;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
+import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Envio;
+import pucp.e3c.redex_back.model.EstadoAlmacen;
 import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
@@ -29,6 +32,9 @@ import pucp.e3c.redex_back.repository.UbicacionRepository;
 
 @Service
 public class EnvioService {
+    @Autowired
+    private Algoritmo algoritmo;
+
     @Autowired
     private EnvioRepository envioRepository; // Inyecta la dependencia
 
@@ -261,6 +267,11 @@ public class EnvioService {
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
                 paquetes.add(paquete);
+
+                String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
+                EstadoAlmacen estado = algoritmo.obtenerEstadoAlmacenDiaDia();
+                estado.registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
+                algoritmo.actualizarEstadoAlmacenDiaDia(estado);
             }
 
         }
@@ -268,6 +279,19 @@ public class EnvioService {
         paqueteRepository.saveAll(paquetes);
 
         return envios;
+    }
+
+    private Date removeTime(Date date) {
+        // Obtener una instancia de Calendar y establecer la fecha dada
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        // Ajustar las horas, minutos, segundos y milisegundos a cero
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Obtener la nueva fecha sin tiempo
+        return calendar.getTime();
     }
 
     public ArrayList<Envio> registerAllByString(ArrayList<RegistrarEnvio> registrarEnvios,
@@ -329,6 +353,33 @@ public class EnvioService {
     public ArrayList<Envio> findSinSimulacionActual() {
         try {
             return envioRepository.findEnviosSinSimulacion();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public void deleteAll() {
+        try {
+            envioRepository.deleteAll();
+            envioRepository.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    public ArrayList<Envio> findByEmisorId(Integer id) {
+        try {
+            return envioRepository.findByEmisorId(id);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Envio> findByReceptorId(Integer id) {
+        try {
+            return envioRepository.findByReceptorId(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;

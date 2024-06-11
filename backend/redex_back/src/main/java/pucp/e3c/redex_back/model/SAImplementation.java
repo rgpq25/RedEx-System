@@ -249,8 +249,9 @@ public class SAImplementation {
                         // Funciones.printLineInLog("");
                         // Funciones.printLineInLog("");
 
-                        Funciones.printRutasTXT(current.paquetes, current.rutas, "paquetes" + iteracion + ".txt");
-                        current.printFlightOcupation("ocupacionVuelos" + iteracion + ".txt");
+                        // Funciones.printRutasTXT(current.paquetes, current.rutas, "paquetes" +
+                        // iteracion + ".txt");
+                        // current.printFlightOcupation("ocupacionVuelos" + iteracion + ".txt");
                         current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion + ".txt");
 
                         // Guardar vuelos
@@ -267,7 +268,7 @@ public class SAImplementation {
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                                         messagingTemplate.convertAndSend("/algoritmo/estado",
-                                                        "Error al guardar algun vuelo: " + e.getMessage());
+                                        new RespuestaAlgoritmoEstado("Error al guardar algun vuelo: " + e.getMessage(), simulacion));
                                 }
                         }
                         RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
@@ -279,7 +280,7 @@ public class SAImplementation {
                         e.printStackTrace();
                         System.err.println("Error al ejecutar el algoritmo p: " + e.getMessage());
                         messagingTemplate.convertAndSend("/algoritmo/estado",
-                                        "Error al ejecutar el algoritmo: " + e.getMessage());
+                        new RespuestaAlgoritmoEstado("Error al ejecutar el algoritmo: " + e.getMessage(), simulacion));
                         return null;
                 }
 

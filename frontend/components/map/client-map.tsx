@@ -50,7 +50,7 @@ function ClientMap({
 		}
 	);
 
-	const { currentTime, map, setMap, zoomToAirport, lockToFlight } = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight, getCurrentlyPausedTime } = attributes;
 
 	const {
 		isAirportModalOpen,
@@ -101,6 +101,7 @@ function ClientMap({
 								aeropuerto={aeropuerto}
 								coordinates={[latitud, longitud] as [number, number]}
 								onClick={(coordinates: [number, number]) => {
+									console.log(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {})
 									zoomToAirport(aeropuerto);
 									openAirportModal(aeropuerto);
 								}}
@@ -129,6 +130,7 @@ function ClientMap({
 										lockToFlight(vuelo);
 										openFlightModal(vuelo);
 									}}
+									focusedAirplane={currentlyLockedFlight}
 								/>
 							);
 						})}
@@ -155,6 +157,8 @@ function ClientMap({
 				}}
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
+				currentTime={currentTime}
+				getCurrentlyPausedTime={getCurrentlyPausedTime}
 			/>
 			<EnvioModal
 				currentTime={currentTime}
@@ -163,6 +167,8 @@ function ClientMap({
 				setIsOpen={(isOpen: boolean) => setIsEnvioModalOpen(isOpen)}
 				envio={currentEnvioModal}
 				simulacion={simulation}
+				lockToFlight={lockToFlight}
+				zoomToUbicacion={zoomToUbicacion}
 			/>
 			<div
 				className={cn("border rounded-xl flex justify-center items-center  overflow-hidden z-[10]", className)}

@@ -10,6 +10,7 @@ import { api } from "@/lib/api";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowUpDown, Loader2 } from "lucide-react";
+import { AirportTable } from "./airport-table";
 
 interface FlightModalProps {
 	isSimulation: boolean;
@@ -35,41 +36,31 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "envio",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px] gap-1">
+				<div className="flex items-center gap-1 flex-1">
 					<p>Envío asociado</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
-		cell: ({ row }) => <div className="w-[150px] text-start">{(row.getValue("envio") as Envio).id}</div>,
+		cell: ({ row }) => <div className="truncate text-start flex-1">{(row.getValue("envio") as Envio).id }</div>,
 	},
 	{
 		accessorKey: "Origen",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center flex-1 w-[250px]">
 					<p>Origen</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionOrigen.pais}
+			<div className="flex-1 truncate w-[250px]">
+				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais + " (" + (row.getValue("envio") as Envio).ubicacionOrigen.id + ")"}
 			</div>
 		),
 	},
@@ -77,42 +68,20 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "Destino",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center w-[250px]">
 					<p>Destino</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad +
-					", " +
-					(row.getValue("envio") as Envio).ubicacionDestino.pais}
+			<div className="w-[250px] truncate">
+				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais + " (" + (row.getValue("envio") as Envio).ubicacionDestino.id + ")"}
 			</div>
 		),
-	},
-	{
-		accessorKey: "statusAlmacen",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center">
-					<p>Estado</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => (
-			<div className="">
-				<p>Pendiente</p>
-				{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
-			</div>
-		),
-	},
+	}
 ];
 
 function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: FlightModalProps) {
@@ -132,7 +101,9 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					return;
 				}
 
-				console.log(`Fetching airport data with flight id ${vuelo.id}, current used capacity ${vuelo.capacidadUtilizada} and simulation id ${simulacion.id}`);
+				console.log(
+					`Fetching airport data with flight id ${vuelo.id}, current used capacity ${vuelo.capacidadUtilizada} and simulation id ${simulacion.id}`
+				);
 				setIsLoading(true);
 				await api(
 					"GET",
@@ -175,7 +146,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[650px] min-h-[650px] max-h-[650px]  flex flex-col gap-2">
+			<DialogContent className="w-[950px] min-w-[950px] max-w-[950px] h-[662px] min-h-[662px] max-h-[662px]  flex flex-col gap-2">
 				{isLoading ? (
 					<div className="flex-1 flex justify-center items-center">
 						<Loader2 className="animate-spin stroke-gray-400" />
@@ -185,44 +156,38 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 						<DialogHeader>
 							<DialogTitle className="text-2xl">Información de vuelo</DialogTitle>
 						</DialogHeader>
-						<div className="flex-1 flex flex-col">
+						<div className="flex-1 flex flex-col 	">
 							<p>
-								{"Origen - Destino: " +
+								{"Origen: " +
 									vuelo?.planVuelo.ciudadOrigen.ciudad +
 									", " +
 									vuelo?.planVuelo.ciudadOrigen.pais +
-									" - " +
+									" (" +
+									vuelo?.planVuelo.ciudadOrigen.id +
+									") --> " +
+									"Destino: " +
 									vuelo?.planVuelo.ciudadDestino.ciudad +
 									", " +
-									vuelo?.planVuelo.ciudadDestino.pais}
+									vuelo?.planVuelo.ciudadDestino.pais +
+									" (" +
+									vuelo?.planVuelo.ciudadDestino.id +
+									")"}
 							</p>
-							<p>
-								{"Fecha salida: " +
-									vuelo?.fechaSalida.toLocaleDateString() +
-									" " +
-									vuelo?.fechaSalida.toLocaleTimeString()}
-							</p>
-							<p>
-								{"Fecha llegada: " +
-									vuelo?.fechaLlegada.toLocaleDateString() +
-									" " +
-									vuelo?.fechaLlegada.toLocaleTimeString()}
-							</p>
+
+							<p>{"Fecha salida: " + vuelo?.fechaSalida.toLocaleDateString() + " " + vuelo?.fechaSalida.toLocaleTimeString()}</p>
+							<p>{"Fecha llegada: " + vuelo?.fechaLlegada.toLocaleDateString() + " " + vuelo?.fechaLlegada.toLocaleTimeString()}</p>
 							<div className="flex flex-row items-center gap-1">
-								<p>
-									Capacidad actual:{" "}
-									{vuelo?.capacidadUtilizada + " / " + vuelo?.planVuelo.capacidadMaxima}
-								</p>
+								<p>Capacidad actual: {vuelo?.capacidadUtilizada + " / " + vuelo?.planVuelo.capacidadMaxima}</p>
 								{vuelo?.capacidadUtilizada &&
-									(vuelo?.capacidadUtilizada <= 30 ? (
+									(vuelo?.capacidadUtilizada / vuelo?.planVuelo.capacidadMaxima <= 0.3 ? (
 										<Chip color="green">Bajo</Chip>
-									) : vuelo?.capacidadUtilizada <= 60 ? (
+									) : vuelo?.capacidadUtilizada / vuelo?.planVuelo.capacidadMaxima <= 0.6 ? (
 										<Chip color="yellow">Medio</Chip>
 									) : (
 										<Chip color="red">Alto</Chip>
 									))}
 							</div>
-							<FlightTable data={paquetes} columns={columns} />
+							<AirportTable data={paquetes} columns={columns} />
 						</div>
 					</>
 				)}

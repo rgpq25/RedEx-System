@@ -120,4 +120,15 @@ public class PlanVueloService {
             return null;
         }
     }
+
+
+    public void deleteAll() {
+        try{
+            planVueloRepository.deleteAll();
+            planVueloRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

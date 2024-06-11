@@ -1,6 +1,8 @@
 package pucp.e3c.redex_back.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,11 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
+import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Envio;
+import pucp.e3c.redex_back.model.EstadoAlmacen;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
+import pucp.e3c.redex_back.service.PaqueteService;
 
 @RestController
 @CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
@@ -35,12 +40,45 @@ public class EnvioController {
     @Autowired
     private AeropuertoService aeropuertoService;
 
+    @Autowired
+    private PaqueteService paqueteService;
+
+    @Autowired
+    private Algoritmo algoritmo;
+
+    private Date removeTime(Date date) {
+        // Obtener una instancia de Calendar y establecer la fecha dada
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        // Ajustar las horas, minutos, segundos y milisegundos a cero
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Obtener la nueva fecha sin tiempo
+        return calendar.getTime();
+    }
+
+
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {
         envio = envioService.register(envio);
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
+            Aeropuerto aeropuerto = aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId());
+            paquete.setAeropuertoActual(aeropuerto);
+            paquete.setEnAeropuerto(true);
+            paquete.setEntregado(false);
             paquete.setEnvio(envio);
+            paquete.setSimulacionActual(envio.getSimulacionActual());
+            paqueteService.register(paquete);
+
+            if(envio.getSimulacionActual() == null){
+                String aeropuertoSalida = envio.getUbicacionOrigen().getId();
+                EstadoAlmacen estado = algoritmo.obtenerEstadoAlmacenDiaDia();
+                estado.registrarCapacidad(aeropuertoSalida, removeTime(envio.getFechaRecepcion()), 1);
+                algoritmo.actualizarEstadoAlmacenDiaDia(estado);
+            }
         }
         return envioService.register(envio);
     }
@@ -102,6 +140,16 @@ public class EnvioController {
     @GetMapping(value = "/sin_simulacion")
     public ArrayList<Envio> findSinSimuacionActual() {
         return envioService.findSinSimulacionActual();
+    }
+
+    @GetMapping(value = "/emisor/{id}")
+    public ArrayList<Envio> findByEmisorID(@PathVariable("id") Integer id) {
+        return envioService.findByEmisorId(id);
+    }
+
+    @GetMapping(value = "/receptor/{id}")
+    public ArrayList<Envio> findByReceptorID(@PathVariable("id") Integer id) {
+        return envioService.findByReceptorId(id);
     }
 
 }

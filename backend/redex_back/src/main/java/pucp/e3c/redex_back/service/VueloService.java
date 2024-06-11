@@ -1,14 +1,22 @@
 package pucp.e3c.redex_back.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRuta;
@@ -80,6 +88,60 @@ public class VueloService {
         }
     }
 
+    public HashMap<Integer, ArrayList<Vuelo>> findVuelosByPaqueteIds(List<Paquete> paquetes) {
+        List<Integer> paqueteIds = new ArrayList<>();
+        for (Paquete paquete : paquetes) {
+            paqueteIds.add(paquete.getId());
+        }
+        paquetes = paqueteRepository.findAllById(paqueteIds);
+
+        HashMap<Integer, ArrayList<Vuelo>> vuelosPorPaquete = new HashMap<>();
+
+        if (paquetes.isEmpty()) {
+            return vuelosPorPaquete;
+        }
+
+        // Collect PlanRuta ids from the paquetes
+        List<Integer> planRutaIds = paquetes.stream()
+                .filter(p -> p.getPlanRutaActual() != null)
+                .map(p -> p.getPlanRutaActual().getId())
+                .collect(Collectors.toList());
+
+        // Map PlanRuta ids to corresponding PlanRutaXVuelos in a single query
+        HashMap<Integer, List<PlanRutaXVuelo>> planRutaXVuelosMap = (HashMap<Integer, List<PlanRutaXVuelo>>) planRutaXVueloRepository
+                .findAllById(planRutaIds)
+                .stream()
+                .collect(Collectors.groupingBy(prxv -> prxv.getPlanRuta().getId()));
+
+        // Collect all Vuelo ids involved
+        List<Integer> vueloIds = planRutaXVuelosMap.values().stream()
+                .flatMap(Collection::stream)
+                .map(prxv -> prxv.getVuelo().getId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Get all Vuelos in one query
+        HashMap<Integer, Vuelo> vuelosMap = (HashMap<Integer, Vuelo>) vueloRepository.findAllById(vueloIds)
+                .stream()
+                .collect(Collectors.toMap(Vuelo::getId, Function.identity()));
+
+        // Build the final map of vuelos by paquete id
+        for (Paquete paquete : paquetes) {
+            if (paquete.getPlanRutaActual() != null) {
+                List<Vuelo> vuelos = planRutaXVuelosMap
+                        .getOrDefault(paquete.getPlanRutaActual().getId(), new ArrayList<>())
+                        .stream()
+                        .map(prxv -> vuelosMap.get(prxv.getVuelo().getId()))
+                        .collect(Collectors.toCollection(ArrayList::new));
+                vuelosPorPaquete.put(paquete.getId(), new ArrayList<>(vuelos));
+            } else {
+                vuelosPorPaquete.put(paquete.getId(), new ArrayList<>());
+            }
+        }
+
+        return vuelosPorPaquete;
+    }
+
     public Vuelo update(Vuelo vuelo) {
         // return vueloRepository.save(vuelo);
         try {
@@ -143,6 +205,24 @@ public class VueloService {
             LOGGER.error(e.getMessage());
             return null;
         }
+    }
+
+    public HashMap<Integer, ArrayList<Vuelo>> findByAllPaqueteId(ArrayList<Paquete> paquetes) {
+        HashMap<Integer, ArrayList<Vuelo>> hashVuelosXPaquete = new HashMap<>();
+        if (paquetes.size() <= 0) {
+            return new HashMap<Integer, ArrayList<Vuelo>>();
+        }
+        for (Paquete paquete : paquetes) {
+            ArrayList<Vuelo> vuelos = findVuelosByPaqueteId(paquete.getId());
+            if (vuelos != null) {
+                hashVuelosXPaquete.put(paquete.getId(), vuelos);
+            } else {
+                hashVuelosXPaquete.put(paquete.getId(), new ArrayList<Vuelo>());
+            }
+        }
+
+        return hashVuelosXPaquete;
+
     }
 
     public ArrayList<Vuelo> findByCiudadDestino(Ubicacion ciudadDestino) {
@@ -264,6 +344,15 @@ public class VueloService {
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
+        }
+    }
+
+    public void deleteAll() {
+        try {
+            vueloRepository.deleteAll();
+            vueloRepository.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
         }
     }
 }

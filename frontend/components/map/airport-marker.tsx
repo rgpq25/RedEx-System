@@ -25,7 +25,12 @@ function AirportMarker({
 	const porcentajeOcupacion = (currentCapacity / aeropuerto.capacidadMaxima) * 100;
 
 	const airportIcon = new Icon({
-		iconUrl: "/airportIcon.png",
+		iconUrl:
+			porcentajeOcupacion >= 0 && porcentajeOcupacion <= 30
+				? "/green-airport.png"
+				: porcentajeOcupacion > 30 && porcentajeOcupacion <= 60
+				? "/yellow-airport.png"
+				: "/red-airport.png",
 		iconSize: [30, 30],
 		iconAnchor: [15, 30],
 	});
@@ -40,7 +45,16 @@ function AirportMarker({
 				}}
 			>
 				<Tooltip direction="top" offset={[0, -35]} className="font-bold text-md text-center">
-					{aeropuerto.ubicacion.id + " (" + currentCapacity + "/" + aeropuerto.capacidadMaxima + ")"}
+					{aeropuerto.ubicacion.ciudad +
+						", " +
+						aeropuerto.ubicacion.pais +
+						" - " +
+						aeropuerto.ubicacion.id +
+						" (" +
+						currentCapacity +
+						"/" +
+						aeropuerto.capacidadMaxima +
+						")"}
 				</Tooltip>
 				{/* <Tooltip permanent direction="bottom" >
 					{currentCapacity}
