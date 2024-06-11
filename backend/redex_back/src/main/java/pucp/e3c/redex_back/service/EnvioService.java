@@ -344,4 +344,22 @@ public class EnvioService {
         }
     }
 
+    public ArrayList<Envio> findByEmisorId(Integer id) {
+        try {
+            return envioRepository.findByEmisorId(id);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Envio> findByReceptorId(Integer id) {
+        try {
+            return envioRepository.findByReceptorId(id);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }
