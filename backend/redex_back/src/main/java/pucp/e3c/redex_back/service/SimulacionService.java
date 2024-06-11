@@ -71,4 +71,15 @@ public class SimulacionService {
             return null;
         }
     }
+
+    public void deleteAll()
+    {
+        try{
+            simulacionRepository.deleteAll();
+            simulacionRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
 }
