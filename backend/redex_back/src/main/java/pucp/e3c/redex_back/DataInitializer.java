@@ -257,7 +257,7 @@ public class DataInitializer {
          * paqueteService.register(paquete);
          * }
          */
-        boolean inicializar_paquetes_operaciones_dia_dia = false;
+        boolean inicializar_paquetes_operaciones_dia_dia = true;
         if (inicializar_paquetes_operaciones_dia_dia) {
             // inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
             incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); // 100,250,500
