@@ -13,6 +13,8 @@ import { Ubicacion , Envio} from "@/lib/types";
 import { formatISO } from "date-fns"
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import Link from 'next/link'; 
+import { buttonVariants } from "@/components/ui/button"
 
 import {
   AlertDialog,
@@ -59,18 +61,47 @@ interface NavigationButtonsProps {
   api: CarouselApi;
   currentStep: number;
   openConfirmDialog: () => void;
+  validateSenderCard: () => boolean;  // Añadir esta línea
+  validateReceiverCard: () => boolean;
+  validatePackageCard: () => boolean;
+
 }
 
-function NavigationButtons({ api, currentStep, openConfirmDialog  }: NavigationButtonsProps) { 
+function NavigationButtons({ api, currentStep, openConfirmDialog, validateSenderCard, validateReceiverCard, validatePackageCard  }: NavigationButtonsProps) { 
   const apiInstance = api ? api : null;
+  const isNextDisabled = (currentStep === 0 && !validateSenderCard()) ||
+                         (currentStep === 1 && !validateReceiverCard()) ||
+                         (currentStep === 2 && !validatePackageCard());
+
+  const navigateNext = () => {
+    if (isNextDisabled) {
+      toast.error("Por favor, complete correctamente todos los campos antes de continuar.");
+      return;
+    }
+    if (currentStep === 2) {
+      openConfirmDialog();  // Abre el diálogo de confirmación si es el último paso y la validación es correcta
+    } else {
+      apiInstance && apiInstance.scrollNext(); // Avanza al siguiente paso si no es el último
+    }
+  };
+
+  const buttonStyle = "bg-red-800 text-white px-8 py-6 rounded shadow inline-flex items-center justify-center";
+
   return (
-    <div className="flex justify-center items-center space-x-4 absolute bottom-40 w-full">
-      <Button className="bg-red-800 text-white px-8 py-6 rounded shadow" onClick={() => apiInstance && apiInstance.scrollPrev()}>
-        Cancelar
-      </Button>
+    <div className="flex justify-center items-center space-x-4 absolute bottom-32 w-full">
+      {currentStep === 0 ? (
+        <Link  className={buttonVariants({ variant: "outline"  })}  href="/dashboard"  >
+          Cancelar
+        </Link>
+      ) : (
+        <Button className="bg-red-800 text-white px-6 py-4 rounded shadow" onClick={() => apiInstance && apiInstance.scrollPrev()}>
+          Cancelar
+        </Button>
+      )}
       <Button
-        className="bg-red-800 text-white px-8 py-6 rounded shadow"
-        onClick={() => currentStep === 2 ? openConfirmDialog() : apiInstance && apiInstance.scrollNext()}
+        className={`bg-red-800 text-white px-6 py-4 rounded shadow ${isNextDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onClick={navigateNext}
+        disabled={isNextDisabled}
       >
         {currentStep === 2 ? "Confirmar" : "Siguiente"}
       </Button>
@@ -86,11 +117,48 @@ function RegisterShipmentPage() {
   const [date, setDate] = useState(new Date());
   const [locations, setLocations] = useState<Ubicacion[]>([]);
 
+
+
   const [originLocationId, setOriginLocationId] = useState('');
   const [destinationLocationId, setDestinationLocationId] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
+  const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+  const [showDashboardLink, setShowDashboardLink] = useState(false);
 
+
+    
+  const [senderEmail, setSenderEmail] = useState('');
+  const [senderNames, setSenderNames] = useState('');
+  const [senderSurnames, setSenderSurnames] = useState('');
+  
+  const [receiverEmail, setReceiverEmail] = useState('');
+  const [receiverNames, setReceiverNames] = useState('');
+  const [receiverSurnames, setReceiverSurnames] = useState('');
+
+
+
+
+   // Validación de correo electrónico
+   const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
+
+   // Validación de los campos del emisor
+   const validateSenderCard = () => {
+     return senderEmail && senderNames && senderSurnames && isValidEmail(senderEmail);
+   };
+
+   const validateReceiverCard = () => {
+    return receiverEmail && receiverNames && receiverSurnames && isValidEmail(receiverEmail);
+  };
+
+  const validatePackageCard = () => {
+    const validDate = date instanceof Date && !isNaN(date.getTime()); // Correctly check if the date object is valid
+
+    const timeElement = document.getElementById('register-time') as HTMLInputElement;
+    const validTime = timeElement ? timeElement.value.trim() !== '' : false; // Check if the time input is not empty
+    return originLocationId && destinationLocationId && packagesCount > 0 && validDate && validTime;
+  };
 
   useEffect(() => {
     fetch('http://localhost:8080/back/ubicacion/')
@@ -120,12 +188,9 @@ function RegisterShipmentPage() {
 
   const handleConfirm = () => {
     const formattedDate = formatISO(date);
-
-
-
     const dataToSend = {
-      ubicacionOrigen: { id: "UMMS" },
-      ubicacionDestino: { id: "WSSS" },
+      ubicacionOrigen: { id: originLocationId  },
+      ubicacionDestino: { id: destinationLocationId },
       fechaRecepcion: formattedDate,
       fechaLimiteEntrega: formattedDate,
       estado: 'En Almacen',
@@ -137,7 +202,6 @@ function RegisterShipmentPage() {
     console.log("dataToSend:", dataToSend); // Agrega este console.log
 
     api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
-    setIsConfirmDialogOpen(false);  // Close the dialog after confirming
   };
 
   interface ApiResponse {
@@ -148,6 +212,8 @@ function RegisterShipmentPage() {
   const handleSuccess = (data : ApiResponse) => {
     console.log('Registro completado:', data);
     console.log('Objeto recibido de la API:', data); // Agrega esta línea
+    setIsConfirmDialogOpen(false);  // Close the dialog after confirming
+    setIsSecondDialogOpen(true);    // Abre el segundo diálogo
     toast.success("Registro completado con éxito!");
   };
 
@@ -156,38 +222,68 @@ function RegisterShipmentPage() {
     toast.error("Error en el registro: " + error);
   };
 
+
+
   const openConfirmDialog = () => setIsConfirmDialogOpen(true);
+
+
+  const handleSecondDialogChoice = (choice: string) => {
+    setIsSecondDialogOpen(false); // Cierra el segundo diálogo
+    if (choice === "yes") {
+        resetForm(); // Resetea el formulario para nuevo ingreso
+        window.location.reload(); // Refresca la página
+    } else {
+        setRedirectToDashboard(true); // Establece el estado para redirigir al dashboard
+    }
+  };
+  
+  if (redirectToDashboard) {
+    window.location.href = '/dashboard';
+    return null; // Renderiza nada mientras se procesa la redirección
+  }
+
+  const resetForm = () => {
+    // Resetea todos los campos del formulario
+    setSenderEmail('');
+    setSenderNames('');
+    setSenderSurnames('');
+    setReceiverEmail('');
+    setReceiverNames('');
+    setReceiverSurnames('');
+    setPackagesCount(1);
+    setOriginLocationId('');
+    setDestinationLocationId('');
+    setDate(new Date()); // O cualquier otra lógica de reseteo
+  };
 
   const SenderCard = () => (
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-4">Información del Emisor</h2>
       <form>
-        <Label htmlFor="correo" className="font-semibold text-base">Correo *</Label>
-        <Input type="email" id="email-send" placeholder="email@example.com" />
-        <br></br>
-        <Label htmlFor="names" className="font-semibold text-base">Nombres *</Label>
-        <Input type="mt-1" id="nombres-send" placeholder="nombres" />
-        <br></br>
-        <Label htmlFor="surnames" className="font-semibold text-base">Apellidos *</Label>
-        <Input type="mt-1" id="apellidos-send" placeholder="apellidos" />
-
+      <Label htmlFor="email-send" className="font-semibold text-base">Correo *</Label>
+      <Input type="email" id="email-send" value={senderEmail} onChange={e => setSenderEmail(e.target.value)} placeholder="email@example.com" />
+      <br></br>
+      <Label htmlFor="names-send" className="font-semibold text-base">Nombres *</Label>
+      <Input id="names-send" value={senderNames} onChange={e => setSenderNames(e.target.value)} placeholder="nombres" />
+      <br></br>
+      <Label htmlFor="surnames-send" className="font-semibold text-base">Apellidos *</Label>
+      <Input id="surnames-send" value={senderSurnames} onChange={e => setSenderSurnames(e.target.value)} placeholder="apellidos" />
       </form>
     </div>
   );
 
   const ReceiverCard = () => (
-
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-4">Información del Receptor</h2>
       <form>
         <Label htmlFor="correo" className="font-semibold text-base">Correo *</Label>
-        <Input type="email" id="email-receiver" placeholder="email@example.com" />
+        <Input type="email" id="email-receiver" value={receiverEmail} onChange={e => setReceiverEmail(e.target.value)} placeholder="email@example.com" />
         <br></br>
         <Label htmlFor="names" className="font-semibold text-base">Nombres *</Label>
-        <Input type="mt-1" id="nombres-receiver" placeholder="nombres" />
+        <Input type="mt-1" value={receiverNames} onChange={e => setReceiverNames(e.target.value)} placeholder="nombres" />
         <br></br>
         <Label htmlFor="surnames" className="font-semibold text-base">Apellidos *</Label>
-        <Input type="mt-1" id="apellidos-receiver" placeholder="apellidos" />
+        <Input type="mt-1" value={receiverSurnames} onChange={e => setReceiverSurnames(e.target.value)}placeholder="apellidos" />
 
       </form>
     </div>
@@ -217,35 +313,37 @@ function RegisterShipmentPage() {
           </SelectContent>
         </Select>
         <br></br>
-        <Label htmlFor="city-destination" className="font-semibold text-base">Ciudad origen *</Label>
-        <Select>
-          <SelectTrigger className="w-[885px]">
-            <SelectValue placeholder="Seleccione la ciudad de origen" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Seleccione la ciudad de origen</SelectLabel>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id} onClick={() => setOriginLocationId(location.id)}>{location.ciudad}</SelectItem>
-            ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <br></br>
-        <Label htmlFor="amount-package" className="font-semibold text-base">Ciudad destino *</Label>
-        <Select>
-          <SelectTrigger className="w-[885px]">
-            <SelectValue placeholder="Seleccione la cantidad de paquetes" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Seleccione la ciudad de destino</SelectLabel>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id} onClick={() => setDestinationLocationId(location.id)}>{location.ciudad}</SelectItem>
-            ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Label htmlFor="city-origin" className="font-semibold text-base">Ciudad origen *</Label>
+        <Select onValueChange={setOriginLocationId} value={originLocationId}>
+                <SelectTrigger className="w-[885px]">
+                    <SelectValue placeholder="Seleccione la ciudad de origen" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        {locations.map((location) => (
+                            <SelectItem key={location.id} value={location.id}>
+                                {location.ciudad}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+            <br/>
+            <Label htmlFor="city-destination" className="font-semibold text-base">Ciudad destino *</Label>
+            <Select onValueChange={setDestinationLocationId} value={destinationLocationId}>
+                <SelectTrigger className="w-[885px]">
+                    <SelectValue placeholder="Seleccione la ciudad de destino" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        {locations.map((location) => (
+                            <SelectItem key={location.id} value={location.id}>
+                                {location.ciudad}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
         <br></br>
         <div className="flex justify-between space-x-4">
         <div className="flex-1">
@@ -312,7 +410,7 @@ function RegisterShipmentPage() {
           </CarouselItem>
         </CarouselContent>  
       </Carousel>
-      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} openConfirmDialog={openConfirmDialog} />}
+      {carouselApi  && <NavigationButtons api={carouselApi} currentStep={currentStep} openConfirmDialog={openConfirmDialog} validateSenderCard={validateSenderCard as () => boolean}  validateReceiverCard={validateReceiverCard as () => boolean}   validatePackageCard={validatePackageCard as () => boolean}/>}
 
       {isConfirmDialogOpen && (
         <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
@@ -329,6 +427,23 @@ function RegisterShipmentPage() {
             <AlertDialogFooter>
               <AlertDialogAction onClick={handleConfirm}>Confirmar</AlertDialogAction>
               <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>Cancelar</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {isSecondDialogOpen && (
+        <AlertDialog open={isSecondDialogOpen} onOpenChange={setIsSecondDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿El cliente desea hacer otro envío?</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              Esta acción permitirá iniciar un nuevo registro de envío.
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => handleSecondDialogChoice("yes")}>Sí</AlertDialogAction>
+              <AlertDialogCancel onClick={() => handleSecondDialogChoice("no")}>No</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
