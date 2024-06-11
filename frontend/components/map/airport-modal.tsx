@@ -16,6 +16,7 @@ interface AirportModalProps {
 	setIsOpen: (isOpen: boolean) => void;
 	aeropuerto: Aeropuerto | null;
 	simulacion: Simulacion | undefined;
+	currentTime: Date | undefined;
 }
 
 const columns: ColumnDef<Paquete>[] = [
@@ -34,31 +35,36 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "envio",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px] gap-1">
+				<div className="flex items-center  gap-1">
 					<p>Envío asociado</p>
-					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
-		cell: ({ row }) => <div className="w-[150px] text-start">{(row.getValue("envio") as Envio).id}</div>,
+		cell: ({ row }) => <div className=" text-start">{(row.getValue("envio") as Envio).id}</div>,
 	},
 	{
 		accessorKey: "Origen",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center flex-grow flex-1">
 					<p>Origen</p>
-					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais}
+			<div className="flex-1 truncate">
+				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad +
+					", " +
+					(row.getValue("envio") as Envio).ubicacionOrigen.pais +
+					" (" +
+					(row.getValue("envio") as Envio).ubicacionOrigen.id +
+					")"}
 			</div>
 		),
 	},
@@ -66,39 +72,44 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "Destino",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center  flex-grow flex-1">
 					<p>Destino</p>
-					<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais}
+			<div className="flex-1 truncate">
+				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad +
+					", " +
+					(row.getValue("envio") as Envio).ubicacionDestino.pais +
+					" (" +
+					(row.getValue("envio") as Envio).ubicacionDestino.id +
+					")"}
 			</div>
 		),
 	},
-	{
-		accessorKey: "statusAlmacen",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center">
-					<p>Estado</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => (
-			<div className="">
-				<p>Pendiente</p>
-				{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
-			</div>
-		),
-	},
+	// {
+	// 	accessorKey: "statusAlmacen",
+	// 	header: ({ column }) => {
+	// 		return (
+	// 			<div className="flex items-center">
+	// 				<p>Estado</p>
+	// 			</div>
+	// 		);
+	// 	},
+	// 	cell: ({ row }) => (
+	// 		<div className="">
+	// 			<p>Pendiente</p>
+	// 			{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
+	// 		</div>
+	// 	),
+	// },
 ];
 
-function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion }: AirportModalProps) {
+function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime }: AirportModalProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fechaConsulta, setFechaConsulta] = useState<Date | null>(null);
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
@@ -107,6 +118,10 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 		async function getAirportShipments() {
 			if (aeropuerto === null) {
 				toast.error("No se encontró aeropuerto");
+				return;
+			}
+			if (currentTime === undefined) {
+				toast.error("No se encontró tiempo actual");
 				return;
 			}
 
@@ -125,7 +140,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);
-						setFechaConsulta(new Date());
+						setFechaConsulta(new Date(currentTime));
 						setIsLoading(false);
 					},
 					(error) => {
@@ -144,7 +159,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 						console.log("Finished fetch");
 						console.log(data);
 						setPaquetes(data);
-						setFechaConsulta(new Date());
+						setFechaConsulta(new Date(currentTime));
 						setIsLoading(false);
 					},
 					(error) => {
@@ -181,7 +196,6 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 							</div>
 							<div className="flex flex-row items-center gap-1">
 								<p>{`Capacidad actual: ${paquetes.length}/${aeropuerto?.capacidadMaxima}`} </p>
-								<Chip color="green">Bueno</Chip>
 								{aeropuerto &&
 									(paquetes.length / aeropuerto?.capacidadMaxima <= 0.3 ? (
 										<Chip color="green">Bajo</Chip>

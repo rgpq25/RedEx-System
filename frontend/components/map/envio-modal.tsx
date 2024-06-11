@@ -8,15 +8,20 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import Chip from "../ui/chip";
+import { AirportTable } from "./airport-table";
 
 function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
+	if (planRutaVuelos.length === 0) {
+		return <p>---</p>;
+	}
+
 	const vuelo = planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime);
 
 	if (vuelo !== undefined) {
 		return (
 			<>
-				<p>{vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais}</p>
-				<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => lockToFlight(vuelo)}>
+				<p className="truncate">{vuelo.planVuelo.ciudadOrigen.pais + " - " + vuelo.planVuelo.ciudadDestino.pais}</p>
+				<Button size="icon" className="w-7 h-7 shrink-0" variant="outline" onClick={() => lockToFlight(vuelo)}>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -26,8 +31,11 @@ function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToF
 	}
 }
 
-
 function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUbicacion: (ubicacion: Ubicacion) => void) {
+	if (planRutaVuelos.length === 0) {
+		return <p>---</p>;
+	}
+
 	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime) !== undefined) {
 		return <p>---</p>;
 	}
@@ -35,8 +43,8 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 	if (_currentTime <= new Date(planRutaVuelos[0].fechaSalida)) {
 		return (
 			<>
-				<p>{planRutaVuelos[0].planVuelo.ciudadOrigen.pais}</p>
-				<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => zoomToUbicacion(planRutaVuelos[0].planVuelo.ciudadOrigen)}>
+				<p className="truncate">{`${planRutaVuelos[0].planVuelo.ciudadOrigen.ciudad}, ${planRutaVuelos[0].planVuelo.ciudadOrigen.pais} (${planRutaVuelos[0].planVuelo.ciudadOrigen.id})`}</p>
+				<Button size="icon" className="w-7 h-7 shrink-0" variant="outline" onClick={() => zoomToUbicacion(planRutaVuelos[0].planVuelo.ciudadOrigen)}>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -46,10 +54,12 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
 		return (
 			<>
-				<p>{planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais}</p>
+				<p className="truncate">{`${planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.ciudad}, ${
+					planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.pais
+				} (${planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.id})`}</p>
 				<Button
 					size="icon"
-					className="w-7 h-7"
+					className="w-7 h-7 shrink-0"
 					variant="outline"
 					onClick={() => zoomToUbicacion(planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino)}
 				>
@@ -66,8 +76,8 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 		if (nextVuelo && new Date(vuelo.fechaLlegada) <= _currentTime && new Date(nextVuelo.fechaSalida) >= _currentTime) {
 			return (
 				<>
-					<p>{vuelo.planVuelo.ciudadDestino.pais}</p>
-					<Button size="icon" className="w-7 h-7" variant="outline" onClick={() => zoomToUbicacion(vuelo.planVuelo.ciudadDestino)}>
+					<p className="truncate">{`${vuelo.planVuelo.ciudadDestino.ciudad}, ${vuelo.planVuelo.ciudadDestino.pais} (${vuelo.planVuelo.ciudadDestino.id})`}</p>
+					<Button size="icon" className="w-7 h-7 shrink-0" variant="outline" onClick={() => zoomToUbicacion(vuelo.planVuelo.ciudadDestino)}>
 						<Eye className="w-4 h-4" />
 					</Button>
 				</>
@@ -77,6 +87,13 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 }
 
 function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
+	if (planRutaVuelos.length === 0) {
+		return {
+			descripcion: "Sin plan de ruta",
+			color: "red",
+		};
+	}
+
 	if (_currentTime <= new Date(planRutaVuelos[0].fechaSalida)) {
 		return {
 			descripcion: "En aeropuerto origen",
@@ -149,13 +166,13 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			accessorKey: "planRutaVuelos",
 			header: ({ column }) => {
 				return (
-					<div className="flex items-center">
+					<div className="flex items-center  w-[250px]">
 						<p>Vuelo actual</p>
 					</div>
 				);
 			},
 			cell: ({ row }) => (
-				<div className="text-start flex flex-row gap-2 items-center">
+				<div className="text-start flex flex-row gap-2 items-center w-[250px] line-clamp-1 truncate">
 					{planeMap !== null && currentTime !== undefined
 						? getCurrentLocation(planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
 								lockToFlight(vuelo);
@@ -169,13 +186,13 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			accessorKey: "Origen",
 			header: ({ column }) => {
 				return (
-					<div className="flex items-center ">
+					<div className="flex items-center  w-[250px]">
 						<p>Aeropuerto actual</p>
 					</div>
 				);
 			},
 			cell: ({ row }) => (
-				<div className="truncate flex flex-row gap-2 items-center">
+				<div className="truncate flex flex-row gap-2 items-center  w-[250px]">
 					{planeMap !== null && currentTime !== undefined
 						? getCurrentAirport(planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
 								zoomToUbicacion(ubicacion);
@@ -189,13 +206,13 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			accessorKey: "statusAlmacen",
 			header: ({ column }) => {
 				return (
-					<div className="flex items-center ">
+					<div className="flex items-center w-[170px]">
 						<p>Estado</p>
 					</div>
 				);
 			},
 			cell: ({ row }) => (
-				<div className="">
+				<div className="w-[170px]">
 					{planeMap !== null && currentTime !== undefined
 						? renderStatusChip(getPackageState(planeMap[row.original.id], currentTime))
 						: "---"}
@@ -248,7 +265,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[650px] min-h-[650px] max-h-[650px]  flex flex-col gap-2">
+			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[687px] min-h-[687px] max-h-[687px]  flex flex-col gap-2">
 				{isLoading ? (
 					<div className="flex-1 flex justify-center items-center">
 						<Loader2 className="animate-spin stroke-gray-400" />
@@ -259,8 +276,23 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 							<DialogTitle className="text-2xl">Información de envío</DialogTitle>
 						</DialogHeader>
 						<div className="flex-1 flex flex-col">
-							<p>{"Origen: " + envio?.ubicacionOrigen.ciudad + ", " + envio?.ubicacionOrigen.pais}</p>
-							<p>{"Destino: " + envio?.ubicacionDestino.ciudad + ", " + envio?.ubicacionDestino.pais}</p>
+							<p>
+								{"Origen: " +
+									envio?.ubicacionOrigen.ciudad +
+									", " +
+									envio?.ubicacionOrigen.pais +
+									" (" +
+									envio?.ubicacionOrigen.id +
+									") --> " +
+									"Destino: " +
+									envio?.ubicacionDestino.ciudad +
+									", " +
+									envio?.ubicacionDestino.pais +
+									" (" +
+									envio?.ubicacionDestino.id +
+									")"}
+							</p>
+
 							<p>
 								{"Fecha recepcion: " + envio?.fechaRecepcion.toLocaleDateString() + " " + envio?.fechaRecepcion.toLocaleTimeString()}
 							</p>
@@ -270,7 +302,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 									" " +
 									envio?.fechaLimiteEntrega.toLocaleTimeString()}
 							</p>
-							<EnvioTable data={envio?.paquetes || []} columns={columns} />
+							<AirportTable data={envio?.paquetes || []} columns={columns} />
 						</div>
 					</>
 				)}

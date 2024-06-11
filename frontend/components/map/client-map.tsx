@@ -156,6 +156,7 @@ function ClientMap({
 				}}
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
+				currentTime={currentTime}
 			/>
 			<EnvioModal
 				currentTime={currentTime}

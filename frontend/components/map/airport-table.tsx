@@ -69,7 +69,7 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 	});
 
 	return (
-		<div className="flex-1 flex flex-col mt-2">
+		<div className="flex-1 flex flex-col mt-2 overflow-x-hidden">
 			<div className="flex items-center">
 				<p className="text-lg font-medium">{data.length} paquete(s)</p>
 				<DropdownMenu>
@@ -97,8 +97,8 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
-			<div className="rounded-md overflow-hidden border mt-2 flex-1 flex">
-				<Table className={cn(data.length === 0 ? "h-full" : "")}>
+			<div className="rounded-md overflow-hidden border mt-2 flex-1 flex overflow-x-hidden">
+				<Table className={cn(data.length === 0 ? "h-full" : "", "overflow-x-hidden")}>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
@@ -114,7 +114,7 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 							</TableRow>
 						))}
 					</TableHeader>
-					<TableBody>
+					<TableBody className="overflow-x-hidden">
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
