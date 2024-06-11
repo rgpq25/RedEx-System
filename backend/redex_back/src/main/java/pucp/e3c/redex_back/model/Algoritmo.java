@@ -1053,6 +1053,8 @@ public class Algoritmo {
             Paquete paquete = paquetesSimulacion.get(i);
             ArrayList<Vuelo> vuelos = planRutasSimulacion.get(i).getVuelos();
 
+            Collections.sort(vuelos, Comparator.comparing(Vuelo::getFechaSalida));
+
             boolean enAeropuerto = false;
             if (vuelos.isEmpty() || vuelos.size() == 0 || vuelos.get(0).getFechaSalida().after(fechaCorte)) {
                 // No hay vuelos asignados, o aun no ha tomado vuelos, verificar la ciudad de
