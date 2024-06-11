@@ -114,20 +114,15 @@ public class AeropuertoController {
         return differenceInMillis > fiveMinutesInMillis;
     }
 
-    @GetMapping(value = "/{idAeropuerto}/paquetesfromsimulation/{idSimulacion}")
+    @PostMapping(value = "/{idAeropuerto}/paquetesfromsimulation")
     public ResponseEntity<ArrayList<Paquete>> getPaquetesFromSimulation(
             @PathVariable("idAeropuerto") Integer idAeropuerto,
-            @PathVariable("idSimulacion") Integer idSimulacion) {
+            @RequestBody Simulacion simulacion) {
         Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
-        if (aeropuerto == null){
+        if (aeropuerto == null) {
             System.err.println("No se encontro aeropuerto");
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
         }
-        Simulacion simulacion = simulacionService.get(idSimulacion);
-        if (simulacion == null)
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
-
-        Date fechaSimulacion = calcularTiempoSimulacion(simulacion);
 
         /*
          * ArrayList<Vuelo> vuelosDestino =
@@ -254,10 +249,9 @@ public class AeropuertoController {
          * }
          * return paquetes;
          */
-        System.out.println("La consulta se esta haciendo a las " + fechaSimulacion);
         return new ResponseEntity<>(
                 (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuerto(aeropuerto.getUbicacion().getId(),
-                        fechaSimulacion, simulacion),
+                        simulacion),
                 HttpStatus.ACCEPTED);
     }
 

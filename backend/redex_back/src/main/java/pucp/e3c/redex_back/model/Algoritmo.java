@@ -1045,8 +1045,10 @@ public class Algoritmo {
                 "Estado Almacen actualizado");
     }
 
-    public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Date fechaCorte, Simulacion simulacion) {
+    public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Simulacion simulacion) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
+        Date fechaCorte = calcularTiempoSimulacion(simulacion);
+
         for (int i = 0; i < paquetesSimulacion.size(); i++) {
             Paquete paquete = paquetesSimulacion.get(i);
             ArrayList<Vuelo> vuelos = planRutasSimulacion.get(i).getVuelos();
