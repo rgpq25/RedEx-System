@@ -19,6 +19,10 @@ public interface EnvioRepository extends JpaRepository<Envio, Integer> {
 
     public ArrayList<Envio> findBySimulacionActualId(Integer id);
 
+    public ArrayList<Envio> findByEmisorId(Integer id);
+
+    public ArrayList<Envio> findByReceptorId(Integer id);
+
     @Query("SELECT e FROM Envio e WHERE e.simulacionActual IS NULL")
     public ArrayList<Envio> findEnviosSinSimulacion();
 

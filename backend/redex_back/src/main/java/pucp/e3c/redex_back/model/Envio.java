@@ -36,8 +36,16 @@ public class Envio {
     private String codigoSeguridad;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_emisor", referencedColumnName = "id")
+    private Cliente emisor;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_receptor", referencedColumnName = "id")
+    private Cliente receptor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
-    Simulacion simulacionActual;
+    private Simulacion simulacionActual;
 
     /*
      * public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date
@@ -61,6 +69,32 @@ public class Envio {
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }
+
+    
+
+    public Cliente getEmisor() {
+        return emisor;
+    }
+
+
+
+    public void setEmisor(Cliente emisor) {
+        this.emisor = emisor;
+    }
+
+
+
+    public Cliente getReceptor() {
+        return receptor;
+    }
+
+
+
+    public void setReceptor(Cliente receptor) {
+        this.receptor = receptor;
+    }
+
+
 
     // TO DO id emisor
     // TO DO id receptor

@@ -189,4 +189,14 @@ public class PlanRutaXVueloService {
             return null;
         }
     }
+
+    public void deleteAll(){
+        try{
+            planRutaXVueloRepository.deleteAll();
+            planRutaXVueloRepository.flush();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

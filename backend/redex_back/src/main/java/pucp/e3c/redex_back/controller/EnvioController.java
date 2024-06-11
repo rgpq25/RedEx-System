@@ -104,4 +104,14 @@ public class EnvioController {
         return envioService.findSinSimulacionActual();
     }
 
+    @GetMapping(value = "/emisor/{id}")
+    public ArrayList<Envio> findByEmisorID(@PathVariable("id") Integer id) {
+        return envioService.findByEmisorId(id);
+    }
+
+    @GetMapping(value = "/receptor/{id}")
+    public ArrayList<Envio> findByReceptorID(@PathVariable("id") Integer id) {
+        return envioService.findByReceptorId(id);
+    }
+
 }
