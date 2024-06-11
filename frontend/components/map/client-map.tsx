@@ -50,7 +50,7 @@ function ClientMap({
 		}
 	);
 
-	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight } = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight, getCurrentlyPausedTime } = attributes;
 
 	const {
 		isAirportModalOpen,
@@ -101,6 +101,7 @@ function ClientMap({
 								aeropuerto={aeropuerto}
 								coordinates={[latitud, longitud] as [number, number]}
 								onClick={(coordinates: [number, number]) => {
+									console.log(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {})
 									zoomToAirport(aeropuerto);
 									openAirportModal(aeropuerto);
 								}}
@@ -157,6 +158,7 @@ function ClientMap({
 				aeropuerto={currentAirportModal}
 				simulacion={simulation}
 				currentTime={currentTime}
+				getCurrentlyPausedTime={getCurrentlyPausedTime}
 			/>
 			<EnvioModal
 				currentTime={currentTime}

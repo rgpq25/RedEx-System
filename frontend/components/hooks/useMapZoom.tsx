@@ -19,12 +19,14 @@ export type MapZoomAttributes = {
 	zoomToUbicacion: (ubicacion: Ubicacion) => void;
 	pauseSimulation: (_simu: Simulacion) => Promise<void>;
 	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => Promise<void>;
+	getCurrentlyPausedTime: () => number;
 };
 
 const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0): MapZoomAttributes => {
 	const zoomFactor = 7;
 	const curInterval = useRef<NodeJS.Timeout | null>(null);
 	const pausingTime = useRef<number | null>(null);
+	const ref_milisecondsPaused = useRef<number>(0);
 	const isTimerPaused = useRef<boolean>(false);
 
 	const [map, setMap] = useState<MapType | null>(null);
@@ -61,7 +63,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 				multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime() - milisegundosPausados)
 			).getTime();
 
-			const elapsedRealTime = new Date(new Date().getTime() - fechaInicioSim.getTime() - milisegundosPausados).getTime();
+			const elapsedRealTime = new Date(new Date().getTime() - fechaInicioSistema.getTime() - milisegundosPausados).getTime();
 
 			return { elapsedRealTime, elapsedSimulatedTime };
 		}
@@ -165,6 +167,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 
 			const newSimulation = { ...oldSimulation };
 			newSimulation.milisegundosPausados += milisecondsPaused;
+			ref_milisecondsPaused.current += milisecondsPaused;
 			pausingTime.current = null;
 
 			await api(
@@ -183,6 +186,14 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 			handleSetTime(newSimulation);
 		}
 	};
+
+	const getCurrentlyPausedTime = () => {
+		if(pausingTime.current === null) return ref_milisecondsPaused.current;
+		const pauseDate: number = pausingTime.current;
+		const currentDate = new Date().getTime();
+		const milisecondsPaused = currentDate - pauseDate;
+		return ref_milisecondsPaused.current + milisecondsPaused;
+	}
 
 	function onMove() {
 		if (isLockedToFlight && currentlyLockedFlight) {
@@ -236,6 +247,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		zoomToUbicacion,
 		pauseSimulation,
 		playSimulation,
+		getCurrentlyPausedTime
 	};
 };
 

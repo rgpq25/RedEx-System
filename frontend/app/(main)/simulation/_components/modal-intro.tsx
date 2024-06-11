@@ -36,7 +36,7 @@ export function ModalIntro({
 }) {
 	//const fileInputRef = useRef<HTMLInputElement>(null);
 	//const [file, setFile] = useState<File | undefined>();
-	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 	const [selectedTime, setSelectedTime] = useState<string>("");
 	const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
 

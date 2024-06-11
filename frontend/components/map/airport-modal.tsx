@@ -17,6 +17,7 @@ interface AirportModalProps {
 	aeropuerto: Aeropuerto | null;
 	simulacion: Simulacion | undefined;
 	currentTime: Date | undefined;
+	getCurrentlyPausedTime: () => number;
 }
 
 const columns: ColumnDef<Paquete>[] = [
@@ -91,25 +92,9 @@ const columns: ColumnDef<Paquete>[] = [
 			</div>
 		),
 	},
-	// {
-	// 	accessorKey: "statusAlmacen",
-	// 	header: ({ column }) => {
-	// 		return (
-	// 			<div className="flex items-center">
-	// 				<p>Estado</p>
-	// 			</div>
-	// 		);
-	// 	},
-	// 	cell: ({ row }) => (
-	// 		<div className="">
-	// 			<p>Pendiente</p>
-	// 			{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
-	// 		</div>
-	// 	),
-	// },
 ];
 
-function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime }: AirportModalProps) {
+function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime, getCurrentlyPausedTime }: AirportModalProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fechaConsulta, setFechaConsulta] = useState<Date | null>(null);
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
@@ -132,11 +117,16 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 				}
 
 				console.log(`Fetching airport data with airport id ${aeropuerto.id} and simulation id ${simulacion.id}`);
+
+				const _temp_sim = {...simulacion};
+				_temp_sim.milisegundosPausados = getCurrentlyPausedTime();
+
+				console.log("The current simulation object is: ", _temp_sim);
 				setIsLoading(true);
 
 				await api(
-					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation/${simulacion.id}`,
+					"POST",
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation`,
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);
@@ -147,7 +137,8 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 						console.log(error);
 						setIsOpen(false);
 						toast.error("Error al cargar paquetes de aeropuerto");
-					}
+					},
+					_temp_sim
 				);
 			} else {
 				console.log(`Fetching airport data with airport id ${aeropuerto.id}`);
@@ -159,7 +150,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 						console.log("Finished fetch");
 						console.log(data);
 						setPaquetes(data);
-						setFechaConsulta(new Date(currentTime));
+						setFechaConsulta(new Date());
 						setIsLoading(false);
 					},
 					(error) => {

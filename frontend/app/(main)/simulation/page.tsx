@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
 import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
@@ -19,6 +19,8 @@ import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
 import { structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
 import ModalStopSimulation from "./_components/modal-stop-simulation";
+import ElapsedRealTime from "@/app/_components/elapsed-real-time";
+import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -34,7 +36,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
 function SimulationPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } = attributes;
+	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } =
+		attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
@@ -66,6 +69,18 @@ function SimulationPage() {
 			toast.error("Error al cargar aeropuertos");
 		}
 	);
+
+	const getTimeByMs = useCallback((timeInMiliseconds: number) => {
+		const h = Math.floor(timeInMiliseconds / 1000 / 60 / 60);
+		const m = Math.floor((timeInMiliseconds / 1000 / 60 / 60 - h) * 60);
+		const s = Math.floor(((timeInMiliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
+
+		const h_string = h < 10 ? `0${h}` : `${h}`;
+		const m_string = m < 10 ? `0${m}` : `${m}`;
+		const s_string = s < 10 ? `0${s}` : `${s}`;
+
+		return `${h_string}:${m_string}:${s_string}`;
+	}, []);
 
 	const onSimulationRegister = async (simulacion: Simulacion) => {
 		setIsSimulationLoading(true);
@@ -111,7 +126,6 @@ function SimulationPage() {
 					}
 				);
 
-
 				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
@@ -147,14 +161,14 @@ function SimulationPage() {
 	useEffect(() => {
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 			event.preventDefault();
-			event.returnValue = 'Mensaje de prueba'; // Standard for most browsers
-			return 'Mensaje de prueba'; // Some browsers may require this for the dialog to show up
-		  };
-	  
-		  window.addEventListener('beforeunload', handleBeforeUnload);
+			event.returnValue = "Mensaje de prueba"; // Standard for most browsers
+			return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
 
 		return () => {
-			window.removeEventListener('beforeunload', handleBeforeUnload);
+			window.removeEventListener("beforeunload", handleBeforeUnload);
 
 			if (client) {
 				client.deactivate();
@@ -179,9 +193,13 @@ function SimulationPage() {
 					</div>
 				</MapHeader>
 
+				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
+					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
+					<ElapsedSimuTime>{getTimeByMs(elapsedSimulationTime)}</ElapsedSimuTime>
+				</div>
+
 				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
-					{/* <PlaneLegend /> */}
-					<p className="text-lg font-medium">{elapsedRealTime}</p>
+					
 					{simulation !== null && simulation !== undefined && (
 						<div className="flex items-center gap-1">
 							<Button size={"icon"} onClick={() => setIsStoppingModalOpen(true)}>
