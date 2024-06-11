@@ -11,7 +11,7 @@ import { Calendar as CalendarIcon } from "lucide-react"
 import { useState, useEffect } from 'react';
 import { Ubicacion , Envio} from "@/lib/types";
 import { formatISO } from "date-fns"
-import { api } from "@/lib/api";
+import { api , apiT} from "@/lib/api";
 import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
@@ -38,8 +38,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel"
 
 import {
@@ -54,8 +52,6 @@ import {
 
 import { type CarouselApi } from "@/components/ui/carousel"
 import { Progress } from "@/components/ui/progress"
-
-const twStyle = "w-5 h-5";
 
 interface NavigationButtonsProps {
   api: CarouselApi;
@@ -117,8 +113,6 @@ function RegisterShipmentPage() {
   const [date, setDate] = useState(new Date());
   const [locations, setLocations] = useState<Ubicacion[]>([]);
 
-
-
   const [originLocationId, setOriginLocationId] = useState('');
   const [destinationLocationId, setDestinationLocationId] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
@@ -127,8 +121,6 @@ function RegisterShipmentPage() {
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
   const [showDashboardLink, setShowDashboardLink] = useState(false);
 
-
-    
   const [senderEmail, setSenderEmail] = useState('');
   const [senderNames, setSenderNames] = useState('');
   const [senderSurnames, setSenderSurnames] = useState('');
@@ -136,9 +128,6 @@ function RegisterShipmentPage() {
   const [receiverEmail, setReceiverEmail] = useState('');
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
-
-
-
 
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -186,22 +175,96 @@ function RegisterShipmentPage() {
     setProgress(33.33); 
   }, []);
 
-  const handleConfirm = () => {
+  interface UserResponse {
+    id: number; // Asumiendo que el ID es numérico
+    nombre: string; // Similar para la respuesta de cliente
+    correo: string; // Similar para la respuesta de cliente
+    // Incluye otros campos esperados de la respuesta si son necesarios
+  }
+  
+  interface ClientResponse {
+    id: number; // Similar para la respuesta de cliente
+    // Otros campos si son necesarios
+  }
+
+  const handleConfirm = async () => {
     const formattedDate = formatISO(date);
-    const dataToSend = {
-      ubicacionOrigen: { id: originLocationId  },
-      ubicacionDestino: { id: destinationLocationId },
-      fechaRecepcion: formattedDate,
-      fechaLimiteEntrega: formattedDate,
-      estado: 'En Almacen',
-      cantidadPaquetes: packagesCount,
-      codigoSeguridad: '146918',
-      simulacionActual: null
-    };
 
-    console.log("dataToSend:", dataToSend); // Agrega este console.log
+    try {
+      // Crear usuario
+      const senderUserData = {
+        nombre: senderNames,
+        correo: senderEmail,
+        tipo: "a"
+      };
+      
+      const senderUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/", senderUserData);
+      if (!senderUserResponse || !senderUserResponse.id) {
+        throw new Error("Error al crear el usuario emisor");
+      }
+      console.log("data respuesta: usuario emisor", senderUserResponse);
+      
+      const senderClientData = {
+        informacionContacto: senderEmail,
+        preferenciasNotificacion: "ninguna",
+        usuario: {
+          id: senderUserResponse.id
+        }
+      };
+      const senderClientResponse = await apiT<ClientResponse>("POST", "http://localhost:8080/back/cliente/", senderClientData);
+      if (!senderClientResponse || !senderClientResponse.id) {
+        throw new Error("Error al crear el cliente emisor");
+      }
+      console.log("data respuesta: cliente emisor", senderClientResponse);
 
-    api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+      // Registro del usuario receptor
+      
+      const receiverUserData = {
+        nombre: receiverNames,
+        correo: receiverEmail,
+        tipo: "a"
+      };
+      const receiverUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/", receiverUserData);
+      if (!receiverUserResponse || !receiverUserResponse.id) {
+        throw new Error("Error al crear el usuario receptor");
+      }
+      console.log("data respuesta: usuario receptor", receiverUserResponse);
+
+      // Registro del cliente receptor
+      const receiverClientData = {
+        informacionContacto: receiverEmail,
+        preferenciasNotificacion: "ninguna",
+        usuario: {
+          id: receiverUserResponse.id
+        }
+      };
+      const receiverClientResponse = await apiT<ClientResponse>("POST", "http://localhost:8080/back/cliente/", receiverClientData);
+      if (!receiverClientResponse || !receiverClientResponse.id) {
+        throw new Error("Error al crear el cliente receptor");
+      }
+      console.log("data respuesta: cliente receptor", receiverClientResponse);
+
+      // Datos para el envío
+      const dataToSend = {
+        ubicacionOrigen: { id: originLocationId },
+        ubicacionDestino: { id: destinationLocationId },
+        fechaRecepcion: formattedDate,
+        fechaLimiteEntrega: formattedDate,
+        estado: 'En Almacen',
+        cantidadPaquetes: packagesCount,
+        codigoSeguridad: '146918',
+        emisor: { id: senderClientResponse.id},
+        receptor: { id: receiverClientResponse.id }, // Suponemos que tienes el ID del receptor de alguna manera
+      };
+      
+      // Registrar el envío
+      api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+  
+    } catch (error) {
+      console.error("Error en el proceso de registro:", error);
+      toast.error("Error en el registro: " + error);
+    }
+
   };
 
   interface ApiResponse {
@@ -210,7 +273,6 @@ function RegisterShipmentPage() {
   }
 
   const handleSuccess = (data : ApiResponse) => {
-    console.log('Registro completado:', data);
     console.log('Objeto recibido de la API:', data); // Agrega esta línea
     setIsConfirmDialogOpen(false);  // Close the dialog after confirming
     setIsSecondDialogOpen(true);    // Abre el segundo diálogo
@@ -222,10 +284,7 @@ function RegisterShipmentPage() {
     toast.error("Error en el registro: " + error);
   };
 
-
-
   const openConfirmDialog = () => setIsConfirmDialogOpen(true);
-
 
   const handleSecondDialogChoice = (choice: string) => {
     setIsSecondDialogOpen(false); // Cierra el segundo diálogo
