@@ -1,6 +1,7 @@
 package pucp.e3c.redex_back.service;
 
 import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -178,7 +179,60 @@ public class EnvioService {
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
                 paquetes.add(paquete);
-                //LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
+                // LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
+            }
+
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
+    }
+
+    public ArrayList<Envio> registerAllByStringBloqueFecha(ArrayList<RegistrarEnvio> registrarEnvios,
+            HashMap<String, Aeropuerto> hashAeropuertos, Date fechaInicioDeseada, Date fechaInicioOriginal,
+            int cantidad) throws ParseException {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+        ArrayList<Envio> envios = new ArrayList<>();
+        int aux = 0;
+        for (RegistrarEnvio registrarEnvio : registrarEnvios) {
+            if (aux >= cantidad) {
+                break;
+            }
+
+            String clave = registrarEnvio.getCodigo();
+            String fechaModificarStr = clave.split("-")[2];
+            SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
+            Date fechaModificar = formato.parse(fechaModificarStr);
+            clave = Funciones.asignarFechaAClaveBloque(clave, fechaInicioDeseada, fechaInicioOriginal, fechaModificar);
+            registrarEnvio.setCodigo(clave);
+
+            Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                    registrarEnvio.getSimulacion(),
+                    aeropuertoRepository);
+
+            envio.setSimulacionActual(registrarEnvio.getSimulacion());
+            envios.add(envio);
+            aux++;
+        }
+        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+                Paquete paquete = new Paquete();
+                paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+                paquete.setEnAeropuerto(true);
+                paquete.setEntregado(false);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(envio.getSimulacionActual());
+                paquetes.add(paquete);
+                // LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
             }
 
         }
@@ -209,7 +263,7 @@ public class EnvioService {
 
             Envio envio = Funciones.stringToEnvioInicioFijo(registrarEnvio.getCodigo(), ubicacionMap,
                     registrarEnvio.getSimulacion(),
-                    aeropuertoRepository,fechaInicio);
+                    aeropuertoRepository, fechaInicio);
 
             envio.setSimulacionActual(registrarEnvio.getSimulacion());
             envios.add(envio);
@@ -228,7 +282,7 @@ public class EnvioService {
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
                 paquetes.add(paquete);
-                //LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
+                // LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
             }
 
         }
@@ -270,7 +324,8 @@ public class EnvioService {
 
                 String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
                 EstadoAlmacen estado = algoritmo.obtenerEstadoAlmacenDiaDia();
-                estado.registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
+                estado.registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()),
+                        1);
                 algoritmo.actualizarEstadoAlmacenDiaDia(estado);
             }
 

@@ -334,6 +334,17 @@ public class Funciones {
         return String.join("-", partes);
     }
 
+    public static String asignarFechaAClaveBloque(String linea, Date fechaInicioDeseada, Date fechaInicioOriginal,
+            Date fechaModificar) {
+        String[] partes = linea.split("-");
+        if (partes.length < 3) {
+            throw new IllegalArgumentException("La línea debe tener al menos tres partes separadas por guiones");
+        }
+        partes[2] = formatearFecha(
+                Funciones.generarFechaBloque(fechaInicioDeseada, fechaInicioOriginal, fechaModificar));
+        return String.join("-", partes);
+    }
+
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository) {
         String[] parts = line.split("-");
@@ -369,25 +380,30 @@ public class Funciones {
         return envio;
     }
 
-    public static Envio stringToEnvioInicioFijo(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
+    public static Envio stringToEnvioInicioFijo(String line, HashMap<String, Ubicacion> ubicacionMap,
+            Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository, Date fecha_inicio) {
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
-        //String fechaRecibo = parts[2].trim();
-        //String horaRecibo = parts[3].trim() + ":00";
+        // String fechaRecibo = parts[2].trim();
+        // String horaRecibo = parts[3].trim() + ":00";
         String[] destinoWithPackageCount = parts[4].trim().split(":");
         String destinoCode = destinoWithPackageCount[0].trim();
         int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
 
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
-        /*String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
-                fechaRecibo.substring(4, 6) + "-" +
-                fechaRecibo.substring(6, 8);*/
-        //Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
-        //Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
-        //parse utc 0 to origin timezone
+        /*
+         * String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
+         * fechaRecibo.substring(4, 6) + "-" +
+         * fechaRecibo.substring(6, 8);
+         */
+        // Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " +
+        // horaRecibo);
+        // Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,
+        // origen.getZonaHoraria(), "UTC");
+        // parse utc 0 to origin timezone
         Date fecha_recepcion_GMTOrigin = convertTimeZone(fecha_inicio, "UTC", origen.getZonaHoraria());
         Date fecha_recepcion_GMT0 = fecha_inicio;
         Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
@@ -433,6 +449,11 @@ public class Funciones {
         Random random = new Random();
         long milisAleatorios = (long) (random.nextDouble() * diferenciaEnMillis);
         return new Date(fechaInicio.getTime() + milisAleatorios);
+    }
+
+    public static Date generarFechaBloque(Date fechaInicioDeseada, Date fechaInicioOriginal, Date fechaModificar) {
+        long diferenciaEnMillis = fechaInicioDeseada.getTime() - fechaInicioOriginal.getTime();
+        return new Date(fechaModificar.getTime() + diferenciaEnMillis);
     }
 
     public static Date generateRandomDateTime(Date startDate, Date endDate) {
