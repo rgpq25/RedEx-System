@@ -50,12 +50,15 @@ public class Algoritmo {
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
+    private EstadoAlmacen estadoAlmacenDiaDia;
+
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
         this.respuesta_paquetes_dia_dia = new ArrayList<>();
         this.paquetes_por_simulacion = new HashMap<>();
+        this.estadoAlmacenDiaDia = new EstadoAlmacen();
     }
 
     public boolean isTerminarPlanificacionDiaDia() {
@@ -800,7 +803,7 @@ public class Algoritmo {
                 // Manejo de errores si algo sale mal durante la operación de guardado
                 System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                 messagingTemplate.convertAndSend(canal,
-                        "Error al guardar algun plan ruta: " + e.getMessage());
+                new RespuestaAlgoritmoEstado("Error al guardar algun plan ruta: " + e.getMessage(), simulacion));
             }
 
             // Actualizar paquete
@@ -827,7 +830,7 @@ public class Algoritmo {
                 // Manejo de errores si algo sale mal durante la operación de guardado
                 System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                 messagingTemplate.convertAndSend(canal,
-                        "Error al guardar algun paquete: " + e.getMessage());
+                new RespuestaAlgoritmoEstado("Error al guardar algun paquete: " + e.getMessage(), simulacion));
             }
 
             // Asociar cada PlanRuta con sus vuelos
@@ -846,7 +849,7 @@ public class Algoritmo {
                     // Manejo de errores si algo sale mal durante la operación de guardado
                     System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                     messagingTemplate.convertAndSend(canal,
-                            "Error al guardar algun plan ruta x vuelo: " + e.getMessage());
+                    new RespuestaAlgoritmoEstado("Error al guardar algun plan ruta x vuelo: " + e.getMessage(), simulacion));
                 }
             }
 
@@ -1019,5 +1022,15 @@ public class Algoritmo {
     public void setRespuesta_paquetes_dia_dia(List<Paquete> respuesta_paquetes_dia_dia) {
         this.respuesta_paquetes_dia_dia = respuesta_paquetes_dia_dia;
     }
+
+    public EstadoAlmacen getEstadoAlmacenDiaDia() {
+        return estadoAlmacenDiaDia;
+    }
+
+    public void setEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
+        this.estadoAlmacenDiaDia = estadoAlmacenDiaDia;
+    }
+
+    
 
 }
