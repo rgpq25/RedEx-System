@@ -268,10 +268,10 @@ public class EnvioService {
                 paquete.setSimulacionActual(envio.getSimulacionActual());
                 paquetes.add(paquete);
 
-                /*String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
+                String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
                 EstadoAlmacen estado = algoritmo.getEstadoAlmacenDiaDia();
                 estado.registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
-                algoritmo.setEstadoAlmacenDiaDia(estado);*/
+                algoritmo.setEstadoAlmacenDiaDia(estado);
             }
 
         }

@@ -226,6 +226,7 @@ public class Algoritmo {
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
                     tipoOperacion, null);
+            this.estadoAlmacenDiaDia = respuestaAlgoritmo.getEstadoAlmacen();
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
             respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
