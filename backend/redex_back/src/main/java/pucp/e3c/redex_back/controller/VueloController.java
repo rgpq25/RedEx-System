@@ -67,22 +67,8 @@ public class VueloController {
     @PostMapping("/paqueteAll")
     public ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>> findByAllPaqueteId(
             @RequestBody ArrayList<Paquete> paquetes) {
-        HashMap<Integer, ArrayList<Vuelo>> hashVuelosXPaquete = new HashMap<>();
-        if (paquetes.size() <= 0) {
-            return new ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>>(new HashMap<Integer, ArrayList<Vuelo>>(),
-                    HttpStatus.BAD_REQUEST);
-        }
-        for (Paquete paquete : paquetes) {
-            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquete.getId());
-            if (vuelos != null) {
-                hashVuelosXPaquete.put(paquete.getId(), vuelos);
-            } else {
-                hashVuelosXPaquete.put(paquete.getId(), new ArrayList<Vuelo>());
-            }
-        }
-
+        HashMap<Integer, ArrayList<Vuelo>> hashVuelosXPaquete = vueloService.findVuelosByPaqueteIds(paquetes);
         return new ResponseEntity<HashMap<Integer, ArrayList<Vuelo>>>(hashVuelosXPaquete, HttpStatus.OK);
-
     }
 
     @PutMapping("/")
@@ -91,7 +77,7 @@ public class VueloController {
         if (updatedVuelo != null) {
             return new ResponseEntity<>(updatedVuelo, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
