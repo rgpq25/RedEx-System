@@ -87,5 +87,5 @@ export function formatDateTimeLongShort (date: Date | string): string {
 };
 
 export function currentTimeString (): string {
-    return new Date().toLocaleTimeString(localeIdentifier, { hour: "numeric", minute: "numeric" });
+    return new Date().toLocaleTimeString(localeIdentifier, { hour: "2-digit", minute: "2-digit" });
 }

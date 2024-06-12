@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { H1, Large, Lead, Muted } from "@/components/ui/typography";
 import { FileUp } from "lucide-react";
@@ -14,19 +15,25 @@ import { RowShipmentType } from "@/lib/types";
 import { ShipmentTable } from "../_components/shipment-table";
 
 import { api } from "@/lib/api";
+import { currentTimeString } from "@/lib/date";
+import { Label } from "@/components/ui/label";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export default function FileShipment() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | undefined>(undefined);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
     const [shipments, setShipments] = useState<RowShipmentType[]>([]);
     const [loading, setLoading] = useState(false);
+    const [useCustomDate, setUseCustomDate] = useState(false);
+    const isDisabled = shipments.length === 0 || loading;
 
     const openFilePicker = useCallback(() => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
     }, [fileInputRef]);
-
     const readFile = useCallback((file: File) => {
         try {
             const reader = new FileReader();
@@ -69,7 +76,6 @@ export default function FileShipment() {
             });
         }
     }, []);
-
     const handleFileChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const file = event.target.files?.[0];
@@ -82,13 +88,19 @@ export default function FileShipment() {
         },
         [setFile, readFile]
     );
-
     const handleSubmit = useCallback(async () => {
         try {
             setLoading(true);
             const formattedShipments = shipments.map((shipment) => {
-                const dateString = shipment.dateTimeShipment.toISOString().split("T")[0].replace(/-/g, "");
-                const timeString = shipment.dateTimeShipment.toTimeString().split(" ")[0].substring(0, 5);
+                let dateString;
+                let timeString;
+                if (!useCustomDate) {
+                    dateString = shipment.dateTimeShipment.toISOString().split("T")[0].replace(/-/g, "");
+                    timeString = shipment.dateTimeShipment.toTimeString().split(" ")[0].substring(0, 5);
+                } else {
+                    dateString = selectedDate?.toISOString().split("T")[0].replace(/-/g, "");
+                    timeString = selectedTime ?? currentTimeString();
+                }
                 return `${shipment.origin}-${shipment.id.split("-")[1]}-${dateString}-${timeString}-${shipment.destination}:${shipment.amountPackages.toString().padStart(2, "0")}`;
             });
 
@@ -122,27 +134,55 @@ export default function FileShipment() {
         } finally {
             setLoading(false);
         }
-    }, [shipments]);
+    }, [shipments, useCustomDate, selectedDate, selectedTime]);    
 
     return (
-        <main className='w-3/5 mx-auto my-10 flex flex-col justify-start gap-4 h-full'>
-            <H1>Archivo de envíos</H1>
-            <Large>
-                <strong>Formato de líneas:</strong> CORIEnvio-FORI-HORI-CDES:QQ
-            </Large>
-            <span className='grid grid-cols-2 gap-2 w-4/6'>
-                <Muted>CORI = Ciudad origen </Muted>
-                <Muted>CDES = Ciudad destino</Muted>
-                <Muted>Envio = Número de envío</Muted>
-                <Muted>FORI = Fecha de envío</Muted>
-                <Muted>HORI = Hora de envío</Muted>
-                <Muted>QQ = Cantidad de paquetes</Muted>
-                <Muted className='col-span-2'>
-                    <strong>Ejemplo:</strong> SKBO-000000001-20240103-01:02-SPIM:15
-                </Muted>
-            </span>
-
-            <section className='flex flex-row items-center justify-between gap-4'>
+        <main className='w-3/5 mx-auto my-10 flex flex-col justify-start h-full'>
+            <section className="space-y-4 mb-10">
+                <H1>Archivo de envíos</H1>
+                <Large>
+                    <strong>Formato de líneas:</strong> CORIEnvio-FORI-HORI-CDES:QQ
+                </Large>
+                <span className='grid grid-cols-2 gap-2 w-4/6'>
+                    <Muted>CORI = Ciudad origen </Muted>
+                    <Muted>CDES = Ciudad destino</Muted>
+                    <Muted>Envio = Número de envío</Muted>
+                    <Muted>FORI = Fecha de envío</Muted>
+                    <Muted>HORI = Hora de envío</Muted>
+                    <Muted>QQ = Cantidad de paquetes</Muted>
+                    <Muted className='col-span-2'>
+                        <strong>Ejemplo:</strong> SKBO-000000001-20240103-01:02-SPIM:15
+                    </Muted>
+                </span>
+            </section>
+            <section className='flex flex-col items-start justify-start gap-4 mb-10'>
+                <div className='flex flex-row items-center gap-2'>
+                    <Checkbox
+                        id='check'
+                        checked={useCustomDate}
+                        onCheckedChange={() => setUseCustomDate(!useCustomDate)}
+                    />
+                    <Label htmlFor='check'>Usar fecha de envio personalizada para todos los envios</Label>
+                </div>
+                <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
+                    <DatePicker
+                        className='flex-1'
+                        date={selectedDate}
+                        setDate={setSelectedDate}
+                        placeholder='Selecciona una fecha'
+                        disabled={loading}
+                    />
+                    <Input
+                        type='time'
+                        className='w-[95px]'
+                        defaultValue={selectedTime}
+                        value={selectedTime}
+                        onChange={(e) => setSelectedTime(e.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+            </section>
+            <section className='flex flex-row items-center justify-between gap-4 mb-4'>
                 <Input
                     placeholder='No ha seleccionado ningun archivo'
                     readOnly
@@ -166,31 +206,33 @@ export default function FileShipment() {
                     <FileUp className='w-5 h-5 shrink-0' />
                 </Button>
             </section>
-            <ShipmentTable data={shipments} />
-            {file !== undefined && (
-                <Lead className='mx-auto'>
-                    Se han detectado <strong>{shipments.length}</strong> envios y{" "}
-                    <strong>{shipments.reduce((acc, shipment) => acc + shipment.amountPackages, 0)}</strong> paquetes
-                </Lead>
-            )}
-            <div className='mx-auto flex flex-row gap-4 pb-10'>
-                <Link
-                    href='/dashboard'
-                    className={cn(buttonVariants({ variant: "outline" }))}
-                >
-                    Cancelar
-                </Link>
-                <Button
-                    variant='default'
-                    disabled={shipments.length === 0 || loading}
-                    onClick={() => {
-                        handleSubmit();
-                    }}
-                    isLoading={loading}
-                >
-                    Registrar
-                </Button>
-            </div>
+            <section className='flex flex-col items-center justify-between gap-4'>
+                <ShipmentTable data={shipments} useCustomDate={useCustomDate}/>
+                {file !== undefined && (
+                    <Lead className='mx-auto'>
+                        Se han detectado <strong>{shipments.length}</strong> envios y{" "}
+                        <strong>{shipments.reduce((acc, shipment) => acc + shipment.amountPackages, 0)}</strong> paquetes
+                    </Lead>
+                )}
+                <div className='mx-auto flex flex-row gap-4 pb-10'>
+                    <Link
+                        href='/dashboard'
+                        className={cn(buttonVariants({ variant: "outline" }))}
+                    >
+                        Cancelar
+                    </Link>
+                    <Button
+                        variant='default'
+                        disabled={isDisabled}
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                        isLoading={loading}
+                    >
+                        Registrar
+                    </Button>
+                </div>
+            </section>
         </main>
     );
 }
