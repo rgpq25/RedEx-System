@@ -29,7 +29,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion, Paquete } from "@/lib/types";
 import { continentes } from "@/lib/sample";
-import { formatDateShort } from "@/lib/date";
+import { formatDateShort, formatDateTimeShort } from "@/lib/date";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
 
@@ -123,7 +123,7 @@ export default function Sidebar({
                         </ChevronsLeft>
                     </div>
                 </CardHeader>
-                <CardContent className='w-full flex flex-col items-center gap-6 *:w-full overflow-hidden'>
+                <CardContent className='w-full flex flex-col items-center space-y-6 *:w-full overflow-hidden'>
                     <Separator />
                     {selectedOperation === Operacion.Envios && (
                         <Envios
@@ -174,6 +174,8 @@ function Envios({
     const rowsPerPage = 10;
     const [search, setSearch] = useState<string>("");
     const hasSearchFilter = Boolean(search);
+    const [continentesOrigenFilter, setContinentesOrigenFilter] = useState<string[]>(continentes);
+    const [continentesDestinoFilter, setContinentesDestinoFilter] = useState<string[]>(continentes);
     const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
 
     const minCapacidad = Math.min(...rangoCapacidadFilter);
@@ -186,6 +188,12 @@ function Envios({
                 (envio) =>
                     envio.fechaRecepcion.getTime() <= tiempoActual.getTime() && envio.fechaLimiteEntrega.getTime() >= tiempoActual.getTime()
             );
+        }
+        if (continentesOrigenFilter) {
+            filteredEnvios = filteredEnvios?.filter((envio) => continentesOrigenFilter?.includes(envio.ubicacionOrigen.continente));
+        }
+        if (continentesDestinoFilter) {
+            filteredEnvios = filteredEnvios?.filter((envio) => continentesDestinoFilter?.includes(envio.ubicacionDestino.continente));
         }
         if (rangoCapacidadFilter) {
             filteredEnvios = filteredEnvios?.filter(
@@ -213,6 +221,8 @@ function Envios({
         rangoCapacidadFilter,
         minCapacidad,
         maxCapacidad,
+        continentesOrigenFilter,
+        continentesDestinoFilter,
     ]);
 
     const pages = Math.ceil((filteredItems?.length || 0) / 10);
@@ -245,6 +255,8 @@ function Envios({
         setReceptionDateStart(undefined);
         setReceptionDateEnd(undefined);
         setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+        setContinentesOrigenFilter(continentes);
+        setContinentesDestinoFilter(continentes);
     }, []);
 
     const renderCard = useCallback(
@@ -258,7 +270,7 @@ function Envios({
                     <Large>{envio.id}</Large>
                 </CardHeader>
                 <CardContent>
-                    <Muted>Fecha de recepción: {formatDateShort(envio.fechaRecepcion)}</Muted>
+                    <Muted>Fecha de recepción: {formatDateTimeShort(envio.fechaRecepcion)}</Muted>
                     <Muted>Cantidad: {envio.cantidadPaquetes}</Muted>
                     <span className='flex flex-wrap *:flex-grow'>
                         <Muted>Origen: {envio.ubicacionOrigen.ciudad}</Muted>
@@ -306,14 +318,14 @@ function Envios({
                                 step={10}
                             />
                             <Separator />
-                            <Small>Rango de fecha de recepción:</Small>
-                            <section className='flex flex-col gap-2'>
+                            {/* <Small>Rango de fecha de recepción:</Small>
+                            <section className='flex flex-row gap-2'>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-[280px] justify-start text-left font-normal",
+                                                "w-fit justify-start text-left font-normal",
                                                 !receptionDateStart && "text-muted-foreground"
                                             )}
                                         >
@@ -335,7 +347,7 @@ function Envios({
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-[280px] justify-start text-left font-normal",
+                                                "w-fit justify-start text-left font-normal",
                                                 !receptionDateEnd && "text-muted-foreground"
                                             )}
                                         >
@@ -352,6 +364,50 @@ function Envios({
                                         />
                                     </PopoverContent>
                                 </Popover>
+                            </section>
+                            <Separator /> */}
+                            <section className='flex h-fit items-center space-x-4'>
+                                <div className='flex flex-col gap-4'>
+                                    <Small>Continente de origen:</Small>
+                                    {continentes.map((continente) => (
+                                        <div
+                                            className='ml-4 flex items-center space-x-2'
+                                            key={continente}
+                                        >
+                                            <Checkbox
+                                                id={continente}
+                                                checked={continentesOrigenFilter.includes(continente)}
+                                                onCheckedChange={(checked) => {
+                                                    setContinentesOrigenFilter((prev) =>
+                                                        checked ? [...prev, continente] : prev.filter((c) => c !== continente)
+                                                    );
+                                                }}
+                                            />
+                                            <Label htmlFor={continente}>{continente}</Label>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Separator orientation='vertical' />
+                                <div className='flex flex-col gap-4'>
+                                    <Small>Continente de destino:</Small>
+                                    {continentes.map((continente) => (
+                                        <div
+                                            className='ml-4 flex items-center space-x-2'
+                                            key={continente}
+                                        >
+                                            <Checkbox
+                                                id={continente}
+                                                checked={continentesDestinoFilter.includes(continente)}
+                                                onCheckedChange={(checked) => {
+                                                    setContinentesDestinoFilter((prev) =>
+                                                        checked ? [...prev, continente] : prev.filter((c) => c !== continente)
+                                                    );
+                                                }}
+                                            />
+                                            <Label htmlFor={continente}>{continente}</Label>
+                                        </div>
+                                    ))}
+                                </div>
                             </section>
                             <Separator />
                             <section className='flex flex-row justify-end gap-4'>
@@ -372,7 +428,18 @@ function Envios({
                 </section>
             </>
         );
-    }, [search, onSearchChange, receptionDateStart, receptionDateEnd, onClearFilters, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+    }, [
+        search,
+        onSearchChange,
+        receptionDateStart,
+        receptionDateEnd,
+        onClearFilters,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+        continentesOrigenFilter,
+        continentesDestinoFilter,
+    ]);
 
     return (
         <>
@@ -380,9 +447,12 @@ function Envios({
                 SidebarSkeleton()
             ) : (
                 <>
+                    <Muted>Cantidad de envios: {filteredItems?.length}</Muted>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay envíos disponibles</p></div>
+                        <div className='h-screen flex'>
+                            <p className='m-auto text-muted-foreground text-sm'>No hay envíos disponibles</p>
+                        </div>
                     ) : (
                         <>
                             <ScrollArea className='h-screen'>
@@ -559,7 +629,7 @@ function Aeropuertos({
                                 step={10}
                             />
                             <Separator />
-                            <Small>Continente de origen:</Small>
+                            <Small>Continente:</Small>
                             {continentes.map((continente) => (
                                 <div
                                     className='ml-4 flex items-center space-x-2'
@@ -644,9 +714,12 @@ function Aeropuertos({
                 SidebarSkeleton()
             ) : (
                 <>
+                    <Muted>Cantidad de aeropuertos: {items.length}</Muted>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay aeropuertos disponibles</p></div>
+                        <div className='h-screen flex'>
+                            <p className='m-auto text-muted-foreground text-sm'>No hay aeropuertos disponibles</p>
+                        </div>
                     ) : (
                         <ScrollArea className='flex-1 pr-3'>
                             <section className='flex flex-col gap-4'>{items.map(renderCard)}</section>
@@ -833,48 +906,60 @@ function Vuelos({
                                 </div>
                             ))}
                             <Separator />
-                            <Small>Pais de origen:</Small>
-                            <Select
-                                key={paisOrigenFilter}
-                                onValueChange={(e) => setPaisOrigenFilter(e as string)}
-                                value={paisOrigenFilter}
-                                defaultValue={paisOrigenFilter}
-                            >
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder={paisOrigenFilter || "Pais de origen"} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {ubicaciones.sort((a, b) => a.pais.localeCompare(b.pais)).map((ubicacion) => (
-                                        <SelectItem
-                                            key={ubicacion.pais}
-                                            value={ubicacion.pais}
-                                        >
-                                            {ubicacion.pais}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Small>Pais de destino:</Small>
-                            <Select
-                                key={paisDestinoFilter}
-                                onValueChange={(e) => setPaisDestinoFilter(e as string)}
-                                value={paisDestinoFilter}
-                                defaultValue={paisDestinoFilter}
-                            >
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder={paisDestinoFilter || "Pais de destino"} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {ubicaciones.sort((a, b) => a.pais.localeCompare(b.pais)).map((ubicacion) => (
-                                        <SelectItem
-                                            key={ubicacion.pais}
-                                            value={ubicacion.pais}
-                                        >
-                                            {ubicacion.pais}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <section className='flex h-fit items-center space-x-4'>
+                                <div className="flex flex-col gap-2">
+                                    <Small>Pais de origen:</Small>
+                                    <Select
+                                        key={paisOrigenFilter}
+                                        onValueChange={(e) => setPaisOrigenFilter(e as string)}
+                                        value={paisOrigenFilter}
+                                        defaultValue={paisOrigenFilter}
+                                    >
+                                        <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder={paisOrigenFilter || "Pais de origen"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {ubicaciones
+                                                .sort((a, b) => a.pais.localeCompare(b.pais))
+                                                .map((ubicacion) => (
+                                                    <SelectItem
+                                                        key={ubicacion.pais}
+                                                        value={ubicacion.pais}
+                                                    >
+                                                        {ubicacion.pais}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Separator orientation='vertical' />
+                                <div className='flex flex-col gap-2'>
+                                    <Small>Pais de destino:</Small>
+                                    <Select
+                                        key={paisDestinoFilter}
+                                        onValueChange={(e) => setPaisDestinoFilter(e as string)}
+                                        value={paisDestinoFilter}
+                                        defaultValue={paisDestinoFilter}
+                                    >
+                                        <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder={paisDestinoFilter || "Pais de destino"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {ubicaciones
+                                                .sort((a, b) => a.pais.localeCompare(b.pais))
+                                                .map((ubicacion) => (
+                                                    <SelectItem
+                                                        key={ubicacion.pais}
+                                                        value={ubicacion.pais}
+                                                    >
+                                                        {ubicacion.pais}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </section>
+
                             <Separator />
                             <section className='flex flex-row justify-end gap-4'>
                                 <Button
@@ -913,9 +998,12 @@ function Vuelos({
                 SidebarSkeleton()
             ) : (
                 <>
+                    <Muted>Cantidad de vuelos: {filteredItems?.length}</Muted>
                     {renderFilters()}
                     {items.length === 0 ? (
-                        <div className="h-screen flex"><p className="m-auto text-muted-foreground text-sm">No hay vuelos disponibles</p></div>
+                        <div className='h-screen flex'>
+                            <p className='m-auto text-muted-foreground text-sm'>No hay vuelos disponibles</p>
+                        </div>
                     ) : (
                         <>
                             <ScrollArea className='h-screen'>
