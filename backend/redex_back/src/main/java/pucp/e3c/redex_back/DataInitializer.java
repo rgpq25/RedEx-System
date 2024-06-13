@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -196,6 +197,7 @@ public class DataInitializer {
 
     @PostConstruct
     public void initData() throws IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         eliminarRegistrosBaseDeDatos();
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
