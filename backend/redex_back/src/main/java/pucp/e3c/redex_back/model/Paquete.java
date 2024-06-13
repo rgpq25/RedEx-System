@@ -81,22 +81,10 @@ public class Paquete {
                 fechaRecepcion,
                 origen.getZonaHoraria(),
                 "UTC");
-        int agregar = 0;
-        if (origen.getContinente().equals(destino.getContinente())) {
-            agregar = 1;
-        } else {
-            agregar = 2;
-        }
-
-        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, agregar);
-        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
-                fecha_maxima_entrega_GMTDestino,
-                destino.getZonaHoraria(),
-                "UTC");
 
         this.fechaDeEntrega = null;
         Envio envio = new Envio();
-        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        envio.fillData(origen, destino, fecha_recepcion_GMT0);
         this.envio = envio;
         this.simulacionActual = null;
         this.planRutaActual = null;

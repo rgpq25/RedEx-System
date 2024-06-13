@@ -115,8 +115,7 @@ public class SimulacionController {
 
         for (Envio envio : envios) {
             Envio nuevoEnvio = new Envio();
-            nuevoEnvio.fillData(envio.getUbicacionOrigen(), envio.getUbicacionDestino(), envio.getFechaRecepcion(),
-                    envio.getFechaLimiteEntrega());
+            nuevoEnvio.fillData(envio.getUbicacionOrigen(), envio.getUbicacionDestino(), envio.getFechaRecepcion());
             nuevoEnvio.setSimulacionActual(simulacion);
             nuevoEnvio = envioService.register(nuevoEnvio);
             ArrayList<Paquete> paquetes = new ArrayList<>(paqueteService.findByEnvioId(envio.getId()));

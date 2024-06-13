@@ -29,12 +29,12 @@ public class Envio {
     @JoinColumn(name = "id_ubicacionDestino")
     private Ubicacion ubicacionDestino;
 
-    @Temporal(TemporalType.TIMESTAMP) 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRecepcion;
 
-    @Temporal(TemporalType.TIMESTAMP) 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaLimiteEntrega;
-    
+
     @Column(length = 16)
     private String estado;
     private Integer cantidadPaquetes;
@@ -44,7 +44,7 @@ public class Envio {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_emisor", referencedColumnName = "id")
     private Cliente emisor;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_receptor", referencedColumnName = "id")
     private Cliente receptor;
@@ -66,11 +66,11 @@ public class Envio {
      * }
      */
 
-    public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date fecha_maxima_entrega) {
+    public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion) {
         this.setUbicacionOrigen(origen);
         this.setUbicacionDestino(destino);
         this.setFechaRecepcion(fechaRecepcion);
-        
+
         this.setEstado("En proceso");
         Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
                 fechaRecepcion,
@@ -82,41 +82,31 @@ public class Envio {
         } else {
             agregar = 2;
         }
-        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, agregar);
-        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
-                fecha_maxima_entrega_GMTDestino,
+        Date fecha_maxima_entrega_GMT0 = Funciones.addDays(fecha_recepcion_GMT0, agregar);
+        Date fecha_maxima_entrega_GMTDestino = Funciones.convertTimeZone(
+            fecha_maxima_entrega_GMT0,
                 destino.getZonaHoraria(),
                 "UTC");
-        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMTDestino);
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }
-
-    
 
     public Cliente getEmisor() {
         return emisor;
     }
 
-
-
     public void setEmisor(Cliente emisor) {
         this.emisor = emisor;
     }
-
-
 
     public Cliente getReceptor() {
         return receptor;
     }
 
-
-
     public void setReceptor(Cliente receptor) {
         this.receptor = receptor;
     }
-
-
 
     // TO DO id emisor
     // TO DO id receptor
