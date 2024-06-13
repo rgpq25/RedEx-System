@@ -14,11 +14,23 @@ import { H2, H3, Muted, Small } from "@/components/ui/typography";
 
 import { Envio, Paquete, Vuelo } from "@/lib/types";
 import { formatDateTimeLongShort } from "@/lib/date";
+import Chip from "@/components/ui/chip";
+import { ChipColors, PackageStatusVariant } from "@/lib/types";
+
+const badgePackageStatusData = [
+    { name: "En almacén origen", value: 26.9, color: "#0088FE" },
+    { name: "Volando", value: 10.8, color: "#00C49F" },
+    { name: "En espera", value: 19.4, color: "#FFBB28" },
+    { name: "En almacén destino", value: 22.2, color: "#FF8042" },
+    { name: "Entregado", value: 11.8, color: "#9900FF" },
+    { name: "Atrasado", value: 10.2, color: "#FF4050" },
+];
 
 const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
     const [visible, setVisible] = useState<boolean>(true);
     const [selectedIdPackage, setSelectedIdPackage] = useState<number>();
     const selectedPackage = shipment?.paquetes?.find((pkg: Paquete) => pkg.id === selectedIdPackage);
+    const chipData = badgePackageStatusData.find((data) => data.name === selectedPackage?.estado);
 
     return (
         <>
@@ -91,7 +103,17 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                             </SelectContent>
                         </Select>
                     </div>
-                    <H3>Ruta del paquete</H3>
+                    <div className="flex flex-col">
+                        <H3>Ruta del paquete</H3>
+                        {chipData && (
+                            <Chip
+                                className='mt-2'
+                                color={chipData.color as ChipColors}
+                            >
+                                {chipData.name}
+                            </Chip>
+                        )}
+                    </div>
                     <ScrollArea className='flex flex-col'>
                         {/* <CurrentStateBox
                             className=''

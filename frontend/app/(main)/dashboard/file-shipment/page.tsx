@@ -104,6 +104,11 @@ export default function FileShipment() {
                 return `${shipment.origin}-${shipment.id.split("-")[1]}-${dateString}-${timeString}-${shipment.destination}:${shipment.amountPackages.toString().padStart(2, "0")}`;
             });
 
+            console.log(selectedDate);
+            console.log(selectedTime);
+            console.log(formattedShipments);
+            throw new Error("Not implemented");
+
             await api(
                 "POST",
                 `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll`,
