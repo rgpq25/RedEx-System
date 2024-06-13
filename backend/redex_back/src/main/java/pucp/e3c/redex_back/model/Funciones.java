@@ -366,20 +366,13 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
-        //LOGGER.info("Fecha recibo real: " + fechaReciboReal);
+        // LOGGER.info("Fecha recibo real: " + fechaReciboReal);
         Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
-        //LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
+        // LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
-        //LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
+        // LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
 
-        Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
-                                                                                      // destino
-        Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino, destino.getZonaHoraria(),
-                "UTC");
-
-        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
-        //LOGGER.info("Fecha recibo GMT 0: " + envio.getFechaRecepcion());
-        //LOGGER.info("Fecha maxima entrega GMT 0: " + envio.getFechaLimiteEntrega());
+        envio.fillData(origen, destino, fecha_recepcion_GMT0);
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
@@ -414,14 +407,8 @@ public class Funciones {
         // Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,
         // origen.getZonaHoraria(), "UTC");
         // parse utc 0 to origin timezone
-        Date fecha_recepcion_GMTOrigin = convertTimeZone(fecha_inicio, "UTC", origen.getZonaHoraria());
         Date fecha_recepcion_GMT0 = fecha_inicio;
-        Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
-                                                                                      // destino
-        Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino, destino.getZonaHoraria(),
-                "UTC");
-
-        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        envio.fillData(origen, destino, fecha_recepcion_GMT0);
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;

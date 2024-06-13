@@ -63,7 +63,12 @@ public class EstadoAlmacen {
             String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
 
             registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
-            registrarCapacidad(aeropuertoLlegada, removeTime(plan.get(i).getFin()), -1);
+            Date newDate = removeTime(plan.get(i).getFin());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(newDate);
+            calendar.add(Calendar.MINUTE, 1);
+            newDate = calendar.getTime();
+            registrarCapacidad(aeropuertoLlegada, newDate, -1);
         }
         for (String aeropuerto : aeropuertos) {
             TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);

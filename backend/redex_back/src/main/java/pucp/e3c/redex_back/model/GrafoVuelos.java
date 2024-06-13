@@ -418,7 +418,7 @@ public class GrafoVuelos {
         Collections.shuffle(vuelosPosibles);
 
         for (Vuelo vuelo : vuelosPosibles) {
-            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+            if (fechaHoraActual.getTime() + 300000 < vuelo.getFechaSalida().getTime() &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
