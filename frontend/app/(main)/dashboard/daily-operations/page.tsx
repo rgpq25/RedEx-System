@@ -11,7 +11,7 @@ import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../../_components/map-header";
-import { calculateAngle, structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
+import { calculateAngle, structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -66,7 +66,7 @@ function DailyOperationsPage() {
 
 			client.onConnect = () => {
 				console.log("Connected to WebSocket");
-				client.subscribe("/algoritmo/diaDiaRespuesta", (msg) => {
+				client.subscribe("/algoritmo/diaDiaRespuesta", async (msg) => {
 					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
@@ -74,7 +74,22 @@ function DailyOperationsPage() {
 						setIsLoadingFirstTime(false);
 					}
 
-					const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
+					let _paquetes: Paquete[] = [];
+					await api(
+						"GET",
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+						(data: Paquete[]) => {
+							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
+							_paquetes = [...data];
+						},
+						(error) => {
+							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+							_paquetes = [];
+						}
+					);
+
+					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
@@ -92,7 +107,7 @@ function DailyOperationsPage() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
-				(data: RespuestaAlgoritmo) => {
+				async (data: RespuestaAlgoritmo) => {
 					console.log("DATA DE operacionesDiaDia/diaDiaRespuesta: ", data);
 					setCurrentTimeNoSimulation();
 
@@ -101,7 +116,22 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
+					let _paquetes: Paquete[] = [];
+					await api(
+						"GET",
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+						(data: Paquete[]) => {
+							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
+							_paquetes = [...data];
+						},
+						(error) => {
+							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+							_paquetes = [];
+						}
+					);
+
+					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
