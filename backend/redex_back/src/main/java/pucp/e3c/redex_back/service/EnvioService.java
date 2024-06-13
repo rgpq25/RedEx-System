@@ -305,10 +305,11 @@ public class EnvioService {
             Envio envio = Funciones.stringToEnvio(envioString, ubicacionMap,
                     null,
                     aeropuertoRepository);
-
-            envios.add(envio);
+            Envio envioGuardado = envioRepository.save(envio);
+            envios.add(envioGuardado);
+            LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
         }
-        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+        //envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
         ArrayList<Paquete> paquetes = new ArrayList<>();
 
