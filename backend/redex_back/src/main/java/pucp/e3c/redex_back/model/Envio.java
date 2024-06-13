@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "envio")
@@ -27,8 +29,12 @@ public class Envio {
     @JoinColumn(name = "id_ubicacionDestino")
     private Ubicacion ubicacionDestino;
 
+    @Temporal(TemporalType.TIMESTAMP) 
     private Date fechaRecepcion;
+
+    @Temporal(TemporalType.TIMESTAMP) 
     private Date fechaLimiteEntrega;
+    
     @Column(length = 16)
     private String estado;
     private Integer cantidadPaquetes;

@@ -46,6 +46,8 @@ public class EnvioController {
     @Autowired
     private Algoritmo algoritmo;
 
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger("EnvioController");
+
     private Date removeTime(Date date) {
         // Obtener una instancia de Calendar y establecer la fecha dada
         Calendar calendar = Calendar.getInstance();
@@ -119,7 +121,9 @@ public class EnvioController {
 
     @GetMapping(value = "/{id}")
     public Envio get(@PathVariable("id") Integer id) {
-        return envioService.get(id);
+        Envio envio = envioService.get(id);
+        LOGGER.info("Fecha recepcion del envio " + id + ": " + envio.getFechaRecepcion());
+        return envio;
     }
 
     @DeleteMapping(value = "/{id}")
