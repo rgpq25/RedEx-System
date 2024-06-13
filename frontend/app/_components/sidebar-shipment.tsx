@@ -91,28 +91,53 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                             </SelectTrigger>
                             <SelectContent className='z-[120]'>
                                 <SelectGroup>
-                                    {shipment?.paquetes?.map((pkg: any) => (
-                                        <SelectItem
-                                            key={pkg.id}
-                                            value={pkg.id.toString()}
-                                        >
-                                            {`${pkg.id}`}
-                                        </SelectItem>
-                                    ))}
+                                    {shipment?.paquetes
+                                        ?.sort((a: any, b: any) => {
+                                            // Primero ordenamos por estado
+                                            const estadoComparison = a.estado.localeCompare(b.estado);
+                                            if (estadoComparison !== 0) return estadoComparison;
+                                    
+                                            // Si los estados son iguales, ordenamos por la fechaLlegada más lejana
+                                            const getMaxFechaLlegada = (pkg: any) => {
+                                                return pkg.planRutaActual?.vuelos?.reduce((maxFecha: Date, vuelo: Vuelo) => {
+                                                    const fechaLlegada = new Date(vuelo.fechaLlegada);
+                                                    // Truncamos la fecha a día y hora
+                                                    const truncFechaLlegada = new Date(fechaLlegada.getFullYear(), fechaLlegada.getMonth(), fechaLlegada.getDate(), fechaLlegada.getHours());
+                                                    return truncFechaLlegada > maxFecha ? truncFechaLlegada : maxFecha;
+                                                }, new Date(0));
+                                            };
+                                    
+                                            const aMaxFechaLlegada = getMaxFechaLlegada(a);
+                                            const bMaxFechaLlegada = getMaxFechaLlegada(b);
+                                    
+                                            // Orden inverso de las fechas
+                                            return bMaxFechaLlegada - aMaxFechaLlegada;
+                                        })
+                                        .map((pkg: Paquete) => (
+                                            <SelectItem
+                                                key={pkg.id}
+                                                value={pkg.id.toString()}
+                                            >
+                                                {pkg.id}
+                                                {pkg.estado && (
+                                                    <Chip
+                                                        color={
+                                                            badgePackageStatusData.find((data) => data.name === pkg.estado)
+                                                                ?.color as ChipColors
+                                                        }
+                                                        className='inline-flex ml-4'
+                                                    >
+                                                        {pkg.estado}
+                                                    </Chip>
+                                                )}
+                                            </SelectItem>
+                                        ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex flex-col">
+                    <div className='flex flex-col'>
                         <H3>Ruta del paquete</H3>
-                        {chipData && (
-                            <Chip
-                                className='mt-2'
-                                color={chipData.color as ChipColors}
-                            >
-                                {chipData.name}
-                            </Chip>
-                        )}
                     </div>
                     <ScrollArea className='flex flex-col'>
                         {/* <CurrentStateBox
@@ -127,7 +152,9 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                             <h2 className='text-3xl font-semibold tracking-wide font-poppins'>27 de marzo - 14:40</h2>
                         </div> */}
 
-                        {selectedPackage === undefined || selectedPackage?.planRutaActual === undefined ? (
+                        {selectedPackage === undefined ||
+                        selectedPackage?.planRutaActual === undefined ||
+                        selectedPackage?.planRutaActual?.vuelos === null ? (
                             <Muted>No hay planeamiento activo.</Muted>
                         ) : (
                             <>
