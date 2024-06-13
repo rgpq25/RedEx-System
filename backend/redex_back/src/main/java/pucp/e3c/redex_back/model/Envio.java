@@ -64,8 +64,24 @@ public class Envio {
         this.setUbicacionOrigen(origen);
         this.setUbicacionDestino(destino);
         this.setFechaRecepcion(fechaRecepcion);
-        this.setFechaLimiteEntrega(fecha_maxima_entrega);
+        
         this.setEstado("En proceso");
+        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+                fechaRecepcion,
+                origen.getZonaHoraria(),
+                "UTC");
+        int agregar = 0;
+        if (origen.getContinente().equals(destino.getContinente())) {
+            agregar = 1;
+        } else {
+            agregar = 2;
+        }
+        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, agregar);
+        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
+                fecha_maxima_entrega_GMTDestino,
+                destino.getZonaHoraria(),
+                "UTC");
+        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }
