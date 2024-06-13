@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -40,6 +42,8 @@ public class Funciones {
 
     @Autowired
     ResourceLoader resourceLoader;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Funciones.class);
 
     public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -347,6 +351,7 @@ public class Funciones {
 
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository) {
+        LOGGER.info("Procesando linea: " + line);
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
@@ -361,8 +366,11 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
+        LOGGER.info("Fecha recibo real: " + fechaReciboReal);
         Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
+        LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
+        LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
 
         Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
                                                                                       // destino
