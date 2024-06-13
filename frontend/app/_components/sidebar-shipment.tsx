@@ -18,12 +18,12 @@ import Chip from "@/components/ui/chip";
 import { ChipColors, PackageStatusVariant } from "@/lib/types";
 
 const badgePackageStatusData = [
-    { name: "En almacén origen", value: 26.9, color: "#0088FE" },
-    { name: "Volando", value: 10.8, color: "#00C49F" },
-    { name: "En espera", value: 19.4, color: "#FFBB28" },
-    { name: "En almacén destino", value: 22.2, color: "#FF8042" },
-    { name: "Entregado", value: 11.8, color: "#9900FF" },
-    { name: "Atrasado", value: 10.2, color: "#FF4050" },
+    { name: "En almacén origen", color: "gray" as ChipColors },
+    { name: "Volando", color: "blue" as ChipColors },
+    { name: "En espera", color: "yellow" as ChipColors },
+    { name: "En almacén destino", color: "purple" as ChipColors },
+    { name: "Entregado", color: "green" as ChipColors },
+    { name: "Atrasado", color: "red" as ChipColors },
 ];
 
 const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
@@ -71,8 +71,8 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                     </div> */}
                     <div className='flex flex-col w-full items-start'>
                         <H3 className='mb-2'>Envio</H3>
-                        <Muted>{`Ubicación origen: ${shipment.ubicacionOrigen.ciudad} (${shipment.ubicacionOrigen.ciudadAbreviada.toUpperCase()})`}</Muted>
-                        <Muted>{`Ubicación destino: ${shipment.ubicacionDestino.ciudad} (${shipment.ubicacionDestino.ciudadAbreviada.toUpperCase()})`}</Muted>
+                        <Muted>{`Origen: ${shipment.ubicacionOrigen.ciudad} (${shipment.ubicacionOrigen.ciudadAbreviada.toUpperCase()})`}</Muted>
+                        <Muted>{`Destino: ${shipment.ubicacionDestino.ciudad} (${shipment.ubicacionDestino.ciudadAbreviada.toUpperCase()})`}</Muted>
                         <Muted>{`Fecha de registro: ${formatDateTimeLongShort(shipment.fechaRecepcion)}`}</Muted>
                         <Muted>{`Fecha de limite: ${formatDateTimeLongShort(shipment.fechaLimiteEntrega)}`}</Muted>
                         <Muted>{`Cantidad de paquetes: ${shipment?.paquetes?.length}`}</Muted>
