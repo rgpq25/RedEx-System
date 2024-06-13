@@ -122,7 +122,7 @@ public class EnvioController {
     @GetMapping(value = "/{id}")
     public Envio get(@PathVariable("id") Integer id) {
         Envio envio = envioService.get(id);
-        LOGGER.info("Fecha recepcion del envio " + id + ": " + envio.getFechaRecepcion());
+        //LOGGER.info("Fecha recepcion del envio " + id + ": " + envio.getFechaRecepcion());
         return envio;
     }
 

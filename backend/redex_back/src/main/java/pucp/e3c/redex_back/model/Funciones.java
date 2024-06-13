@@ -366,7 +366,7 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
-        LOGGER.info("Fecha recibo real: " + fechaReciboReal);
+        //LOGGER.info("Fecha recibo real: " + fechaReciboReal);
         Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
         //LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
@@ -378,8 +378,8 @@ public class Funciones {
                 "UTC");
 
         envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
-        LOGGER.info("Fecha recibo GMT 0: " + envio.getFechaRecepcion());
-        LOGGER.info("Fecha maxima entrega GMT 0: " + envio.getFechaLimiteEntrega());
+        //LOGGER.info("Fecha recibo GMT 0: " + envio.getFechaRecepcion());
+        //LOGGER.info("Fecha maxima entrega GMT 0: " + envio.getFechaLimiteEntrega());
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
