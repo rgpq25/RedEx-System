@@ -86,7 +86,7 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 	}
 }
 
-function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
+export function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
 	if (planRutaVuelos.length === 0) {
 		return {
 			descripcion: "Sin plan de ruta",

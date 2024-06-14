@@ -10,15 +10,40 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { H2, H3, Muted, Small } from "@/components/ui/typography";
 
 import { Envio, Paquete, Vuelo } from "@/lib/types";
 import { formatDateTimeLongShort } from "@/lib/date";
+import Chip from "@/components/ui/chip";
+import { ChipColors, PackageStatusVariant } from "@/lib/types";
+import { getPackageState } from "@/components/map/envio-modal";
+import { EstadoPaquete } from "@/lib/types";
 
-const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
+const badgePackageStatusData = [
+    { name: "En almacén origen", color: "gray" as ChipColors },
+    { name: "Volando", color: "blue" as ChipColors },
+    { name: "En espera", color: "yellow" as ChipColors },
+    { name: "En almacén destino", color: "purple" as ChipColors },
+    { name: "Entregado", color: "green" as ChipColors },
+    { name: "Atrasado", color: "red" as ChipColors },
+];
+
+const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefined; currentTime: Date | undefined }) => {
     const [visible, setVisible] = useState<boolean>(true);
     const [selectedIdPackage, setSelectedIdPackage] = useState<number>();
     const selectedPackage = shipment?.paquetes?.find((pkg: Paquete) => pkg.id === selectedIdPackage);
+
+    const renderStatusChip = (status: EstadoPaquete) => {
+        return (
+            <Chip
+                color={status.color}
+                className='ml-4'
+            >
+                {status.descripcion}
+            </Chip>
+        );
+    };
 
     return (
         <>
@@ -39,16 +64,21 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                 )}
             >
                 <CardHeader className='relative flex flex-row w-full items-center justify-between'>
-                    <H2 className='flex-1'>{`ID: ${shipment.id}`}</H2>
-                    <ChevronsLeft
-                        className='cursor-pointer w-10 h-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out'
-                        onClick={() => {
-                            console.log("Clckng");
-                            setVisible(false);
-                        }}
-                    >
-                        Cerrar
-                    </ChevronsLeft>
+                    {shipment === undefined ? (
+                        <Skeleton className='w-1/2 h-8' />
+                    ) : (
+                        <>
+                            <H2 className='flex-1'>{`ID: ${shipment.id}`}</H2>
+                            <ChevronsLeft
+                                className='cursor-pointer w-10 h-10 p-2 stroke-muted-foreground hover:stroke-black transition-all duration-200 ease-in-out'
+                                onClick={() => {
+                                    setVisible(false);
+                                }}
+                            >
+                                Cerrar
+                            </ChevronsLeft>
+                        </>
+                    )}
                 </CardHeader>
                 <CardContent className='w-full flex space-y-4 flex-col *:w-full overflow-hidden'>
                     {/* <div className='text-center flex flex-col justify-center items-center'>
@@ -57,76 +87,132 @@ const SidebarShipment = ({ shipment }: { shipment: Envio }) => {
                         </p>
                         <h2 className='text-3xl font-semibold tracking-wide font-poppins'>27 de marzo - 14:40</h2>
                     </div> */}
-                    <div className='flex flex-col w-full items-start'>
-                        <H3 className='mb-2'>Envio</H3>
-                        <Muted>{`Ubicación origen: ${shipment.ubicacionOrigen.ciudad} (${shipment.ubicacionOrigen.ciudadAbreviada.toUpperCase()})`}</Muted>
-                        <Muted>{`Ubicación destino: ${shipment.ubicacionDestino.ciudad} (${shipment.ubicacionDestino.ciudadAbreviada.toUpperCase()})`}</Muted>
-                        <Muted>{`Fecha de registro: ${formatDateTimeLongShort(shipment.fechaRecepcion)}`}</Muted>
-                        <Muted>{`Fecha de limite: ${formatDateTimeLongShort(shipment.fechaLimiteEntrega)}`}</Muted>
-                        <Muted>{`Cantidad de paquetes: ${shipment?.paquetes?.length}`}</Muted>
-                    </div>
+                    {shipment === undefined ? (
+                        <div className='w-full h-full flex-col space-y-4'>
+                            <Skeleton className='w-1/2 h-8' />
+                            <Skeleton className='w-full h-2' />
+                            <Skeleton className='w-1/2 h-2' />
+                            <Skeleton className='w-full h-2' />
+                        </div>
+                    ) : (
+                        <div className='flex flex-col w-full items-start'>
+                            <H3 className='mb-2'>Envio</H3>
+                            <Muted>{`Origen: ${shipment.ubicacionOrigen.ciudad} (${shipment.ubicacionOrigen.ciudadAbreviada.toUpperCase()})`}</Muted>
+                            <Muted>{`Destino: ${shipment.ubicacionDestino.ciudad} (${shipment.ubicacionDestino.ciudadAbreviada.toUpperCase()})`}</Muted>
+                            <Muted>{`Fecha de registro: ${formatDateTimeLongShort(shipment.fechaRecepcion)}`}</Muted>
+                            <Muted>{`Fecha de limite: ${formatDateTimeLongShort(shipment.fechaLimiteEntrega)}`}</Muted>
+                            <Muted>{`Cantidad de paquetes: ${shipment?.paquetes?.length}`}</Muted>
+                        </div>
+                    )}
                     <Separator />
-                    <div className='flex flex-col space-y-4 w-full items-start'>
-                        <H3>Paquetes</H3>
-                        <Select
-                            key={selectedIdPackage}
-                            onValueChange={(value) => setSelectedIdPackage(parseInt(value))}
-                            defaultValue={selectedIdPackage?.toString()}
-                            value={selectedIdPackage?.toString()}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder={selectedIdPackage || "Seleccione un paquete"} />
-                            </SelectTrigger>
-                            <SelectContent className='z-[120]'>
-                                <SelectGroup>
-                                    {shipment?.paquetes?.map((pkg: any) => (
-                                        <SelectItem
-                                            key={pkg.id}
-                                            value={pkg.id.toString()}
-                                        >
-                                            {`${pkg.id}`}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <H3>Ruta del paquete</H3>
-                    <ScrollArea className='flex flex-col'>
-                        {/* <CurrentStateBox
+                    {shipment?.paquetes === undefined || shipment?.paquetes === null || shipment?.paquetes?.length === 0 ? (
+                        <div className='w-full h-full flex-col space-y-4'>
+                            <Skeleton className='w-1/2 h-8' />
+                            <Skeleton className='w-full h-10' />
+                            <Skeleton className='w-1/2 h-10' />
+                            <Skeleton className='w-full h-36' />
+                        </div>
+                    ) : (
+                        <>
+                            <div className='flex flex-col space-y-4 w-full items-start'>
+                                <H3>Paquetes</H3>
+                                <Select
+                                    key={selectedIdPackage}
+                                    onValueChange={(value) => setSelectedIdPackage(parseInt(value))}
+                                    defaultValue={selectedIdPackage?.toString()}
+                                    value={selectedIdPackage?.toString()}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={selectedIdPackage || "Seleccione un paquete"} />
+                                    </SelectTrigger>
+                                    <SelectContent className='z-[120]'>
+                                        <SelectGroup>
+                                            {shipment?.paquetes
+                                                ?.sort((a: any, b: any) => {
+                                                    // Primero ordenamos por estado
+                                                    const estadoComparison = a.estado.localeCompare(b.estado);
+                                                    if (estadoComparison !== 0) return estadoComparison;
+
+                                                    // Si los estados son iguales, ordenamos por la fechaLlegada más lejana
+                                                    const getMaxFechaLlegada = (pkg: any) => {
+                                                        return pkg.planRutaActual?.vuelos?.reduce((maxFecha: Date, vuelo: Vuelo) => {
+                                                            const fechaLlegada = new Date(vuelo.fechaLlegada);
+                                                            // Truncamos la fecha a día y hora
+                                                            const truncFechaLlegada = new Date(
+                                                                fechaLlegada.getFullYear(),
+                                                                fechaLlegada.getMonth(),
+                                                                fechaLlegada.getDate(),
+                                                                fechaLlegada.getHours()
+                                                            );
+                                                            return truncFechaLlegada > maxFecha ? truncFechaLlegada : maxFecha;
+                                                        }, new Date(0));
+                                                    };
+
+                                                    const aMaxFechaLlegada = getMaxFechaLlegada(a);
+                                                    const bMaxFechaLlegada = getMaxFechaLlegada(b);
+
+                                                    // Orden inverso de las fechas
+                                                    return bMaxFechaLlegada - aMaxFechaLlegada;
+                                                })
+                                                .map((pkg: Paquete) => (
+                                                    <SelectItem
+                                                        key={pkg.id}
+                                                        value={pkg.id.toString()}
+                                                    >
+                                                        <div className='inline-flex'>
+                                                            ID: {pkg.id}
+                                                            {pkg.planRutaActual?.vuelos &&
+                                                                currentTime &&
+                                                                renderStatusChip(getPackageState(pkg.planRutaActual?.vuelos, currentTime))}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className='flex flex-col'>
+                                <H3>Ruta del paquete</H3>
+                            </div>
+                            <ScrollArea className='flex flex-col'>
+                                {/* <CurrentStateBox
                             className=''
                             state={shipment.status}
                         /> */}
 
-                        {/* <div className='mt-2 text-center flex-1 flex flex-col justify-center items-center'>
+                                {/* <div className='mt-2 text-center flex-1 flex flex-col justify-center items-center'>
                             <p className='text-lg font-poppins tracking-tight'>
                                 Tiempo de llegada a <span className='font-semibold text-green-600'>destino final:</span>
                             </p>
                             <h2 className='text-3xl font-semibold tracking-wide font-poppins'>27 de marzo - 14:40</h2>
                         </div> */}
 
-                        {selectedPackage === undefined || selectedPackage?.planRutaActual === undefined ? (
-                            <Muted>No hay planeamiento activo.</Muted>
-                        ) : (
-                            <>
-                                {selectedPackage?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
-                                    <section
-                                        key={vuelo.id}
-                                        className='flex flex-row my-4 justify-between *:flex *:flex-col px-2'
-                                    >
-                                        <div className='*:text-left'>
-                                            <Small>{vuelo.planVuelo.ciudadOrigen.ciudad}</Small>
-                                            <Muted>{formatDateTimeLongShort(vuelo.fechaSalida)}</Muted>
-                                        </div>
-                                        <div className='*:text-right'>
-                                            <Small>{vuelo.planVuelo.ciudadDestino.ciudad}</Small>
-                                            <Muted>{formatDateTimeLongShort(vuelo.fechaLlegada)}</Muted>
-                                        </div>
-                                    </section>
-                                ))}
-                            </>
-                        )}
-                    </ScrollArea>
+                                {selectedPackage === undefined ||
+                                selectedPackage?.planRutaActual === undefined ||
+                                selectedPackage?.planRutaActual?.vuelos === null ? (
+                                    <Muted>No hay planeamiento activo.</Muted>
+                                ) : (
+                                    <>
+                                        {selectedPackage?.planRutaActual?.vuelos?.map((vuelo: Vuelo) => (
+                                            <section
+                                                key={vuelo.id}
+                                                className='flex flex-row my-4 justify-between *:flex *:flex-col px-2'
+                                            >
+                                                <div className='*:text-left'>
+                                                    <Small>{vuelo.planVuelo.ciudadOrigen.ciudad}</Small>
+                                                    <Muted>{formatDateTimeLongShort(vuelo.fechaSalida)}</Muted>
+                                                </div>
+                                                <div className='*:text-right'>
+                                                    <Small>{vuelo.planVuelo.ciudadDestino.ciudad}</Small>
+                                                    <Muted>{formatDateTimeLongShort(vuelo.fechaLlegada)}</Muted>
+                                                </div>
+                                            </section>
+                                        ))}
+                                    </>
+                                )}
+                            </ScrollArea>
+                        </>
+                    )}
                 </CardContent>
             </Card>
         </>

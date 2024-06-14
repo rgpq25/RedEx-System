@@ -42,6 +42,8 @@ function TrackingPage() {
     // Shipment information
     const { shipmentId } = useContext(ShipmentIdContext);
     const [shipment, setShipment] = useState<Envio | undefined>(undefined);
+    const [firstFetchPlanes, setFirstFetchPlanes] = useState<boolean>(true);
+    const [shouldUpdateFlights, setShouldUpdateFlights] = useState<boolean>(false);
 
     // Shipment data fetching
     const getShipment = async () => {
@@ -77,6 +79,7 @@ function TrackingPage() {
         }
     };
     const updateFlightsPackages = async () => {
+        console.log("Updating flights of packages");
         try {
             const packagesPromises = shipment?.paquetes?.map(async (pkg) => {
                 const idPackage = pkg?.id;
@@ -120,6 +123,7 @@ function TrackingPage() {
             try {
                 await getShipment();
                 await getPackagesShipment();
+                await updateFlightsPackages();
             } catch (error) {
                 console.log(error);
             }
@@ -128,14 +132,18 @@ function TrackingPage() {
         handleReceptionData();
     }, []);
     useEffect(() => {
-        if (shipment?.paquetes) {
-            updateFlightsPackages();
+        const handleUpdateFlights = async () => {
+            if (shipment && shouldUpdateFlights) {
+                await getPackagesShipment();
+                await updateFlightsPackages();
+                setShouldUpdateFlights((prev) => false);
+            }
         }
-    }, [shipment]);
+        handleUpdateFlights();
+    }, [shipment, shouldUpdateFlights]);
     const cardInfoRender = useMemo(() => {
-        if (!shipment) return null;
-        return <SidebarShipment shipment={shipment} />;
-    }, [shipment]);
+        return <SidebarShipment shipment={shipment} currentTime={currentTime}/>;
+    }, [shipment, currentTime]);
 
     // Web Socket data fetching
     const [airports, setAirports] = useState<Aeropuerto[]>([]);
@@ -151,7 +159,6 @@ function TrackingPage() {
                 "GET",
                 `${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
                 (data: Aeropuerto[]) => {
-                    console.log("Fetched airport data succesfully");
                     setAirports(data);
                 },
                 (error) => {
@@ -180,6 +187,8 @@ function TrackingPage() {
                     setFlights(db_vuelos);
                     setEnvios(db_envios);
                     setEstadoAlmacen(db_estadoAlmacen);
+
+                    setShouldUpdateFlights((prev) => true);
                 });
                 client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
                     console.log("MENSAJE DE /algoritmo/diaDiaEstado: ", msg.body);
@@ -193,7 +202,7 @@ function TrackingPage() {
             await api(
                 "GET",
                 `${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
-                (data: RespuestaAlgoritmo) => {
+                async (data: RespuestaAlgoritmo) => {
                     console.log("DATA DE operacionesDiaDia/diaDiaRespuesta: ", data);
                     setCurrentTimeNoSimulation();
 
@@ -201,6 +210,8 @@ function TrackingPage() {
                         setIsLoadingFirstTime(true);
                         return;
                     }
+
+                    setShouldUpdateFlights((prev) => true);
 
                     const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 

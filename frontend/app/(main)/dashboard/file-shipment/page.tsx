@@ -29,6 +29,8 @@ export default function FileShipment() {
     const [useCustomDate, setUseCustomDate] = useState(false);
     const isDisabled = shipments.length === 0 || loading;
 
+    console.log(selectedDate, selectedTime, useCustomDate);
+
     const openFilePicker = useCallback(() => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -91,19 +93,35 @@ export default function FileShipment() {
     const handleSubmit = useCallback(async () => {
         try {
             setLoading(true);
+            const formatDate = (date: Date): string => {
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}${month}${day}`;
+            };
+
+            const formatTime = (time: string): string => {
+                const [hours, minutes] = time.split(':').map(Number);
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            };
+
             const formattedShipments = shipments.map((shipment) => {
                 let dateString;
                 let timeString;
+
                 if (!useCustomDate) {
-                    dateString = shipment.dateTimeShipment.toISOString().split("T")[0].replace(/-/g, "");
-                    timeString = shipment.dateTimeShipment.toTimeString().split(" ")[0].substring(0, 5);
+                    dateString = formatDate(shipment.dateTimeShipment);
+                    timeString = formatTime(shipment.dateTimeShipment.toTimeString().split(" ")[0]);
                 } else {
-                    dateString = selectedDate?.toISOString().split("T")[0].replace(/-/g, "");
+                    dateString = selectedDate ? formatDate(selectedDate) : "";
                     timeString = selectedTime ?? currentTimeString();
                 }
+
                 return `${shipment.origin}-${shipment.id.split("-")[1]}-${dateString}-${timeString}-${shipment.destination}:${shipment.amountPackages.toString().padStart(2, "0")}`;
             });
 
+            console.log(formattedShipments);
+            
             await api(
                 "POST",
                 `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll`,
