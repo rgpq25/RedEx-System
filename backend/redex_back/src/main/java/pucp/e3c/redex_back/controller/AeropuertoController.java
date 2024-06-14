@@ -330,7 +330,7 @@ public class AeropuertoController {
         }
     }
 
-    @GetMapping(value = "/{idAeropuerto}/paquetes")
+    /*@GetMapping(value = "/{idAeropuerto}/paquetes")
     public ArrayList<Paquete> getPaquetes(@PathVariable("idAeropuerto") Integer idAeropuerto) {
         Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
         if (aeropuerto == null)
@@ -455,6 +455,6 @@ public class AeropuertoController {
         }
         actualizaPaquetesNoSimulacion(paquetes);
         return paquetes;
-    }
+    }*/
 
 }
