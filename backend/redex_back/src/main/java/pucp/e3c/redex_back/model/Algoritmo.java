@@ -44,17 +44,17 @@ public class Algoritmo {
 
     private boolean terminarPlanificacionDiaDia;
 
-    // private List<Paquete> respuesta_paquetes_simulacion;
-    // HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
 
     private List<Paquete> respuesta_paquetes_dia_dia;
 
-    // private EstadoAlmacen estadoAlmacenDiaDia;
-
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
+
+    private ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
+
+    private ArrayList<PlanRutaNT> planRutasDiaDia = new ArrayList<>();
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -102,47 +102,49 @@ public class Algoritmo {
             ArrayList<PlanVuelo> planVuelos,
             VueloService vueloService, PlanRutaService planRutaService,
             PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
-            AeropuertoService aeropuertoService, int SA, int TA) {
+            AeropuertoService aeropuertoService, int SA) {
         String tipoOperacion = "DIA A DIA";
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
-        // SA y TA en segundos\
 
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
-        LOGGER.info(tipoOperacion + "Iniciando loop principal");
+        LOGGER.info(tipoOperacion + " Iniciando loop principal");
 
         if (planVuelos.size() == 0) {
-            // System.out.println("ERROR: No hay planes de vuelo para procesar.");
             LOGGER.error(tipoOperacion + " ERROR: No hay planes de vuelo para procesar.");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin planes vuelo");
             return;
         }
         int i = 0;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
-
         boolean primera_iteracion_con_paquetes = true;
-        ArrayList<Paquete> paquetesDiaDia = null;
+        ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
         GrafoVuelos grafoVuelos = null;
-        // ArrayList<PlanRutaNT> planRutaNTs = new ArrayList<>();
-        // ArrayList<PlanRutaNT> planRutaNTs = null;
+
+        HashMap<Integer, Paquete> hashTodosPaquetes = new HashMap<>();
         HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
 
         while (true) {
-            if (terminarPlanificacionDiaDia)
+            if (this.terminarPlanificacionDiaDia)
                 break;
             long start = System.currentTimeMillis();
-            Date now = new Date();
-            // TO DO ACTUALIZAR PAQUETES
-
-            // paquetesDiaDia = paqueteService.findPaquetesSinSimulacionYNoEntregados();
+            Date now = new Date(); 
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
+
             if (paquetesDiaDia != null) {
                 paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService,
                         paqueteService);
             }
+
+            for (Paquete paquete : paquetesDiaDia) {
+                hashTodosPaquetes.put(paquete.getId(), paquete);
+            }
+            
+
             List<Paquete> paquetesPrimerFiltro = paquetesDiaDia.stream()
                     .filter(p -> p.isEntregado() == false)
                     .filter(p -> p.getFechaRecepcion().before(now))
                     .collect(Collectors.toList());
+
 
             this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
                     .filter(p -> p.getFechaRecepcion().before(now)
@@ -153,7 +155,7 @@ public class Algoritmo {
             if (paquetes.size() == 0) {
                 // System.out.println("No hay paquetes para procesar.");
                 LOGGER.info(tipoOperacion + " No hay paquetes para procesar.");
-                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin paquetes");
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes para procesar.");
                 this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
                 long end = System.currentTimeMillis();
                 long sa_millis = SA * 1000 - (end - start);
@@ -170,7 +172,6 @@ public class Algoritmo {
             if (primera_iteracion_con_paquetes) {
                 grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
-                    // System.out.println("ERROR: No se generaron vuelos.");
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
                     return;
@@ -196,10 +197,8 @@ public class Algoritmo {
             Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
 
             // Filtrar paquetes que estan volando
-            // System.out.println("Filtrando vuelos");
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now);
-            // System.out.println("Fin de filtrado de vuelos");
             LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
             int tamanhoPaquetes = paquetesProcesar.size();
 
@@ -209,9 +208,7 @@ public class Algoritmo {
                 // System.out.println("No hay paquetes que planificar");
                 continue;
             }
-            // Recalcular el tamanho de paquetes
-            // System.out.println("Se van a procesar " + tamanhoPaquetes + " paquetes, hasta
-            // " + now);
+
             LOGGER.info(tipoOperacion + " Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + now);
 
             // Crea el array rutas para los paquetes a procesar
@@ -222,6 +219,7 @@ public class Algoritmo {
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
+            
 
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
@@ -229,6 +227,8 @@ public class Algoritmo {
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
                     tipoOperacion, null);
+            i++;
+            
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
             respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
@@ -242,19 +242,26 @@ public class Algoritmo {
                 contador_index_respuesta++;
             }
 
-            i++;
-            // System.out.println("");
-            // System.out.println("Planificacion finalizada");
-            // System.out.println("");
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
 
             realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService,
-                    vueloService, planRutaXVueloService);
+                    vueloService, planRutaXVueloService,hashTodosPaquetes);
 
+            ArrayList<Paquete> currentPaquetes = new ArrayList<>();
+            ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
+            for(Entry<Integer,Paquete> entry : hashTodosPaquetes.entrySet()){
+                currentPaquetes.add(entry.getValue());
+                currentPlanRutas.add(hashPlanRutasNT.get(entry.getKey()));
+            }
+            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas, grafoVuelos.getVuelosHash(),
+                    ocupacionVuelos,
+                    aeropuertos);
+            respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
+            this.paquetesDiaDia = currentPaquetes;
+            this.planRutasDiaDia = currentPlanRutas;
             // Formar respuesta a front
             respuestaAlgoritmo.setSimulacion(null);
             respuestaAlgoritmo.setOcupacionVuelos(null);
-            // Temporal
             respuestaAlgoritmo.setPaquetes(null);
 
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
@@ -281,7 +288,7 @@ public class Algoritmo {
 
     public void realizarGuardadoDiaDia(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             PaqueteService paqueteService,
-            PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService) {
+            PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService,HashMap<Integer,Paquete> hashTodosPaquetes) {
         for (int idx = 0; idx < planRutaNTs.size(); idx++) {
             PlanRutaNT planRutaNT = planRutaNTs.get(idx);
 
@@ -302,6 +309,7 @@ public class Algoritmo {
             // Actualizar paquete
             paquetes.get(idx).setFechaDeEntrega(planRutaNT.getFin());
             paquetes.get(idx).setPlanRutaActual(planRuta);
+            hashTodosPaquetes.put(paquetes.get(idx).getId(), paquetes.get(idx));
 
             try {
                 paqueteService.update(paquetes.get(idx));
@@ -500,7 +508,7 @@ public class Algoritmo {
             } else {
                 this.paquetes_por_simulacion.put(simulacion.getId(), filteredPaquetes);
             }
-            // this.paquetes_por_simulacion.put(simulacion.getId(),filteredPaquetes);
+
             LOGGER.info(tipoOperacion + " Paquetes guardados en memoria: "
                     + this.paquetes_por_simulacion.get(simulacion.getId()).size());
 
@@ -573,7 +581,7 @@ public class Algoritmo {
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
-            LOGGER.info("Respuesta algoritmo enviada de simulacion");
+            LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
             // fechaSgteCalculo);
@@ -1051,7 +1059,10 @@ public class Algoritmo {
 
         for (int i = 0; i < paquetesSimulacion.size(); i++) {
             Paquete paquete = paquetesSimulacion.get(i);
-            ArrayList<Vuelo> vuelos = planRutasSimulacion.get(i).getVuelos();
+            ArrayList<Vuelo> vuelos = new ArrayList<>();
+            if(planRutasSimulacion.get(i) != null) {
+                vuelos = planRutasSimulacion.get(i).getVuelos();
+            }
 
             Collections.sort(vuelos, Comparator.comparing(Vuelo::getFechaSalida));
 
@@ -1083,5 +1094,53 @@ public class Algoritmo {
         }
         return paquetesEnAeropuerto;
     }
+
+    public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId) {
+        ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
+        Date fechaCorte = new Date();
+
+        for (int i = 0; i < this.paquetesDiaDia.size(); i++) {
+            Paquete paquete = this.paquetesDiaDia.get(i);
+            ArrayList<Vuelo> vuelos = new ArrayList<>();
+            if(this.planRutasDiaDia.get(i) != null) {
+                vuelos = this.planRutasDiaDia.get(i).getVuelos();
+            }
+
+            Collections.sort(vuelos, Comparator.comparing(Vuelo::getFechaSalida));
+
+            boolean enAeropuerto = false;
+            if (vuelos.isEmpty() || vuelos.size() == 0 || vuelos.get(0).getFechaSalida().after(fechaCorte)) {
+                // No hay vuelos asignados, o aun no ha tomado vuelos, verificar la ciudad de
+                // origen y la fecha de
+                // recepción
+                if (paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId)
+                        && !paquete.getFechaRecepcion().after(fechaCorte)) {
+                    enAeropuerto = true;
+                }
+            } else {
+                for (Vuelo vuelo : vuelos) {
+                    // El paquete está en el aeropuerto entre la llegada de un vuelo y la salida del
+                    // siguiente
+                    if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&
+                            !vuelo.getFechaLlegada().after(fechaCorte) &&
+                            (vuelos.get(vuelos.indexOf(vuelo) + 1).getFechaSalida().after(fechaCorte))) {
+                        enAeropuerto = true;
+                        break;
+                    }
+                }
+            }
+
+            if (enAeropuerto) {
+                paquetesEnAeropuerto.add(paquete);
+            }
+        }
+        return paquetesEnAeropuerto;
+    }
+
+    public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
+        this.paquetesDiaDia.add(paquete);
+        this.planRutasDiaDia.add(new PlanRutaNT());
+    }
+    
 
 }

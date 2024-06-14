@@ -76,10 +76,7 @@ public class EnvioController {
             paqueteService.register(paquete);
 
             if(envio.getSimulacionActual() == null){
-                String aeropuertoSalida = envio.getUbicacionOrigen().getId();
-                EstadoAlmacen estado = algoritmo.obtenerEstadoAlmacenDiaDia();
-                estado.registrarCapacidad(aeropuertoSalida, removeTime(envio.getFechaRecepcion()), 1);
-                algoritmo.actualizarEstadoAlmacenDiaDia(estado);
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
             }
         }
         return envioService.register(envio);

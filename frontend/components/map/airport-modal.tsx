@@ -145,7 +145,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 				setIsLoading(true);
 				await api(
 					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetes`,
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesDiaDia`,
 					(data: Paquete[]) => {
 						console.log("Finished fetch");
 						console.log(data);

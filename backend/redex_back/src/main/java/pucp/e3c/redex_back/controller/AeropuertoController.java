@@ -114,6 +114,19 @@ public class AeropuertoController {
         return differenceInMillis > fiveMinutesInMillis;
     }
 
+    @GetMapping(value = "/{idAeropuerto}/paquetesDiaDia")
+    public ResponseEntity<ArrayList<Paquete>> getPaquetesDiaDia(
+            @PathVariable("idAeropuerto") Integer idAeropuerto) {
+        Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
+        if (aeropuerto == null) {
+            System.err.println("No se encontro aeropuerto");
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
+        }
+        return new ResponseEntity<>(
+                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId()),
+                HttpStatus.ACCEPTED);
+    }
+
     @PostMapping(value = "/{idAeropuerto}/paquetesfromsimulation")
     public ResponseEntity<ArrayList<Paquete>> getPaquetesFromSimulation(
             @PathVariable("idAeropuerto") Integer idAeropuerto,
