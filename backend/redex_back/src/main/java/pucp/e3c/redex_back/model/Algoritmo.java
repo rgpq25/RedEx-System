@@ -1140,6 +1140,26 @@ public class Algoritmo {
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
         this.paquetesDiaDia.add(paquete);
         this.planRutasDiaDia.add(new PlanRutaNT());
+        String aeropuertoSalida = paquete.getEnvio().getUbicacionOrigen().getId();
+        EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+        estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                "Paquete " + paquete.getId() + " agregado al aeropuerto " + aeropuertoSalida);
+    }
+
+    private Date removeTime(Date date) {
+        // Obtener una instancia de Calendar y establecer la fecha dada
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        // Ajustar las horas, minutos, segundos y milisegundos a cero
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Obtener la nueva fecha sin tiempo
+        return calendar.getTime();
     }
     
 

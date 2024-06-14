@@ -48,18 +48,7 @@ public class EnvioController {
 
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger("EnvioController");
 
-    private Date removeTime(Date date) {
-        // Obtener una instancia de Calendar y establecer la fecha dada
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        // Ajustar las horas, minutos, segundos y milisegundos a cero
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        // Obtener la nueva fecha sin tiempo
-        return calendar.getTime();
-    }
+    
 
 
     @PostMapping(value = "/")
