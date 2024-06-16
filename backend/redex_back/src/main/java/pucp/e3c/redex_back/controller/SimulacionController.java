@@ -103,30 +103,51 @@ public class SimulacionController {
     }
 
     @PostMapping("/inicializarSimulacion")
-    public ResponseEntity<Simulacion> inicializarSimulacion(@RequestBody Simulacion simulacion) {
-        // Registrar una nueva simulacion
-        simulacion.setId(0);
+    public ResponseEntity<Simulacion> inicializarSimulacion(@RequestBody Simulacion simulacion)
+            throws ParseException, IOException {
+
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+
         simulacion.setMilisegundosPausados(0);
         simulacion = simulacionService.register(simulacion);
+        LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID" + simulacion.getId());
 
-        ArrayList<Envio> envios = envioService.findBySimulacionActualID(1);
-        Date fechaMinima = simulacion.getFechaInicioSim();
-        envios.removeIf(envio -> envio.getFechaRecepcion().before(fechaMinima));
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V3.txt");
+        InputStream input1 = resource.getInputStream();
 
-        for (Envio envio : envios) {
-            Envio nuevoEnvio = new Envio();
-            nuevoEnvio.fillData(envio.getUbicacionOrigen(), envio.getUbicacionDestino(), envio.getFechaRecepcion());
-            nuevoEnvio.setSimulacionActual(simulacion);
-            nuevoEnvio = envioService.register(nuevoEnvio);
-            ArrayList<Paquete> paquetes = new ArrayList<>(paqueteService.findByEnvioId(envio.getId()));
-            for (Paquete paquete : paquetes) {
-                Paquete nuevoPaquete = new Paquete();
-                nuevoPaquete.fillData(paquete.getAeropuertoActual(), paquete.getEnvio().getUbicacionOrigen(),
-                        paquete.getEnvio().getUbicacionDestino(), paquete.getEnvio().getFechaRecepcion());
-                nuevoPaquete.setEnvio(nuevoEnvio);
-                nuevoPaquete.setSimulacionActual(simulacion);
-                nuevoPaquete = paqueteService.register(nuevoPaquete);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
+            List<String> lines = reader.lines().collect(Collectors.toList());
+            Date fechaInicio = simulacion.getFechaInicioSim();
+            // Crear variable fecha fin que es una semana despues que fechaInicio
+            Date fechaFin = new Date(fechaInicio.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
+            SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
+
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            for (String line : lines) {
+                String fechaStr = lines.get(0).split("-")[2];
+                Date fecha = formato.parse(fechaStr);
+                if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
+                    continue;
+                }
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(simulacion);
+                registrarEnvios.add(registrarEnvio);
+            }
+
+            ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
+
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
         }
 
         return new ResponseEntity<>(simulacion, HttpStatus.CREATED);

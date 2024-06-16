@@ -127,7 +127,7 @@ public class Algoritmo {
             if (this.terminarPlanificacionDiaDia)
                 break;
             long start = System.currentTimeMillis();
-            Date now = new Date(); 
+            Date now = new Date();
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
 
             if (paquetesDiaDia != null) {
@@ -138,13 +138,11 @@ public class Algoritmo {
             for (Paquete paquete : paquetesDiaDia) {
                 hashTodosPaquetes.put(paquete.getId(), paquete);
             }
-            
 
             List<Paquete> paquetesPrimerFiltro = paquetesDiaDia.stream()
                     .filter(p -> p.isEntregado() == false)
                     .filter(p -> p.getFechaRecepcion().before(now))
                     .collect(Collectors.toList());
-
 
             this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
                     .filter(p -> p.getFechaRecepcion().before(now)
@@ -198,7 +196,8 @@ public class Algoritmo {
 
             // Filtrar paquetes que estan volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
-            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now);
+            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now, 0, 1);
+
             LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
             int tamanhoPaquetes = paquetesProcesar.size();
 
@@ -219,16 +218,15 @@ public class Algoritmo {
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
-            
 
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar,
                     aeropuertos, planVuelos,
                     tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
-                    tipoOperacion, null);
+                    tipoOperacion, null, 0);
             i++;
-            
+
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
             respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
@@ -245,15 +243,16 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
 
             realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService,
-                    vueloService, planRutaXVueloService,hashTodosPaquetes);
+                    vueloService, planRutaXVueloService, hashTodosPaquetes);
 
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
             ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
-            for(Entry<Integer,Paquete> entry : hashTodosPaquetes.entrySet()){
+            for (Entry<Integer, Paquete> entry : hashTodosPaquetes.entrySet()) {
                 currentPaquetes.add(entry.getValue());
                 currentPlanRutas.add(hashPlanRutasNT.get(entry.getKey()));
             }
-            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas, grafoVuelos.getVuelosHash(),
+            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
+                    grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
                     aeropuertos);
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
@@ -288,7 +287,8 @@ public class Algoritmo {
 
     public void realizarGuardadoDiaDia(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             PaqueteService paqueteService,
-            PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService,HashMap<Integer,Paquete> hashTodosPaquetes) {
+            PlanRutaService planRutaService, VueloService vueloService, PlanRutaXVueloService planRutaXVueloService,
+            HashMap<Integer, Paquete> hashTodosPaquetes) {
         for (int idx = 0; idx < planRutaNTs.size(); idx++) {
             PlanRutaNT planRutaNT = planRutaNTs.get(idx);
 
@@ -534,7 +534,8 @@ public class Algoritmo {
             }
 
             // Filtrar paquetes que estan volando
-            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnSimulacion);
+            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnSimulacion, TA,
+                    simulacion.getMultiplicadorTiempo());
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -553,7 +554,8 @@ public class Algoritmo {
             // Realizar planificacion
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
-                    simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion);
+                    simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion,
+                    TA * (int) simulacion.getMultiplicadorTiempo());
             i++;
 
             // Guardar resultados
@@ -739,8 +741,9 @@ public class Algoritmo {
     }
 
     private ArrayList<Paquete> filtrarPaquetesVolando(ArrayList<Paquete> paquetesProcesar, VueloService vueloService,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA, double multiplicador) {
         ArrayList<Integer> indicesAEliminar = new ArrayList<>();
+        Date fechaMaxima = agregarSAyTA(tiempoEnSimulacion, TA, 0, multiplicador);
         for (int i = 0; i < paquetesProcesar.size(); i++) {
             // for (Paquete paquete : paquetesProcesar) {
 
@@ -753,8 +756,7 @@ public class Algoritmo {
             }
             for (Vuelo vuelo : vuelos) {
                 if (vuelo.getFechaLlegada().after(tiempoEnSimulacion)
-                        && vuelo.getFechaSalida().before(tiempoEnSimulacion)) {
-                    // System.out.println("Eliminando paquete " + paquetesProcesar.get(i));
+                        && vuelo.getFechaSalida().before(fechaMaxima)) {
                     indicesAEliminar.add(i);
                     break;
                 }
@@ -971,8 +973,8 @@ public class Algoritmo {
             HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
             VueloService vueloService, PlanRutaService planRutaService, SimulacionService simulacionService,
-            Simulacion simulacion,
-            SimpMessagingTemplate messagingTemplate, String tipoOperacion, Date tiempoEnSimulacion) {
+            Simulacion simulacion, SimpMessagingTemplate messagingTemplate, String tipoOperacion,
+            Date tiempoEnSimulacion, int TA) {
         // Simmulated Annealing Parameters
         double temperature = 1000;
         double coolingRate = 0.08;
@@ -1014,8 +1016,7 @@ public class Algoritmo {
                 promedioPonderadoTiempoAeropuertoWeight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
-                messagingTemplate,
-                tipoOperacion);
+                messagingTemplate, tipoOperacion, TA);
     }
 
     public RespuestaAlgoritmo getUltimaRespuestaOperacionDiaDia() {
@@ -1060,7 +1061,7 @@ public class Algoritmo {
         for (int i = 0; i < paquetesSimulacion.size(); i++) {
             Paquete paquete = paquetesSimulacion.get(i);
             ArrayList<Vuelo> vuelos = new ArrayList<>();
-            if(planRutasSimulacion.get(i) != null) {
+            if (planRutasSimulacion.get(i) != null) {
                 vuelos = planRutasSimulacion.get(i).getVuelos();
             }
 
@@ -1102,7 +1103,7 @@ public class Algoritmo {
         for (int i = 0; i < this.paquetesDiaDia.size(); i++) {
             Paquete paquete = this.paquetesDiaDia.get(i);
             ArrayList<Vuelo> vuelos = new ArrayList<>();
-            if(this.planRutasDiaDia.get(i) != null) {
+            if (this.planRutasDiaDia.get(i) != null) {
                 vuelos = this.planRutasDiaDia.get(i).getVuelos();
             }
 
@@ -1161,6 +1162,5 @@ public class Algoritmo {
         // Obtener la nueva fecha sin tiempo
         return calendar.getTime();
     }
-    
 
 }

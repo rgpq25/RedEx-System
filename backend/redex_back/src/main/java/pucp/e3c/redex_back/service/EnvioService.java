@@ -139,6 +139,46 @@ public class EnvioService {
         return auxEnvio;
     }
 
+    public ArrayList<Envio> registerAllByRegistrarEnvio(ArrayList<RegistrarEnvio> registrarEnvios,
+            HashMap<String, Aeropuerto> hashAeropuertos) {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+        ArrayList<Envio> envios = new ArrayList<>();
+        for (RegistrarEnvio registrarEnvio : registrarEnvios) {
+
+            Envio envio = Funciones.stringToEnvio(registrarEnvio.getCodigo(), ubicacionMap,
+                    registrarEnvio.getSimulacion(),
+                    aeropuertoRepository);
+
+            envio.setSimulacionActual(registrarEnvio.getSimulacion());
+            envios.add(envio);
+        }
+        envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+                Paquete paquete = new Paquete();
+                paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+                paquete.setEnAeropuerto(true);
+                paquete.setEntregado(false);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(envio.getSimulacionActual());
+                paquetes.add(paquete);
+                // LOGGER.info("PAQUETE A GUARDAR: " + paquete.toString());
+            }
+
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
+    }
+
     public ArrayList<Envio> registerAllByStringEsp(ArrayList<RegistrarEnvio> registrarEnvios,
             HashMap<String, Aeropuerto> hashAeropuertos, Date fechaInicio, Date fechaFin, int cantidad) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
@@ -309,7 +349,7 @@ public class EnvioService {
             envios.add(envioGuardado);
             LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
         }
-        //envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+        // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
         ArrayList<Paquete> paquetes = new ArrayList<>();
 
