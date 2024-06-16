@@ -1,5 +1,6 @@
 package pucp.e3c.redex_back.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -85,8 +86,37 @@ public class Envio {
         Date fecha_maxima_entrega_GMT0 = Funciones.addDays(fecha_recepcion_GMT0, agregar);
         Date fecha_maxima_entrega_GMTDestino = Funciones.convertTimeZone(
             fecha_maxima_entrega_GMT0,"UTC",destino.getZonaHoraria());
-        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
-        this.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);        
+
+        Date fecha_recepcion_origen = Funciones.convertTimeZone(
+            fecha_recepcion_GMT0,"UTC",origen.getZonaHoraria());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss"); 
+        Date fecha_recepcion_GMTOrigin = Funciones.parseDateString(dateFormat.format(fecha_recepcion_origen) + " " + timeFormat.format(fecha_recepcion_origen));
+        Date fecha_proceso_1_GMT0 = Funciones.convertTimeZone(fecha_recepcion_GMTOrigin, destino.getZonaHoraria(), "UTC");
+        Date fecha_proceso_1_destino = Funciones.convertTimeZone(fecha_proceso_1_GMT0, "UTC", destino.getZonaHoraria());
+        //Ahora trabajo con fecha_recepcion_GMT0 y fecha_proceso_1_GMT0
+        if(fecha_proceso_1_GMT0.before(fecha_recepcion_GMT0) || fecha_proceso_1_GMT0.equals(fecha_recepcion_GMT0)){
+            //agrega un dia entero a fecha_proceso_1_GMT0
+            fecha_proceso_1_GMT0 = Funciones.addDays(fecha_proceso_1_GMT0, 1);
+        }
+        if(agregar==2){
+            //agrega un dia entero a fecha_proceso_1_GMT0
+            fecha_proceso_1_GMT0 = Funciones.addDays(fecha_proceso_1_GMT0, 1);
+        }
+        Date fecha_fin_proceso_destino = Funciones.convertTimeZone(fecha_proceso_1_GMT0, "UTC", destino.getZonaHoraria());
+        System.out.println("=====================================");
+        System.out.println("Fecha recepcion en hora ciudad origen: " + fecha_recepcion_origen);
+        System.out.println("Fecha proceso entrega: " + fecha_proceso_1_GMT0);
+        System.out.println(destino.getZonaHoraria());
+        System.out.println("Fecha proceso entrega en hora ciudad destino: " + fecha_fin_proceso_destino);
+        System.out.println("=====================================");
+
+        //this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+        this.setFechaLimiteEntrega(fecha_proceso_1_GMT0);
+        //System.out.println("ASIGNANDO Fecha limite entrega GMT0: " + fecha_maxima_entrega_GMT0);
+        //this.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
+        this.setFechaLimiteEntregaZonaHorariaDestino(fecha_fin_proceso_destino); 
+        //System.out.println("ASIGNANDO Fecha limite entrega GMT DESTINO: " + fecha_maxima_entrega_GMTDestino);       
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }

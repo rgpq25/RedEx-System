@@ -138,6 +138,9 @@ public class EnvioController {
     @GetMapping(value = "/{id}")
     public Envio get(@PathVariable("id") Integer id) {
         Envio envio = envioService.get(id);
+        System.out.println("Fecha recepcion del envio " + id + ": " + envio.getFechaRecepcion());
+        System.out.println("Fecha limite entrega del envio " + id + ": " + envio.getFechaLimiteEntrega());
+        System.out.println("Fecha limite entrega del envio Zona Horaria Destino " + id + ": " + envio.getFechaLimiteEntregaZonaHorariaDestino());
         //LOGGER.info("Fecha recepcion del envio " + id + ": " + envio.getFechaRecepcion());
         return envio;
     }
