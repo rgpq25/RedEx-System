@@ -112,7 +112,7 @@ public class SimulacionController {
         simulacion = simulacionService.register(simulacion);
         LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID" + simulacion.getId());
 
-        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V3.txt");
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V4.txt");
         InputStream input1 = resource.getInputStream();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
