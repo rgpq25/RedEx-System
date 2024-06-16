@@ -33,7 +33,10 @@ public class Envio {
     private Date fechaRecepcion;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaLimiteEntrega;
+    private Date fechaLimiteEntrega; //EN UTC
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaLimiteEntregaZonaHorariaDestino;
 
     @Column(length = 16)
     private String estado;
@@ -66,16 +69,18 @@ public class Envio {
      * }
      */
 
-    public void fillData(Ubicacion origen, Ubicacion destino, Date fechaRecepcion) {
+    public void fillData(Ubicacion origen, Ubicacion destino, Date fecha_recepcion_GMT0) {
         this.setUbicacionOrigen(origen);
         this.setUbicacionDestino(destino);
-        this.setFechaRecepcion(fechaRecepcion);
+        this.setFechaRecepcion(fecha_recepcion_GMT0);
 
         this.setEstado("En proceso");
-        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+        System.out.println("TEST IN Fecha recepcion: " + fecha_recepcion_GMT0);
+        /*Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
                 fechaRecepcion,
                 origen.getZonaHoraria(),
-                "UTC");
+                "UTC");*/
+        //System.out.println("TEST IN Fecha recepcion que se procesa: " + fecha_recepcion_GMT0);
         int agregar = 0;
         if (origen.getContinente().equals(destino.getContinente())) {
             agregar = 1;
@@ -87,10 +92,13 @@ public class Envio {
             fecha_maxima_entrega_GMT0,
                 destino.getZonaHoraria(),
                 "UTC");
-        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMTDestino);
+        this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+        this.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);        
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }
+
+    
 
     public Cliente getEmisor() {
         return emisor;
@@ -187,6 +195,18 @@ public class Envio {
 
     public void setSimulacionActual(Simulacion simulacionActual) {
         this.simulacionActual = simulacionActual;
+    }
+
+
+
+    public Date getFechaLimiteEntregaZonaHorariaDestino() {
+        return fechaLimiteEntregaZonaHorariaDestino;
+    }
+
+
+
+    public void setFechaLimiteEntregaZonaHorariaDestino(Date fechaLimiteEntregaZonaHorariaDestino) {
+        this.fechaLimiteEntregaZonaHorariaDestino = fechaLimiteEntregaZonaHorariaDestino;
     }
 
 }

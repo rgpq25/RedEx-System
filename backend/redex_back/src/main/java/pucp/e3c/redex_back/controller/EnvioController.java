@@ -95,6 +95,25 @@ public class EnvioController {
         return new ResponseEntity<>(envios, HttpStatus.CREATED);
     }
 
+    @PostMapping("/codigoAll/horaSistema")
+    public ResponseEntity<ArrayList<Envio>> registrarEnviosHoraSistema(@RequestBody ArrayList<String> enviosString) {
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+
+        HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+        }
+
+        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+
+        int totalPaquetes = envios.stream()
+                .mapToInt(envio -> envio.getCantidadPaquetes())
+                .sum();
+        System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+
+        return new ResponseEntity<>(envios, HttpStatus.CREATED);
+    }
+
     @PutMapping(value = "/")
     public Envio update(@RequestBody Envio envio) {
         return envioService.update(envio);
