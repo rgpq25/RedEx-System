@@ -75,12 +75,7 @@ public class Envio {
         this.setFechaRecepcion(fecha_recepcion_GMT0);
 
         this.setEstado("En proceso");
-        System.out.println("TEST IN Fecha recepcion: " + fecha_recepcion_GMT0);
-        /*Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
-                fechaRecepcion,
-                origen.getZonaHoraria(),
-                "UTC");*/
-        //System.out.println("TEST IN Fecha recepcion que se procesa: " + fecha_recepcion_GMT0);
+
         int agregar = 0;
         if (origen.getContinente().equals(destino.getContinente())) {
             agregar = 1;
@@ -89,9 +84,7 @@ public class Envio {
         }
         Date fecha_maxima_entrega_GMT0 = Funciones.addDays(fecha_recepcion_GMT0, agregar);
         Date fecha_maxima_entrega_GMTDestino = Funciones.convertTimeZone(
-            fecha_maxima_entrega_GMT0,
-                destino.getZonaHoraria(),
-                "UTC");
+            fecha_maxima_entrega_GMT0,"UTC",destino.getZonaHoraria());
         this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         this.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);        
         this.setCantidadPaquetes(1);

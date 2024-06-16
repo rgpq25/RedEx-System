@@ -302,7 +302,7 @@ public class SimulacionController {
         Simulacion simulacion = simulacionService.get(id);
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(id).stream()
-                .filter(paquete -> paquete.getFechaRecepcion().after(simulacion.getFechaInicioSim()))
+                .filter(paquete -> paquete.obtenerFechaRecepcion().after(simulacion.getFechaInicioSim()))
                 .collect(Collectors.toList());
         ;
         ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();

@@ -141,11 +141,11 @@ public class Algoritmo {
 
             List<Paquete> paquetesPrimerFiltro = paquetesDiaDia.stream()
                     .filter(p -> p.isEntregado() == false)
-                    .filter(p -> p.getFechaRecepcion().before(now))
+                    .filter(p -> p.obtenerFechaRecepcion().before(now))
                     .collect(Collectors.toList());
 
             this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
-                    .filter(p -> p.getFechaRecepcion().before(now)
+                    .filter(p -> p.obtenerFechaRecepcion().before(now)
                             && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
                     .collect(Collectors.toList());
 
@@ -192,7 +192,7 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion iniciada");
 
             // Ordeno por fecha de recepcion
-            Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
+            Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
             // Filtrar paquetes que estan volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
@@ -499,7 +499,7 @@ public class Algoritmo {
              * .collect(Collectors.toList());
              */
             List<Paquete> filteredPaquetes = paquetes.stream()
-                    .filter(p -> p.getFechaRecepcion().before(finalTiempoEnSimulacion)
+                    .filter(p -> p.obtenerFechaRecepcion().before(finalTiempoEnSimulacion)
                             && (p.getFechaDeEntrega() == null
                                     || !p.getFechaDeEntrega().before(finalTiempoEnSimulacion)))
                     .collect(Collectors.toList());
@@ -670,7 +670,7 @@ public class Algoritmo {
             VueloService vueloService) {
         HashMap<Integer, Integer> hashMap = new HashMap<>();
         ArrayList<Paquete> paquetesOrdenados = new ArrayList<>(paquetes);
-        Collections.sort(paquetesOrdenados, Comparator.comparing(Paquete::getFechaRecepcion));
+        Collections.sort(paquetesOrdenados, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
         try {
             FileWriter fw = new FileWriter("paquetes" + i + " .txt", true);
@@ -729,12 +729,12 @@ public class Algoritmo {
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
             Date fechaLimiteCalculo) {
-        Collections.sort(paquetes, Comparator.comparing(Paquete::getFechaRecepcion));
+        Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
         final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
         List<Paquete> paquetesTemp = paquetes.stream()
                 .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
-                .filter(p -> p.getFechaRecepcion().before(fechaLimiteCalculo))
+                .filter(p -> p.obtenerFechaRecepcion().before(fechaLimiteCalculo))
                 .collect(Collectors.toList());
         ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
         return paquetesProcesar;
@@ -1073,7 +1073,7 @@ public class Algoritmo {
                 // origen y la fecha de
                 // recepción
                 if (paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId)
-                        && !paquete.getFechaRecepcion().after(fechaCorte)) {
+                        && !paquete.obtenerFechaRecepcion().after(fechaCorte)) {
                     enAeropuerto = true;
                 }
             } else {
@@ -1115,7 +1115,7 @@ public class Algoritmo {
                 // origen y la fecha de
                 // recepción
                 if (paquete.getEnvio().getUbicacionOrigen().getId().equals(aeropuertoId)
-                        && !paquete.getFechaRecepcion().after(fechaCorte)) {
+                        && !paquete.obtenerFechaRecepcion().after(fechaCorte)) {
                     enAeropuerto = true;
                 }
             } else {

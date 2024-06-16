@@ -355,26 +355,20 @@ public class Funciones {
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
-        //String fechaRecibo = parts[2].trim();
-        //String horaRecibo = parts[3].trim() + ":00";
         String[] destinoWithPackageCount = parts[4].trim().split(":");
         String destinoCode = destinoWithPackageCount[0].trim();
         int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
 
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
-
-
-        // LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         Date fecha_recepcion_GMT0 = now;
-        // LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
 
         envio.fillData(origen, destino, fecha_recepcion_GMT0);
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
-        envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        // envio.setCodigoSeguridad(parts[0].trim());
+        //envio.setCodigoSeguridad(Integer.toString(randomNumber));
+        envio.setCodigoSeguridad(parts[1].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;
@@ -402,15 +396,12 @@ public class Funciones {
         // LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
         // LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
-        LOGGER.info("TEST Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
         envio.fillData(origen, destino, fecha_recepcion_GMT0);
-        LOGGER.info("TEST Fecha recibo GMT 0: " + envio.getFechaRecepcion());
-        LOGGER.info("TEST Fecha maxima de entrega: " + envio.getFechaLimiteEntrega());
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
         //envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        envio.setCodigoSeguridad(parts[0].trim());
+        envio.setCodigoSeguridad(parts[1].trim());
         // envio.setCodigoSeguridad(parts[0].trim());
         envio.setSimulacionActual(simulacion);
 
@@ -423,24 +414,12 @@ public class Funciones {
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
-        // String fechaRecibo = parts[2].trim();
-        // String horaRecibo = parts[3].trim() + ":00";
         String[] destinoWithPackageCount = parts[4].trim().split(":");
         String destinoCode = destinoWithPackageCount[0].trim();
         int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
 
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
-        /*
-         * String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
-         * fechaRecibo.substring(4, 6) + "-" +
-         * fechaRecibo.substring(6, 8);
-         */
-        // Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " +
-        // horaRecibo);
-        // Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,
-        // origen.getZonaHoraria(), "UTC");
-        // parse utc 0 to origin timezone
         Date fecha_recepcion_GMT0 = fecha_inicio;
         envio.fillData(origen, destino, fecha_recepcion_GMT0);
         envio.setCantidadPaquetes(cantidadPaquetes);

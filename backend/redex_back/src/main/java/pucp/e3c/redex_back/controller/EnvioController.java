@@ -104,7 +104,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())
