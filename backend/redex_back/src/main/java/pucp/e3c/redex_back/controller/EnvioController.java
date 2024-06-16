@@ -23,6 +23,7 @@ import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.EstadoAlmacen;
+import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
 import pucp.e3c.redex_back.service.AeropuertoService;
@@ -53,6 +54,16 @@ public class EnvioController {
 
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {
+        //TO DO CAMBIAR
+        int agregar = 0;
+        if (envio.getUbicacionOrigen().getContinente().equals(envio.getUbicacionDestino().getContinente())) {
+            agregar = 1;
+        } else {
+            agregar = 2;
+        }
+        Date fecha_maxima_entrega_GMT0 = Funciones.addDays(envio.getFechaRecepcion(), agregar);
+        envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+
         envio = envioService.register(envio);
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
