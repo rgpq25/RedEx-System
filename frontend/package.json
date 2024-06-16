@@ -43,6 +43,7 @@
     "react-leaflet": "^4.2.1",
     "react-simple-maps": "^3.0.0",
     "react-tooltip": "^5.26.3",
+    "resend": "^3.2.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7"
