@@ -1093,6 +1093,10 @@ public class Algoritmo {
                 }
             } else {
                 for (Vuelo vuelo : vuelos) {
+                    // Verificar si ya aterrizo el ultimo vuelo del arreglo
+                    if (vuelos.indexOf(vuelo) == vuelos.size() - 1) {
+                        break;
+                    }
                     // El paquete está en el aeropuerto entre la llegada de un vuelo y la salida del
                     // siguiente
                     if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&
