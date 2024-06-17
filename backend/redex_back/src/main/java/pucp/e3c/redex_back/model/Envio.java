@@ -70,7 +70,7 @@ public class Envio {
      * }
      */
 
-    public void fillData(Ubicacion origen, Ubicacion destino, Date fecha_recepcion_GMT0) {
+    public void fillData(Ubicacion origen, Ubicacion destino, Date fecha_recepcion) {
         this.setUbicacionOrigen(origen);
         this.setUbicacionDestino(destino);
 
@@ -82,6 +82,11 @@ public class Envio {
         } else {
             agregar = 2;
         }
+        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+                fechaRecepcion,
+                origen.getZonaHoraria(),
+                "UTC");
+
         this.setFechaRecepcion(fecha_recepcion_GMT0);
 
         Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, agregar);

@@ -44,20 +44,15 @@ public class Paquete {
     @JoinColumn(name = "id_plan_ruta", referencedColumnName = "id", nullable = true)
     PlanRuta planRutaActual;
 
-    public void fillData(Aeropuerto aeropuertoActual, Ubicacion origen, Ubicacion destino, Date fechaRecepcion) {
+    public void fillData(Aeropuerto aeropuertoActual, Ubicacion origen, Ubicacion destino, Date fecha_recepcion) {
         this.id = ContadorID.obtenerSiguienteIDPaquet();
         this.aeropuertoActual = aeropuertoActual;
         this.enAeropuerto = true;
         this.entregado = false;
 
-        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
-                fechaRecepcion,
-                origen.getZonaHoraria(),
-                "UTC");
-
         this.fechaDeEntrega = null;
         Envio envio = new Envio();
-        envio.fillData(origen, destino, fecha_recepcion_GMT0);
+        envio.fillData(origen, destino, fecha_recepcion);
         this.envio = envio;
         this.simulacionActual = null;
         this.planRutaActual = null;
