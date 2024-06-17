@@ -112,11 +112,16 @@ public class SimulacionController {
         simulacion = simulacionService.register(simulacion);
         LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID" + simulacion.getId());
 
-        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V4.txt");
-        InputStream input1 = resource.getInputStream();
+        Resource resource1 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P1.txt");
+        Resource resource2 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P2.txt");
+        InputStream input1 = resource1.getInputStream();
+        InputStream input2 = resource2.getInputStream();
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader1 = new BufferedReader(new InputStreamReader(input1));
+                BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2))) {
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
+            lines.addAll(reader1.lines().collect(Collectors.toList()));
+            lines.addAll(reader2.lines().collect(Collectors.toList()));
             Date fechaInicio = simulacion.getFechaInicioSim();
             // Crear variable fecha fin que es una semana despues que fechaInicio
             Date fechaFin = new Date(fechaInicio.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -146,7 +151,9 @@ public class SimulacionController {
                     .mapToInt(envio -> envio.getCantidadPaquetes())
                     .sum();
             System.out.println("Se generaron " + totalPaquetes + " paquetes.");
-        } catch (IOException e) {
+        } catch (
+
+        IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
 
