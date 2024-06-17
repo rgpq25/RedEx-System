@@ -367,8 +367,8 @@ public class Funciones {
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
-        //envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        envio.setCodigoSeguridad(parts[1].trim());
+        envio.setCodigoSeguridad(Integer.toString(randomNumber));
+        //envio.setCodigoSeguridad(parts[1].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;
@@ -400,9 +400,8 @@ public class Funciones {
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
-        //envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        envio.setCodigoSeguridad(parts[1].trim());
-        // envio.setCodigoSeguridad(parts[0].trim());
+        envio.setCodigoSeguridad(Integer.toString(randomNumber));
+        //envio.setCodigoSeguridad(parts[1].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;
