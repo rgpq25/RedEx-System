@@ -83,13 +83,15 @@ public class Envio {
             agregar = 2;
         }
         this.setFechaRecepcion(fecha_recepcion_GMT0);
-
-        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fechaRecepcion, agregar);
+        Date fecha_recepcion_origen = Funciones.convertTimeZone(
+            fecha_recepcion_GMT0,"UTC",origen.getZonaHoraria());
+        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fecha_recepcion_origen, agregar);
         Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
                 fecha_maxima_entrega_GMTDestino,
                 destino.getZonaHoraria(),
                 "UTC");
         this.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+        this.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         this.setCantidadPaquetes(1);
         this.setCodigoSeguridad("123456");
     }
