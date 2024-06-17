@@ -46,8 +46,6 @@ public class Algoritmo {
 
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
 
-    private List<Paquete> respuesta_paquetes_dia_dia;
-
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
@@ -60,7 +58,6 @@ public class Algoritmo {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
-        this.respuesta_paquetes_dia_dia = new ArrayList<>();
         this.paquetes_por_simulacion = new HashMap<>();
     }
 
@@ -144,10 +141,10 @@ public class Algoritmo {
                     .filter(p -> p.obtenerFechaRecepcion().before(now))
                     .collect(Collectors.toList());
 
-            this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
+            /*this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
                     .filter(p -> p.obtenerFechaRecepcion().before(now)
                             && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
 
             ArrayList<Paquete> paquetes = new ArrayList<>(paquetesPrimerFiltro);
             if (paquetes.size() == 0) {
@@ -979,7 +976,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 5;
+        int windowSize = tamanhoPaquetes / 4;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
@@ -1035,12 +1032,15 @@ public class Algoritmo {
         this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
-    public List<Paquete> getRespuesta_paquetes_dia_dia() {
-        return respuesta_paquetes_dia_dia;
-    }
-
-    public void setRespuesta_paquetes_dia_dia(List<Paquete> respuesta_paquetes_dia_dia) {
-        this.respuesta_paquetes_dia_dia = respuesta_paquetes_dia_dia;
+    public List<Paquete> obtenerPaquetesActualesDiaDia(){
+        List<Paquete> paquetes = new ArrayList<>(this.paquetesDiaDia);
+        //ACAAAA
+        Date now = new Date();
+        paquetes = paquetes.stream()
+                    .filter(p -> p.obtenerFechaRecepcion().before(now)
+                            && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+                    .collect(Collectors.toList());
+        return paquetes;
     }
 
     public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
