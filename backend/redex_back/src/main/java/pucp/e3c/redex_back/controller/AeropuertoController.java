@@ -274,7 +274,7 @@ public class AeropuertoController {
         // Filtrar los paquetes cuya fecharecepcion sea menor a la fecha Corte
         paquetes = (ArrayList<Paquete>) paquetes.stream()
                 .filter(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaCorte)
-                        && paquete.getFechaRecepcion().after(simulacion.getFechaInicioSim())
+                        && paquete.obtenerFechaRecepcion().after(simulacion.getFechaInicioSim())
                         && (paquete.getFechaDeEntrega() == null || paquete.getFechaDeEntrega().after(fechaCorte)))
                 .collect(Collectors.toList());
 

@@ -23,11 +23,14 @@ import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.EstadoAlmacen;
+import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
+import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.UbicacionService;
 
 @RestController
 @CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
@@ -46,13 +49,38 @@ public class EnvioController {
     @Autowired
     private Algoritmo algoritmo;
 
+    @Autowired
+    private UbicacionService ubicacionService;
+
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger("EnvioController");
 
     
-
-
     @PostMapping(value = "/")
     public Envio register(@RequestBody Envio envio) {
+        Ubicacion origen = ubicacionService.get(envio.getUbicacionOrigen().getId());
+        if(origen == null){
+            return null;
+        }
+        Ubicacion destino = ubicacionService.get(envio.getUbicacionDestino().getId());
+        if(destino == null){
+            return null;
+        }
+        int agregar = 0;
+        if (origen.getContinente().equals(destino.getContinente())) {
+            agregar = 1;
+        } else {
+            agregar = 2;
+        }
+        
+        
+        Date fecha_recepcion_origen = Funciones.convertTimeZone(
+            envio.getFechaRecepcion(),"UTC",origen.getZonaHoraria());
+        Date fecha_maxima_entrega_GMTDestino = Funciones.addDays(fecha_recepcion_origen, agregar);
+        
+        Date fecha_maxima_entrega_GMT0 = Funciones.convertTimeZone(
+            fecha_maxima_entrega_GMTDestino,destino.getZonaHoraria(),"UTC");     
+        envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
+        envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         envio = envioService.register(envio);
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
@@ -86,6 +114,25 @@ public class EnvioController {
         }
 
         ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+
+        int totalPaquetes = envios.stream()
+                .mapToInt(envio -> envio.getCantidadPaquetes())
+                .sum();
+        System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+
+        return new ResponseEntity<>(envios, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/codigoAll/horaSistema")
+    public ResponseEntity<ArrayList<Envio>> registrarEnviosHoraSistema(@RequestBody ArrayList<String> enviosString) {
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+
+        HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+        }
+
+        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())

@@ -48,4 +48,6 @@ public class ClienteController {
   public void delete(@PathVariable("id") Integer id) {
     clienteService.delete(id);
   }
+
+
 }

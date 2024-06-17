@@ -332,6 +332,48 @@ public class EnvioService {
         return envios;
     }
 
+    public ArrayList<Envio> registerAllEnviosByStringHoraSistema(ArrayList<String> enviosString,
+            HashMap<String, Aeropuerto> hashAeropuertos) {
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+        ArrayList<Envio> envios = new ArrayList<>();
+        Date now = new Date();
+        for (String envioString : enviosString) {
+
+            Envio envio = Funciones.stringToEnvioHoraSistemaEnvio(envioString, ubicacionMap,
+                    null,
+                    aeropuertoRepository, now);
+            Envio envioGuardado = envioRepository.save(envio);
+            envios.add(envioGuardado);
+            LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
+        }
+        // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
+
+        ArrayList<Paquete> paquetes = new ArrayList<>();
+
+        for (Envio envio : envios) {
+            for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
+                Paquete paquete = new Paquete();
+                paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
+                paquete.setEnAeropuerto(true);
+                paquete.setEntregado(false);
+                paquete.setEnvio(envio);
+                paquete.setSimulacionActual(envio.getSimulacionActual());
+                paquetes.add(paquete);
+
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+            }
+
+        }
+
+        paqueteRepository.saveAll(paquetes);
+
+        return envios;
+    }
+
     public ArrayList<Envio> registerAllEnviosByString(ArrayList<String> enviosString,
             HashMap<String, Aeropuerto> hashAeropuertos) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
