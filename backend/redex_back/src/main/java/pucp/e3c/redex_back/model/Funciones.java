@@ -396,8 +396,8 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
-        // LOGGER.info("Fecha recibo real: " + fechaReciboReal);
-        Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
+        String fechaStr = fechaReciboReal + " " + horaRecibo;
+        Date fecha_recepcion_GMTOrigin = parseDateString(fechaStr);
         // LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
         // LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
         envio.fillData(origen, destino, fecha_recepcion_GMTOrigin);
@@ -501,6 +501,7 @@ public class Funciones {
         try {
             return format.parse(dateString);
         } catch (ParseException e) {
+            LOGGER.info("Error al convertir fecha " + dateString);
             e.printStackTrace();
             return null;
         }
