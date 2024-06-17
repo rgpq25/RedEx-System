@@ -44,9 +44,9 @@ public class PaqueteService {
         }
     }
 
-    private boolean isAfterByMoreThanFiveMinutes(Date date1, Date date2) {
+    private boolean isAfterByMoreThanOneMinute(Date date1, Date date2) {
         long differenceInMillis = date1.getTime() - date2.getTime();
-        long fiveMinutesInMillis = 5 * 60 * 1000; // 5 minutes in milliseconds
+        long fiveMinutesInMillis = 1 * 60 * 1000; // 5 minutes in milliseconds
 
         return differenceInMillis > fiveMinutesInMillis;
     }
@@ -72,7 +72,7 @@ public class PaqueteService {
                             }
                             break;
                         } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
-                            if (isAfterByMoreThanFiveMinutes(fechaActual, vuelo.getFechaLlegada())) {
+                            if (isAfterByMoreThanOneMinute(fechaActual, vuelo.getFechaLlegada())) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
                             } else {

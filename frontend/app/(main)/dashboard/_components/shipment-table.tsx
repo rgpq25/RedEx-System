@@ -132,7 +132,7 @@ export const columns: ColumnDef<RowShipmentType>[] = [
     },
 ];
 
-export function ShipmentTable({data}: {data: RowShipmentType[]}) {
+export function ShipmentTable( { data, useCustomDate }: { data: RowShipmentType[], useCustomDate: boolean }) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([]);
@@ -159,6 +159,10 @@ export function ShipmentTable({data}: {data: RowShipmentType[]}) {
         },
     });
 
+    React.useEffect(() => {
+        table.getColumn("dateTimeShipment")?.toggleVisibility(!useCustomDate);
+    }, [useCustomDate, table]);
+
     return (
         <div className="w-full">
             <div className="flex items-center gap-4">
@@ -176,32 +180,6 @@ export function ShipmentTable({data}: {data: RowShipmentType[]}) {
                     }
                     className="max-w-sm"
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columnas <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                );
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
             <div className="rounded-md border mt-3">
                 <Table>

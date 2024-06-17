@@ -9,5 +9,6 @@ import pucp.e3c.redex_back.model.Cliente;
 @Transactional
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
-
+    //public ArrayList<Paquete> findBySimulacionActualId(Integer id);
+    public Cliente findByUsuarioId(Integer id);
 }

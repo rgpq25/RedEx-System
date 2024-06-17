@@ -103,7 +103,7 @@ public class OperacionesDiaDiaController {
 
     @GetMapping("/obtenerPaquetes")
     public List<Paquete> obtenerPaquetes(){
-        return algoritmo.getRespuesta_paquetes_dia_dia();
+        return algoritmo.obtenerPaquetesActualesDiaDia();
     }
 
     @GetMapping("/obtenerEstadoAlmacen")

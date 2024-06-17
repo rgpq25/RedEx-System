@@ -95,6 +95,7 @@ export type Vuelo = {
     anguloAvion: number;
     capacidadUtilizada: number;
     simulacionActual: Simulacion | null;
+    posicionesRuta: [number,number][];
 };
 
 export type PlanRuta = {
@@ -128,7 +129,23 @@ export type Envio = {
     cantidadPaquetes: number;
     codigoSeguridad: string;
     paquetes: Paquete[];
+    emisor: Cliente;
+    receptor: Cliente;
 };
+
+export type Cliente = {
+    id: number;
+    usuario: Usuario;
+    informacionContacto: string;
+    preferenciasNotificacion: string;
+}
+
+export type Usuario = {
+    id: number;
+    nombre: string;
+    correo: string;
+    tipo: string;
+}
 
 export type Simulacion = {
     id: number;
@@ -150,6 +167,11 @@ export type RespuestaAlgoritmo = {
 	iniciandoPrimeraPlanificacionDiaDia: boolean;
 };
 
+export type RespuestaEstado = {
+    estado: string;
+    simulacion: Simulacion;
+}
+
 export type EstadoAlmacen = {
     uso_historico: UsoHistorico;
 };
@@ -160,4 +182,11 @@ export type UsoHistorico = {
 
 export type HistoricoValores = {
     [key: string]: number;
+};
+
+export type ChipColors = "gray" | "blue" | "yellow" | "purple" | "green" | "red";
+
+export type EstadoPaquete = {
+    descripcion: "En aeropuerto origen" | "En aeropuerto destino" | "En vuelo" | "En espera" | "Entregado" | "Sin plan de ruta";
+    color: ChipColors;
 };

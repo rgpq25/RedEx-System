@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { currentTimeString } from "@/lib/date";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { api } from "@/lib/api";
@@ -36,8 +37,9 @@ export function ModalIntro({
 }) {
 	//const fileInputRef = useRef<HTMLInputElement>(null);
 	//const [file, setFile] = useState<File | undefined>();
-	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-	const [selectedTime, setSelectedTime] = useState<string>("");
+	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+	const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+	const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
 
 	// const openFilePicker = () => {
 	// 	if (fileInputRef.current) {
@@ -56,12 +58,15 @@ export function ModalIntro({
 
 	const handleStartSimulation = async () => {
 		if (
-			//!file || 
-			!selectedDate || 
-			!selectedTime) {
+			//!file ||
+			!selectedDate ||
+			!selectedTime
+		) {
 			toast.error("Complete todos los campos");
 			return;
 		}
+
+		setIsRegisterLoading(true);
 
 		const [hours, minutes] = selectedTime.split(":").map(Number);
 
@@ -76,19 +81,18 @@ export function ModalIntro({
 		realDate.setSeconds(0);
 		realDate.setMilliseconds(0);
 
-		console.log("Date is ", realDate)
-
 		//Register new simulation and all shipments
 		const simulacion = await startWeeklySimulation(realDate);
 
 		if (simulacion === undefined || simulacion.id === 0) {
 			toast.error("Error al registrar la simulación");
+			setIsRegisterLoading(false);
 			return;
 		}
 
-		await onSimulationRegister(simulacion);
-
 		setIsModalOpen(false);
+
+		await onSimulationRegister(simulacion);
 	};
 
 	return (
@@ -107,7 +111,7 @@ export function ModalIntro({
 						<Label htmlFor="name" className="text-right">
 							Tipo
 						</Label>
-						<Select>
+						<Select disabled={isRegisterLoading === true}>
 							<SelectTrigger className="w-[77%]">
 								<SelectValue placeholder="Seleccione un tipo de simulación" />
 							</SelectTrigger>
@@ -147,24 +151,27 @@ export function ModalIntro({
 								date={selectedDate}
 								setDate={setSelectedDate}
 								placeholder="Selecciona una fecha"
+								disabled={isRegisterLoading === true}
 							/>
 							<Input
 								type="time"
 								className="w-[95px]"
 								value={selectedTime}
 								onChange={(e) => setSelectedTime(e.target.value)}
+								disabled={isRegisterLoading === true}
 							/>
 						</div>
 					</div>
 				</div>
 				<DialogFooter className="flex flex-row items-center">
-					<Link href="/security-code" className={cn(buttonVariants({ variant: "outline" }), "w-[100px]")}>
-						Cancelar
-					</Link>
+					<Button variant="outline" className="w-[100px]" disabled={isRegisterLoading}>
+						<Link href="/security-code">Cancelar</Link>
+					</Button>
 					<Button
 						className="w-[100px]"
 						onClick={() => handleStartSimulation()}
-						disabled={selectedDate === undefined}
+						disabled={selectedDate === undefined || selectedTime === "" || isRegisterLoading === true}
+						isLoading={isRegisterLoading}
 					>
 						Iniciar
 					</Button>

@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
-import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -13,11 +13,14 @@ import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-cus
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { CircleStop, Play } from "lucide-react";
+import { CircleStop, Pause, Play } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
-import { structureDataFromRespuestaAlgoritmo } from "@/lib/map-utils";
+import { structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import ModalStopSimulation from "./_components/modal-stop-simulation";
+import ElapsedRealTime from "@/app/_components/elapsed-real-time";
+import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -33,10 +36,19 @@ const breadcrumbItems: BreadcrumbItem[] = [
 function SimulationPage() {
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, setCurrentTime, zoomToAirport, lockToFlight } = attributes;
+	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } =
+		attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
+	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
+	const [loadingMessages, setLoadingMessages] = useState<string[]>(["Cargando simulación"]);
+
+	const [isPaused, setIsPaused] = useState<boolean>(false);
+	const [isPauseLoading, setIsPauseLoading] = useState<boolean>(false);
+
 	const [isModalOpen, setIsModalOpen] = useState(true);
+	const [isStoppingModalOpen, setIsStoppingModalOpen] = useState(false);
+
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [envios, setEnvios] = useState<Envio[]>([]);
@@ -58,8 +70,20 @@ function SimulationPage() {
 		}
 	);
 
+	const getTimeByMs = useCallback((timeInMiliseconds: number) => {
+		const h = Math.floor(timeInMiliseconds / 1000 / 60 / 60);
+		const m = Math.floor((timeInMiliseconds / 1000 / 60 / 60 - h) * 60);
+		const s = Math.floor(((timeInMiliseconds / 1000 / 60 / 60 - h) * 60 - m) * 60);
+
+		const h_string = h < 10 ? `0${h}` : `${h}`;
+		const m_string = m < 10 ? `0${m}` : `${m}`;
+		const s_string = s < 10 ? `0${s}` : `${s}`;
+
+		return `${h_string}:${m_string}:${s_string}`;
+	}, []);
+
 	const onSimulationRegister = async (simulacion: Simulacion) => {
-		setSimulation(simulacion);
+		setIsSimulationLoading(true);
 
 		//Connect to the socket
 		const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}/websocket`);
@@ -69,30 +93,52 @@ function SimulationPage() {
 
 		client.onConnect = () => {
 			console.log("Connected to WebSocket");
-			client.subscribe("/algoritmo/respuesta", (msg) => {
+			client.subscribe("/algoritmo/respuesta", async (msg) => {
+				setIsSimulationLoading(false);
+				if ((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
+
+				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
-				console.log("MENSAJE DE /algoritmo/respuesta: ", data);
 
-				const simulation = data.simulacion;
-				const fechaInicioSistema: Date = new Date(simulation.fechaInicioSistema);
-				const fechaInicioSim: Date = new Date(simulation.fechaInicioSim);
-				const multiplicadorTiempo: number = simulation.multiplicadorTiempo;
+				setSimulation((prev) => {
+					if (prev === undefined) {
+						console.log("Setting simulation");
+						return { ...data.simulacion };
+					} else {
+						console.log("Simulation already set, not updating it again.");
+						return prev;
+					}
+				});
 
-				const currentSimTime = new Date(
-					fechaInicioSim.getTime() +
-						multiplicadorTiempo * (new Date().getTime() - fechaInicioSistema.getTime())
+				setCurrentTime(data.simulacion);
+
+				let _paquetes: Paquete[] = [];
+				await api(
+					"GET",
+					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}`,
+					(data: Paquete[]) => {
+						console.log(`Data from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, data);
+						_paquetes = [...data];
+					},
+					(error) => {
+						console.log(`Error from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, error);
+						_paquetes = [];
+					}
 				);
 
-				setCurrentTime(currentSimTime, fechaInicioSistema, fechaInicioSim, multiplicadorTiempo);
-
-				const { db_vuelos, db_envios, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
+				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
 				setEstadoAlmacen(db_estadoAlmacen);
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
-				console.log("MENSAJE DE /algoritmo/estado: ", msg.body);
+				if ((JSON.parse(msg.body) as RespuestaEstado).simulacion.id !== simulacion.id) return;
+
+				console.log("MENSAJE DE /algoritmo/estado: ", JSON.parse(msg.body) as RespuestaEstado);
+				const data: RespuestaEstado = JSON.parse(msg.body);
+				setLoadingMessages((prev) => [...prev, data.estado]);
 			});
 		};
 
@@ -113,7 +159,17 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+			event.returnValue = "Mensaje de prueba"; // Standard for most browsers
+			return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
 		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+
 			if (client) {
 				client.deactivate();
 			}
@@ -127,6 +183,7 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
+			<ModalStopSimulation isOpen={isStoppingModalOpen} setIsModalOpen={setIsStoppingModalOpen} simulation={simulation} />
 			<MainContainer className="relative">
 				<MapHeader>
 					<BreadcrumbCustom items={breadcrumbItems} />
@@ -136,18 +193,66 @@ function SimulationPage() {
 					</div>
 				</MapHeader>
 
-				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
-					<PlaneLegend />
-					<div className="flex items-center gap-1">
-						<Button size={"icon"}>
-							<CircleStop className="w-5 h-5" />
-						</Button>
-
-						<Button size={"icon"}>
-							<Play className="w-5 h-5" />
-						</Button>
-					</div>
+				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
+					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
+					<ElapsedSimuTime>{getTimeByMs(elapsedSimulationTime)}</ElapsedSimuTime>
 				</div>
+
+				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
+					
+					{simulation !== null && simulation !== undefined && (
+						<div className="flex items-center gap-1">
+							<Button size={"icon"} onClick={() => setIsStoppingModalOpen(true)}>
+								<CircleStop className="w-5 h-5" />
+							</Button>
+
+							{isPaused === true ? (
+								<Button
+									size={"icon"}
+									onClick={async () => {
+										setIsPauseLoading(true);
+										await playSimulation(simulation, setSimulation);
+										setIsPauseLoading(false);
+										setIsPaused(false);
+									}}
+									disabled={isPauseLoading}
+									isLoading={isPauseLoading}
+								>
+									<Play className="w-5 h-5" />
+								</Button>
+							) : (
+								<Button
+									size={"icon"}
+									onClick={async () => {
+										setIsPauseLoading(true);
+										await pauseSimulation(simulation);
+										setIsPauseLoading(false);
+										setIsPaused(true);
+									}}
+									disabled={isPauseLoading}
+									isLoading={isPauseLoading}
+								>
+									<Pause className="w-5 h-5" />
+								</Button>
+							)}
+						</div>
+					)}
+				</div>
+
+				{isSimulationLoading && (
+					<>
+						<div className="absolute top-1 bottom-3 left-3 right-3 bg-black z-[30] opacity-70 rounded-md flex justify-center items-center"></div>
+
+						<div className="absolute top-1 bottom-3 left-3 right-3 flex flex-col justify-center items-center z-[100] gap-1">
+							<img src="/plane_loading.gif" className="w-[10%] opacity-100" />
+							{loadingMessages.map((msg, index) => (
+								<p key={index} className="font-bold text-md text-white">
+									{msg}
+								</p>
+							))}
+						</div>
+					</>
+				)}
 
 				<Sidebar
 					envios={envios}

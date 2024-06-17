@@ -399,7 +399,7 @@ public class GrafoVuelos {
 
     private PlanRutaNT buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
             PlanRutaNT rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA) {
 
         if (actual.getId().equals(destino.getId())) {
             PlanRutaNT nuevaRuta = new PlanRutaNT();
@@ -416,9 +416,17 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
                 paquete.getEnvio().getFechaLimiteEntrega());
         Collections.shuffle(vuelosPosibles);
-
+        long tiempoIntermedio = 300000;
+        boolean primerVuelo = true;
         for (Vuelo vuelo : vuelosPosibles) {
-            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+            long aumentar = 0;
+            if (primerVuelo) {
+                aumentar = tiempoIntermedio;
+                primerVuelo = false;
+            } else {
+                aumentar = TA;
+            }
+            if (fechaHoraActual.getTime() + aumentar < vuelo.getFechaSalida().getTime() &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
@@ -439,7 +447,7 @@ public class GrafoVuelos {
                     aeropuertosVisitados.add(actual.getId());
                     PlanRutaNT result = buscarRutaAleatoriaDFS(vuelo.getPlanVuelo().getCiudadDestino(), destino,
                             vuelo.getFechaLlegada(), rutaActual, aeropuertosVisitados, continental, paquete,
-                            tiempoEnSimulacion);
+                            tiempoEnSimulacion, TA);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
                     }
@@ -455,7 +463,7 @@ public class GrafoVuelos {
     }
 
     public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes, VueloService vueloService,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA) {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
@@ -479,7 +487,7 @@ public class GrafoVuelos {
                     paquete.getEnvio().getUbicacionDestino(), fechaActual, rutaTomada, aeropuertosVisitados,
                     paquete.getEnvio().getUbicacionOrigen().getId()
                             .equals(paquete.getEnvio().getUbicacionDestino().getId()),
-                    paquete, tiempoEnSimulacion);
+                    paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "
                         + paquete.toString());

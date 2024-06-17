@@ -1,11 +1,11 @@
 "use client";
 
-import { PackageStatusVariant } from "@/lib/types";
+import { ChipColors, PackageStatusVariant } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface ChipProps {
 	children: React.ReactNode;
-	color: "gray" | "blue" | "yellow" | "purple" | "green" | "red";
+	color: ChipColors;
 	size?: "sm" | "md";
     className?: string;
 }

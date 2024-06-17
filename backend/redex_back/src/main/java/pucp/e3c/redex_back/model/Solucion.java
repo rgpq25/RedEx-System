@@ -66,7 +66,7 @@ public class Solucion {
     }
 
     public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA) {
         // We do 5 attempts to try to initialize the solution
         ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
         for (int idx = 0; idx < this.paquetes.size(); idx++) {
@@ -90,7 +90,7 @@ public class Solucion {
                     ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                     tempPaquetesArray.add(paquetes.get(i));
                     ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                            vueloService, tiempoEnSimulacion);
+                            vueloService, tiempoEnSimulacion, TA);
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                     if (copiedRutas.get(i).getVuelos().size() > 0) {
@@ -124,7 +124,7 @@ public class Solucion {
 
     }
 
-    public void initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService) {
+    public void initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService, int TA) {
         // We do 5 attempts to try to initialize the solution
         for (int j = 0; j < 20; j++) {
             System.out.println("Intento " + (j + 1) + " de inicializacion");
@@ -135,7 +135,7 @@ public class Solucion {
                 ArrayList<Paquete> tempPaquetesArray = new ArrayList<Paquete>();
                 tempPaquetesArray.add(paquetes.get(i));
                 ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                        vueloService, null);
+                        vueloService, null, TA);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // this.rutas.add(av_rutas.get(i));
@@ -160,7 +160,7 @@ public class Solucion {
 
     }
 
-    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion) {
+    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA) {
 
         Solucion neighbour = new Solucion(
                 new ArrayList<>(this.paquetes),
@@ -202,7 +202,7 @@ public class Solucion {
                 tempPaquetesArray.add(randomPackages.get(j));
 
                 ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
-                        vueloService, tiempoEnSimulacion);
+                        vueloService, tiempoEnSimulacion, TA);
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // check if origin and destiny is different

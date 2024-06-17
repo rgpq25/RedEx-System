@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -196,6 +197,7 @@ public class DataInitializer {
 
     @PostConstruct
     public void initData() throws IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         eliminarRegistrosBaseDeDatos();
         System.out.println("Inicializando planes de vuelo y aeropuertos");
         String inputPath = "src\\main\\resources\\dataFija";
@@ -260,7 +262,7 @@ public class DataInitializer {
         boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
             // inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
-            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 100); // 100,250,500
+            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 250); // 100,250,500
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
@@ -272,11 +274,11 @@ public class DataInitializer {
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
         ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<PlanVuelo> planVuelosLoop = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+        // Salto del Algoritmo en segundos
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    300, 80);
+                    120);
         });
 
     }

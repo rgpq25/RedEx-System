@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pucp.e3c.redex_back.model.Cliente;
 import pucp.e3c.redex_back.model.Usuario;
+import pucp.e3c.redex_back.model.RegistroUsuario;
+import pucp.e3c.redex_back.service.ClienteService;
 import pucp.e3c.redex_back.service.UsuarioService;
 
 @RestController
@@ -23,6 +26,9 @@ public class UsuarioController {
 
   @Autowired
   private UsuarioService usuarioService;
+
+  @Autowired
+  private ClienteService clienteService;
 
   @PostMapping(value = "/")
   public Usuario register(@RequestBody Usuario usuario) {
@@ -47,5 +53,34 @@ public class UsuarioController {
   @DeleteMapping(value = "/{id}")
   public void delete(@PathVariable("id") Integer id) {
     usuarioService.delete(id);
+  }
+  @GetMapping(value = "/correo/{correo}")
+  public Usuario findByCorreo(@PathVariable("correo")String correo){
+    return usuarioService.findByCorreo(correo);
+  }
+
+  @PostMapping(value = "/validarRegistrar/")
+  public RegistroUsuario validarRegistrar(@RequestBody Usuario usuario){
+    Usuario usuarioBD = usuarioService.findByCorreo(usuario.getCorreo());
+    if(usuarioBD == null){
+      Usuario user = usuarioService.register(usuario);
+      Cliente cliente = new Cliente();
+      cliente.setUsuario(user);
+      cliente.setInformacionContacto("Ninguna");
+      cliente.setPreferenciasNotificacion("Ninguna");
+      cliente = clienteService.register(cliente);
+      return new RegistroUsuario(user, cliente);
+    }
+    else{
+      Cliente cliente = clienteService.findByUsuarioId(usuarioBD.getId());
+      if(cliente == null){
+        cliente = new Cliente();
+        cliente.setUsuario(usuarioBD);
+        cliente.setInformacionContacto("Ninguna");
+        cliente.setPreferenciasNotificacion("Ninguna");
+        cliente = clienteService.register(cliente);
+      }
+      return new RegistroUsuario(usuarioBD, cliente);
+    }
   }
 }

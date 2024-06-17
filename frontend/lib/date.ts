@@ -85,3 +85,7 @@ export function formatDateTimeLongShort (date: Date | string): string {
 
     return fecha.toLocaleString(localeIdentifier, opciones);
 };
+
+export function currentTimeString (): string {
+    return new Date().toLocaleTimeString(localeIdentifier, { hour: "2-digit", minute: "2-digit" });
+}

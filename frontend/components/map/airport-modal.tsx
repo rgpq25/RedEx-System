@@ -16,6 +16,8 @@ interface AirportModalProps {
 	setIsOpen: (isOpen: boolean) => void;
 	aeropuerto: Aeropuerto | null;
 	simulacion: Simulacion | undefined;
+	currentTime: Date | undefined;
+	getCurrentlyPausedTime: () => number;
 }
 
 const columns: ColumnDef<Paquete>[] = [
@@ -34,41 +36,36 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "envio",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px] gap-1">
+				<div className="flex items-center  gap-1">
 					<p>Envío asociado</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
-		cell: ({ row }) => <div className="w-[150px] text-start">{(row.getValue("envio") as Envio).id}</div>,
+		cell: ({ row }) => <div className=" text-start">{(row.getValue("envio") as Envio).id}</div>,
 	},
 	{
 		accessorKey: "Origen",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center flex-grow flex-1">
 					<p>Origen</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
+			<div className="flex-1 truncate">
 				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad +
 					", " +
-					(row.getValue("envio") as Envio).ubicacionOrigen.pais}
+					(row.getValue("envio") as Envio).ubicacionOrigen.pais +
+					" (" +
+					(row.getValue("envio") as Envio).ubicacionOrigen.id +
+					")"}
 			</div>
 		),
 	},
@@ -76,45 +73,28 @@ const columns: ColumnDef<Paquete>[] = [
 		accessorKey: "Destino",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[150px]">
+				<div className="flex items-center  flex-grow flex-1">
 					<p>Destino</p>
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						size={"icon"}
-					>
+					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
 						<ArrowUpDown className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[150px] truncate">
+			<div className="flex-1 truncate">
 				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad +
 					", " +
-					(row.getValue("envio") as Envio).ubicacionDestino.pais}
-			</div>
-		),
-	},
-	{
-		accessorKey: "statusAlmacen",
-		header: ({ column }) => {
-			return (
-				<div className="flex items-center">
-					<p>Estado</p>
-				</div>
-			);
-		},
-		cell: ({ row }) => (
-			<div className="">
-				<p>Pendiente</p>
-				{/* <Chip color={row.original.statusVariant}>{row.getValue("statusAlmacen")}</Chip> */}
+					(row.getValue("envio") as Envio).ubicacionDestino.pais +
+					" (" +
+					(row.getValue("envio") as Envio).ubicacionDestino.id +
+					")"}
 			</div>
 		),
 	},
 ];
 
-function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion }: AirportModalProps) {
+function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime, getCurrentlyPausedTime }: AirportModalProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fechaConsulta, setFechaConsulta] = useState<Date | null>(null);
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
@@ -125,6 +105,10 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 				toast.error("No se encontró aeropuerto");
 				return;
 			}
+			if (currentTime === undefined) {
+				toast.error("No se encontró tiempo actual");
+				return;
+			}
 
 			if (isSimulation === true) {
 				if (simulacion === undefined) {
@@ -132,34 +116,38 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 					return;
 				}
 
-				console.log(
-					`Fetching airport data with airport id ${aeropuerto.id} and simulation id ${simulacion.id}`
-				);
+				console.log(`Fetching airport data with airport id ${aeropuerto.id} and simulation id ${simulacion.id}`);
+
+				const _temp_sim = {...simulacion};
+				_temp_sim.milisegundosPausados = getCurrentlyPausedTime();
+
+				console.log("The current simulation object is: ", _temp_sim);
 				setIsLoading(true);
 
 				await api(
-					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation/${simulacion.id}`,
+					"POST",
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation`,
 					(data: Paquete[]) => {
 						console.log(data);
 						setPaquetes(data);
-						setFechaConsulta(new Date());
+						setFechaConsulta(new Date(currentTime));
 						setIsLoading(false);
 					},
 					(error) => {
 						console.log(error);
 						setIsOpen(false);
 						toast.error("Error al cargar paquetes de aeropuerto");
-					}
+					},
+					_temp_sim
 				);
 			} else {
 				console.log(`Fetching airport data with airport id ${aeropuerto.id}`);
 				setIsLoading(true);
 				await api(
 					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetes`,
+					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesDiaDia`,
 					(data: Paquete[]) => {
-						console.log("Finished fetch")
+						console.log("Finished fetch");
 						console.log(data);
 						setPaquetes(data);
 						setFechaConsulta(new Date());
@@ -184,25 +172,29 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion 
 			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[617.5px] min-h-[617.5px] max-h-[617.5px]  flex flex-col gap-2">
 				{isLoading ? (
 					<div className="flex-1 flex justify-center items-center">
-						<Loader2 className="animate-spin stroke-gray-400"/>
+						<Loader2 className="animate-spin stroke-gray-400" />
 					</div>
 				) : (
 					<>
 						<DialogHeader>
 							<DialogTitle className="text-2xl">
-								Información de aeropuerto (al{" "}
-								{fechaConsulta?.toLocaleDateString() + "-" + fechaConsulta?.toLocaleTimeString()})
+								Información de aeropuerto (al {fechaConsulta?.toLocaleDateString() + "-" + fechaConsulta?.toLocaleTimeString()})
 							</DialogTitle>
 						</DialogHeader>
 						<div className="text-black flex-1 flex flex-col">
 							<div>
-								<p>
-									{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}
-								</p>
+								<p>{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}</p>
 							</div>
 							<div className="flex flex-row items-center gap-1">
 								<p>{`Capacidad actual: ${paquetes.length}/${aeropuerto?.capacidadMaxima}`} </p>
-								<Chip color="green">Bueno</Chip>
+								{aeropuerto &&
+									(paquetes.length / aeropuerto?.capacidadMaxima <= 0.3 ? (
+										<Chip color="green">Bajo</Chip>
+									) : paquetes.length / aeropuerto?.capacidadMaxima <= 0.6 ? (
+										<Chip color="yellow">Medio</Chip>
+									) : (
+										<Chip color="red">Alto</Chip>
+									))}
 							</div>
 							<AirportTable data={paquetes} columns={columns} />
 						</div>
