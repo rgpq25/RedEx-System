@@ -427,7 +427,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
@@ -443,7 +443,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
