@@ -10,11 +10,12 @@ import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { useState, useEffect } from 'react';
 import { Ubicacion , Envio} from "@/lib/types";
-import { formatISO } from "date-fns"
+import { formatISO  , addMinutes} from "date-fns"
 import { api , apiT} from "@/lib/api";
 import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
+import { currentTimeString } from "@/lib/date";
 
 import {
   AlertDialog,
@@ -129,6 +130,8 @@ function RegisterShipmentPage() {
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
 
+  const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
@@ -176,19 +179,39 @@ function RegisterShipmentPage() {
   }, []);
 
   interface UserResponse {
-    id: number; // Asumiendo que el ID es numérico
-    nombre: string; // Similar para la respuesta de cliente
-    correo: string; // Similar para la respuesta de cliente
-    // Incluye otros campos esperados de la respuesta si son necesarios
+    cliente: Cliente;
+    usuario: Usuario;
+  }
+
+  interface Usuario {
+    cliente: Cliente;
+    usuario: Usuario;
   }
   
-  interface ClientResponse {
+  interface Cliente  {
     id: number; // Similar para la respuesta de cliente
+    informacionContacto: string;
+    preferenciasNotificacion: string;
+    usuario: Usuario;
     // Otros campos si son necesarios
   }
 
   const handleConfirm = async () => {
-    const formattedDate = formatISO(date);
+    // Obtén la fecha actual
+    const now = new Date();
+
+    // Convertir la fecha actual a UTC
+    const offset = now.getTimezoneOffset();
+    const utcDate = new Date(now.getTime() + offset * 60 * 1000);
+    
+    // Formatear la fecha en UTC en formato de 24 horas
+    const year = utcDate.getUTCFullYear();
+    const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(utcDate.getUTCDate()).padStart(2, '0');
+    const hours = String(utcDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(utcDate.getUTCSeconds()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
 
     try {
       // Crear usuario
@@ -198,24 +221,14 @@ function RegisterShipmentPage() {
         tipo: "a"
       };
       
-      const senderUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/", senderUserData);
-      if (!senderUserResponse || !senderUserResponse.id) {
+
+      const senderUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", senderUserData);
+      /*if (!senderUserResponse || !senderUserResponse.id) {
         throw new Error("Error al crear el usuario emisor");
-      }
+      }*/
+
       console.log("data respuesta: usuario emisor", senderUserResponse);
-      
-      const senderClientData = {
-        informacionContacto: senderEmail,
-        preferenciasNotificacion: "ninguna",
-        usuario: {
-          id: senderUserResponse.id
-        }
-      };
-      const senderClientResponse = await apiT<ClientResponse>("POST", "http://localhost:8080/back/cliente/", senderClientData);
-      if (!senderClientResponse || !senderClientResponse.id) {
-        throw new Error("Error al crear el cliente emisor");
-      }
-      console.log("data respuesta: cliente emisor", senderClientResponse);
+      console.log("data respuesta: ID cliente emisor", senderUserResponse.cliente.id);
 
       // Registro del usuario receptor
       
@@ -224,12 +237,17 @@ function RegisterShipmentPage() {
         correo: receiverEmail,
         tipo: "a"
       };
-      const receiverUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/", receiverUserData);
+
+      const receiverUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", receiverUserData);
+      /*
       if (!receiverUserResponse || !receiverUserResponse.id) {
         throw new Error("Error al crear el usuario receptor");
       }
+        */
       console.log("data respuesta: usuario receptor", receiverUserResponse);
+      console.log("data respuesta: ID cliente recepto", receiverUserResponse.cliente.id);
 
+      /*
       // Registro del cliente receptor
       const receiverClientData = {
         informacionContacto: receiverEmail,
@@ -243,31 +261,55 @@ function RegisterShipmentPage() {
         throw new Error("Error al crear el cliente receptor");
       }
       console.log("data respuesta: cliente receptor", receiverClientResponse);
-
+      */
       // Datos para el envío
       const dataToSend = {
         ubicacionOrigen: { id: originLocationId },
         ubicacionDestino: { id: destinationLocationId },
         fechaRecepcion: formattedDate,
-        fechaLimiteEntrega: formattedDate,
+        fechaLimiteEntrega: "",
         estado: 'En Almacen',
         cantidadPaquetes: packagesCount,
         codigoSeguridad: '146918',
-        emisor: { id: senderClientResponse.id},
-        receptor: { id: receiverClientResponse.id }, // Suponemos que tienes el ID del receptor de alguna manera
+        emisor: { id: senderUserResponse.cliente.id},
+        receptor: { id: receiverUserResponse.cliente.id }, // Suponemos que tienes el ID del receptor de alguna manera
       };
       
 
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
-      api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
-  
+      const registerResponse = await api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+
+      
     } catch (error) {
       console.error("Error en el proceso de registro:", error);
       toast.error("Error en el registro: " + error);
     }
 
+  };
+
+  const sendEmail = async () => {
+    const emailData = {
+      senderEmail: senderEmail,
+      receiverEmail: receiverEmail,
+    };
+  
+    const response = await fetch('api/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(emailData)
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Failed to send email:', errorData.error);
+      throw new Error('Failed to send email');
+    }
+  
+    console.log('Emails sent successfully');
   };
 
   interface ApiResponse {
@@ -439,7 +481,12 @@ function RegisterShipmentPage() {
         </div>
         <div className="flex-1">
           <Label htmlFor="register-time" className="font-semibold text-base">Hora de registro *</Label>
-          <input type="time" id="register-time" className="w-full px-4 py-2 border rounded-md" />
+          <input type="time"
+           id="register-time"
+           className="w-full px-4 py-2 border rounded-md" 
+           value={selectedTime}
+           onChange={(e) => setSelectedTime(e.target.value)}
+           />
         </div>
         </div>
 
@@ -488,7 +535,7 @@ function RegisterShipmentPage() {
               ¿Estás seguro que deseas confirmar el registro con los datos actuales?
             </AlertDialogDescription>
             <AlertDialogFooter>
-              <AlertDialogAction onClick={handleConfirm}>Confirmar</AlertDialogAction>
+              <AlertDialogAction onClick={handleConfirm} >Confirmar</AlertDialogAction>
               <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>Cancelar</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
