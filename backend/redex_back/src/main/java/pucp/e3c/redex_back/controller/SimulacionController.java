@@ -131,14 +131,15 @@ public class SimulacionController {
                 aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
             }
             SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
-
+            System.out.println(lines.size() + "\n\n");
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             for (String line : lines) {
-                String fechaStr = lines.get(0).split("-")[2];
+                String fechaStr = line.split("-")[2];
                 Date fecha = formato.parse(fechaStr);
                 if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
                     continue;
                 }
+
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
