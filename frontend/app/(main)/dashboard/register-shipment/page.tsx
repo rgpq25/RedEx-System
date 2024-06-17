@@ -15,6 +15,7 @@ import { api , apiT} from "@/lib/api";
 import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
+import { currentTimeString } from "@/lib/date";
 
 import {
   AlertDialog,
@@ -128,6 +129,8 @@ function RegisterShipmentPage() {
   const [receiverEmail, setReceiverEmail] = useState('');
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
+
+  const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
 
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -261,13 +264,38 @@ function RegisterShipmentPage() {
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
-      api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
-  
+      const registerResponse = await api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+      await sendEmail();  // Envía los correos si el registro es exitoso
+
+      
     } catch (error) {
       console.error("Error en el proceso de registro:", error);
       toast.error("Error en el registro: " + error);
     }
 
+  };
+
+  const sendEmail = async () => {
+    const emailData = {
+      senderEmail: senderEmail,
+      receiverEmail: receiverEmail,
+    };
+  
+    const response = await fetch('api/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(emailData)
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Failed to send email:', errorData.error);
+      throw new Error('Failed to send email');
+    }
+  
+    console.log('Emails sent successfully');
   };
 
   interface ApiResponse {
@@ -439,7 +467,12 @@ function RegisterShipmentPage() {
         </div>
         <div className="flex-1">
           <Label htmlFor="register-time" className="font-semibold text-base">Hora de registro *</Label>
-          <input type="time" id="register-time" className="w-full px-4 py-2 border rounded-md" />
+          <input type="time"
+           id="register-time"
+           className="w-full px-4 py-2 border rounded-md" 
+           value={selectedTime}
+           onChange={(e) => setSelectedTime(e.target.value)}
+           />
         </div>
         </div>
 
@@ -488,7 +521,7 @@ function RegisterShipmentPage() {
               ¿Estás seguro que deseas confirmar el registro con los datos actuales?
             </AlertDialogDescription>
             <AlertDialogFooter>
-              <AlertDialogAction onClick={handleConfirm}>Confirmar</AlertDialogAction>
+              <AlertDialogAction onClick={handleConfirm} >Confirmar</AlertDialogAction>
               <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>Cancelar</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
