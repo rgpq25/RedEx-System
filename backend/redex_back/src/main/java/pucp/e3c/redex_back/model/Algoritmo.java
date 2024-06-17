@@ -976,7 +976,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 4;
+        int windowSize = tamanhoPaquetes / 2;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
