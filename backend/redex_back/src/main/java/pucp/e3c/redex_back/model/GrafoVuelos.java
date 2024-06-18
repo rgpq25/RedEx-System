@@ -485,8 +485,8 @@ public class GrafoVuelos {
 
             PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(ubicacionActual,
                     paquete.getEnvio().getUbicacionDestino(), fechaActual, rutaTomada, aeropuertosVisitados,
-                    paquete.getEnvio().getUbicacionOrigen().getId()
-                            .equals(paquete.getEnvio().getUbicacionDestino().getId()),
+                    paquete.getEnvio().getUbicacionOrigen().getContinente()
+                            .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "
