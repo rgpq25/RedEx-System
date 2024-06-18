@@ -279,7 +279,7 @@ function RegisterShipmentPage() {
         receptor: { id: receiverUserResponse.cliente.id }, // Suponemos que tienes el ID del receptor de alguna manera
       };
       
-
+      console.log("fecha registro", formattedDate);
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío

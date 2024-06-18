@@ -82,7 +82,6 @@ public class Envio {
         } else {
             agregar = 2;
         }
-        System.out.println("\nFecha\n" + fecha_recepcion);
         Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
                 fecha_recepcion,
                 origen.getZonaHoraria(),
