@@ -247,4 +247,14 @@ public class PaqueteService {
         }
     }
 
+    public Paquete findById(Integer id){
+        try{
+            return paqueteRepository.findById(id).get();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }

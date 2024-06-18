@@ -123,7 +123,7 @@ public class AeropuertoController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
         }
         return new ResponseEntity<>(
-                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId()),
+                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId(),paqueteService),
                 HttpStatus.ACCEPTED);
     }
 

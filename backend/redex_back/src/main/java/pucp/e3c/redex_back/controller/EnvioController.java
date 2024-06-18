@@ -82,19 +82,20 @@ public class EnvioController {
         envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         envio = envioService.register(envio);
-        Envio envioBD = envioService.get(envio.getId());
+        //Envio envioBD = envioService.get(envio.getId());
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
             Aeropuerto aeropuerto = aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId());
             paquete.setAeropuertoActual(aeropuerto);
             paquete.setEnAeropuerto(true);
             paquete.setEntregado(false);
-            paquete.setEnvio(envioBD);
-            paquete.setSimulacionActual(envioBD.getSimulacionActual());
-            paqueteService.register(paquete);
+            paquete.setEnvio(envio);
+            paquete.setSimulacionActual(envio.getSimulacionActual());
+            paquete = paqueteService.register(paquete);
+            Paquete paqueteBD = paqueteService.get(paquete.getId());
 
-            if(envioBD.getSimulacionActual() == null){
-                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+            if(envio.getSimulacionActual() == null){
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
         }
         return envioService.register(envio);
