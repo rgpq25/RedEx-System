@@ -407,26 +407,31 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
-        Date fechaMinima = null;
-        if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-            fechaMinima = new Date(tiempoEnSimulacion.getTime() + 3600000);
-        } else {
-            fechaMinima = paquete.getEnvio().getFechaRecepcion();
-        }
-        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
+        /*
+         * Date fechaMinima = null;
+         * if (tiempoEnSimulacion != null &&
+         * tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
+         * fechaMinima = new Date(tiempoEnSimulacion.getTime() + 3600000);
+         * } else {
+         * fechaMinima = paquete.getEnvio().getFechaRecepcion();
+         * }
+         */
+        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaHoraActual,
                 paquete.getEnvio().getFechaLimiteEntrega());
         Collections.shuffle(vuelosPosibles);
         long tiempoIntermedio = 300000;
         boolean primerVuelo = true;
         for (Vuelo vuelo : vuelosPosibles) {
-            long aumentar = 0;
-            if (primerVuelo) {
-                aumentar = tiempoIntermedio;
-                primerVuelo = false;
-            } else {
-                aumentar = TA;
-            }
-            if (fechaHoraActual.getTime() + aumentar < vuelo.getFechaSalida().getTime() &&
+            /*
+             * long aumentar = 0;
+             * if (primerVuelo) {
+             * aumentar = tiempoIntermedio;
+             * primerVuelo = false;
+             * } else {
+             * aumentar = TA;
+             * }
+             */
+            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
