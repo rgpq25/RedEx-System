@@ -96,12 +96,12 @@ function SecurityCodeLoginPage() {
 
                 <section className='flex-1 flex flex-col justify-center items-center'>
                     <div>
-                        <h1 className='font-semibold text-3xl mb-2'>Ingrese su codigo de seguridad</h1>
+                        <h1 className='font-semibold text-3xl mb-2'>Ingrese su identificador de seguridad</h1>
                         <Label
                             htmlFor='Codigo'
                             className='font-semibold text-base'
                         >
-                            Codigo
+                            Identificador
                         </Label>
                         <Input
                             className='mt-1'
