@@ -153,7 +153,7 @@ function RegisterShipmentPage() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:8080/back/ubicacion/')
+    fetch(`${process.env.NEXT_PUBLIC_API}/back/ubicacion/`)
       .then(response => response.json())
       .then(data => setLocations(data))
       .catch(error => console.error('Error fetching locations:', error));
@@ -222,7 +222,7 @@ function RegisterShipmentPage() {
       };
       
 
-      const senderUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", senderUserData);
+      const senderUserResponse = await apiT<UserResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/usuario/validarRegistrar/`, senderUserData);
       /*if (!senderUserResponse || !senderUserResponse.id) {
         throw new Error("Error al crear el usuario emisor");
       }*/
@@ -238,7 +238,7 @@ function RegisterShipmentPage() {
         tipo: "a"
       };
 
-      const receiverUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", receiverUserData);
+      const receiverUserResponse = await apiT<UserResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/usuario/validarRegistrar/`, receiverUserData);
       /*
       if (!receiverUserResponse || !receiverUserResponse.id) {
         throw new Error("Error al crear el usuario receptor");
@@ -279,7 +279,7 @@ function RegisterShipmentPage() {
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
-      const registerResponse = await api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+      const registerResponse = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`, handleSuccess, handleError, dataToSend);
 
       
     } catch (error) {
@@ -427,7 +427,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
@@ -443,7 +443,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
