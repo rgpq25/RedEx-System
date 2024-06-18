@@ -401,22 +401,25 @@ function RegisterShipmentPage() {
       <h2 className="text-2xl font-bold mb-4">Detalles del Paquete</h2>
       <form>
         <Label htmlFor="amount-package" className="font-semibold text-base">Cantidad de paquetes *</Label>
-        <Select
-          onValueChange={value => setPackagesCount(Number(value))}
-          value={packagesCount.toString()}
-        >
-          <SelectTrigger className="w-[885px]">
-            <SelectValue placeholder="Seleccione la cantidad de paquetes" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Seleccione la cantidad de paquetes</SelectLabel>
-              {Array.from({ length: 8 }, (_, i) => (
-                <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <input
+          type="number"
+          id="amount-package"
+          className="w-full px-4 py-2 border rounded-md"
+          min="1"  // Establece un mínimo de 1 paquete
+          max="50" // Establece un máximo de 50 paquetes
+          value={packagesCount}
+          onChange={e => {
+            const newCount = Number(e.target.value);
+            // Solo actualiza el estado si el valor está dentro del rango 1-50
+            if (newCount >= 1 && newCount <= 50) {
+              setPackagesCount(newCount);
+            } else if (newCount > 50) {
+              // Si el valor excede 50, se establece a 50
+              setPackagesCount(50);
+            }
+          }}
+          placeholder="Introduce la cantidad de paquetes"
+        />
         <br></br>
         <Label htmlFor="city-origin" className="font-semibold text-base">Ciudad origen *</Label>
         <Select onValueChange={setOriginLocationId} value={originLocationId}>
