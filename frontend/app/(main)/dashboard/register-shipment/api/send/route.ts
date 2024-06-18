@@ -1,4 +1,4 @@
-import { EmailTemplate } from '@/components/resend/email-template';
+/*import { EmailTemplate } from '@/components/resend/email-template';
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -38,4 +38,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email', details: error.toString() });
   }
-}
+}*/
