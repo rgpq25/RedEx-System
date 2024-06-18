@@ -326,10 +326,6 @@ public class Algoritmo {
                 planRutaXVuelo.setPlanRuta(planRuta);
                 planRutaXVuelo.setVuelo(vuelo);
                 planRutaXVuelo.setIndiceDeOrden(planRutaNT.getVuelos().indexOf(vueloFromArray));
-                // print data from planRutaXVuelo
-                // System.out.println("PlanRutaXVuelo: " +
-                // planRutaXVuelo.getPlanRuta().getCodigo() + " " +
-                // planRutaXVuelo.getVuelo().getId() + " " + planRutaXVuelo.getIndiceDeOrden());
 
                 try {
                     planRutaXVueloService.register(planRutaXVuelo);
