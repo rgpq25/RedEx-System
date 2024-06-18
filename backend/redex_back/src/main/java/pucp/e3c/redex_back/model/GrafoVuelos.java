@@ -407,16 +407,13 @@ public class GrafoVuelos {
             return nuevaRuta;
         }
 
-        /*
-         * Date fechaMinima = null;
-         * if (tiempoEnSimulacion != null &&
-         * tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-         * fechaMinima = new Date(tiempoEnSimulacion.getTime() + 3600000);
-         * } else {
-         * fechaMinima = paquete.getEnvio().getFechaRecepcion();
-         * }
-         */
-        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaHoraActual,
+        Date fechaMinima = null;
+        if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
+            fechaMinima = new Date(tiempoEnSimulacion.getTime());
+        } else {
+            fechaMinima = paquete.getEnvio().getFechaRecepcion();
+        }
+        ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
                 paquete.getEnvio().getFechaLimiteEntrega());
         Collections.shuffle(vuelosPosibles);
         long tiempoIntermedio = 300000;
