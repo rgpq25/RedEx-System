@@ -141,10 +141,12 @@ public class Algoritmo {
                     .filter(p -> p.obtenerFechaRecepcion().before(now))
                     .collect(Collectors.toList());
 
-            /*this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
-                    .filter(p -> p.obtenerFechaRecepcion().before(now)
-                            && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-                    .collect(Collectors.toList());*/
+            /*
+             * this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
+             * .filter(p -> p.obtenerFechaRecepcion().before(now)
+             * && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+             * .collect(Collectors.toList());
+             */
 
             ArrayList<Paquete> paquetes = new ArrayList<>(paquetesPrimerFiltro);
             if (paquetes.size() == 0) {
@@ -559,9 +561,22 @@ public class Algoritmo {
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
+            HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
+            // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
+            for (PlanRutaNT planRutaNT : planRutas) {
+                for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                    if (nuevaOcupacion.get(vuelo.getId()) == null) {
+                        nuevaOcupacion.put(vuelo.getId(), 1);
+                    } else {
+                        nuevaOcupacion.put(vuelo.getId(), nuevaOcupacion.get(vuelo.getId()) + 1);
+                    }
+                }
+            }
 
-            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+            // ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+            ocupacionVuelos = nuevaOcupacion;
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
+            respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
             this.paquetesSimulacion = paquetes;
             this.planRutasSimulacion = planRutas;
 
@@ -1032,14 +1047,14 @@ public class Algoritmo {
         this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
-    public List<Paquete> obtenerPaquetesActualesDiaDia(){
+    public List<Paquete> obtenerPaquetesActualesDiaDia() {
         List<Paquete> paquetes = new ArrayList<>(this.paquetesDiaDia);
-        //ACAAAA
+        // ACAAAA
         Date now = new Date();
         paquetes = paquetes.stream()
-                    .filter(p -> p.obtenerFechaRecepcion().before(now)
-                            && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-                    .collect(Collectors.toList());
+                .filter(p -> p.obtenerFechaRecepcion().before(now)
+                        && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+                .collect(Collectors.toList());
         return paquetes;
     }
 
@@ -1078,6 +1093,10 @@ public class Algoritmo {
                 }
             } else {
                 for (Vuelo vuelo : vuelos) {
+                    // Verificar si ya aterrizo el ultimo vuelo del arreglo
+                    if (vuelos.indexOf(vuelo) == vuelos.size() - 1) {
+                        break;
+                    }
                     // El paquete está en el aeropuerto entre la llegada de un vuelo y la salida del
                     // siguiente
                     if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&

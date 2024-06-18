@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -29,7 +29,15 @@ export default function FileShipment() {
     const [useCustomDate, setUseCustomDate] = useState(false);
     const isDisabled = shipments.length === 0 || loading;
 
-    console.log(selectedDate, selectedTime, useCustomDate);
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const now = new Date();
+            setSelectedDate(now);
+            setSelectedTime(now.toTimeString().split(" ")[0].substring(0, 5));
+        }, 1000);
+
+        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    }, []);
 
     const openFilePicker = useCallback(() => {
         if (fileInputRef.current) {
@@ -86,6 +94,7 @@ export default function FileShipment() {
                 readFile(file);
             } else {
                 setFile(undefined);
+                setShipments([]);
             }
         },
         [setFile, readFile]
@@ -95,36 +104,36 @@ export default function FileShipment() {
             setLoading(true);
             const formatDate = (date: Date): string => {
                 const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, "0");
+                const day = date.getDate().toString().padStart(2, "0");
                 return `${year}${month}${day}`;
             };
 
             const formatTime = (time: string): string => {
-                const [hours, minutes] = time.split(':').map(Number);
-                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                const [hours, minutes] = time.split(":").map(Number);
+                return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
             };
 
             const formattedShipments = shipments.map((shipment) => {
                 let dateString;
                 let timeString;
 
-                if (!useCustomDate) {
-                    dateString = formatDate(shipment.dateTimeShipment);
-                    timeString = formatTime(shipment.dateTimeShipment.toTimeString().split(" ")[0]);
-                } else {
-                    dateString = selectedDate ? formatDate(selectedDate) : "";
-                    timeString = selectedTime ?? currentTimeString();
-                }
+                dateString = formatDate(shipment.dateTimeShipment);
+                timeString = formatTime(shipment.dateTimeShipment.toTimeString().split(" ")[0]);
 
                 return `${shipment.origin}-${shipment.id.split("-")[1]}-${dateString}-${timeString}-${shipment.destination}:${shipment.amountPackages.toString().padStart(2, "0")}`;
             });
 
-            console.log(formattedShipments);
-            
+            let urlApi;
+            if (useCustomDate) {
+                urlApi = `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll/horaSistema`;
+            } else {
+                urlApi = `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll`;
+            }
+
             await api(
                 "POST",
-                `${process.env.NEXT_PUBLIC_API}/back/envio/codigoAll`,
+                urlApi,
                 (response) => {
                     toast.success("Envíos registrados correctamente", {
                         position: "bottom-right",
@@ -152,11 +161,11 @@ export default function FileShipment() {
         } finally {
             setLoading(false);
         }
-    }, [shipments, useCustomDate, selectedDate, selectedTime]);    
+    }, [shipments, useCustomDate, selectedDate, selectedTime]);
 
     return (
         <main className='w-3/5 mx-auto my-10 flex flex-col justify-start h-full'>
-            <section className="space-y-4 mb-10">
+            <section className='space-y-4 mb-10'>
                 <H1>Archivo de envíos</H1>
                 <Large>
                     <strong>Formato de líneas:</strong> CORIEnvio-FORI-HORI-CDES:QQ
@@ -180,7 +189,7 @@ export default function FileShipment() {
                         checked={useCustomDate}
                         onCheckedChange={() => setUseCustomDate(!useCustomDate)}
                     />
-                    <Label htmlFor='check'>Usar fecha de envio personalizada para todos los envios</Label>
+                    <Label htmlFor='check'>Usar fecha actual del sistema para todos los envios</Label>
                 </div>
                 <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
                     <DatePicker
@@ -188,7 +197,7 @@ export default function FileShipment() {
                         date={selectedDate}
                         setDate={setSelectedDate}
                         placeholder='Selecciona una fecha'
-                        disabled={loading}
+                        disabled={true}
                     />
                     <Input
                         type='time'
@@ -196,7 +205,7 @@ export default function FileShipment() {
                         defaultValue={selectedTime}
                         value={selectedTime}
                         onChange={(e) => setSelectedTime(e.target.value)}
-                        disabled={loading}
+                        disabled={true}
                     />
                 </div>
             </section>
@@ -225,7 +234,10 @@ export default function FileShipment() {
                 </Button>
             </section>
             <section className='flex flex-col items-center justify-between gap-4'>
-                <ShipmentTable data={shipments} useCustomDate={useCustomDate}/>
+                <ShipmentTable
+                    data={shipments}
+                    useCustomDate={useCustomDate}
+                />
                 {file !== undefined && (
                     <Lead className='mx-auto'>
                         Se han detectado <strong>{shipments.length}</strong> envios y{" "}
