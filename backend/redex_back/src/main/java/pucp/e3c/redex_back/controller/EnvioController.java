@@ -82,6 +82,7 @@ public class EnvioController {
         envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         envio = envioService.register(envio);
+        //Envio envioBD = envioService.get(envio.getId());
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
             Aeropuerto aeropuerto = aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId());
@@ -90,10 +91,11 @@ public class EnvioController {
             paquete.setEntregado(false);
             paquete.setEnvio(envio);
             paquete.setSimulacionActual(envio.getSimulacionActual());
-            paqueteService.register(paquete);
+            paquete = paqueteService.register(paquete);
+            Paquete paqueteBD = paqueteService.get(paquete.getId());
 
             if(envio.getSimulacionActual() == null){
-                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
         }
         return envioService.register(envio);

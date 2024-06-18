@@ -1103,7 +1103,7 @@ public class Algoritmo {
         return paquetesEnAeropuerto;
     }
 
-    public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId) {
+    public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId, PaqueteService paqueteService) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
         Date fechaCorte = new Date();
 
@@ -1139,7 +1139,8 @@ public class Algoritmo {
             }
 
             if (enAeropuerto) {
-                paquetesEnAeropuerto.add(paquete);
+                Paquete paqueteBD = paqueteService.findById(paquete.getId());
+                paquetesEnAeropuerto.add(paqueteBD);
             }
         }
         return paquetesEnAeropuerto;
