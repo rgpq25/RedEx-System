@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
 import { currentTimeString } from "@/lib/date";
+import { DatePicker } from "@/components/ui/date-picker";
+
 
 import {
   AlertDialog,
@@ -130,7 +132,19 @@ function RegisterShipmentPage() {
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
 
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+
+
+  useEffect(() => {
+      const intervalId = setInterval(() => {
+          const now = new Date();
+          setSelectedDate(now);
+          setSelectedTime(now.toTimeString().split(" ")[0].substring(0, 5));
+      }, 1000);
+
+      return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, []);
 
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -145,11 +159,8 @@ function RegisterShipmentPage() {
   };
 
   const validatePackageCard = () => {
-    const validDate = date instanceof Date && !isNaN(date.getTime()); // Correctly check if the date object is valid
 
-    const timeElement = document.getElementById('register-time') as HTMLInputElement;
-    const validTime = timeElement ? timeElement.value.trim() !== '' : false; // Check if the time input is not empty
-    return originLocationId && destinationLocationId && packagesCount > 0 && validDate && validTime;
+    return originLocationId && destinationLocationId && packagesCount > 0 ;
   };
 
   useEffect(() => {
@@ -200,19 +211,12 @@ function RegisterShipmentPage() {
     // Obtén la fecha actual
     const now = new Date();
 
-    // Convertir la fecha actual a UTC
-    const offset = now.getTimezoneOffset();
-    const utcDate = new Date(now.getTime() + offset * 60 * 1000);
+    // Obtener la fecha y hora en UTC en formato ISO
+    const formattedDate = now.toISOString();  // Ejemplo: '2021-07-19T12:34:56.789Z'
     
-    // Formatear la fecha en UTC en formato de 24 horas
-    const year = utcDate.getUTCFullYear();
-    const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(utcDate.getUTCDate()).padStart(2, '0');
-    const hours = String(utcDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(utcDate.getUTCSeconds()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
-
+    // Si solo necesitas la fecha y hora hasta los minutos en UTC
+    const formattedDateToMinutes = formattedDate.substring(0, 16) + 'Z';  // '2021-07-19T12:34Z'
+    
     try {
       // Crear usuario
       const senderUserData = {
@@ -421,6 +425,7 @@ function RegisterShipmentPage() {
           placeholder="Introduce la cantidad de paquetes"
         />
         <br></br>
+        <br></br>
         <Label htmlFor="city-origin" className="font-semibold text-base">Ciudad origen *</Label>
         <Select onValueChange={setOriginLocationId} value={originLocationId}>
                 <SelectTrigger className="w-[885px]">
@@ -457,39 +462,24 @@ function RegisterShipmentPage() {
         <div className="flex-1">
           <Label htmlFor="register-date" className="font-semibold text-base">Fecha de registro *</Label>
           <br></br>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[430px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate: Date | undefined) => {
-                    if (newDate) setDate(newDate); // Asegurarse de que sólo se llama a setDate si newDate no es undefined
-                  }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <DatePicker
+            className='w-full px-4 py-2 border rounded-md'
+            date={selectedDate}
+            setDate={setSelectedDate}
+            placeholder='Selecciona una fecha'
+            disabled={true}
+          />
         </div>
         <div className="flex-1">
           <Label htmlFor="register-time" className="font-semibold text-base">Hora de registro *</Label>
-          <input type="time"
-           id="register-time"
-           className="w-full px-4 py-2 border rounded-md" 
-           value={selectedTime}
-           onChange={(e) => setSelectedTime(e.target.value)}
-           />
+          <Input
+                        type='time'
+                        className='w-full px-4 py-2 border rounded-md'
+                        
+                        value={selectedTime}
+                        onChange={(e) => setSelectedTime(e.target.value)}
+                        disabled={true}
+                    />
         </div>
         </div>
 
