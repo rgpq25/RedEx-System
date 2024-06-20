@@ -419,16 +419,14 @@ public class GrafoVuelos {
         long tiempoIntermedio = 300000;
         boolean primerVuelo = true;
         for (Vuelo vuelo : vuelosPosibles) {
-            /*
-             * long aumentar = 0;
-             * if (primerVuelo) {
-             * aumentar = tiempoIntermedio;
-             * primerVuelo = false;
-             * } else {
-             * aumentar = TA;
-             * }
-             */
-            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+
+            long aumentar = 0;
+            if (primerVuelo) {
+                aumentar = tiempoIntermedio;
+                primerVuelo = false;
+            }
+
+            if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {

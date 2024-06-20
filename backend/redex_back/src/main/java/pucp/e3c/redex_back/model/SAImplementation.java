@@ -252,7 +252,8 @@ public class SAImplementation {
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "paquetes" +
                         // iteracion + ".txt");
                         // current.printFlightOcupation("ocupacionVuelos" + iteracion + ".txt");
-                        current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion + ".txt");
+                        // current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion +
+                        // ".txt");
 
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {

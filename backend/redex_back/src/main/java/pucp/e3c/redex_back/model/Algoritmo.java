@@ -96,14 +96,14 @@ public class Algoritmo {
     }
 
     public void loopPrincipalDiaADia(
-        ArrayList<Aeropuerto> aeropuertos,
-        ArrayList<PlanVuelo> planVuelos,
-        VueloService vueloService,
-        PlanRutaService planRutaService,
-        PaqueteService paqueteService,
-        PlanRutaXVueloService planRutaXVueloService,
-        AeropuertoService aeropuertoService,
-        int SA) {
+            ArrayList<Aeropuerto> aeropuertos,
+            ArrayList<PlanVuelo> planVuelos,
+            VueloService vueloService,
+            PlanRutaService planRutaService,
+            PaqueteService paqueteService,
+            PlanRutaXVueloService planRutaXVueloService,
+            AeropuertoService aeropuertoService,
+            int SA) {
 
         // Inicia la operación dia a dia
         String tipoOperacion = "DIA A DIA";
@@ -130,7 +130,8 @@ public class Algoritmo {
 
         // Loop principal del día a día
         while (true) {
-            if (this.terminarPlanificacionDiaDia) break;
+            if (this.terminarPlanificacionDiaDia)
+                break;
 
             long start = System.currentTimeMillis();
             Date now = new Date();
@@ -138,7 +139,8 @@ public class Algoritmo {
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
             if (paquetesDiaDia != null) {
-                paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService, paqueteService);
+                paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService,
+                        paqueteService);
             }
 
             // Agregar paquetes al hash map
@@ -160,7 +162,8 @@ public class Algoritmo {
 
                 long end = System.currentTimeMillis();
                 long saMillis = SA * 1000 - (end - start);
-                if (saMillis < 0) continue;
+                if (saMillis < 0)
+                    continue;
 
                 try {
                     Thread.sleep(saMillis);
@@ -218,7 +221,7 @@ public class Algoritmo {
 
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService, 
+                    planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
                     planRutaService, null, null, messagingTemplate, tipoOperacion, null, 0);
             i++;
 
@@ -232,7 +235,7 @@ public class Algoritmo {
 
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
 
-            realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService, 
+            realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService,
                     vueloService, planRutaXVueloService, hashTodosPaquetes);
 
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
@@ -242,7 +245,8 @@ public class Algoritmo {
                 currentPlanRutas.add(hashPlanRutasNT.get(entry.getKey()));
             }
 
-            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas, grafoVuelos.getVuelosHash(), 
+            EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
+                    grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             this.paquetesDiaDia = currentPaquetes;
@@ -264,7 +268,8 @@ public class Algoritmo {
             long end = System.currentTimeMillis();
             LOGGER.info(tipoOperacion + "|| Planificacion terminada en " + (end - start) + " milisegundos");
             long saMillis = SA * 1000 - (end - start);
-            if (saMillis < 0) continue;
+            if (saMillis < 0)
+                continue;
 
             try {
                 Thread.sleep(saMillis);
@@ -273,7 +278,6 @@ public class Algoritmo {
             }
         }
     }
-
 
     public void realizarGuardadoDiaDia(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             PaqueteService paqueteService,
@@ -448,7 +452,7 @@ public class Algoritmo {
                 LOGGER.info(tipoOperacion + " Aun no es tiempo de planificar, la fecha en simulacion es "
                         + tiempoEnSimulacion);
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     System.out.println("Error en sleep");
                 }
@@ -570,6 +574,7 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
                     aeropuertos);
+            estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
