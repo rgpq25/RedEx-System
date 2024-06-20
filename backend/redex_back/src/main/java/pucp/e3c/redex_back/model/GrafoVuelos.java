@@ -409,7 +409,7 @@ public class GrafoVuelos {
 
         Date fechaMinima = null;
         if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-            fechaMinima = new Date(tiempoEnSimulacion.getTime() + 3600000);
+            fechaMinima = new Date(tiempoEnSimulacion.getTime());
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
         }
@@ -419,14 +419,16 @@ public class GrafoVuelos {
         long tiempoIntermedio = 300000;
         boolean primerVuelo = true;
         for (Vuelo vuelo : vuelosPosibles) {
-            long aumentar = 0;
-            if (primerVuelo) {
-                aumentar = tiempoIntermedio;
-                primerVuelo = false;
-            } else {
-                aumentar = TA;
-            }
-            if (fechaHoraActual.getTime() + aumentar < vuelo.getFechaSalida().getTime() &&
+            /*
+             * long aumentar = 0;
+             * if (primerVuelo) {
+             * aumentar = tiempoIntermedio;
+             * primerVuelo = false;
+             * } else {
+             * aumentar = TA;
+             * }
+             */
+            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
@@ -485,8 +487,8 @@ public class GrafoVuelos {
 
             PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(ubicacionActual,
                     paquete.getEnvio().getUbicacionDestino(), fechaActual, rutaTomada, aeropuertosVisitados,
-                    paquete.getEnvio().getUbicacionOrigen().getId()
-                            .equals(paquete.getEnvio().getUbicacionDestino().getId()),
+                    paquete.getEnvio().getUbicacionOrigen().getContinente()
+                            .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null) {
                 throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "

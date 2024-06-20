@@ -1,10 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 
-import { CalendarIcon, Check, ChevronsLeft, ChevronsRight, Eraser, Info, ListFilter, MapPin, MapPinned } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronsLeft, ChevronsRight, Eraser, Info, ListFilter, MapPinned } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Pagination,
     PaginationContent,
@@ -16,18 +15,17 @@ import {
 import { SliderDouble } from "@/components/ui/slider-double";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Large, Muted, Small } from "@/components/ui/typography";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion, Paquete } from "@/lib/types";
+import { Operacion, Aeropuerto, Envio, Vuelo, Ubicacion } from "@/lib/types";
 import { continentes } from "@/lib/sample";
 import { formatDateShort, formatDateTimeShort } from "@/lib/date";
 import { Label } from "@/components/ui/label";
@@ -176,6 +174,8 @@ function Envios({
     const hasSearchFilter = Boolean(search);
     const [continentesOrigenFilter, setContinentesOrigenFilter] = useState<string[]>(continentes);
     const [continentesDestinoFilter, setContinentesDestinoFilter] = useState<string[]>(continentes);
+    const [paisOrigenFilter, setPaisOrigenFilter] = useState<string | undefined>(undefined);
+    const [paisDestinoFilter, setPaisDestinoFilter] = useState<string | undefined>(undefined);
     const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
 
     const minCapacidad = Math.min(...rangoCapacidadFilter);
@@ -195,6 +195,13 @@ function Envios({
         if (continentesDestinoFilter) {
             filteredEnvios = filteredEnvios?.filter((envio) => continentesDestinoFilter?.includes(envio.ubicacionDestino.continente));
         }
+        if (paisOrigenFilter) {
+            filteredEnvios = filteredEnvios?.filter((envio) => envio.ubicacionOrigen.pais === paisOrigenFilter);
+        }
+        if (paisDestinoFilter) {
+            filteredEnvios = filteredEnvios?.filter((envio) => envio.ubicacionDestino.pais === paisDestinoFilter);
+        }
+        filteredEnvios;
         if (rangoCapacidadFilter) {
             filteredEnvios = filteredEnvios?.filter(
                 (envio) => envio.cantidadPaquetes >= minCapacidad && envio.cantidadPaquetes <= maxCapacidad
@@ -223,6 +230,8 @@ function Envios({
         maxCapacidad,
         continentesOrigenFilter,
         continentesDestinoFilter,
+        paisOrigenFilter,
+        paisDestinoFilter,
     ]);
 
     const pages = Math.ceil((filteredItems?.length || 0) / 10);
@@ -257,6 +266,8 @@ function Envios({
         setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
         setContinentesOrigenFilter(continentes);
         setContinentesDestinoFilter(continentes);
+        setPaisOrigenFilter(undefined);
+        setPaisDestinoFilter(undefined);
     }, []);
 
     const renderCard = useCallback(
@@ -410,6 +421,60 @@ function Envios({
                                 </div>
                             </section>
                             <Separator />
+                            <section className='flex h-fit items-center space-x-4 justify-between'>
+                                <div className='flex flex-col gap-2'>
+                                    <Small>Pais de origen:</Small>
+                                    <Select
+                                        key={paisOrigenFilter}
+                                        onValueChange={(e) => setPaisOrigenFilter(e as string)}
+                                        value={paisOrigenFilter}
+                                        defaultValue={paisOrigenFilter}
+                                    >
+                                        <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder={paisOrigenFilter || "Pais de origen"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {ubicaciones
+                                                .sort((a, b) => a.pais.localeCompare(b.pais))
+                                                .map((ubicacion) => (
+                                                    <SelectItem
+                                                        key={ubicacion.pais}
+                                                        value={ubicacion.pais}
+                                                    >
+                                                        {ubicacion.pais}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Separator orientation='vertical' />
+                                <div className='flex flex-col gap-2'>
+                                    <Small>Pais de destino:</Small>
+                                    <Select
+                                        key={paisDestinoFilter}
+                                        onValueChange={(e) => setPaisDestinoFilter(e as string)}
+                                        value={paisDestinoFilter}
+                                        defaultValue={paisDestinoFilter}
+                                    >
+                                        <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder={paisDestinoFilter || "Pais de destino"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {ubicaciones
+                                                .sort((a, b) => a.pais.localeCompare(b.pais))
+                                                .map((ubicacion) => (
+                                                    <SelectItem
+                                                        key={ubicacion.pais}
+                                                        value={ubicacion.pais}
+                                                    >
+                                                        {ubicacion.pais}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </section>
+                            <Separator />
                             <section className='flex flex-row justify-end gap-4'>
                                 <Button
                                     size='sm'
@@ -431,14 +496,15 @@ function Envios({
     }, [
         search,
         onSearchChange,
-        receptionDateStart,
-        receptionDateEnd,
         onClearFilters,
         rangoCapacidadFilter,
         minCapacidad,
         maxCapacidad,
         continentesOrigenFilter,
         continentesDestinoFilter,
+        paisOrigenFilter,
+        paisDestinoFilter,
+        ubicaciones,
     ]);
 
     return (
@@ -512,6 +578,7 @@ function Aeropuertos({
 
     const items = useMemo(() => {
         let filteredAeropuertos = aeropuertos;
+        filteredAeropuertos = filteredAeropuertos?.sort((a, b) => a.ubicacion.ciudad.localeCompare(b.ubicacion.ciudad));
         if (continentesFilter) {
             filteredAeropuertos = filteredAeropuertos?.filter((aeropuerto) => continentesFilter?.includes(aeropuerto.ubicacion.continente));
         }
@@ -906,8 +973,8 @@ function Vuelos({
                                 </div>
                             ))}
                             <Separator />
-                            <section className='flex h-fit items-center space-x-4'>
-                                <div className="flex flex-col gap-2">
+                            <section className='flex h-fit items-center space-x-4 justify-between'>
+                                <div className='flex flex-col gap-2'>
                                     <Small>Pais de origen:</Small>
                                     <Select
                                         key={paisOrigenFilter}

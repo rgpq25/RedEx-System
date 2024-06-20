@@ -222,7 +222,7 @@ public class DataInitializer {
         boolean inicializar_paquetes_operaciones_dia_dia = false;
         if (inicializar_paquetes_operaciones_dia_dia) {
             // inicializaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos);
-            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 250); // 100,250,500
+            incializacionFijaPaquetesDiaDia(aeropuertos, ubicacionMap, planVuelos, 60); // 100,250,500
         }
 
         boolean inicializar_paquetes_operaciones_simulacion = false;
