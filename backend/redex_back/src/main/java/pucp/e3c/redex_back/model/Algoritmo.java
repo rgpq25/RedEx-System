@@ -228,7 +228,6 @@ public class Algoritmo {
 
             // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
-            respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
 
             // Actualiza el hasmap rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
