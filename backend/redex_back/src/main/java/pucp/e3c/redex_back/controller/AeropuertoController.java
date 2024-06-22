@@ -325,8 +325,9 @@ public class AeropuertoController {
     }
 
     public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {
+        Date fechaCorte = new Date();
         for (Paquete paquete : paquetes) {
-            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete);
+            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         }
     }
 

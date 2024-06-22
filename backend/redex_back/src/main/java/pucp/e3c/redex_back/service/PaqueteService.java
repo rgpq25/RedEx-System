@@ -44,14 +44,14 @@ public class PaqueteService {
         }
     }
 
-    private boolean isAfterByMoreThanOneMinute(Date date1, Date date2) {
+    private boolean isAfterByMoreThanThirtyMinutes(Date date1, Date date2) {
         long differenceInMillis = date1.getTime() - date2.getTime();
-        long fiveMinutesInMillis = 1 * 60 * 1000; // 5 minutes in milliseconds
+        long thirtyMinutesInMillis = 30 * 60 * 1000; // 5 minutes in milliseconds
 
-        return differenceInMillis > fiveMinutesInMillis;
+        return differenceInMillis > thirtyMinutesInMillis;
     }
 
-    public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete) {
+    public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete, Date fechaActual) {
         try {
             if (paquete.getPlanRutaActual() == null) {
                 paquete.setEstado("En almacen origen");
@@ -61,7 +61,6 @@ public class PaqueteService {
                 if (vuelos == null)
                     paquete.setEstado("En almacen origen");
                 else {
-                    Date fechaActual = new Date();
                     int i = 0;
                     for (Vuelo vuelo : vuelos) {
                         if (vuelo.getFechaSalida().after(fechaActual)) {
@@ -72,10 +71,10 @@ public class PaqueteService {
                             }
                             break;
                         } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
-                            if (isAfterByMoreThanOneMinute(fechaActual, vuelo.getFechaLlegada())) {
+                            if (isAfterByMoreThanThirtyMinutes(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
-                            } else {
+                            } else if(paquete.isEntregado() == false){
                                 paquete.setEstado("En almacen destino");
                             }
                             break;
@@ -89,7 +88,7 @@ public class PaqueteService {
                     }
                 }
             }
-            update(paquete);
+            paquete = update(paquete);
             return paquete;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -109,10 +108,10 @@ public class PaqueteService {
         }
     }
 
-    public Paquete getPaqueteNoSimulacion(Integer id) {
+    public Paquete getPaqueteNoSimulacion(Integer id, Date fechaCorte) {
         try {
             Paquete paquete = get(id);
-            return actualizaEstadoPaqueteNoSimulacion(paquete);
+            return actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
