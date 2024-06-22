@@ -1039,15 +1039,21 @@ public class Algoritmo {
         this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
-    public List<Paquete> obtenerPaquetesActualesDiaDia() {
+    public List<Paquete> obtenerPaquetesActualesDiaDia(PaqueteService paqueteService) {
         List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
         Date now = new Date();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                     && (p.isEntregado() == false))
                 .collect(Collectors.toList());
+        List<Paquete> paquetesRespuesta = new ArrayList<>();
+        for (Paquete p : paquetes) {
+            Paquete paqueteRespuesta = paqueteService.getPaqueteNoSimulacion(p.getId(),now);
+            paquetesRespuesta.add(paqueteRespuesta);
+        }
+        LOGGER.info("Paquetes actuales: " + paquetesRespuesta.size());
                 //&& (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-        return paquetes;
+        return paquetesRespuesta;
     }
 
     public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
