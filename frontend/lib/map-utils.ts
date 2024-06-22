@@ -50,18 +50,11 @@ export function getTrayectory(vuelo: Vuelo) {
 	const dotPositions = [];
 	let steps = 50;
 
-	const originCoordinate = [vuelo.planVuelo.ciudadOrigen.latitud, vuelo.planVuelo.ciudadOrigen.longitud] as [
-		number,
-		number
-	];
-	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.latitud, vuelo.planVuelo.ciudadDestino.longitud] as [
-		number,
-		number
-	];
+	const originCoordinate = [vuelo.planVuelo.ciudadOrigen.latitud, vuelo.planVuelo.ciudadOrigen.longitud] as [number, number];
+	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.latitud, vuelo.planVuelo.ciudadDestino.longitud] as [number, number];
 
 	const distance = Math.sqrt(
-		Math.pow(destinationCoordinate[0] - originCoordinate[0], 2) +
-			Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
+		Math.pow(destinationCoordinate[0] - originCoordinate[0], 2) + Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
 	);
 
 	steps = Math.floor(distance / 2);
@@ -75,7 +68,7 @@ export function getTrayectory(vuelo: Vuelo) {
 	}
 	dotPositions.push(destinationCoordinate);
 
-	return dotPositions as [number,number][];
+	return dotPositions as [number, number][];
 }
 
 export function getCurrentAirportOcupation_Old(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
@@ -128,7 +121,7 @@ export function getCurrentAirportOcupation(estadoAlmacen: HistoricoValores, fech
 		return 0;
 	}
 
-	if(fecha >= new Date(fechas[fechas.length - 1])) {
+	if (fecha >= new Date(fechas[fechas.length - 1])) {
 		return estadoAlmacen[fechas[fechas.length - 1]];
 	}
 
@@ -166,12 +159,10 @@ export function structureDataFromRespuestaAlgoritmo(data: RespuestaAlgoritmo) {
 	};
 }
 
-
-
 export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 	const envioMap = new Map<number, Envio>();
 
-	_paquetes.forEach((paquete: Paquete)=>{
+	for (const paquete of _paquetes) {
 		const envio = paquete.envio;
 
 		if (envioMap.has(envio.id) === false) {
@@ -185,12 +176,12 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 		const currentEnvio = envioMap.get(envio.id)!;
 		currentEnvio.paquetes.push(paquete);
 		//currentEnvio.cantidadPaquetes++;
-
-	})
+	}
 
 	const newEnviosNoDuplicates = Array.from(envioMap.values());
 
+	
 	return {
-		db_envios: newEnviosNoDuplicates
+		db_envios: newEnviosNoDuplicates,
 	};
 }

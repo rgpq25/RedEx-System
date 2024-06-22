@@ -181,6 +181,7 @@ function DailyOperationsPage() {
 				aeropuertos={airports}
 				envios={envios}
 				vuelos={flights}
+				estadoAlmacen={estadoAlmacen}
 				onClicksEnvio={{
 					onClickLocation: (envio: Envio) => {},
 					onClickInfo: (envio: Envio) => {
