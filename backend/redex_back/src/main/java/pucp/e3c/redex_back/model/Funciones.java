@@ -352,7 +352,7 @@ public class Funciones {
     public static Envio stringToEnvioHoraSistemaEnvio(String line, HashMap<String, Ubicacion> ubicacionMap,
             Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository, Date now) {
-        LOGGER.info("Procesando linea: " + line);
+        //LOGGER.info("Procesando linea: " + line);
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
@@ -380,7 +380,7 @@ public class Funciones {
 
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository) {
-        LOGGER.info("Procesando linea: " + line);
+        //LOGGER.info("Procesando linea: " + line);
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();

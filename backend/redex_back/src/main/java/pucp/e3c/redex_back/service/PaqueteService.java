@@ -147,8 +147,6 @@ public class PaqueteService {
         }
     }
 
-    // ...
-
     public List<Paquete> findByAeropuertoActualId(Integer id) {
         // return paqueteRepository.findByAeropuertoActualId(id);
         try {

@@ -16,7 +16,11 @@ public class EstadoPaquete {
     @Column(length = 64)
     private String nombre;
     @Column(length = 64)
-    private String variante; //preguntar Santiago
+    private String variante;
+
+    public EstadoPaquete() {
+    }
+
     public Integer getId() {
         return id;
     }

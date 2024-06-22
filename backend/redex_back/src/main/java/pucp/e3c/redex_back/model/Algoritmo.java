@@ -1137,6 +1137,10 @@ public class Algoritmo {
                 }
             } else {
                 for (Vuelo vuelo : vuelos) {
+                    // Verificar si ya aterrizo el ultimo vuelo del arreglo
+                    if (vuelos.indexOf(vuelo) == vuelos.size() - 1) {
+                        break;
+                    }
                     // El paquete está en el aeropuerto entre la llegada de un vuelo y la salida del
                     // siguiente
                     if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&
@@ -1164,9 +1168,21 @@ public class Algoritmo {
         EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
         estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
+        //messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
+        //messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+        //        "Paquete " + paquete.getId() + " agregado al aeropuerto " + aeropuertoSalida);
+    }
+
+    public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto){
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                "Paquete " + paquete.getId() + " agregado al aeropuerto " + aeropuertoSalida);
+                "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
+    }
+
+    public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes){
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
     }
 
     private Date removeTime(Date date) {
