@@ -409,7 +409,7 @@ public class GrafoVuelos {
 
         Date fechaMinima = null;
         if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-            fechaMinima = new Date(tiempoEnSimulacion.getTime());
+            fechaMinima = paquete.getEnvio().getFechaRecepcion();// tiempoEnSimulacion;
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
         }
@@ -422,7 +422,7 @@ public class GrafoVuelos {
 
             long aumentar = 0;
             if (primerVuelo) {
-                aumentar = tiempoIntermedio;
+                aumentar = 0;// tiempoIntermedio;
                 primerVuelo = false;
             }
 
