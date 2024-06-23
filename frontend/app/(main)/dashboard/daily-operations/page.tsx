@@ -79,7 +79,6 @@ function DailyOperationsPage() {
 						"GET",
 						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
 						(data: Paquete[]) => {
-							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
 							_paquetes = [...data];
 						},
 						(error) => {
@@ -90,7 +89,7 @@ function DailyOperationsPage() {
 
 					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-
+					
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
@@ -121,7 +120,6 @@ function DailyOperationsPage() {
 						"GET",
 						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
 						(data: Paquete[]) => {
-							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
 							_paquetes = [...data];
 						},
 						(error) => {
@@ -181,6 +179,7 @@ function DailyOperationsPage() {
 				aeropuertos={airports}
 				envios={envios}
 				vuelos={flights}
+				estadoAlmacen={estadoAlmacen}
 				onClicksEnvio={{
 					onClickLocation: (envio: Envio) => {},
 					onClickInfo: (envio: Envio) => {

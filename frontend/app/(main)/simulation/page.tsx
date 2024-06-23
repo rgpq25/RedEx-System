@@ -128,6 +128,7 @@ function SimulationPage() {
 
 				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
+				console.log("See db_estadoAlmacen: ", db_estadoAlmacen);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
@@ -258,6 +259,7 @@ function SimulationPage() {
 					envios={envios}
 					vuelos={flights}
 					aeropuertos={airports}
+					estadoAlmacen={estadoAlmacen}
 					onClicksEnvio={{
 						onClickLocation: (envio: Envio) => {},
 						onClickInfo: (envio: Envio) => {

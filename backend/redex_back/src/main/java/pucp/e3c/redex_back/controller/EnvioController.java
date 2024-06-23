@@ -98,6 +98,7 @@ public class EnvioController {
                 algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
         }
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
         return envioService.register(envio);
     }
 

@@ -366,6 +366,7 @@ public class EnvioService {
             }
 
         }
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),paquetes.size());
 
         paqueteRepository.saveAll(paquetes);
 
@@ -407,6 +408,7 @@ public class EnvioService {
             }
 
         }
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),paquetes.size());
 
         paqueteRepository.saveAll(paquetes);
 

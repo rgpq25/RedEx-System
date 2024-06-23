@@ -25,13 +25,15 @@ public class PlanRuta {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    public PlanRuta() {
+    /*public PlanRuta() {
         this.id = 0;
         this.codigo = "";
     }
 
     public PlanRuta(int id) {
         this.id = id;
+    }*/
+    public PlanRuta() {
     }
 
     public String getCodigo() {

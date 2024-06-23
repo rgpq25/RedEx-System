@@ -56,6 +56,9 @@ public class OperacionesDiaDiaController {
     private PlanRutaXVueloService planRutaXVueloService;
 
     @Autowired
+    private PaqueteController paqueteController;
+
+    @Autowired
     private Algoritmo algoritmo;
 
     @GetMapping(value = "/diaDiaRespuesta")
@@ -75,8 +78,8 @@ public class OperacionesDiaDiaController {
     }
 
     @GetMapping("/obtenerPaquetes")
-    public List<Paquete> obtenerPaquetes(){
-        return algoritmo.obtenerPaquetesActualesDiaDia();
+    public List<Paquete> obtenerPaquetes(){        
+        return algoritmo.obtenerPaquetesActualesDiaDia(paqueteService);
     }
 
     @GetMapping("/obtenerEstadoAlmacen")
