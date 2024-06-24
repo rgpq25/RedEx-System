@@ -118,6 +118,7 @@ function RegisterShipmentPage() {
 
   const [originLocationId, setOriginLocationId] = useState('');
   const [destinationLocationId, setDestinationLocationId] = useState('');
+  const [destinationLocationName, setDestinationLocationName] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
@@ -217,6 +218,20 @@ function RegisterShipmentPage() {
     // Si solo necesitas la fecha y hora hasta los minutos en UTC
     const formattedDateToMinutes = formattedDate.substring(0, 16) + 'Z';  // '2021-07-19T12:34Z'
     
+    
+    const origin_location = locations.find(origin_location => origin_location.id === originLocationId);
+    if (origin_location) {
+      origin_location.ciudad = origin_location.ciudad;
+      origin_location.pais=origin_location.pais;
+    }
+
+    const destination_location = locations.find(destination_location => destination_location.id === destinationLocationId);
+    if (destination_location) {
+      destination_location.ciudad = destination_location.ciudad;
+      destination_location.pais=destination_location.pais;
+    }
+
+
     try {
       // Crear usuario
       const senderUserData = {
@@ -284,8 +299,39 @@ function RegisterShipmentPage() {
 
       // Registrar el envío
       const registerResponse = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`, handleSuccess, handleError, dataToSend);
+      console.log(registerResponse);
 
-      
+      const dataToEmailSender = {
+          toEmail: senderEmail,
+          subject: "Solicitud REDEX: Confirmación de Envío de Paquete",
+          body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
+          " del envío de sus paquetes.\n A continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+          "Nombres completos: " + senderNames + " " +senderSurnames+ "\n"+ 
+          "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
+          "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
+          "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
+          "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
+          "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+      };
+
+      const dataToEmailReceiver = {
+        toEmail: receiverEmail,
+        subject: "Solicitud REDEX: Confirmación de Recepción de Paquete",
+        body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
+        " del envío de sus paquetes. \nA continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+        "Nombres completos: " + receiverNames + " " +receiverSurnames+ "\n"+ 
+        "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
+        "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
+        "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
+        "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
+        "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+    };
+
+      const emailsender = await api("POST", `http://localhost:8080/back/email/send`, handleSuccess, handleError, dataToEmailSender);
+      const emailreceiver = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/email/send`, handleSuccess, handleError, dataToEmailReceiver);
+      console.log(emailsender);
+      console.log(emailreceiver);
+
     } catch (error) {
       console.error("Error en el proceso de registro:", error);
       toast.error("Error en el registro: " + error);
@@ -293,28 +339,6 @@ function RegisterShipmentPage() {
 
   };
 
-  const sendEmail = async () => {
-    const emailData = {
-      senderEmail: senderEmail,
-      receiverEmail: receiverEmail,
-    };
-  
-    const response = await fetch('api/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(emailData)
-    });
-  
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Failed to send email:', errorData.error);
-      throw new Error('Failed to send email');
-    }
-  
-    console.log('Emails sent successfully');
-  };
 
   interface ApiResponse {
     message: string;
