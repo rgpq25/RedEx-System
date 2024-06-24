@@ -191,7 +191,7 @@ public class DataInitializer {
         aeropuertoService.deleteAll();
         // 8. ubicacion
         ubicacionService.deleteAll();
-        //9. simulacion
+        // 9. simulacion
         simulacionService.deleteAll();
     }
 
@@ -204,11 +204,13 @@ public class DataInitializer {
 
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<Aeropuerto>();
         ArrayList<PlanVuelo> planVuelos = new ArrayList<PlanVuelo>();
-        HashMap<String, Ubicacion> ubicacionMap = Funciones.getUbicacionMap();
-        for (Ubicacion ubicacion : ubicacionMap.values()) {
-            ubicacion = ubicacionService.register(ubicacion);
+        aeropuertos = funciones.leerAeropuertosCompletos();
+
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Aeropuerto aeropuerto : aeropuertos) {
+            Ubicacion _ubicacion = ubicacionService.register(aeropuerto.getUbicacion());
+            ubicacionMap.put(_ubicacion.getId(), _ubicacion);
         }
-        aeropuertos = funciones.leerAeropuertos(inputPath, ubicacionMap);
         planVuelos = funciones.leerPlanesVuelo(ubicacionMap, inputPath);
 
         for (Aeropuerto aeropuerto : aeropuertos) {
@@ -233,9 +235,9 @@ public class DataInitializer {
         // INICIALIZA LOOP PRINCIPAL DIA A DIA
         ArrayList<Aeropuerto> aeropuertosLoop = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
         ArrayList<PlanVuelo> planVuelosLoop = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        
 
-        // Ejecuta de forma asíncrona el método loopPrincipalDiaADia del objeto algoritmo con los parámetros dados.
+        // Ejecuta de forma asíncrona el método loopPrincipalDiaADia del objeto
+        // algoritmo con los parámetros dados.
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,

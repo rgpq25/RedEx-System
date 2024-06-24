@@ -14,73 +14,67 @@ import org.slf4j.LoggerFactory;
 @Service
 public class UbicacionService {
     @Autowired
-    private UbicacionRepository ubicacionRepository; //Inyecta la dependencia
+    private UbicacionRepository ubicacionRepository; // Inyecta la dependencia
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UbicacionService.class);
 
     public Ubicacion register(Ubicacion ubicacion) {
-        //return ubicacionRepository.save(ubicacion);
-        try{
+        // return ubicacionRepository.save(ubicacion);
+        try {
             return ubicacionRepository.save(ubicacion);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
     public Ubicacion get(String id) {
-        //Optional<Ubicacion> optional_ubicacion = ubicacionRepository.findById(id);
-        //return optional_ubicacion.get();
-        try{
+        // Optional<Ubicacion> optional_ubicacion = ubicacionRepository.findById(id);
+        // return optional_ubicacion.get();
+        try {
             Optional<Ubicacion> optional_ubicacion = ubicacionRepository.findById(id);
             return optional_ubicacion.get();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
     public List<Ubicacion> getAll() {
-        //return ubicacionRepository.findAll();
-        try{
+        // return ubicacionRepository.findAll();
+        try {
             return ubicacionRepository.findAll();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
-        
+
         }
     }
 
     public void delete(String id) {
-        //ubicacionRepository.deleteById(id);
-        try{
+        // ubicacionRepository.deleteById(id);
+        try {
             ubicacionRepository.deleteById(id);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
     }
 
     public Ubicacion update(Ubicacion ubicacion) {
-        //return ubicacionRepository.save(ubicacion);
-        try{
+        // return ubicacionRepository.save(ubicacion);
+        try {
             return ubicacionRepository.save(ubicacion);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
     public void deleteAll() {
-        try{
+        try {
             ubicacionRepository.deleteAll();
             ubicacionRepository.flush();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
     }

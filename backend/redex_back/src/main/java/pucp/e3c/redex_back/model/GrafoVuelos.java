@@ -467,7 +467,8 @@ public class GrafoVuelos {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService);
+            PlanRutaNT rutaPrevia = obtenerRutaHastaAeropuertoActual(paquete, vueloService, false);
+            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService, true);
             for (Vuelo vuelo : rutaTomada.getVuelos()) {
                 aeropuertosVisitados.add(vuelo.getPlanVuelo().getCiudadOrigen().getId());
             }
@@ -488,17 +489,22 @@ public class GrafoVuelos {
                     paquete.getEnvio().getUbicacionOrigen().getContinente()
                             .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
                     paquete, tiempoEnSimulacion, TA);
-            if (rutaEncontrada == null) {
-                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "
-                        + paquete.toString());
+            if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
+                throw new IllegalStateException(
+                        "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
+                                + paquete.toString());
 
             }
-            rutas.add(rutaEncontrada);
+            if (rutaEncontrada == null) {
+                rutas.add(rutaPrevia);
+            } else {
+                rutas.add(rutaEncontrada);
+            }
         }
         return rutas;
     }
 
-    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService) {
+    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService, boolean cortar) {
 
         Ubicacion ubicacionActual = paquete.getAeropuertoActual().getUbicacion();
 
@@ -511,7 +517,7 @@ public class GrafoVuelos {
         // Iterar sobre los vuelos en el plan de ruta completo
         for (Vuelo vuelo : vuelosPaquete) {
 
-            if (vuelo.getPlanVuelo().getCiudadOrigen().getId().equals(ubicacionActual.getId())) {
+            if (vuelo.getPlanVuelo().getCiudadOrigen().getId().equals(ubicacionActual.getId()) && cortar) {
                 break;
             }
             vuelosTomados.add(vuelo);
