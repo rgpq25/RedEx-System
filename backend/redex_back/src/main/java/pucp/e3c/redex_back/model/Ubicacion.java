@@ -31,6 +31,20 @@ public class Ubicacion {
     public Ubicacion() {
     }
 
+    @Override
+    public String toString() {
+        return "Ubicacion{" +
+                "id='" + id + '\'' +
+                ", continente='" + continente + '\'' +
+                ", pais='" + pais + '\'' +
+                ", ciudad='" + ciudad + '\'' +
+                ", ciudadAbreviada='" + ciudadAbreviada + '\'' +
+                ", zonaHoraria='" + zonaHoraria + '\'' +
+                ", latitud=" + latitud +
+                ", longitud=" + longitud +
+                '}';
+    }
+
     public void fillData(String id, String continente, String pais, String ciudad, String ciudadAbreviada,
             String zonaHoraria, double latitud, double logitud) {
         this.setId(id);
