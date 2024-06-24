@@ -476,6 +476,7 @@ public class Algoritmo {
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
                     fechaLimiteCalculo);
+
             int tamanhoPaquetes = paquetesProcesar.size();
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
             List<Paquete> paquetesRest = paquetes.stream()
@@ -510,6 +511,7 @@ public class Algoritmo {
 
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
+                System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 continue;
             }
@@ -1044,15 +1046,15 @@ public class Algoritmo {
         Date now = new Date();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
-                    && (p.isEntregado() == false))
+                        && (p.isEntregado() == false))
                 .collect(Collectors.toList());
         List<Paquete> paquetesRespuesta = new ArrayList<>();
         for (Paquete p : paquetes) {
-            Paquete paqueteRespuesta = paqueteService.getPaqueteNoSimulacion(p.getId(),now);
+            Paquete paqueteRespuesta = paqueteService.getPaqueteNoSimulacion(p.getId(), now);
             paquetesRespuesta.add(paqueteRespuesta);
         }
         LOGGER.info("Paquetes actuales: " + paquetesRespuesta.size());
-                //&& (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+        // && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
         return paquetesRespuesta;
     }
 
@@ -1153,8 +1155,8 @@ public class Algoritmo {
             }
 
             if (enAeropuerto) {
-                //Paquete paqueteBD = paqueteService.findById(paquete.getId());
-                Paquete paqueteBD = paqueteService.getPaqueteNoSimulacion(paquete.getId(),fechaCorte);
+                // Paquete paqueteBD = paqueteService.findById(paquete.getId());
+                Paquete paqueteBD = paqueteService.getPaqueteNoSimulacion(paquete.getId(), fechaCorte);
                 paquetesEnAeropuerto.add(paqueteBD);
             }
         }
@@ -1168,18 +1170,20 @@ public class Algoritmo {
         EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
         estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
-        //messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
-        //messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-        //        "Paquete " + paquete.getId() + " agregado al aeropuerto " + aeropuertoSalida);
+        // messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta",
+        // this.ultimaRespuestaOperacionDiaDia);
+        // messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+        // "Paquete " + paquete.getId() + " agregado al aeropuerto " +
+        // aeropuertoSalida);
     }
 
-    public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto){
+    public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto) {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
     }
 
-    public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes){
+    public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
