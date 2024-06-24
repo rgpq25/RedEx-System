@@ -46,6 +46,7 @@ public class SAImplementation {
         private double sumaPaquetesWeight;
         private double sumaVuelosWeight;
         private double promedioPonderadoTiempoAeropuertoWeight;
+        private double mediaVuelosWight;
         private Date tiempoEnSimulacion;
         private static final Logger LOGGER = LoggerFactory.getLogger(SAImplementation.class);
 
@@ -78,7 +79,8 @@ public class SAImplementation {
                         double airportPenalization,
                         double sumaPaquetesWeight,
                         double sumaVuelosWeight,
-                        double promedioPonderadoTiempoAeropuertoWeight) {
+                        double promedioPonderadoTiempoAeropuertoWeight,
+                        double mediaVuelosWight) {
                 this.stopWhenNoPackagesLeft = stopWhenNoPackagesLeft;
                 this.temperature = temperature;
                 this.coolingRate = coolingRate;
@@ -90,6 +92,7 @@ public class SAImplementation {
                 this.sumaPaquetesWeight = sumaPaquetesWeight;
                 this.sumaVuelosWeight = sumaVuelosWeight;
                 this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
+                this.mediaVuelosWight = mediaVuelosWight;
         }
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
@@ -117,6 +120,10 @@ public class SAImplementation {
                                         badSolutionPenalization,
                                         flightPenalization,
                                         airportPenalization,
+                                        sumaPaquetesWeight,
+                                        sumaVuelosWeight,
+                                        promedioPonderadoTiempoAeropuertoWeight,
+                                        mediaVuelosWight,
                                         vuelos_map,
                                         grafoVuelos);
 

@@ -998,8 +998,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = 4;
+        double sumaVuelosWeight = -8;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
+        double mediaVuelosWight = 4;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
@@ -1021,7 +1022,8 @@ public class Algoritmo {
                 airportPenalization,
                 sumaPaquetesWeight,
                 sumaVuelosWeight,
-                promedioPonderadoTiempoAeropuertoWeight);
+                promedioPonderadoTiempoAeropuertoWeight,
+                mediaVuelosWight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
                 messagingTemplate, tipoOperacion, TA);
