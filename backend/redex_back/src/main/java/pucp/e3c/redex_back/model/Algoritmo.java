@@ -398,6 +398,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
+        boolean replanificar = false;
         String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;
@@ -475,7 +476,7 @@ public class Algoritmo {
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
-                    fechaLimiteCalculo);
+                    fechaLimiteCalculo, replanificar);
 
             int tamanhoPaquetes = paquetesProcesar.size();
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
@@ -570,8 +571,6 @@ public class Algoritmo {
             ocupacionVuelos = nuevaOcupacion;
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
-            this.paquetesSimulacion = paquetes;
-            this.planRutasSimulacion = planRutas;
 
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
@@ -589,6 +588,8 @@ public class Algoritmo {
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
+            this.paquetesSimulacion = new ArrayList<>(paquetes);
+            this.planRutasSimulacion = new ArrayList<>(planRutas);
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
@@ -734,12 +735,13 @@ public class Algoritmo {
     }
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
-            Date fechaLimiteCalculo) {
+            Date fechaLimiteCalculo, boolean replanificar) {
         Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
         final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
         List<Paquete> paquetesTemp = paquetes.stream()
-                .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
+                .filter(p -> p.getFechaDeEntrega() == null
+                        || (replanificar && finalTiempoEnSimulacion.before(p.getFechaDeEntrega())))
                 .filter(p -> p.obtenerFechaRecepcion().before(fechaLimiteCalculo))
                 .collect(Collectors.toList());
         ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
@@ -985,7 +987,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 2;
+        int windowSize = tamanhoPaquetes / 4;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
