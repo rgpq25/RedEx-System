@@ -987,7 +987,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 4;
+        int windowSize = tamanhoPaquetes / 3;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
@@ -998,9 +998,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = -8;
+        double sumaVuelosWeight = -10;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
-        double mediaVuelosWight = 4;
+        double mediaVuelosWight = 50;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
