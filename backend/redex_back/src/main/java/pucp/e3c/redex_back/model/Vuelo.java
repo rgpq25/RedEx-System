@@ -29,13 +29,6 @@ public class Vuelo {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     Simulacion simulacionActual;
 
-    /*public Vuelo(int id, PlanVuelo planVuelo, int capacidadUtilizada, Date fechaSalida, Date fechaLlegada) {
-        this.id = id;
-        this.planVuelo = planVuelo;
-        this.capacidadUtilizada = capacidadUtilizada;
-        this.fechaSalida = fechaSalida;
-        this.fechaLlegada = fechaLlegada;
-    }*/
 
     public void fillData1(int id, PlanVuelo planVuelo, int capacidadUtilizada, Date fechaSalida,
             Date fechaLlegada) {
@@ -46,13 +39,6 @@ public class Vuelo {
         this.setFechaLlegada(fechaLlegada);
     }
 
-    /*public Vuelo(PlanVuelo planVuelo, Date fechaSalida, Date fechaLlegada) {
-        this.id = ContadorID.obtenerSiguienteID();
-        this.planVuelo = planVuelo;
-        this.capacidadUtilizada = 0;
-        this.fechaSalida = fechaSalida;
-        this.fechaLlegada = fechaLlegada;
-    }*/
 
     public void fillData2(PlanVuelo planVuelo, Date fechaSalida, Date fechaLlegada) {
         this.setId(ContadorID.obtenerSiguienteID());
@@ -62,13 +48,6 @@ public class Vuelo {
         this.setFechaLlegada(fechaLlegada);
     }
 
-    /*public Vuelo(Vuelo _vuelo) {
-        this.id = _vuelo.id;
-        this.planVuelo = new PlanVuelo(_vuelo.planVuelo);
-        this.capacidadUtilizada = _vuelo.capacidadUtilizada;
-        this.fechaSalida = _vuelo.fechaSalida;
-        this.fechaLlegada = _vuelo.fechaLlegada;
-    }*/
 
     public void fillData3(Vuelo _vuelo) {
         this.setId(_vuelo.id);

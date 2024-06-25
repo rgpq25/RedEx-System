@@ -58,10 +58,10 @@ function DialogReception({ twStyle }: { twStyle: string }) {
             </DialogTrigger>
             <DialogContent hasCloseButton={false} disableOutsideEventsToClose>
                 <DialogHeader>
-                    <DialogTitle>Ingrese el código de monitoreo del envío</DialogTitle>
+                    <DialogTitle>Ingrese el identificador del envío</DialogTitle>
                 </DialogHeader>
                 <div className='space-y-1'>
-                    <Label htmlFor='tracking-code'>Código de monitoreo</Label>
+                    <Label htmlFor='tracking-code'>Identificador</Label>
                     <Input placeholder='Ej. A43HDS5' ref={inputRef} />
                 </div>
                 <DialogFooter>

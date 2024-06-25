@@ -1,6 +1,7 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -10,6 +11,8 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -40,6 +43,8 @@ public class Funciones {
 
     @Autowired
     ResourceLoader resourceLoader;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Funciones.class);
 
     public static String getFormattedDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -256,6 +261,81 @@ public class Funciones {
         return ubicacionMap;
     }
 
+    private double convertDMSToDecimal(String dms) {
+        String[] dmsParts = dms.split(" ");
+
+        for (int i = 0; i < dmsParts.length; i++) {
+            dmsParts[i] = dmsParts[i].replaceAll("\u0000", "");
+            if (dmsParts[i].isEmpty()) {
+                dmsParts[i] = "";
+            }
+        }
+
+        String[] filteredParts = Arrays.stream(dmsParts)
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
+
+        double degrees = Double.parseDouble(filteredParts[0]);
+        double minutes = Double.parseDouble(filteredParts[1]);
+        double seconds = Double.parseDouble(filteredParts[2]);
+        String direction = filteredParts[3];
+
+        double decimal = degrees + (minutes / 60) + (seconds / 3600);
+        if (direction.equals("S") || direction.equals("W")) {
+            decimal *= -1;
+        }
+
+        return decimal;
+    }
+
+    public ArrayList<Aeropuerto> leerAeropuertosCompletos() {
+        ArrayList<Aeropuerto> aeropuertos = new ArrayList<>();
+        try {
+            Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos.csv");
+            InputStream input = resource.getInputStream();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+                String line;
+                String currentContinent = "";
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (line.contains("#")) {
+                        currentContinent = line.split(":")[1].trim().split(";")[0];
+                    } else if (!line.isEmpty()) {
+                        String[] parts = line.split(";");
+                        if (parts.length == 9) {
+                            String id = parts[1].trim().replaceAll("\u0000", "");
+                            String city = parts[2].trim().replaceAll("\u0000", "");
+                            String country = parts[3].trim().replaceAll("\u0000", "");
+                            String cityAbbr = parts[4].trim().replaceAll("\u0000", "");
+                            String timeZone = parts[5].trim().replaceAll("\u0000", "");
+                            String aux = parts[6].trim().replaceAll("\u0000", "");
+
+                            int capacidad = Integer.parseInt(aux);
+                            String latDMS = parts[7].split(":")[1].trim();
+                            String lonDMS = parts[8].split(":")[1].trim();
+
+                            double lat = convertDMSToDecimal(latDMS);
+                            double lon = convertDMSToDecimal(lonDMS);
+
+                            Ubicacion ubicacion = new Ubicacion();
+                            ubicacion.fillData(id, currentContinent, country, city, cityAbbr, timeZone, lat, lon);
+
+                            Aeropuerto aeropuerto = new Aeropuerto();
+                            aeropuerto.setCapacidadMaxima(capacidad);
+                            aeropuerto.setUbicacion(ubicacion);
+                            aeropuertos.add(aeropuerto);
+
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return aeropuertos;
+    }
+
     public ArrayList<Aeropuerto> leerAeropuertos(String inputPath, HashMap<String, Ubicacion> ubicacionMap)
             throws IOException {
         ArrayList<Aeropuerto> aeropuertos_list = new ArrayList<Aeropuerto>();
@@ -345,8 +425,38 @@ public class Funciones {
         return String.join("-", partes);
     }
 
+    public static Envio stringToEnvioHoraSistemaEnvio(String line, HashMap<String, Ubicacion> ubicacionMap,
+            Simulacion simulacion,
+            AeropuertoRepository aeropuertoRepository, Date now) {
+        // LOGGER.info("Procesando linea: " + line);
+        String[] parts = line.split("-");
+        Envio envio = new Envio();
+        String origenCode = parts[0].trim();
+        String[] destinoWithPackageCount = parts[4].trim().split(":");
+        String destinoCode = destinoWithPackageCount[0].trim();
+        int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
+
+        Ubicacion origen = ubicacionMap.get(origenCode);
+        Ubicacion destino = ubicacionMap.get(destinoCode);
+        Date fecha_recepcion_GMT0 = now;
+        Date fecha_recepcion_GMTOrigen = Funciones.convertTimeZone(
+                fecha_recepcion_GMT0,
+                "UTC",
+                origen.getZonaHoraria());
+
+        envio.fillData(origen, destino, fecha_recepcion_GMTOrigen);
+        envio.setCantidadPaquetes(cantidadPaquetes);
+        Random random = new Random();
+        int randomNumber = random.nextInt(900000) + 100000;
+        envio.setCodigoSeguridad(Integer.toString(randomNumber));
+        envio.setSimulacionActual(simulacion);
+
+        return envio;
+    }
+
     public static Envio stringToEnvio(String line, HashMap<String, Ubicacion> ubicacionMap, Simulacion simulacion,
             AeropuertoRepository aeropuertoRepository) {
+        // LOGGER.info("Procesando linea: " + line);
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
@@ -361,20 +471,16 @@ public class Funciones {
         String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
                 fechaRecibo.substring(4, 6) + "-" +
                 fechaRecibo.substring(6, 8);
-        Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " + horaRecibo);
-        Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin, origen.getZonaHoraria(), "UTC");
-
-        Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
-                                                                                      // destino
-        Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino, destino.getZonaHoraria(),
-                "UTC");
-
-        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        String fechaStr = fechaReciboReal + " " + horaRecibo;
+        Date fecha_recepcion_GMTOrigin = parseDateString(fechaStr);
+        // LOGGER.info("Fecha recibo GMT Origin: " + fecha_recepcion_GMTOrigin);
+        // LOGGER.info("Fecha recibo GMT 0: " + fecha_recepcion_GMT0);
+        envio.fillData(origen, destino, fecha_recepcion_GMTOrigin);
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
         envio.setCodigoSeguridad(Integer.toString(randomNumber));
-        // envio.setCodigoSeguridad(parts[0].trim());
+        // envio.setCodigoSeguridad(parts[1].trim());
         envio.setSimulacionActual(simulacion);
 
         return envio;
@@ -386,32 +492,18 @@ public class Funciones {
         String[] parts = line.split("-");
         Envio envio = new Envio();
         String origenCode = parts[0].trim();
-        // String fechaRecibo = parts[2].trim();
-        // String horaRecibo = parts[3].trim() + ":00";
         String[] destinoWithPackageCount = parts[4].trim().split(":");
         String destinoCode = destinoWithPackageCount[0].trim();
         int cantidadPaquetes = Integer.parseInt(destinoWithPackageCount[1].trim());
 
         Ubicacion origen = ubicacionMap.get(origenCode);
         Ubicacion destino = ubicacionMap.get(destinoCode);
-        /*
-         * String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
-         * fechaRecibo.substring(4, 6) + "-" +
-         * fechaRecibo.substring(6, 8);
-         */
-        // Date fecha_recepcion_GMTOrigin = parseDateString(fechaReciboReal + " " +
-        // horaRecibo);
-        // Date fecha_recepcion_GMT0 = convertTimeZone(fecha_recepcion_GMTOrigin,
-        // origen.getZonaHoraria(), "UTC");
-        // parse utc 0 to origin timezone
-        Date fecha_recepcion_GMTOrigin = convertTimeZone(fecha_inicio, "UTC", origen.getZonaHoraria());
         Date fecha_recepcion_GMT0 = fecha_inicio;
-        Date fecha_maxima_entrega_GMTDestino = addDays(fecha_recepcion_GMTOrigin, 2); // aqui estaria en timezone de
-                                                                                      // destino
-        Date fecha_maxima_entrega_GMT0 = convertTimeZone(fecha_maxima_entrega_GMTDestino, destino.getZonaHoraria(),
-                "UTC");
-
-        envio.fillData(origen, destino, fecha_recepcion_GMT0, fecha_maxima_entrega_GMT0);
+        Date fecha_recepcion_GMTOrigen = Funciones.convertTimeZone(
+                fecha_recepcion_GMT0,
+                "UTC",
+                origen.getZonaHoraria());
+        envio.fillData(origen, destino, fecha_recepcion_GMTOrigen);
         envio.setCantidadPaquetes(cantidadPaquetes);
         Random random = new Random();
         int randomNumber = random.nextInt(900000) + 100000;
@@ -484,6 +576,7 @@ public class Funciones {
         try {
             return format.parse(dateString);
         } catch (ParseException e) {
+            LOGGER.info("Error al convertir fecha " + dateString);
             e.printStackTrace();
             return null;
         }

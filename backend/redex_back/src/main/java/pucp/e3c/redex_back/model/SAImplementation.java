@@ -46,6 +46,7 @@ public class SAImplementation {
         private double sumaPaquetesWeight;
         private double sumaVuelosWeight;
         private double promedioPonderadoTiempoAeropuertoWeight;
+        private double mediaVuelosWight;
         private Date tiempoEnSimulacion;
         private static final Logger LOGGER = LoggerFactory.getLogger(SAImplementation.class);
 
@@ -78,7 +79,8 @@ public class SAImplementation {
                         double airportPenalization,
                         double sumaPaquetesWeight,
                         double sumaVuelosWeight,
-                        double promedioPonderadoTiempoAeropuertoWeight) {
+                        double promedioPonderadoTiempoAeropuertoWeight,
+                        double mediaVuelosWight) {
                 this.stopWhenNoPackagesLeft = stopWhenNoPackagesLeft;
                 this.temperature = temperature;
                 this.coolingRate = coolingRate;
@@ -90,12 +92,13 @@ public class SAImplementation {
                 this.sumaPaquetesWeight = sumaPaquetesWeight;
                 this.sumaVuelosWeight = sumaVuelosWeight;
                 this.promedioPonderadoTiempoAeropuertoWeight = promedioPonderadoTiempoAeropuertoWeight;
+                this.mediaVuelosWight = mediaVuelosWight;
         }
 
         public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
                         SimulacionService simulacionService,
                         PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
-                        SimpMessagingTemplate messagingTemplate, String tipoOperacion) {
+                        SimpMessagingTemplate messagingTemplate, String tipoOperacion, int TA) {
 
                 try {
                         HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
@@ -117,11 +120,15 @@ public class SAImplementation {
                                         badSolutionPenalization,
                                         flightPenalization,
                                         airportPenalization,
+                                        sumaPaquetesWeight,
+                                        sumaVuelosWeight,
+                                        promedioPonderadoTiempoAeropuertoWeight,
+                                        mediaVuelosWight,
                                         vuelos_map,
                                         grafoVuelos);
 
                         long startTimeInitialization = System.nanoTime();
-                        current.force_initialize(todasLasRutas, vueloService, tiempoEnSimulacion);
+                        current.force_initialize(todasLasRutas, vueloService, tiempoEnSimulacion, TA);
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                         System.out.println("Finished solution initialization in "
                                         + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
@@ -139,7 +146,7 @@ public class SAImplementation {
                                 if (simulacionService != null) {
                                         simulacion = simulacionService.get(simulacion.getId());
                                         if (simulacion.getEstado() == 2) {
-                                                Thread.sleep(10);
+
                                                 continue;
                                         }
                                 }
@@ -147,7 +154,7 @@ public class SAImplementation {
                                 for (int i = 0; i < neighbourCount; i++) {
                                         neighbours.add(
                                                         current.generateNeighbour(windowSize, vueloService,
-                                                                        tiempoEnSimulacion));
+                                                                        tiempoEnSimulacion, TA));
                                         // System.out.println("Vecino generado");
                                 }
                                 // System.out.println("\nNeighbours iterados\n");
@@ -252,7 +259,8 @@ public class SAImplementation {
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "paquetes" +
                         // iteracion + ".txt");
                         // current.printFlightOcupation("ocupacionVuelos" + iteracion + ".txt");
-                        current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion + ".txt");
+                        // current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion +
+                        // ".txt");
 
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {
@@ -268,7 +276,8 @@ public class SAImplementation {
                                 } catch (Exception e) {
                                         System.err.println("Error al guardar en la base de datos: " + e.getMessage());
                                         messagingTemplate.convertAndSend("/algoritmo/estado",
-                                        new RespuestaAlgoritmoEstado("Error al guardar algun vuelo: " + e.getMessage(), simulacion));
+                                                        new RespuestaAlgoritmoEstado("Error al guardar algun vuelo: "
+                                                                        + e.getMessage(), simulacion));
                                 }
                         }
                         RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
@@ -280,7 +289,9 @@ public class SAImplementation {
                         e.printStackTrace();
                         System.err.println("Error al ejecutar el algoritmo p: " + e.getMessage());
                         messagingTemplate.convertAndSend("/algoritmo/estado",
-                        new RespuestaAlgoritmoEstado("Error al ejecutar el algoritmo: " + e.getMessage(), simulacion));
+                                        new RespuestaAlgoritmoEstado(
+                                                        "Error al ejecutar el algoritmo: " + e.getMessage(),
+                                                        simulacion));
                         return null;
                 }
 

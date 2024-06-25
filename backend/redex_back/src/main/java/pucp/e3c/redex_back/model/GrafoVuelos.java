@@ -399,7 +399,7 @@ public class GrafoVuelos {
 
     private PlanRutaNT buscarRutaAleatoriaDFS(Ubicacion actual, Ubicacion destino, Date fechaHoraActual,
             PlanRutaNT rutaActual, Set<String> aeropuertosVisitados, boolean continental, Paquete paquete,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA) {
 
         if (actual.getId().equals(destino.getId())) {
             PlanRutaNT nuevaRuta = new PlanRutaNT();
@@ -409,16 +409,24 @@ public class GrafoVuelos {
 
         Date fechaMinima = null;
         if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-            fechaMinima = new Date(tiempoEnSimulacion.getTime() + 3600000);
+            fechaMinima = paquete.getEnvio().getFechaRecepcion();// tiempoEnSimulacion;
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
         }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
                 paquete.getEnvio().getFechaLimiteEntrega());
         Collections.shuffle(vuelosPosibles);
-
+        long tiempoIntermedio = 300000;
+        boolean primerVuelo = true;
         for (Vuelo vuelo : vuelosPosibles) {
-            if (fechaHoraActual.before(vuelo.getFechaSalida()) &&
+
+            long aumentar = 0;
+            if (primerVuelo) {
+                aumentar = 0;// tiempoIntermedio;
+                primerVuelo = false;
+            }
+
+            if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&
                     !aeropuertosVisitados.contains(vuelo.getPlanVuelo().getCiudadDestino().getId())) {
                 Date fechaInicio = rutaActual.getInicio();
                 if (fechaInicio == null) {
@@ -439,7 +447,7 @@ public class GrafoVuelos {
                     aeropuertosVisitados.add(actual.getId());
                     PlanRutaNT result = buscarRutaAleatoriaDFS(vuelo.getPlanVuelo().getCiudadDestino(), destino,
                             vuelo.getFechaLlegada(), rutaActual, aeropuertosVisitados, continental, paquete,
-                            tiempoEnSimulacion);
+                            tiempoEnSimulacion, TA);
                     if (result != null) {
                         return result; // Ruta encontrada, retornarla.
                     }
@@ -455,17 +463,18 @@ public class GrafoVuelos {
     }
 
     public ArrayList<PlanRutaNT> generarRutasParaPaquetes(ArrayList<Paquete> paquetes, VueloService vueloService,
-            Date tiempoEnSimulacion) {
+            Date tiempoEnSimulacion, int TA) {
         ArrayList<PlanRutaNT> rutas = new ArrayList<>();
         for (Paquete paquete : paquetes) {
             Set<String> aeropuertosVisitados = new HashSet<>();
-            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService);
+            PlanRutaNT rutaPrevia = obtenerRutaHastaAeropuertoActual(paquete, vueloService, false);
+            PlanRutaNT rutaTomada = obtenerRutaHastaAeropuertoActual(paquete, vueloService, true);
             for (Vuelo vuelo : rutaTomada.getVuelos()) {
                 aeropuertosVisitados.add(vuelo.getPlanVuelo().getCiudadOrigen().getId());
             }
-
             Date fechaActual;
             Ubicacion ubicacionActual;
+
             if (rutaTomada.getVuelos().size() > 0) {
                 fechaActual = rutaTomada.getVuelos().get(rutaTomada.getVuelos().size() - 1).getFechaLlegada();
                 ubicacionActual = rutaTomada.getVuelos().get(rutaTomada.getVuelos().size() - 1).getPlanVuelo()
@@ -477,20 +486,25 @@ public class GrafoVuelos {
 
             PlanRutaNT rutaEncontrada = buscarRutaAleatoriaDFS(ubicacionActual,
                     paquete.getEnvio().getUbicacionDestino(), fechaActual, rutaTomada, aeropuertosVisitados,
-                    paquete.getEnvio().getUbicacionOrigen().getId()
-                            .equals(paquete.getEnvio().getUbicacionDestino().getId()),
-                    paquete, tiempoEnSimulacion);
-            if (rutaEncontrada == null) {
-                throw new IllegalStateException("No se pudo encontrar una ruta para el paquete "
-                        + paquete.toString());
+                    paquete.getEnvio().getUbicacionOrigen().getContinente()
+                            .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
+                    paquete, tiempoEnSimulacion, TA);
+            if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
+                throw new IllegalStateException(
+                        "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
+                                + paquete.toString());
 
             }
-            rutas.add(rutaEncontrada);
+            if (rutaEncontrada == null) {
+                rutas.add(rutaPrevia);
+            } else {
+                rutas.add(rutaEncontrada);
+            }
         }
         return rutas;
     }
 
-    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService) {
+    public PlanRutaNT obtenerRutaHastaAeropuertoActual(Paquete paquete, VueloService vueloService, boolean cortar) {
 
         Ubicacion ubicacionActual = paquete.getAeropuertoActual().getUbicacion();
 
@@ -503,7 +517,7 @@ public class GrafoVuelos {
         // Iterar sobre los vuelos en el plan de ruta completo
         for (Vuelo vuelo : vuelosPaquete) {
 
-            if (vuelo.getPlanVuelo().getCiudadOrigen().getId().equals(ubicacionActual.getId())) {
+            if (vuelo.getPlanVuelo().getCiudadOrigen().getId().equals(ubicacionActual.getId()) && cortar) {
                 break;
             }
             vuelosTomados.add(vuelo);

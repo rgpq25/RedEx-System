@@ -114,6 +114,19 @@ public class AeropuertoController {
         return differenceInMillis > fiveMinutesInMillis;
     }
 
+    @GetMapping(value = "/{idAeropuerto}/paquetesDiaDia")
+    public ResponseEntity<ArrayList<Paquete>> getPaquetesDiaDia(
+            @PathVariable("idAeropuerto") Integer idAeropuerto) {
+        Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
+        if (aeropuerto == null) {
+            System.err.println("No se encontro aeropuerto");
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
+        }
+        return new ResponseEntity<>(
+                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId(),paqueteService),
+                HttpStatus.ACCEPTED);
+    }
+
     @PostMapping(value = "/{idAeropuerto}/paquetesfromsimulation")
     public ResponseEntity<ArrayList<Paquete>> getPaquetesFromSimulation(
             @PathVariable("idAeropuerto") Integer idAeropuerto,
@@ -261,7 +274,7 @@ public class AeropuertoController {
         // Filtrar los paquetes cuya fecharecepcion sea menor a la fecha Corte
         paquetes = (ArrayList<Paquete>) paquetes.stream()
                 .filter(paquete -> paquete.getEnvio().getFechaRecepcion().before(fechaCorte)
-                        && paquete.getFechaRecepcion().after(simulacion.getFechaInicioSim())
+                        && paquete.obtenerFechaRecepcion().after(simulacion.getFechaInicioSim())
                         && (paquete.getFechaDeEntrega() == null || paquete.getFechaDeEntrega().after(fechaCorte)))
                 .collect(Collectors.toList());
 
@@ -312,12 +325,13 @@ public class AeropuertoController {
     }
 
     public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {
+        Date fechaCorte = new Date();
         for (Paquete paquete : paquetes) {
-            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete);
+            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         }
     }
 
-    @GetMapping(value = "/{idAeropuerto}/paquetes")
+    /*@GetMapping(value = "/{idAeropuerto}/paquetes")
     public ArrayList<Paquete> getPaquetes(@PathVariable("idAeropuerto") Integer idAeropuerto) {
         Aeropuerto aeropuerto = aeropuertoService.get(idAeropuerto);
         if (aeropuerto == null)
@@ -442,6 +456,6 @@ public class AeropuertoController {
         }
         actualizaPaquetesNoSimulacion(paquetes);
         return paquetes;
-    }
+    }*/
 
 }
