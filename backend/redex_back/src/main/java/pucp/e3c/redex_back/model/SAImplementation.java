@@ -146,7 +146,7 @@ public class SAImplementation {
                                 if (simulacionService != null) {
                                         simulacion = simulacionService.get(simulacion.getId());
                                         if (simulacion.getEstado() == 2) {
-                                                Thread.sleep(10);
+
                                                 continue;
                                         }
                                 }

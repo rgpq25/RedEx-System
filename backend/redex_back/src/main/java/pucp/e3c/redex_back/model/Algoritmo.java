@@ -430,12 +430,7 @@ public class Algoritmo {
             if (simulacion.getEstado() == 2) {
                 LOGGER.info(tipoOperacion + " Simulacion pausada");
                 // System.out.println("Simulacion pausada");
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    LOGGER.error(tipoOperacion + " Error en sleep");
-                    // System.out.println("Error en sleep");
-                }
+
                 if (primera_iter) {
                     simulacion.setFechaInicioSistema(new Date());
                     simulacion = simulacionService.update(simulacion);
@@ -589,7 +584,12 @@ public class Algoritmo {
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
             this.paquetesSimulacion = new ArrayList<>(paquetes);
-            this.planRutasSimulacion = new ArrayList<>(planRutas);
+            this.planRutasSimulacion = new ArrayList<>();
+            for (PlanRutaNT planRutaNT : planRutas) {
+                PlanRutaNT clonedPlanRuta = new PlanRutaNT();
+                clonedPlanRuta.setVuelos(new ArrayList<>(planRutaNT.getVuelos()));
+                this.planRutasSimulacion.add(clonedPlanRuta);
+            }
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
@@ -998,9 +998,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = -10;
+        double sumaVuelosWeight = 6;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
-        double mediaVuelosWight = 50;
+        double mediaVuelosWight = 4;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
