@@ -422,7 +422,7 @@ public class GrafoVuelos {
 
             long aumentar = 0;
             if (primerVuelo) {
-                aumentar = 0;// tiempoIntermedio;
+                aumentar = tiempoIntermedio;
                 primerVuelo = false;
             }
 
