@@ -262,7 +262,7 @@ public class Funciones {
     }
 
     private double convertDMSToDecimal(String dms) {
-        String[] dmsParts = dms.split("[°'\"\\s]+");
+        String[] dmsParts = dms.split(" ");
 
         for (int i = 0; i < dmsParts.length; i++) {
             dmsParts[i] = dmsParts[i].replaceAll("\u0000", "");
@@ -291,7 +291,7 @@ public class Funciones {
     public ArrayList<Aeropuerto> leerAeropuertosCompletos() {
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<>();
         try {
-            Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos.txt");
+            Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos.csv");
             InputStream input = resource.getInputStream();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
@@ -300,9 +300,9 @@ public class Funciones {
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     if (line.contains("#")) {
-                        currentContinent = line.split(":")[1].trim().replaceAll("\u0000", "");
+                        currentContinent = line.split(":")[1].trim().split(";")[0];
                     } else if (!line.isEmpty()) {
-                        String[] parts = line.split(",");
+                        String[] parts = line.split(";");
                         if (parts.length == 9) {
                             String id = parts[1].trim().replaceAll("\u0000", "");
                             String city = parts[2].trim().replaceAll("\u0000", "");

@@ -472,9 +472,9 @@ public class GrafoVuelos {
             for (Vuelo vuelo : rutaTomada.getVuelos()) {
                 aeropuertosVisitados.add(vuelo.getPlanVuelo().getCiudadOrigen().getId());
             }
-
             Date fechaActual;
             Ubicacion ubicacionActual;
+
             if (rutaTomada.getVuelos().size() > 0) {
                 fechaActual = rutaTomada.getVuelos().get(rutaTomada.getVuelos().size() - 1).getFechaLlegada();
                 ubicacionActual = rutaTomada.getVuelos().get(rutaTomada.getVuelos().size() - 1).getPlanVuelo()

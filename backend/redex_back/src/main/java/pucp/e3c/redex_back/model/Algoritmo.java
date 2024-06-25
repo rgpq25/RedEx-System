@@ -398,6 +398,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
+        boolean replanificar = false;
         String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;
@@ -429,12 +430,7 @@ public class Algoritmo {
             if (simulacion.getEstado() == 2) {
                 LOGGER.info(tipoOperacion + " Simulacion pausada");
                 // System.out.println("Simulacion pausada");
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    LOGGER.error(tipoOperacion + " Error en sleep");
-                    // System.out.println("Error en sleep");
-                }
+
                 if (primera_iter) {
                     simulacion.setFechaInicioSistema(new Date());
                     simulacion = simulacionService.update(simulacion);
@@ -475,7 +471,7 @@ public class Algoritmo {
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
-                    fechaLimiteCalculo);
+                    fechaLimiteCalculo, replanificar);
 
             int tamanhoPaquetes = paquetesProcesar.size();
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
@@ -570,8 +566,6 @@ public class Algoritmo {
             ocupacionVuelos = nuevaOcupacion;
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
-            this.paquetesSimulacion = paquetes;
-            this.planRutasSimulacion = planRutas;
 
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
@@ -589,6 +583,13 @@ public class Algoritmo {
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
+            this.paquetesSimulacion = new ArrayList<>(paquetes);
+            this.planRutasSimulacion = new ArrayList<>();
+            for (PlanRutaNT planRutaNT : planRutas) {
+                PlanRutaNT clonedPlanRuta = new PlanRutaNT();
+                clonedPlanRuta.setVuelos(new ArrayList<>(planRutaNT.getVuelos()));
+                this.planRutasSimulacion.add(clonedPlanRuta);
+            }
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
@@ -734,12 +735,13 @@ public class Algoritmo {
     }
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
-            Date fechaLimiteCalculo) {
+            Date fechaLimiteCalculo, boolean replanificar) {
         Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
         final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
         List<Paquete> paquetesTemp = paquetes.stream()
-                .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
+                .filter(p -> p.getFechaDeEntrega() == null
+                        || (replanificar && finalTiempoEnSimulacion.before(p.getFechaDeEntrega())))
                 .filter(p -> p.obtenerFechaRecepcion().before(fechaLimiteCalculo))
                 .collect(Collectors.toList());
         ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
@@ -985,7 +987,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 2;
+        int windowSize = tamanhoPaquetes / 3;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
@@ -996,8 +998,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = 4;
+        double sumaVuelosWeight = 6;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
+        double mediaVuelosWight = 4;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
@@ -1019,7 +1022,8 @@ public class Algoritmo {
                 airportPenalization,
                 sumaPaquetesWeight,
                 sumaVuelosWeight,
-                promedioPonderadoTiempoAeropuertoWeight);
+                promedioPonderadoTiempoAeropuertoWeight,
+                mediaVuelosWight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
                 messagingTemplate, tipoOperacion, TA);
