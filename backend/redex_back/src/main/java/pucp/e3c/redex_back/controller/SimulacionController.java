@@ -38,12 +38,14 @@ import org.springframework.web.bind.annotation.RestController;
 import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
 import pucp.e3c.redex_back.model.Envio;
+import pucp.e3c.redex_back.model.Funciones;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanRutaNT;
 import pucp.e3c.redex_back.model.PlanVuelo;
 import pucp.e3c.redex_back.model.RegistrarEnvio;
 import pucp.e3c.redex_back.model.RespuestaAlgoritmo;
 import pucp.e3c.redex_back.model.Simulacion;
+import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
@@ -51,6 +53,7 @@ import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
+import pucp.e3c.redex_back.service.UbicacionService;
 import pucp.e3c.redex_back.service.VueloService;
 
 @RestController
@@ -89,6 +92,9 @@ public class SimulacionController {
     @Autowired
     ResourceLoader resourceLoader;
 
+    @Autowired
+    private UbicacionService ubicacionService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulacionController.class);
 
     public SimulacionController(SimpMessagingTemplate messagingTemplate) {
@@ -102,16 +108,41 @@ public class SimulacionController {
         return new ResponseEntity<>(registeredSimulacion, HttpStatus.CREATED);
     }
 
+    public boolean lineaDentroDeRangoDeFecha(String linea, Date fechaInicio, Date fechaFin,  HashMap<String, Ubicacion> ubicacionMap) throws ParseException {
+        SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
+        String fechaRecibo = linea.split("-")[2];
+        String horaRecibo = linea.split("-")[3] + ":00";
+        String fechaReciboReal = fechaRecibo.substring(0, 4) + "-" +
+                fechaRecibo.substring(4, 6) + "-" +
+                fechaRecibo.substring(6, 8);
+        String fechaStr = fechaReciboReal + " " + horaRecibo;
+        Date fecha_recepcion_GMTOrigin = Funciones.parseDateString(fechaStr);
+        String origenCode = linea.split("-")[0];
+        Ubicacion origen = ubicacionMap.get(origenCode);
+        Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
+            fecha_recepcion_GMTOrigin,
+                origen.getZonaHoraria(),
+                "UTC");
+        //Date fecha = formato.parse(fechaStr);
+        return fecha_recepcion_GMT0.after(fechaInicio) && fecha_recepcion_GMT0.before(fechaFin);
+    }
+
     @PostMapping("/inicializarSimulacion")
     public ResponseEntity<Simulacion> inicializarSimulacion(@RequestBody Simulacion simulacion)
             throws ParseException, IOException {
 
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
 
+        List<Ubicacion> ubicaciones = ubicacionService.getAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+
         simulacion.setMilisegundosPausados(0);
         simulacion = simulacionService.register(simulacion);
         LOGGER.info("inicializarSimulacionCargaVariable - Registrando simulacion - Simulacion ID" + simulacion.getId());
-
+        LOGGER.info("Fecha inicio simulacion" + simulacion.getFechaInicioSim());
         Resource resource1 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P1.txt");
         Resource resource2 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P2.txt");
         InputStream input1 = resource1.getInputStream();
@@ -134,12 +165,17 @@ public class SimulacionController {
             System.out.println(lines.size() + "\n\n");
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             for (String line : lines) {
-                String fechaStr = line.split("-")[2];
+                /*String fechaStr = line.split("-")[2];
                 Date fecha = formato.parse(fechaStr);
                 if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
                     continue;
+                }*/
+                if (!lineaDentroDeRangoDeFecha(line, fechaInicio, fechaFin, ubicacionMap)) {
+                    continue;
                 }
-
+                LOGGER.info("1. Linea a considerar " + line);
+                //LOGGER.info("2. FechaStr a considerar " + fechaStr);
+                //LOGGER.info("3. Fecha parseada de envio a considerar " + fecha);
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
