@@ -107,6 +107,15 @@ public class EnvioController {
         return envioService.registerByString(registrarEnvio);
     }
 
+    @PostMapping(value = "/actualizarEstadoEntregado")
+    public Envio actualizarEstadoEntregado(@RequestBody Envio envio) {
+        Envio envioBD = envioService.get(envio.getId());
+        envioBD.setEstado("Entregado");
+        envioBD = envioService.update(envioBD);
+        return envioBD;
+        //return envioService.registerByString(registrarEnvio);
+    }
+
     @PostMapping("/codigoAll")
     public ResponseEntity<ArrayList<Envio>> registrarEnvios(@RequestBody ArrayList<String> enviosString) {
         ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
