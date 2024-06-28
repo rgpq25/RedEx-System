@@ -44,9 +44,9 @@ public class PaqueteService {
         }
     }
 
-    private boolean isAfterByMoreThanThirtyMinutes(Date date1, Date date2) {
+    private boolean isAfterByMoreThanOneMinute(Date date1, Date date2) {
         long differenceInMillis = date1.getTime() - date2.getTime();
-        long thirtyMinutesInMillis = 30 * 60 * 1000; // 5 minutes in milliseconds
+        long thirtyMinutesInMillis =  60 * 1000; // 5 minutes in milliseconds
 
         return differenceInMillis > thirtyMinutesInMillis;
     }
@@ -72,7 +72,7 @@ public class PaqueteService {
                             }
                             break;
                         } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
-                            if (isAfterByMoreThanThirtyMinutes(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
+                            if (isAfterByMoreThanOneMinute(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
                             } else if(paquete.isEntregado() == false){

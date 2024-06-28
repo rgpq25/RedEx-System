@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 
 public class EstadoAlmacen {
 
@@ -158,6 +159,11 @@ public class EstadoAlmacen {
         Entry<Date, Integer> entry = capacidades.floorEntry(fecha);
         int capacidadActual = (entry != null) ? entry.getValue() : 0;
         capacidades.put(fecha, capacidadActual + cambio);
+
+        SortedMap<Date, Integer> fechasPosteriores = capacidades.tailMap(fecha, false);
+        for (Map.Entry<Date, Integer> e : fechasPosteriores.entrySet()) {
+            e.setValue(e.getValue() + cambio);
+        }
     }
 
     public void consulta_historica() {
