@@ -256,4 +256,14 @@ public class PaqueteService {
         }
     }
 
+    public List<Paquete> findPaqueteSimulacionFechaCorteNoEntregados(int idSimulacion, Date fechaCorte){
+        try{
+            return paqueteRepository.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
 }

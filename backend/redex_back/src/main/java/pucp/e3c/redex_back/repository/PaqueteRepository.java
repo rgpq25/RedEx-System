@@ -2,6 +2,7 @@ package pucp.e3c.redex_back.repository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,6 +40,10 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
     public ArrayList<Paquete> findPaquetesOperacionesDiaDia();
 
     // AND (p.fechaDeEntrega > :fechaCorte OR p.fechaDeEntrega IS NULL)
-    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte ")
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte ")
     public ArrayList<Paquete> findPaqueteSimulacionFechaCorte(int idSimulacion, Date fechaCorte);
+
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte AND (p.entregado IS FALSE OR p.fechaDeEntrega > :fechaCorte)")
+    public List<Paquete> findPaqueteSimulacionFechaCorteNoEntregados(int idSimulacion, Date fechaCorte);
+
 }
