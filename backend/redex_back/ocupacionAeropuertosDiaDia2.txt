@@ -1,60 +1,91 @@
 Aeropuerto: LOWW
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SKBO
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: EDDI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SEQM
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: LATI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OSDI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OAKB
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SCEL
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: VIDP
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SVMI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: UMMS
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OPKC
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OYSN
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SGAS
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: LKPR
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: EBCI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OOMS
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SUAA
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OJAI
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SPIM
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
+Fecha: 2024-06-28 03:23:00 | Uso: 341
 Aeropuerto: LBSF
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: UBBB
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: EKCH
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OERK
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: EHAM
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SABE
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: OMDB
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SBBR
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: SLLP
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336
 Aeropuerto: LDZA
 Fecha: 2024-06-28 03:21:00 | Uso: 168
+Fecha: 2024-06-28 03:22:00 | Uso: 336

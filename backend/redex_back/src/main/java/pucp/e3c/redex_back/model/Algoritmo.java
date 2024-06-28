@@ -1175,13 +1175,18 @@ public class Algoritmo {
         return paquetesEnAeropuerto;
     }
 
+    public void agregarPaquetesEstadoAlmacenDiaDia(String aeropuerto, Date fechaRecepcion, int cantidadPaquetes) {
+        this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(fechaRecepcion), cantidadPaquetes);
+    }
+
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
         this.paquetesOpDiaDia.add(paquete);
         this.planRutasOpDiaDia.add(new PlanRutaNT());
-        String aeropuerto = paquete.getEnvio().getUbicacionOrigen().getId();
+        //String aeropuerto = paquete.getEnvio().getUbicacionOrigen().getId();
         //EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
-        //CORREGIR ESTO
-        this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+  
+        //this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        
         //this.estadoAlmacenOpDiaDia.sumaCalculada();
         //this.estadoAlmacenOpDiaDia.registrarCapacidad(aeropuerto, paquete.getEnvio().getFechaRecepcion(), 1);
 

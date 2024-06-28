@@ -96,9 +96,12 @@ public class EnvioController {
 
             if(envio.getSimulacionActual() == null){
                 algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
+                
             }
         }
         if(envio.getSimulacionActual() == null){
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
             algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
         }
         return envio;
@@ -127,7 +130,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())

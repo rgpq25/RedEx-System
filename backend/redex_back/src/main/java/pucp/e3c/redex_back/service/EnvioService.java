@@ -367,6 +367,8 @@ public class EnvioService {
                 Paquete paqueteBD = paqueteService.get(paquete.getId());
                 algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
 
         }
         LOGGER.info("DIA DIA: Cantidad de paquetes a guardar: " + nPaquetesTotal);
@@ -379,7 +381,7 @@ public class EnvioService {
     }
 
     public ArrayList<Envio> registerAllEnviosByString(ArrayList<String> enviosString,
-            HashMap<String, Aeropuerto> hashAeropuertos) {
+            HashMap<String, Aeropuerto> hashAeropuertos, PaqueteService paqueteService) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
         for (Ubicacion u : ubicaciones) {
@@ -398,8 +400,9 @@ public class EnvioService {
         // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
         ArrayList<Paquete> paquetes = new ArrayList<>();
-
+        int nPaquetesTotal = 0;
         for (Envio envio : envios) {
+            nPaquetesTotal = nPaquetesTotal + envio.getCantidadPaquetes();
             for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
                 Paquete paquete = new Paquete();
                 paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
@@ -407,15 +410,18 @@ public class EnvioService {
                 paquete.setEntregado(false);
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
-                paquetes.add(paquete);
-
-                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+                paquete = paqueteRepository.save(paquete);
+                //paquetes.add(paqueteGuardado);   
+                Paquete paqueteBD = paqueteService.get(paquete.getId());
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
 
         }
-        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),paquetes.size());
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),nPaquetesTotal);
 
-        paqueteRepository.saveAll(paquetes);
+        //paqueteRepository.saveAll(paquetes);
 
         return envios;
     }
