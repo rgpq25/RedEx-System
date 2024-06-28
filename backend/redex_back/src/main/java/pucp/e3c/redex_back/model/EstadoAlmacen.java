@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 public class EstadoAlmacen {
 
@@ -86,6 +87,26 @@ public class EstadoAlmacen {
         }
     }
 
+    public void sumaCalculada(){
+        ArrayList<String> aeropuertos = this.aeropuertos.stream()
+                .map(aeropuerto -> aeropuerto.getUbicacion().getId())
+                .collect(Collectors.toCollection(ArrayList::new));
+        for (String aeropuerto : aeropuertos) {
+            TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
+            int sumaAcumulada = 0;
+            for (Map.Entry<Date, Integer> entrada : capacidad.entrySet()) {
+                sumaAcumulada += entrada.getValue();
+                // Actualizar el TreeMap con el valor acumulado
+                capacidad.put(entrada.getKey(), sumaAcumulada);
+                if (sumaAcumulada < 0) {
+                    // throw new IllegalArgumentException("sumaAcumulada cannot be negative");
+                    // System.out.println("Suma acumulada cannot be negative");
+                }
+            }
+
+        }
+    }
+
     private Date removeTime(Date date) {
         // Obtener una instancia de Calendar y establecer la fecha dada
         Calendar calendar = Calendar.getInstance();
@@ -122,6 +143,20 @@ public class EstadoAlmacen {
         // "Registrando capacidad: Aeropuerto=" + aeropuerto.getId() + ", Fecha=" +
         // fecha + ", Cambio=" + cambio);
         Integer capacidadActual = capacidades.getOrDefault(fecha, 0);
+        capacidades.put(fecha, capacidadActual + cambio);
+    }
+
+    public void registrarCapacidadOperacionesDiaDia(String aeropuerto, Date fecha, int cambio) {
+        if (aeropuerto == null) {
+            throw new IllegalArgumentException("Aeropuerto no puede ser null");
+        }
+        TreeMap<Date, Integer> capacidades = this.uso_historico.get(aeropuerto);
+        if (capacidades == null) {
+            capacidades = new TreeMap<>();
+            this.uso_historico.put(aeropuerto, capacidades);
+        }
+        Entry<Date, Integer> entry = capacidades.floorEntry(fecha);
+        int capacidadActual = (entry != null) ? entry.getValue() : 0;
         capacidades.put(fecha, capacidadActual + cambio);
     }
 

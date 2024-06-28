@@ -1,61 +1,61 @@
 Aeropuerto: LOWW
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SKBO
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: EDDI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SEQM
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: LATI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OSDI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OAKB
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SCEL
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: VIDP
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SVMI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: UMMS
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OPKC
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OYSN
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SGAS
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: LKPR
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: EBCI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OOMS
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SUAA
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OJAI
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SPIM
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
+Fecha: 2024-06-28 02:49:00 | Uso: 173
 Aeropuerto: LBSF
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: UBBB
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: EKCH
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OERK
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: EHAM
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SABE
-Fecha: 2024-06-28 00:01:00 | Uso: 5
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: OMDB
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SBBR
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: SLLP
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
 Aeropuerto: LDZA
-Fecha: 2024-06-28 00:02:00 | Uso: 168
+Fecha: 2024-06-28 02:48:00 | Uso: 168
