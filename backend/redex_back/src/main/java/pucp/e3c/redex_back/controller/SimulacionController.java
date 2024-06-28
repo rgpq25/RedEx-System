@@ -173,7 +173,7 @@ public class SimulacionController {
                 if (!lineaDentroDeRangoDeFecha(line, fechaInicio, fechaFin, ubicacionMap)) {
                     continue;
                 }
-                LOGGER.info("1. Linea a considerar " + line);
+                //LOGGER.info("1. Linea a considerar " + line);
                 //LOGGER.info("2. FechaStr a considerar " + fechaStr);
                 //LOGGER.info("3. Fecha parseada de envio a considerar " + fecha);
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();

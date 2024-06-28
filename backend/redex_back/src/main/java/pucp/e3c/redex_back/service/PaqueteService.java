@@ -53,6 +53,7 @@ public class PaqueteService {
 
     public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete, Date fechaActual) {
         try {
+            //LOGGER.info("Estoy actualizando el estado del paquete " + paquete.getId() + " con fecha " + fechaActual);
             if (paquete.getPlanRutaActual() == null) {
                 paquete.setEstado("En almacen origen");
             } else {
@@ -109,6 +110,7 @@ public class PaqueteService {
     }
 
     public Paquete getPaqueteNoSimulacion(Integer id, Date fechaCorte) {
+        //El paquete necesita estar en BD
         try {
             Paquete paquete = get(id);
             return actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);

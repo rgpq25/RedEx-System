@@ -54,6 +54,8 @@ public class Algoritmo {
 
     private ArrayList<PlanRutaNT> planRutasOpDiaDia = new ArrayList<>();
 
+    private int nConsultasDiaDia = 0;
+
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
@@ -248,6 +250,7 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
+            estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             this.paquetesOpDiaDia = currentPaquetes;
             this.planRutasOpDiaDia = currentPlanRutas;
@@ -1172,6 +1175,7 @@ public class Algoritmo {
         this.planRutasOpDiaDia.add(new PlanRutaNT());
         String aeropuertoSalida = paquete.getEnvio().getUbicacionOrigen().getId();
         EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+        //CORREGIR ESTO
         estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
         // messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta",
@@ -1185,12 +1189,16 @@ public class Algoritmo {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
+        this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen().consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
     }
 
     public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
+        this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen().consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
     }
 
     private Date removeTime(Date date) {
