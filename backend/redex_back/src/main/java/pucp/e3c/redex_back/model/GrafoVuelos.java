@@ -113,9 +113,9 @@ public class GrafoVuelos {
         fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
+            vuelo.setSimulacionActual(simulacion);
             vuelo = vueloService.register(vuelo);
             vuelo = vueloService.get(vuelo.getId());
-            vuelo.setSimulacionActual(simulacion);
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
