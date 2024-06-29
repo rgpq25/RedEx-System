@@ -24,6 +24,9 @@ public class Simulacion {
     // tiempoActual = fechaInicioSim + (time - fechaInicioSistema) * multiplicador
     // String resultado;
 
+    public Simulacion() {
+    }
+
     public void fillData() {
         fechaInicioSim = new Date();
         fechaFinSim = new Date();

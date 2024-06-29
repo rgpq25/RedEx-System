@@ -123,7 +123,7 @@ public class AeropuertoController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.EXPECTATION_FAILED);
         }
         return new ResponseEntity<>(
-                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId()),
+                (ArrayList<Paquete>) algoritmo.obtenerPaquetesEnAeropuertoDiaDia(aeropuerto.getUbicacion().getId(),paqueteService),
                 HttpStatus.ACCEPTED);
     }
 
@@ -325,8 +325,9 @@ public class AeropuertoController {
     }
 
     public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {
+        Date fechaCorte = new Date();
         for (Paquete paquete : paquetes) {
-            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete);
+            paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         }
     }
 

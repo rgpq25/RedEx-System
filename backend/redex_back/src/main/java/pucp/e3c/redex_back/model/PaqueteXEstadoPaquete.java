@@ -24,6 +24,9 @@ public class PaqueteXEstadoPaquete {
     @JoinColumn(name = "id_estadoPaquete", referencedColumnName = "id")
     private EstadoPaquete estadoPaquete;
 
+    public PaqueteXEstadoPaquete() {
+    }
+
     public Integer getId() {
         return id;
     }

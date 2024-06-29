@@ -6,7 +6,7 @@ import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Vuelo } 
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
@@ -44,13 +44,19 @@ function DailyOperationsPage() {
 
 	const [isLoadingFirstTime, setIsLoadingFirstTime] = useState(false);
 
+
+	const hasRun = useRef(false)
+
 	useEffect(() => {
+
+		if(hasRun.current) return
+		hasRun.current = true
+
 		async function getData() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 				(data: Aeropuerto[]) => {
-					console.log("Fetched airport data succesfully");
 					setAirports(data);
 				},
 				(error) => {
@@ -74,25 +80,26 @@ function DailyOperationsPage() {
 						setIsLoadingFirstTime(false);
 					}
 
-					let _paquetes: Paquete[] = [];
-					await api(
-						"GET",
-						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-						(data: Paquete[]) => {
-							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
-							_paquetes = [...data];
-						},
-						(error) => {
-							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-							_paquetes = [];
-						}
-					);
+					// let _paquetes: Paquete[] = [];
+					// await api(
+					// 	"GET",
+					// 	`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+					// 	(data: Paquete[]) => {
+					// 		console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
+					// 		_paquetes = [...data];
+					// 	},
+					// 	(error) => {
+					// 		console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+					// 		_paquetes = [];
+					// 	}
+					// );
+					console.log(" ===== Finished fetching paquetes");
 
-					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					// const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-
+					
 					setFlights(db_vuelos);
-					setEnvios(db_envios);
+					// setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
@@ -116,25 +123,26 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					let _paquetes: Paquete[] = [];
-					await api(
-						"GET",
-						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-						(data: Paquete[]) => {
-							console.log(`Data from /back/operacionesDiaDia/obtenerPaquetes: `, data);
-							_paquetes = [...data];
-						},
-						(error) => {
-							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-							_paquetes = [];
-						}
-					);
+					// let _paquetes: Paquete[] = [];
+					// await api(
+					// 	"GET",
+					// 	`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+					// 	(data: Paquete[]) => {
+					// 		console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
+					// 		_paquetes = [...data];
+					// 	},
+					// 	(error) => {
+					// 		console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+					// 		_paquetes = [];
+					// 	}
+					// );
+					console.log(" ===== Finished fetching paquetes");
 
-					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					// const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
-					setEnvios(db_envios);
+					// setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
 				},
 				(error) => {
@@ -181,6 +189,7 @@ function DailyOperationsPage() {
 				aeropuertos={airports}
 				envios={envios}
 				vuelos={flights}
+				estadoAlmacen={estadoAlmacen}
 				onClicksEnvio={{
 					onClickLocation: (envio: Envio) => {},
 					onClickInfo: (envio: Envio) => {

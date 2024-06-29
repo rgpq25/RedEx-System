@@ -32,28 +32,6 @@ public class PSO {
     public PSO() {
     }
 
-    /*
-     * public void checkFirstFlightTime(position, packages, rutas) {
-     * for (int i = 0; i < position.size(); i++) {
-     * String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
-     * String ciudadDestino = packages.get(i).getCiudadDestino().getId();
-     * String cadena = ciudadOrigen + "-" + ciudadDestino;
-     * ArrayList<PlanRuta> planRutas = rutas.get(cadena);
-     * if (planRutas == null) {
-     * //print error message
-     * System.out.println("No hay rutas para el paquete"+ packages.get(i).getId());
-     * return Double.MAX_VALUE;
-     * }
-     * 
-     * double costo = calcularCosto(packages.get(i),
-     * planRutas.get(position.get(i)));
-     * costoPaquetes += costo;
-     * planRutasEscogidas.add(planRutas.get(position.get(i)));
-     * }
-     * 
-     * }
-     */
-
     static class Particle {
         List<Integer> position;
         List<Double> velocity;
@@ -77,12 +55,6 @@ public class PSO {
 
             }
 
-            /*
-             * for (int i = 0; i < packages.size(); i++) {
-             * position.add(new Random().nextInt(numRoutes));
-             * velocity.add(Math.random());
-             * }
-             */
             bestPosition.addAll(position);
             bestFitness = Double.POSITIVE_INFINITY;
         }
@@ -92,46 +64,17 @@ public class PSO {
         final double COSTO_MAXIMO = Double.POSITIVE_INFINITY;
         String formato = "yyyy-MM-dd HH:mm";
 
-        // Pattern pattern = Pattern.compile("\\d+");
-        // Matcher matcher = pattern.matcher(ruta.identificador);
-        // int numeroRuta = matcher.find() ? Integer.parseInt(matcher.group()) : -1;
-
-        /*
-         * if (numeroRuta >= rutas.size())
-         * return COSTO_MAXIMO;
-         */
-
-        // NOTA: Se supone que cumple esta condicion, para eso se usa el GRAFO
-        /*
-         * if (!planRuta.getVuelos().get(0).getPlan_vuelo().getCiudadOrigen().getId().
-         * equals(paquete.getCiudadOrigen().getId()) ||
-         * !planRuta.getVuelos().get(planRuta.getVuelos().size() -
-         * 1).getPlan_vuelo().getCiudadDestino().getId().equals(paquete.getCiudadDestino
-         * ().getId()))
-         * return 1000;
-         */
-
-        // long tiempoRecepcion =
-        // Paquete.FORMATO_FECHA.parse(paquete.fechaRecepcion).getTime();
-        // long tiempoRecepcion = new
-        // SimpleDateFormat(formato).parse(paquete.getFecha_recepcion()).getTime();
         long tiempoRecepcion = paquete.getFecha_recepcion().getTime();
-        // long tiempoPartidaRuta = new
-        // SimpleDateFormat(formato).parse(ruta.vuelos.get(0).fechaPartida).getTime();
         long tiempoPartidaRuta = planRuta.getVuelos().get(0).getFecha_salida().getTime();
-        // long tiempoLlegadaRuta = new
-        // SimpleDateFormat(formato).parse(ruta.vuelos.get(ruta.vuelos.size() -
-        // 1).fechaLlegada).getTime();
         long tiempoLlegadaRuta = planRuta.getVuelos().get(planRuta.getVuelos().size() - 1).getFecha_llegada().getTime();
 
         long diferencia_fecha_maxima = paquete.getFecha_maxima_entrega().getTime()
                 - paquete.getFecha_recepcion().getTime();
         long diferencia_fecha_entrega = tiempoLlegadaRuta - tiempoRecepcion;
         double porcentaje_tiempo = (diferencia_fecha_entrega * 1.0) / diferencia_fecha_maxima;
-        // Verifica que el primer vuelo no salga antes de recibir el paquete
+
         if (tiempoPartidaRuta < tiempoRecepcion)
             return 100000;
-        // return Double.MAX_VALUE;
         if (porcentaje_tiempo > 1)
             return 100;
         return Math.max(0, porcentaje_tiempo);
@@ -238,19 +181,16 @@ public class PSO {
                     globalBestFitness = fitnessVal;
                     globalBestPosition = new ArrayList<>(particle.position);
                 }
-
+                //Recorre cada una de las posiciones de la particula
                 for (int i = 0; i < particle.position.size(); i++) {
+                    //c1: coeficiente cognitivo
+                    //c2: coeficiente social
                     particle.velocity.set(i, w * particle.velocity.get(i) +
                             c1 * Math.random() * (particle.bestPosition.get(i) - particle.position.get(i)) +
                             c2 * Math.random() * (globalBestPosition.get(i) - particle.position.get(i)));
 
                     particle.position.set(i, particle.position.get(i) + particle.velocity.get(i).intValue());
 
-                    /*
-                     * String ciudadOrigen = packages.get(i).getCiudadOrigen().getId();
-                     * String ciudadDestino = packages.get(i).getCiudadDestino().getId();
-                     * String cadena = ciudadOrigen + "-" + ciudadDestino;
-                     */
                     ArrayList<PlanRuta> planRutas = rutas.get(packages.get(i).getId());
 
                     if (planRutas != null) {
@@ -260,8 +200,7 @@ public class PSO {
                     }
                 }
             }
-            // System.out.println("Mejor posición: " + globalBestPosition + " con fitness "
-            // + globalBestFitness);
+
         }
 
         int[] result = new int[globalBestPosition.size()];

@@ -58,6 +58,9 @@ public class Paquete {
         this.planRutaActual = null;
     }
 
+    public Paquete() {
+    }
+
     public Integer getId() {
         return id;
     }

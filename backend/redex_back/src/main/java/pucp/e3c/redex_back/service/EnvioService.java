@@ -333,7 +333,7 @@ public class EnvioService {
     }
 
     public ArrayList<Envio> registerAllEnviosByStringHoraSistema(ArrayList<String> enviosString,
-            HashMap<String, Aeropuerto> hashAeropuertos) {
+            HashMap<String, Aeropuerto> hashAeropuertos,PaqueteService paqueteService) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
         for (Ubicacion u : ubicaciones) {
@@ -348,13 +348,28 @@ public class EnvioService {
                     aeropuertoRepository, now);
             Envio envioGuardado = envioRepository.save(envio);
             envios.add(envioGuardado);
-            LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
         }
-        // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
-        ArrayList<Paquete> paquetes = new ArrayList<>();
+        //ArrayList<Paquete> paquetes = new ArrayList<>();
+        int nPaquetesTotal = 0;
 
         for (Envio envio : envios) {
+            nPaquetesTotal = nPaquetesTotal + envio.getCantidadPaquetes();
+            while(true){
+                if(algoritmo.isPuedeRecibirPaquetesDiaDia()){
+                    //LOGGER.info("Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " Va a guardar paquetes");
+                    break;
+                }
+                else{
+                    LOGGER.info("DIA DIA Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " NO PUEDE guardar paquetes AHORA");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.out.println("Error en sleep");
+                    }
+                    continue;
+                }
+            }
             for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
                 Paquete paquete = new Paquete();
                 paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
@@ -362,20 +377,27 @@ public class EnvioService {
                 paquete.setEntregado(false);
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
-                paquetes.add(paquete);
-
-                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+                paquete = paqueteRepository.save(paquete);
+                //paquetes.add(paqueteGuardado);   
+                Paquete paqueteBD = paqueteService.get(paquete.getId());
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
+            //LOGGER.info("DIA DIA Envio: " + envio.getId() + " Paquetes guardados: " + envio.getCantidadPaquetes());
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
 
         }
+        LOGGER.info("DIA DIA: Cantidad de paquetes a guardar: " + nPaquetesTotal);
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),nPaquetesTotal);
+        LOGGER.info("DIA DIA: Mensaje enviado a socket");
 
-        paqueteRepository.saveAll(paquetes);
+        //paqueteRepository.saveAll(paquetes);
 
         return envios;
     }
 
     public ArrayList<Envio> registerAllEnviosByString(ArrayList<String> enviosString,
-            HashMap<String, Aeropuerto> hashAeropuertos) {
+            HashMap<String, Aeropuerto> hashAeropuertos, PaqueteService paqueteService) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
         for (Ubicacion u : ubicaciones) {
@@ -394,8 +416,24 @@ public class EnvioService {
         // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
         ArrayList<Paquete> paquetes = new ArrayList<>();
-
+        int nPaquetesTotal = 0;
         for (Envio envio : envios) {
+            nPaquetesTotal = nPaquetesTotal + envio.getCantidadPaquetes();
+            while(true){
+                if(algoritmo.isPuedeRecibirPaquetesDiaDia()){
+                    //LOGGER.info("Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " Va a guardar paquetes");
+                    break;
+                }
+                else{
+                    LOGGER.info("DIA DIA Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " NO PUEDE guardar paquetes AHORA");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.out.println("Error en sleep");
+                    }
+                    continue;
+                }
+            }
             for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
                 Paquete paquete = new Paquete();
                 paquete.setAeropuertoActual(hashAeropuertos.get(envio.getUbicacionOrigen().getId()));
@@ -403,14 +441,18 @@ public class EnvioService {
                 paquete.setEntregado(false);
                 paquete.setEnvio(envio);
                 paquete.setSimulacionActual(envio.getSimulacionActual());
-                paquetes.add(paquete);
-
-                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paquete);
+                paquete = paqueteRepository.save(paquete);
+                //paquetes.add(paqueteGuardado);   
+                Paquete paqueteBD = paqueteService.get(paquete.getId());
+                algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
             }
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
 
         }
+        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorCarga(envios.size(),nPaquetesTotal);
 
-        paqueteRepository.saveAll(paquetes);
+        //paqueteRepository.saveAll(paquetes);
 
         return envios;
     }

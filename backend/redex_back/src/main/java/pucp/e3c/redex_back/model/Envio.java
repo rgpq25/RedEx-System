@@ -57,18 +57,8 @@ public class Envio {
     @JoinColumn(name = "id_simulacion", referencedColumnName = "id")
     private Simulacion simulacionActual;
 
-    /*
-     * public Envio(Ubicacion origen, Ubicacion destino, Date fechaRecepcion, Date
-     * fecha_maxima_entrega) {
-     * this.ubicacionOrigen = origen;
-     * this.ubicacionDestino = destino;
-     * this.fechaRecepcion = fechaRecepcion;
-     * this.fechaLimiteEntrega = fecha_maxima_entrega;
-     * this.estado = "En proceso";
-     * this.cantidadPaquetes = 1;
-     * this.codigoSeguridad = "123456";
-     * }
-     */
+    public Envio() {
+    }
 
     public void fillData(Ubicacion origen, Ubicacion destino, Date fecha_recepcion) {
         this.setUbicacionOrigen(origen);
@@ -82,7 +72,6 @@ public class Envio {
         } else {
             agregar = 2;
         }
-        System.out.println("\nFecha\n" + fecha_recepcion);
         Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
                 fecha_recepcion,
                 origen.getZonaHoraria(),
@@ -118,8 +107,6 @@ public class Envio {
         this.receptor = receptor;
     }
 
-    // TO DO id emisor
-    // TO DO id receptor
     public Integer getId() {
         return id;
     }

@@ -68,8 +68,9 @@ public class PaqueteController {
     @GetMapping(value = "/envio_sin_simulacion/{id}")
     public ArrayList<Paquete> getPaquetesDelEvioNoSimulacion(@PathVariable("id") Integer id) {
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findByEnvioId(id);
+        Date fechaCorte = new Date();
         for (Paquete paquete : paquetes) {
-            paquete = paqueteService.getPaqueteNoSimulacion(paquete.getId());
+            paquete = paqueteService.getPaqueteNoSimulacion(paquete.getId(),fechaCorte);
         }
         return paquetes;
     }
@@ -87,6 +88,7 @@ public class PaqueteController {
 
     @GetMapping(value = "/sin_simulacion/{id}")
     public Paquete getPaqueteNoSimulacion(@PathVariable("id") Integer id) {
-        return paqueteService.getPaqueteNoSimulacion(id);
+        Date fechaCorte = new Date();
+        return paqueteService.getPaqueteNoSimulacion(id,fechaCorte);
     }
 }

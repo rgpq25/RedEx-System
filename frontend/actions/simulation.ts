@@ -17,7 +17,8 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 
 	await api(
 		"POST",
-		`${process.env.NEXT_PUBLIC_API}/back/simulacion/inicializarSimulacionCargaVariable/media`,
+		//`${process.env.NEXT_PUBLIC_API}/back/simulacion/inicializarSimulacionCargaVariable/media`,
+		`${process.env.NEXT_PUBLIC_API}/back/simulacion/inicializarSimulacion`,
 		(data: Simulacion) => {
 			idSimulacion = data.id;
 			simulacion = data;

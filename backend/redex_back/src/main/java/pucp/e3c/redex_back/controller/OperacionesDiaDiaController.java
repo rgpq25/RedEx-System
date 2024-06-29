@@ -56,6 +56,9 @@ public class OperacionesDiaDiaController {
     private PlanRutaXVueloService planRutaXVueloService;
 
     @Autowired
+    private PaqueteController paqueteController;
+
+    @Autowired
     private Algoritmo algoritmo;
 
     @GetMapping(value = "/diaDiaRespuesta")
@@ -74,36 +77,9 @@ public class OperacionesDiaDiaController {
         return new Date();
     }
 
-    /*public RespuestaAlgoritmo obtenerUltimaRespuesta(){
-
-    }*/
-
-    /*@GetMapping("/runAlgorithm")
-    public String correrSimulacion() {
-        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
-        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
-        CompletableFuture.runAsync(() -> {
-            algoritmo.loopPrincipalDiaADia(aeropuertos, planVuelos,
-                    vueloService, planRutaService, paqueteService, planRutaXVueloService, simulacionService,
-                    300, 240);
-        });
-
-        return "Simulacion iniciada";
-
-    }*/
-    
-    /*@GetMapping("/ejecutarUnaPlanificacion")
-    public RespuestaAlgoritmo ejecutarUnaPlanificacion(){
-        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
-        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
-        Algoritmo algoritmo = new Algoritmo(messagingTemplate);
-        return algoritmo.unaPlanificacionDiaDia(aeropuertos, planVuelos, vueloService, planRutaService, paqueteService, planRutaXVueloService);        
-    }*/
-
     @GetMapping("/obtenerPaquetes")
-    public List<Paquete> obtenerPaquetes(){
-        return algoritmo.obtenerPaquetesActualesDiaDia();
+    public List<Paquete> obtenerPaquetes(){        
+        return algoritmo.obtenerPaquetesActualesDiaDia(paqueteService);
     }
 
     @GetMapping("/obtenerEstadoAlmacen")

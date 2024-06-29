@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
 import { currentTimeString } from "@/lib/date";
+import { DatePicker } from "@/components/ui/date-picker";
+
 
 import {
   AlertDialog,
@@ -116,6 +118,7 @@ function RegisterShipmentPage() {
 
   const [originLocationId, setOriginLocationId] = useState('');
   const [destinationLocationId, setDestinationLocationId] = useState('');
+  const [destinationLocationName, setDestinationLocationName] = useState('');
   const [packagesCount, setPackagesCount] = useState(1);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
@@ -130,7 +133,19 @@ function RegisterShipmentPage() {
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
 
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+
+
+  useEffect(() => {
+      const intervalId = setInterval(() => {
+          const now = new Date();
+          setSelectedDate(now);
+          setSelectedTime(now.toTimeString().split(" ")[0].substring(0, 5));
+      }, 1000);
+
+      return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, []);
 
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -145,15 +160,12 @@ function RegisterShipmentPage() {
   };
 
   const validatePackageCard = () => {
-    const validDate = date instanceof Date && !isNaN(date.getTime()); // Correctly check if the date object is valid
 
-    const timeElement = document.getElementById('register-time') as HTMLInputElement;
-    const validTime = timeElement ? timeElement.value.trim() !== '' : false; // Check if the time input is not empty
-    return originLocationId && destinationLocationId && packagesCount > 0 && validDate && validTime;
+    return originLocationId && destinationLocationId && packagesCount > 0 ;
   };
 
   useEffect(() => {
-    fetch('http://localhost:8080/back/ubicacion/')
+    fetch(`${process.env.NEXT_PUBLIC_API}/back/ubicacion/`)
       .then(response => response.json())
       .then(data => setLocations(data))
       .catch(error => console.error('Error fetching locations:', error));
@@ -195,23 +207,33 @@ function RegisterShipmentPage() {
     usuario: Usuario;
     // Otros campos si son necesarios
   }
+  interface RegisterResponse{
+    id: number;
+  }
 
   const handleConfirm = async () => {
     // Obtén la fecha actual
     const now = new Date();
 
-    // Convertir la fecha actual a UTC
-    const offset = now.getTimezoneOffset();
-    const utcDate = new Date(now.getTime() + offset * 60 * 1000);
+    // Obtener la fecha y hora en UTC en formato ISO
+    const formattedDate = now.toISOString();  // Ejemplo: '2021-07-19T12:34:56.789Z'
     
-    // Formatear la fecha en UTC en formato de 24 horas
-    const year = utcDate.getUTCFullYear();
-    const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(utcDate.getUTCDate()).padStart(2, '0');
-    const hours = String(utcDate.getUTCHours()).padStart(2, '0');
-    const minutes = String(utcDate.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(utcDate.getUTCSeconds()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+    // Si solo necesitas la fecha y hora hasta los minutos en UTC
+    const formattedDateToMinutes = formattedDate.substring(0, 16) + 'Z';  // '2021-07-19T12:34Z'
+    
+    
+    const origin_location = locations.find(origin_location => origin_location.id === originLocationId);
+    if (origin_location) {
+      origin_location.ciudad = origin_location.ciudad;
+      origin_location.pais=origin_location.pais;
+    }
+
+    const destination_location = locations.find(destination_location => destination_location.id === destinationLocationId);
+    if (destination_location) {
+      destination_location.ciudad = destination_location.ciudad;
+      destination_location.pais=destination_location.pais;
+    }
+
 
     try {
       // Crear usuario
@@ -222,7 +244,7 @@ function RegisterShipmentPage() {
       };
       
 
-      const senderUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", senderUserData);
+      const senderUserResponse = await apiT<UserResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/usuario/validarRegistrar/`, senderUserData);
       /*if (!senderUserResponse || !senderUserResponse.id) {
         throw new Error("Error al crear el usuario emisor");
       }*/
@@ -238,7 +260,7 @@ function RegisterShipmentPage() {
         tipo: "a"
       };
 
-      const receiverUserResponse = await apiT<UserResponse>("POST", "http://localhost:8080/back/usuario/validarRegistrar/", receiverUserData);
+      const receiverUserResponse = await apiT<UserResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/usuario/validarRegistrar/`, receiverUserData);
       /*
       if (!receiverUserResponse || !receiverUserResponse.id) {
         throw new Error("Error al crear el usuario receptor");
@@ -275,13 +297,47 @@ function RegisterShipmentPage() {
         receptor: { id: receiverUserResponse.cliente.id }, // Suponemos que tienes el ID del receptor de alguna manera
       };
       
-
+      console.log("fecha registro", formattedDate);
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
-      const registerResponse = await api("POST", "http://localhost:8080/back/envio/", handleSuccess, handleError, dataToSend);
+      const registerResponse = await apiT<RegisterResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`,   dataToSend);
+      console.log(registerResponse);
 
-      
+
+      const dataToEmailSender = {
+          toEmail: senderEmail,
+          subject: "Solicitud REDEX: Confirmación de Envío de Paquete",
+          body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
+          " del envío de sus paquetes.\n A continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+          "Su codigo de envío es: " + registerResponse.id + "\n"+
+          "Nombres completos: " + senderNames + " " +senderSurnames+ "\n"+ 
+          "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
+          "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
+          "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
+          "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
+          "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+      };
+
+      const dataToEmailReceiver = {
+        toEmail: receiverEmail,
+        subject: "Solicitud REDEX: Confirmación de Recepción de Paquete",
+        body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
+        " del envío de sus paquetes. \nA continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+        "Su codigo de envío es: " + registerResponse.id + "\n"+
+        "Nombres completos: " + receiverNames + " " +receiverSurnames+ "\n"+ 
+        "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
+        "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
+        "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
+        "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
+        "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+    };
+
+      const emailsender = await api("POST", `http://localhost:8080/back/email/send`, handleSuccess, handleError, dataToEmailSender);
+      const emailreceiver = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/email/send`, handleSuccess, handleError, dataToEmailReceiver);
+      console.log(emailsender);
+      console.log(emailreceiver);
+
     } catch (error) {
       console.error("Error en el proceso de registro:", error);
       toast.error("Error en el registro: " + error);
@@ -289,28 +345,6 @@ function RegisterShipmentPage() {
 
   };
 
-  const sendEmail = async () => {
-    const emailData = {
-      senderEmail: senderEmail,
-      receiverEmail: receiverEmail,
-    };
-  
-    const response = await fetch('api/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(emailData)
-    });
-  
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Failed to send email:', errorData.error);
-      throw new Error('Failed to send email');
-    }
-  
-    console.log('Emails sent successfully');
-  };
 
   interface ApiResponse {
     message: string;
@@ -401,22 +435,26 @@ function RegisterShipmentPage() {
       <h2 className="text-2xl font-bold mb-4">Detalles del Paquete</h2>
       <form>
         <Label htmlFor="amount-package" className="font-semibold text-base">Cantidad de paquetes *</Label>
-        <Select
-          onValueChange={value => setPackagesCount(Number(value))}
-          value={packagesCount.toString()}
-        >
-          <SelectTrigger className="w-[885px]">
-            <SelectValue placeholder="Seleccione la cantidad de paquetes" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Seleccione la cantidad de paquetes</SelectLabel>
-              {Array.from({ length: 8 }, (_, i) => (
-                <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <input
+          type="number"
+          id="amount-package"
+          className="w-full px-4 py-2 border rounded-md"
+          min="1"  // Establece un mínimo de 1 paquete
+          max="50" // Establece un máximo de 50 paquetes
+          value={packagesCount}
+          onChange={e => {
+            const newCount = Number(e.target.value);
+            // Solo actualiza el estado si el valor está dentro del rango 1-50
+            if (newCount >= 1 && newCount <= 50) {
+              setPackagesCount(newCount);
+            } else if (newCount > 50) {
+              // Si el valor excede 50, se establece a 50
+              setPackagesCount(50);
+            }
+          }}
+          placeholder="Introduce la cantidad de paquetes"
+        />
+        <br></br>
         <br></br>
         <Label htmlFor="city-origin" className="font-semibold text-base">Ciudad origen *</Label>
         <Select onValueChange={setOriginLocationId} value={originLocationId}>
@@ -427,7 +465,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
@@ -443,7 +481,7 @@ function RegisterShipmentPage() {
                     <SelectGroup>
                         {locations.map((location) => (
                             <SelectItem key={location.id} value={location.id}>
-                                {location.ciudad}
+                                {location.ciudad} - {location.pais}
                             </SelectItem>
                         ))}
                     </SelectGroup>
@@ -454,39 +492,24 @@ function RegisterShipmentPage() {
         <div className="flex-1">
           <Label htmlFor="register-date" className="font-semibold text-base">Fecha de registro *</Label>
           <br></br>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[430px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate: Date | undefined) => {
-                    if (newDate) setDate(newDate); // Asegurarse de que sólo se llama a setDate si newDate no es undefined
-                  }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <DatePicker
+            className='w-full px-4 py-2 border rounded-md'
+            date={selectedDate}
+            setDate={setSelectedDate}
+            placeholder='Selecciona una fecha'
+            disabled={true}
+          />
         </div>
         <div className="flex-1">
           <Label htmlFor="register-time" className="font-semibold text-base">Hora de registro *</Label>
-          <input type="time"
-           id="register-time"
-           className="w-full px-4 py-2 border rounded-md" 
-           value={selectedTime}
-           onChange={(e) => setSelectedTime(e.target.value)}
-           />
+          <Input
+                        type='time'
+                        className='w-full px-4 py-2 border rounded-md'
+                        
+                        value={selectedTime}
+                        onChange={(e) => setSelectedTime(e.target.value)}
+                        disabled={true}
+                    />
         </div>
         </div>
 

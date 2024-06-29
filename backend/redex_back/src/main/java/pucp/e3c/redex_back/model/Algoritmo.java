@@ -50,15 +50,22 @@ public class Algoritmo {
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
 
-    private ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
+    private ArrayList<Paquete> paquetesOpDiaDia = new ArrayList<>();
 
-    private ArrayList<PlanRutaNT> planRutasDiaDia = new ArrayList<>();
+    private ArrayList<PlanRutaNT> planRutasOpDiaDia = new ArrayList<>();
+
+    private EstadoAlmacen estadoAlmacenOpDiaDia = new EstadoAlmacen();
+
+    private int nConsultasDiaDia = 0;
+
+    private boolean puedeRecibirPaquetesDiaDia = true;
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.terminarPlanificacionDiaDia = false;
         this.paquetes_por_simulacion = new HashMap<>();
+        this.puedeRecibirPaquetesDiaDia = true;
     }
 
     public boolean isTerminarPlanificacionDiaDia() {
@@ -95,121 +102,147 @@ public class Algoritmo {
         return fechaActualizada;
     }
 
-    public void loopPrincipalDiaADia(ArrayList<Aeropuerto> aeropuertos,
+    public void loopPrincipalDiaADia(
+            ArrayList<Aeropuerto> aeropuertos,
             ArrayList<PlanVuelo> planVuelos,
-            VueloService vueloService, PlanRutaService planRutaService,
-            PaqueteService paqueteService, PlanRutaXVueloService planRutaXVueloService,
-            AeropuertoService aeropuertoService, int SA) {
+            VueloService vueloService,
+            PlanRutaService planRutaService,
+            PaqueteService paqueteService,
+            PlanRutaXVueloService planRutaXVueloService,
+            AeropuertoService aeropuertoService,
+            int SA) {
+
+        // Inicia la operación dia a dia
         String tipoOperacion = "DIA A DIA";
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
 
+        // Enviar mensaje de inicio de loop principal
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
         LOGGER.info(tipoOperacion + " Iniciando loop principal");
 
-        if (planVuelos.size() == 0) {
+        // Verificar si hay planes de vuelo para procesar
+        if (planVuelos.isEmpty()) {
             LOGGER.error(tipoOperacion + " ERROR: No hay planes de vuelo para procesar.");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, sin planes vuelo");
             return;
         }
+
         int i = 0;
-        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
-        boolean primera_iteracion_con_paquetes = true;
+        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<>();
+        boolean primeraIteracionConPaquetes = true;
         ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
         GrafoVuelos grafoVuelos = null;
-
         HashMap<Integer, Paquete> hashTodosPaquetes = new HashMap<>();
         HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
 
+        // Loop principal del día a día
         while (true) {
             if (this.terminarPlanificacionDiaDia)
                 break;
+
             long start = System.currentTimeMillis();
             Date now = new Date();
-            paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
 
+            // Obtener paquetes para operaciones del día a día
+            paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
             if (paquetesDiaDia != null) {
                 paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService,
                         paqueteService);
             }
 
+            // Agregar paquetes al hash map
             for (Paquete paquete : paquetesDiaDia) {
                 hashTodosPaquetes.put(paquete.getId(), paquete);
             }
 
+            // Filtrar paquetes por entrega y fecha de recepción
             List<Paquete> paquetesPrimerFiltro = paquetesDiaDia.stream()
-                    .filter(p -> p.isEntregado() == false)
+                    .filter(p -> !p.isEntregado())
                     .filter(p -> p.obtenerFechaRecepcion().before(now))
                     .collect(Collectors.toList());
 
-            /*
-             * this.respuesta_paquetes_dia_dia = paquetesDiaDia.stream()
-             * .filter(p -> p.obtenerFechaRecepcion().before(now)
-             * && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-             * .collect(Collectors.toList());
-             */
-
             ArrayList<Paquete> paquetes = new ArrayList<>(paquetesPrimerFiltro);
-            if (paquetes.size() == 0) {
-                // System.out.println("No hay paquetes para procesar.");
+            if (paquetes.isEmpty()) {
                 LOGGER.info(tipoOperacion + " No hay paquetes para procesar.");
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes para procesar.");
                 this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
+
                 long end = System.currentTimeMillis();
-                long sa_millis = SA * 1000 - (end - start);
-                if (sa_millis < 0)
+                long saMillis = SA * 1000 - (end - start);
+                if (saMillis < 0)
                     continue;
+
                 try {
-                    Thread.sleep(sa_millis);
+                    Thread.sleep(saMillis);
                 } catch (Exception e) {
                     System.out.println("Error en sleep");
                 }
                 continue;
             }
 
-            if (primera_iteracion_con_paquetes) {
+            // Crear o actualizar el grafo de vuelos
+            if (primeraIteracionConPaquetes) {
                 grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
-                if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().size() <= 0) {
+                if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().isEmpty()) {
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
                     return;
                 }
-                primera_iteracion_con_paquetes = false;
+                primeraIteracionConPaquetes = false;
             } else {
                 grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
             }
 
-            // Agrega planRutasNT para los paquetes que no tienen
+            // Agregar PlanRutaNT para los paquetes que no tienen
             for (Paquete paquete : paquetes) {
-                if (hashPlanRutasNT.get(paquete.getId()) == null) {
-                    PlanRutaNT planRutaNT = new PlanRutaNT();
-                    hashPlanRutasNT.put(paquete.getId(), planRutaNT);
-                }
+                hashPlanRutasNT.computeIfAbsent(paquete.getId(), k -> new PlanRutaNT());
             }
 
-            // System.out.println("Planificacion iniciada");
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion iniciada");
 
-            // Ordeno por fecha de recepcion
-            Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
+            // Ordenar paquetes por fecha de recepción
+            //CAMBIO AQUI .filter(p -> !p.isEntregado())
+            paquetes.sort(Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
-            // Filtrar paquetes que estan volando
+            /*List<Paquete> filteredPaquetes = paquetes.stream()
+                    .filter(p -> p.obtenerFechaRecepcion().before(now)
+                            && (p.getFechaDeEntrega() == null
+                                    || !p.getFechaDeEntrega().before(now)))
+                    .collect(Collectors.toList());*/
+            
+
+            
+            //ArrayList<Paquete> paquetesAL = new ArrayList<>(paquetes);
+            LOGGER.info(tipoOperacion + " Filtro entrega");
+            List<Paquete> paquetesProcesarFiltrados = paquetes.stream()
+                    .filter(p -> (p.getFechaDeEntrega() == null))
+                    .collect(Collectors.toList());
+            // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
-            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now, 0, 1);
-
+            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados), vueloService, now, 0, 1);
+            //paquetesProcesar = new ArrayList<>(paquetesProcesarFiltrados);
             LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
-            int tamanhoPaquetes = paquetesProcesar.size();
 
-            if (tamanhoPaquetes == 0) {
+            if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
                 LOGGER.info(tipoOperacion + " No hay paquetes que planificar");
-                // System.out.println("No hay paquetes que planificar");
+                long end = System.currentTimeMillis();
+                long saMillis = SA * 1000 - (end - start);
+                if (saMillis < 0)
+                    continue;
+
+                try {
+                    Thread.sleep(saMillis);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
                 continue;
             }
 
-            LOGGER.info(tipoOperacion + " Se van a procesar " + tamanhoPaquetes + " paquetes, hasta " + now);
+            LOGGER.info(tipoOperacion + " Se van a procesar " + paquetesProcesar.size() + " paquetes, hasta " + now);
 
-            // Crea el array rutas para los paquetes a procesar
+            // Crear listas de rutas y IDs para los paquetes a procesar
             ArrayList<PlanRutaNT> planRutasPaquetesProcesar = new ArrayList<>();
             ArrayList<Integer> idsPaquetesProcesar = new ArrayList<>();
             for (Paquete paquete : paquetesProcesar) {
@@ -218,25 +251,18 @@ public class Algoritmo {
                 idsPaquetesProcesar.add(paquete.getId());
             }
 
-            // Realizar planificacion
+            // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    planRutasPaquetesProcesar,
-                    aeropuertos, planVuelos,
-                    tamanhoPaquetes, i, vueloService, planRutaService, null, null, messagingTemplate,
-                    tipoOperacion, null, 0);
+                    planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, null, 0);
             i++;
 
-            // respuestaAlgoritmo.filtrarVuelosSinPaquetes();
             ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
-            respuestaAlgoritmo.setPaquetes(paquetesDiaDia);
 
-            // Actualiza el hasmap rutas
+            // Actualizar el hash map de rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
-
-            int contador_index_respuesta = 0;
-            for (Integer idPaquete : idsPaquetesProcesar) {
-                hashPlanRutasNT.put(idPaquete, planRutasRespuestaAlgoritmo.get(contador_index_respuesta));
-                contador_index_respuesta++;
+            for (int j = 0; j < idsPaquetesProcesar.size(); j++) {
+                hashPlanRutasNT.put(idsPaquetesProcesar.get(j), planRutasRespuestaAlgoritmo.get(j));
             }
 
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
@@ -250,37 +276,59 @@ public class Algoritmo {
                 currentPaquetes.add(entry.getValue());
                 currentPlanRutas.add(hashPlanRutasNT.get(entry.getKey()));
             }
+            LOGGER.info(tipoOperacion + " Inicio Calculo Estado Almacen, NO PUEDE recibir paquetes");
+            this.puedeRecibirPaquetesDiaDia = false;
+
+            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, new Date());
+            
+            if(nuevosPaquetes!=null){
+                LOGGER.info(tipoOperacion + " Se encontraron " + nuevosPaquetes.size() + " nuevos paquetes");
+                currentPaquetes.addAll(nuevosPaquetes);
+                currentPlanRutas.addAll(Collections.nCopies(nuevosPaquetes.size(), new PlanRutaNT()));
+            }
+            else{
+                LOGGER.info(tipoOperacion + " No se encontraron nuevos paquetes");
+            }
+
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
-                    ocupacionVuelos,
-                    aeropuertos);
-            respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
-            this.paquetesDiaDia = currentPaquetes;
-            this.planRutasDiaDia = currentPlanRutas;
-            // Formar respuesta a front
+                    ocupacionVuelos, aeropuertos);
+            //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+            
+            
+            this.estadoAlmacenOpDiaDia = estadoAlmacen;
+            this.paquetesOpDiaDia = currentPaquetes;
+            this.planRutasOpDiaDia = currentPlanRutas;
+
+            // Formar respuesta para el front
+            respuestaAlgoritmo.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
             respuestaAlgoritmo.setSimulacion(null);
             respuestaAlgoritmo.setOcupacionVuelos(null);
             respuestaAlgoritmo.setPaquetes(null);
 
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada");
+
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+
+            this.puedeRecibirPaquetesDiaDia = true;
+            LOGGER.info(tipoOperacion + " Puede recibir paquetes");
+
             this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
             System.out.println("Planificacion terminada hasta " + now);
-            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                    "Planificacion terminada hasta " + now);
+            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion terminada hasta " + now);
 
             long end = System.currentTimeMillis();
             LOGGER.info(tipoOperacion + "|| Planificacion terminada en " + (end - start) + " milisegundos");
-            long sa_millis = SA * 1000 - (end - start);
-            if (sa_millis < 0)
+            long saMillis = SA * 1000 - (end - start);
+            if (saMillis < 0)
                 continue;
+
             try {
-                Thread.sleep(sa_millis);
+                Thread.sleep(saMillis);
             } catch (Exception e) {
                 System.out.println("Error en sleep");
             }
-
         }
     }
 
@@ -326,10 +374,6 @@ public class Algoritmo {
                 planRutaXVuelo.setPlanRuta(planRuta);
                 planRutaXVuelo.setVuelo(vuelo);
                 planRutaXVuelo.setIndiceDeOrden(planRutaNT.getVuelos().indexOf(vueloFromArray));
-                // print data from planRutaXVuelo
-                // System.out.println("PlanRutaXVuelo: " +
-                // planRutaXVuelo.getPlanRuta().getCodigo() + " " +
-                // planRutaXVuelo.getVuelo().getId() + " " + planRutaXVuelo.getIndiceDeOrden());
 
                 try {
                     planRutaXVueloService.register(planRutaXVuelo);
@@ -407,6 +451,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
+        boolean replanificar = false;
         String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;
@@ -438,12 +483,7 @@ public class Algoritmo {
             if (simulacion.getEstado() == 2) {
                 LOGGER.info(tipoOperacion + " Simulacion pausada");
                 // System.out.println("Simulacion pausada");
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    LOGGER.error(tipoOperacion + " Error en sleep");
-                    // System.out.println("Error en sleep");
-                }
+
                 if (primera_iter) {
                     simulacion.setFechaInicioSistema(new Date());
                     simulacion = simulacionService.update(simulacion);
@@ -461,7 +501,7 @@ public class Algoritmo {
                 LOGGER.info(tipoOperacion + " Aun no es tiempo de planificar, la fecha en simulacion es "
                         + tiempoEnSimulacion);
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     System.out.println("Error en sleep");
                 }
@@ -484,7 +524,8 @@ public class Algoritmo {
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
-                    fechaLimiteCalculo);
+                    fechaLimiteCalculo, replanificar);
+
             int tamanhoPaquetes = paquetesProcesar.size();
             final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
             List<Paquete> paquetesRest = paquetes.stream()
@@ -519,6 +560,7 @@ public class Algoritmo {
 
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
+                System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
                 tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 continue;
             }
@@ -577,12 +619,11 @@ public class Algoritmo {
             ocupacionVuelos = nuevaOcupacion;
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
-            this.paquetesSimulacion = paquetes;
-            this.planRutasSimulacion = planRutas;
 
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
                     aeropuertos);
+            //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
@@ -595,6 +636,13 @@ public class Algoritmo {
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");
+            this.paquetesSimulacion = new ArrayList<>(paquetes);
+            this.planRutasSimulacion = new ArrayList<>();
+            for (PlanRutaNT planRutaNT : planRutas) {
+                PlanRutaNT clonedPlanRuta = new PlanRutaNT();
+                clonedPlanRuta.setVuelos(new ArrayList<>(planRutaNT.getVuelos()));
+                this.planRutasSimulacion.add(clonedPlanRuta);
+            }
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
@@ -740,12 +788,13 @@ public class Algoritmo {
     }
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
-            Date fechaLimiteCalculo) {
+            Date fechaLimiteCalculo, boolean replanificar) {
         Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
         final Date finalTiempoEnSimulacion = tiempoEnSimulacion;
         List<Paquete> paquetesTemp = paquetes.stream()
-                .filter(p -> p.getFechaDeEntrega() == null || finalTiempoEnSimulacion.before(p.getFechaDeEntrega()))
+                .filter(p -> p.getFechaDeEntrega() == null
+                        || (replanificar && finalTiempoEnSimulacion.before(p.getFechaDeEntrega())))
                 .filter(p -> p.obtenerFechaRecepcion().before(fechaLimiteCalculo))
                 .collect(Collectors.toList());
         ArrayList<Paquete> paquetesProcesar = new ArrayList<>(paquetesTemp);
@@ -754,6 +803,7 @@ public class Algoritmo {
 
     private ArrayList<Paquete> filtrarPaquetesVolando(ArrayList<Paquete> paquetesProcesar, VueloService vueloService,
             Date tiempoEnSimulacion, int TA, double multiplicador) {
+        if(paquetesProcesar == null) return new ArrayList<>();
         ArrayList<Integer> indicesAEliminar = new ArrayList<>();
         Date fechaMaxima = agregarSAyTA(tiempoEnSimulacion, TA, 0, multiplicador);
         for (int i = 0; i < paquetesProcesar.size(); i++) {
@@ -991,7 +1041,7 @@ public class Algoritmo {
         double temperature = 1000;
         double coolingRate = 0.08;
         int neighbourCount = 1;
-        int windowSize = tamanhoPaquetes / 2;
+        int windowSize = tamanhoPaquetes / 3;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
@@ -1002,8 +1052,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = 4;
+        double sumaVuelosWeight = 6;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
+        double mediaVuelosWight = 4;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
@@ -1025,7 +1076,8 @@ public class Algoritmo {
                 airportPenalization,
                 sumaPaquetesWeight,
                 sumaVuelosWeight,
-                promedioPonderadoTiempoAeropuertoWeight);
+                promedioPonderadoTiempoAeropuertoWeight,
+                mediaVuelosWight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
                 messagingTemplate, tipoOperacion, TA);
@@ -1047,27 +1099,39 @@ public class Algoritmo {
         this.paquetes_por_simulacion = paquetes_por_simulacion;
     }
 
-    public List<Paquete> obtenerPaquetesActualesDiaDia() {
-        List<Paquete> paquetes = new ArrayList<>(this.paquetesDiaDia);
-        // ACAAAA
+    public List<Paquete> obtenerPaquetesActualesDiaDia(PaqueteService paqueteService) {
+        //test time
+        long start = System.currentTimeMillis(); 
+        List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
         Date now = new Date();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
-                        && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
+                        && (p.isEntregado() == false))
                 .collect(Collectors.toList());
+        long end1 = System.currentTimeMillis();
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Tiempo de filtrado: " + (end1 - start) + " ms");
+        /*List<Paquete> paquetesRespuesta = new ArrayList<>();
+        for (Paquete p : paquetes) {
+            Paquete paqueteRespuesta = paqueteService.getPaqueteNoSimulacion(p.getId(), now);
+            paquetesRespuesta.add(paqueteRespuesta);
+        }
+        long end2 = System.currentTimeMillis();
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Tiempo de consulta: " + (end2 - end1) + " ms");
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Paquetes actuales: " + paquetesRespuesta.size());
+        // && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))*/
         return paquetes;
     }
 
     public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
-        return this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+        return this.estadoAlmacenOpDiaDia;
     }
 
-    public void actualizarEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
+    /*public void actualizarEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estadoAlmacenDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Estado Almacen actualizado");
-    }
+    }*/
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Simulacion simulacion) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
@@ -1115,15 +1179,15 @@ public class Algoritmo {
         return paquetesEnAeropuerto;
     }
 
-    public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId) {
+    public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId, PaqueteService paqueteService) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
         Date fechaCorte = new Date();
 
-        for (int i = 0; i < this.paquetesDiaDia.size(); i++) {
-            Paquete paquete = this.paquetesDiaDia.get(i);
+        for (int i = 0; i < this.paquetesOpDiaDia.size(); i++) {
+            Paquete paquete = this.paquetesOpDiaDia.get(i);
             ArrayList<Vuelo> vuelos = new ArrayList<>();
-            if (this.planRutasDiaDia.get(i) != null) {
-                vuelos = this.planRutasDiaDia.get(i).getVuelos();
+            if (this.planRutasOpDiaDia.get(i) != null) {
+                vuelos = this.planRutasOpDiaDia.get(i).getVuelos();
             }
 
             Collections.sort(vuelos, Comparator.comparing(Vuelo::getFechaSalida));
@@ -1139,6 +1203,10 @@ public class Algoritmo {
                 }
             } else {
                 for (Vuelo vuelo : vuelos) {
+                    // Verificar si ya aterrizo el ultimo vuelo del arreglo
+                    if (vuelos.indexOf(vuelo) == vuelos.size() - 1) {
+                        break;
+                    }
                     // El paquete está en el aeropuerto entre la llegada de un vuelo y la salida del
                     // siguiente
                     if (vuelo.getPlanVuelo().getCiudadDestino().getId().equals(aeropuertoId) &&
@@ -1151,22 +1219,54 @@ public class Algoritmo {
             }
 
             if (enAeropuerto) {
-                paquetesEnAeropuerto.add(paquete);
+                // Paquete paqueteBD = paqueteService.findById(paquete.getId());
+                Paquete paqueteBD = paqueteService.getPaqueteNoSimulacion(paquete.getId(), fechaCorte);
+                paquetesEnAeropuerto.add(paqueteBD);
             }
         }
         return paquetesEnAeropuerto;
     }
 
+    public void agregarPaquetesEstadoAlmacenDiaDia(String aeropuerto, Date fechaRecepcion, int cantidadPaquetes) {
+        this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(fechaRecepcion), cantidadPaquetes);
+    }
+
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
-        this.paquetesDiaDia.add(paquete);
-        this.planRutasDiaDia.add(new PlanRutaNT());
-        String aeropuertoSalida = paquete.getEnvio().getUbicacionOrigen().getId();
-        EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
-        estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
-        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
+        this.paquetesOpDiaDia.add(paquete);
+        this.planRutasOpDiaDia.add(new PlanRutaNT());
+        //String aeropuerto = paquete.getEnvio().getUbicacionOrigen().getId();
+        //EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+  
+        //this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        
+        //this.estadoAlmacenOpDiaDia.sumaCalculada();
+        //this.estadoAlmacenOpDiaDia.registrarCapacidad(aeropuerto, paquete.getEnvio().getFechaRecepcion(), 1);
+
+        //estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        //this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
+        // messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta",
+        // this.ultimaRespuestaOperacionDiaDia);
+        // messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+        // "Paquete " + paquete.getId() + " agregado al aeropuerto " +
+        // aeropuertoSalida);
+    }
+
+    public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto) {
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
-                "Paquete " + paquete.getId() + " agregado al aeropuerto " + aeropuertoSalida);
+                "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
+        //this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
+    }
+
+    public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
+        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
+                cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
+        //this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
     }
 
     private Date removeTime(Date date) {
@@ -1181,5 +1281,15 @@ public class Algoritmo {
         // Obtener la nueva fecha sin tiempo
         return calendar.getTime();
     }
+
+    public boolean isPuedeRecibirPaquetesDiaDia() {
+        return puedeRecibirPaquetesDiaDia;
+    }
+
+    public void setPuedeRecibirPaquetesDiaDia(boolean puedeRecibirPaquetesDiaDia) {
+        this.puedeRecibirPaquetesDiaDia = puedeRecibirPaquetesDiaDia;
+    }
+
+    
 
 }
