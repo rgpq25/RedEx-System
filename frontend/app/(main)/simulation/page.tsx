@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
 import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
@@ -21,6 +21,8 @@ import { structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from
 import ModalStopSimulation from "./_components/modal-stop-simulation";
 import ElapsedRealTime from "@/app/_components/elapsed-real-time";
 import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
+import { useRouter } from "next/navigation";
+import { SimulationContext } from "@/components/contexts/simulation-provider";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -34,6 +36,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 function SimulationPage() {
+	const router = useRouter();
+	const { setSimulation: setSimulationContext } = useContext(SimulationContext);
+
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
 	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } =
@@ -177,6 +182,20 @@ function SimulationPage() {
 		};
 	}, []);
 
+	useEffect(()=>{
+		if(currentTime && simulation){
+			const date1 = new Date(currentTime);
+			const date2 = new Date(simulation.fechaInicioSim);
+			const diffTime = Math.abs(date2.getTime() - date1.getTime());
+			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+			if(diffDays > 7 && envios.length === 0){
+				toast.info("Simulation ended successfully");
+				// router.push("/simulation/results");
+				window.location.replace("/simulation/results");
+			}
+		}
+	},[currentTime, simulation]);
+
 	return (
 		<>
 			<ModalIntro
@@ -184,7 +203,19 @@ function SimulationPage() {
 				setIsModalOpen={setIsModalOpen}
 				onSimulationRegister={(idSimulacion) => onSimulationRegister(idSimulacion)}
 			/>
-			<ModalStopSimulation isOpen={isStoppingModalOpen} setIsModalOpen={setIsStoppingModalOpen} simulation={simulation} />
+			<ModalStopSimulation
+				isOpen={isStoppingModalOpen}
+				setIsModalOpen={setIsStoppingModalOpen}
+				simulation={simulation}
+				redirectToReport={() => {
+					if (simulation === undefined) {
+						toast.error("No se ha cargado la simulación");
+						return;
+					}
+					setSimulationContext(simulation);
+					router.push("/simulation/results");
+				}}
+			/>
 			<MainContainer className="relative">
 				<MapHeader>
 					<BreadcrumbCustom items={breadcrumbItems} />
@@ -200,7 +231,6 @@ function SimulationPage() {
 				</div>
 
 				<div className="flex items-center gap-5 absolute top-10 right-14 z-[20]">
-					
 					{simulation !== null && simulation !== undefined && (
 						<div className="flex items-center gap-1">
 							<Button size={"icon"} onClick={() => setIsStoppingModalOpen(true)}>
