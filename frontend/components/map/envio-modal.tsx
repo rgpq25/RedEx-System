@@ -31,9 +31,31 @@ function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToF
 	}
 }
 
-function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUbicacion: (ubicacion: Ubicacion) => void) {
-	if (planRutaVuelos.length === 0) {
+function getCurrentAirport(
+	paquete: Paquete | undefined,
+	planRutaVuelos: Vuelo[],
+	_currentTime: Date,
+	zoomToUbicacion: (ubicacion: Ubicacion) => void
+) {
+	if (paquete === undefined) {
+		toast.error("No se encontró paquete");
 		return <p>---</p>;
+	}
+
+	if (planRutaVuelos.length === 0) {
+		return (
+			<>
+				<p className="truncate">{`${paquete.aeropuertoActual.ubicacion.ciudad}, ${paquete.aeropuertoActual.ubicacion.pais} (${paquete.aeropuertoActual.ubicacion.id})`}</p>
+				<Button
+					size="icon"
+					className="w-7 h-7 shrink-0"
+					variant="outline"
+					onClick={() => zoomToUbicacion(paquete.aeropuertoActual.ubicacion)}
+				>
+					<Eye className="w-4 h-4" />
+				</Button>
+			</>
+		);
 	}
 
 	if (planRutaVuelos.find((vuelo) => new Date(vuelo.fechaSalida) <= _currentTime && new Date(vuelo.fechaLlegada) >= _currentTime) !== undefined) {
@@ -44,7 +66,12 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 		return (
 			<>
 				<p className="truncate">{`${planRutaVuelos[0].planVuelo.ciudadOrigen.ciudad}, ${planRutaVuelos[0].planVuelo.ciudadOrigen.pais} (${planRutaVuelos[0].planVuelo.ciudadOrigen.id})`}</p>
-				<Button size="icon" className="w-7 h-7 shrink-0" variant="outline" onClick={() => zoomToUbicacion(planRutaVuelos[0].planVuelo.ciudadOrigen)}>
+				<Button
+					size="icon"
+					className="w-7 h-7 shrink-0"
+					variant="outline"
+					onClick={() => zoomToUbicacion(planRutaVuelos[0].planVuelo.ciudadOrigen)}
+				>
 					<Eye className="w-4 h-4" />
 				</Button>
 			</>
@@ -89,8 +116,8 @@ function getCurrentAirport(planRutaVuelos: Vuelo[], _currentTime: Date, zoomToUb
 export function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
 	if (planRutaVuelos.length === 0) {
 		return {
-			descripcion: "Sin plan de ruta",
-			color: "red",
+			descripcion: "En aeropuerto origen",
+			color: "gray",
 		};
 	}
 
@@ -194,7 +221,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			cell: ({ row }) => (
 				<div className="truncate flex flex-row gap-2 items-center  w-[250px]">
 					{planeMap !== null && currentTime !== undefined
-						? getCurrentAirport(planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
+						? getCurrentAirport(envio?.paquetes[row.index], planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
 								zoomToUbicacion(ubicacion);
 								setIsOpen(false);
 						  })

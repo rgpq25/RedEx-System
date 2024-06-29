@@ -80,26 +80,26 @@ function DailyOperationsPage() {
 						setIsLoadingFirstTime(false);
 					}
 
-					// let _paquetes: Paquete[] = [];
-					// await api(
-					// 	"GET",
-					// 	`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-					// 	(data: Paquete[]) => {
-					// 		console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
-					// 		_paquetes = [...data];
-					// 	},
-					// 	(error) => {
-					// 		console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-					// 		_paquetes = [];
-					// 	}
-					// );
+					let _paquetes: Paquete[] = [];
+					await api(
+						"GET",
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+						(data: Paquete[]) => {
+							console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
+							_paquetes = [...data];
+						},
+						(error) => {
+							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+							_paquetes = [];
+						}
+					);
 					console.log(" ===== Finished fetching paquetes");
 
-					// const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 					
 					setFlights(db_vuelos);
-					// setEnvios(db_envios);
+					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
@@ -123,26 +123,26 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					// let _paquetes: Paquete[] = [];
-					// await api(
-					// 	"GET",
-					// 	`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-					// 	(data: Paquete[]) => {
-					// 		console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
-					// 		_paquetes = [...data];
-					// 	},
-					// 	(error) => {
-					// 		console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-					// 		_paquetes = [];
-					// 	}
-					// );
+					let _paquetes: Paquete[] = [];
+					await api(
+						"GET",
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
+						(data: Paquete[]) => {
+							console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
+							_paquetes = [...data];
+						},
+						(error) => {
+							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
+							_paquetes = [];
+						}
+					);
 					console.log(" ===== Finished fetching paquetes");
 
-					// const { db_envios } = structureEnviosFromPaquetes(_paquetes);
+					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
-					// setEnvios(db_envios);
+					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
 				},
 				(error) => {
