@@ -54,6 +54,10 @@ public class Algoritmo {
 
     private ArrayList<PlanRutaNT> planRutasOpDiaDia = new ArrayList<>();
 
+    private EstadoAlmacen estadoAlmacenOpDiaDia = new EstadoAlmacen();
+
+    private int nConsultasDiaDia = 0;
+
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
@@ -248,11 +252,14 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
-            respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
+            estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+            
+            this.estadoAlmacenOpDiaDia = estadoAlmacen;
             this.paquetesOpDiaDia = currentPaquetes;
             this.planRutasOpDiaDia = currentPlanRutas;
 
             // Formar respuesta para el front
+            respuestaAlgoritmo.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
             respuestaAlgoritmo.setSimulacion(null);
             respuestaAlgoritmo.setOcupacionVuelos(null);
             respuestaAlgoritmo.setPaquetes(null);
@@ -261,6 +268,7 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada");
 
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+
             this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
             System.out.println("Planificacion terminada hasta " + now);
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion terminada hasta " + now);
@@ -1063,15 +1071,15 @@ public class Algoritmo {
     }
 
     public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
-        return this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+        return this.estadoAlmacenOpDiaDia;
     }
 
-    public void actualizarEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
+    /*public void actualizarEstadoAlmacenDiaDia(EstadoAlmacen estadoAlmacenDiaDia) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estadoAlmacenDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Estado Almacen actualizado");
-    }
+    }*/
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuerto(String aeropuertoId, Simulacion simulacion) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
@@ -1167,13 +1175,23 @@ public class Algoritmo {
         return paquetesEnAeropuerto;
     }
 
+    public void agregarPaquetesEstadoAlmacenDiaDia(String aeropuerto, Date fechaRecepcion, int cantidadPaquetes) {
+        this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(fechaRecepcion), cantidadPaquetes);
+    }
+
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
         this.paquetesOpDiaDia.add(paquete);
         this.planRutasOpDiaDia.add(new PlanRutaNT());
-        String aeropuertoSalida = paquete.getEnvio().getUbicacionOrigen().getId();
-        EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
-        estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
-        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
+        //String aeropuerto = paquete.getEnvio().getUbicacionOrigen().getId();
+        //EstadoAlmacen estado = this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
+  
+        //this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        
+        //this.estadoAlmacenOpDiaDia.sumaCalculada();
+        //this.estadoAlmacenOpDiaDia.registrarCapacidad(aeropuerto, paquete.getEnvio().getFechaRecepcion(), 1);
+
+        //estado.registrarCapacidad(aeropuertoSalida, removeTime(paquete.getEnvio().getFechaRecepcion()), 1);
+        //this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(estado);
         // messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta",
         // this.ultimaRespuestaOperacionDiaDia);
         // messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
@@ -1182,15 +1200,21 @@ public class Algoritmo {
     }
 
     public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto) {
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
+        this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
     }
 
     public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
+        this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
+        this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.nConsultasDiaDia++;
     }
 
     private Date removeTime(Date date) {

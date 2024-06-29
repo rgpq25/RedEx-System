@@ -44,15 +44,16 @@ public class PaqueteService {
         }
     }
 
-    private boolean isAfterByMoreThanThirtyMinutes(Date date1, Date date2) {
+    private boolean isAfterByMoreThanOneMinute(Date date1, Date date2) {
         long differenceInMillis = date1.getTime() - date2.getTime();
-        long thirtyMinutesInMillis = 30 * 60 * 1000; // 5 minutes in milliseconds
+        long thirtyMinutesInMillis =  60 * 1000; // 5 minutes in milliseconds
 
         return differenceInMillis > thirtyMinutesInMillis;
     }
 
     public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete, Date fechaActual) {
         try {
+            //LOGGER.info("Estoy actualizando el estado del paquete " + paquete.getId() + " con fecha " + fechaActual);
             if (paquete.getPlanRutaActual() == null) {
                 paquete.setEstado("En almacen origen");
             } else {
@@ -71,7 +72,7 @@ public class PaqueteService {
                             }
                             break;
                         } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
-                            if (isAfterByMoreThanThirtyMinutes(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
+                            if (isAfterByMoreThanOneMinute(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
                             } else if(paquete.isEntregado() == false){
@@ -109,6 +110,7 @@ public class PaqueteService {
     }
 
     public Paquete getPaqueteNoSimulacion(Integer id, Date fechaCorte) {
+        //El paquete necesita estar en BD
         try {
             Paquete paquete = get(id);
             return actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
@@ -247,6 +249,16 @@ public class PaqueteService {
     public Paquete findById(Integer id){
         try{
             return paqueteRepository.findById(id).get();
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Paquete> findPaqueteSimulacionFechaCorteNoEntregados(int idSimulacion, Date fechaCorte){
+        try{
+            return paqueteRepository.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
         }
         catch(Exception e){
             LOGGER.error(e.getMessage());

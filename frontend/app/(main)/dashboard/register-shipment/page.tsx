@@ -207,6 +207,9 @@ function RegisterShipmentPage() {
     usuario: Usuario;
     // Otros campos si son necesarios
   }
+  interface RegisterResponse{
+    id: number;
+  }
 
   const handleConfirm = async () => {
     // Obtén la fecha actual
@@ -298,14 +301,16 @@ function RegisterShipmentPage() {
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
-      const registerResponse = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`, handleSuccess, handleError, dataToSend);
+      const registerResponse = await apiT<RegisterResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`,   dataToSend);
       console.log(registerResponse);
+
 
       const dataToEmailSender = {
           toEmail: senderEmail,
           subject: "Solicitud REDEX: Confirmación de Envío de Paquete",
           body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
           " del envío de sus paquetes.\n A continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+          "Su codigo de envío es: " + registerResponse.id + "\n"+
           "Nombres completos: " + senderNames + " " +senderSurnames+ "\n"+ 
           "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
           "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
@@ -319,6 +324,7 @@ function RegisterShipmentPage() {
         subject: "Solicitud REDEX: Confirmación de Recepción de Paquete",
         body: "Estimado " + senderNames + " " + senderSurnames +": \n\n Se le envía el siguiente correo para informarle acerca de su confirmación"+ 
         " del envío de sus paquetes. \nA continuación se le envía los siguientes datos acerca de su envío:\n\n" +
+        "Su codigo de envío es: " + registerResponse.id + "\n"+
         "Nombres completos: " + receiverNames + " " +receiverSurnames+ "\n"+ 
         "Codigo de seguridad: " + dataToSend.codigoSeguridad + "\n"+
         "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+

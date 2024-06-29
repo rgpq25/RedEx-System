@@ -96,15 +96,29 @@ public class EnvioController {
 
             if(envio.getSimulacionActual() == null){
                 algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
+                
             }
         }
-        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
-        return envioService.register(envio);
+        if(envio.getSimulacionActual() == null){
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
+            algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
+        }
+        return envio;
     }
 
     @PostMapping(value = "/codigo")
     public Envio registerByString(@RequestBody RegistrarEnvio registrarEnvio) {
         return envioService.registerByString(registrarEnvio);
+    }
+
+    @PostMapping(value = "/actualizarEstadoEntregado")
+    public Envio actualizarEstadoEntregado(@RequestBody Envio envio) {
+        Envio envioBD = envioService.get(envio.getId());
+        envioBD.setEstado("Entregado");
+        envioBD = envioService.update(envioBD);
+        return envioBD;
+        //return envioService.registerByString(registrarEnvio);
     }
 
     @PostMapping("/codigoAll")
@@ -116,7 +130,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())
@@ -135,7 +149,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())
