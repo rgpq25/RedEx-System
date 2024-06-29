@@ -30,7 +30,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.save(paquete);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.register " + e.getMessage());
             return null;
         }
     }
@@ -39,20 +39,21 @@ public class PaqueteService {
         try {
             return (ArrayList<Paquete>) paqueteRepository.saveAll(paquete);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.registerAll " + e.getMessage());
             return null;
         }
     }
 
-    private boolean isAfterByMoreThanThirtyMinutes(Date date1, Date date2) {
+    private boolean isAfterByMoreThanOneMinute(Date date1, Date date2) {
         long differenceInMillis = date1.getTime() - date2.getTime();
-        long thirtyMinutesInMillis = 30 * 60 * 1000; // 5 minutes in milliseconds
+        long thirtyMinutesInMillis =  60 * 1000; // 5 minutes in milliseconds
 
         return differenceInMillis > thirtyMinutesInMillis;
     }
 
     public Paquete actualizaEstadoPaqueteNoSimulacion(Paquete paquete, Date fechaActual) {
         try {
+            //LOGGER.info("Estoy actualizando el estado del paquete " + paquete.getId() + " con fecha " + fechaActual);
             if (paquete.getPlanRutaActual() == null) {
                 paquete.setEstado("En almacen origen");
             } else {
@@ -71,7 +72,7 @@ public class PaqueteService {
                             }
                             break;
                         } else if (vuelo.getFechaLlegada().before(fechaActual) && i == vuelos.size() - 1) {
-                            if (isAfterByMoreThanThirtyMinutes(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
+                            if (isAfterByMoreThanOneMinute(fechaActual, vuelo.getFechaLlegada()) && paquete.isEntregado() == false) {
                                 paquete.setEstado("Entregado");
                                 paquete.setEntregado(true);
                             } else if(paquete.isEntregado() == false){
@@ -91,7 +92,7 @@ public class PaqueteService {
             paquete = update(paquete);
             return paquete;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.actualizaEstadoPaqueteNoSimulacion " + e.getMessage());
             return null;
         }
     }
@@ -103,17 +104,18 @@ public class PaqueteService {
 
             return optional_paquete.get();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.get " + e.getMessage());
             return null;
         }
     }
 
     public Paquete getPaqueteNoSimulacion(Integer id, Date fechaCorte) {
+        //El paquete necesita estar en BD
         try {
             Paquete paquete = get(id);
             return actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.getPaqueteNoSimulacion " + e.getMessage());
             return null;
         }
     }
@@ -123,7 +125,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findAll();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.getAll " + e.getMessage());
             return null;
         }
     }
@@ -133,7 +135,7 @@ public class PaqueteService {
         try {
             paqueteRepository.deleteById(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.delete " + e.getMessage());
         }
     }
 
@@ -142,7 +144,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.save(paquete);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.update " + e.getMessage());
             return null;
         }
     }
@@ -152,7 +154,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findByAeropuertoActualId(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findByAeropuertoActualId " + e.getMessage());
             return null;
         }
     }
@@ -162,7 +164,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findByEnvioId(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findByEnvioId " + e.getMessage());
             return null;
         }
     }
@@ -177,7 +179,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findByPlanRutaActualId(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findByPlanRutaId " + e.getMessage());
             return null;
         }
     }
@@ -190,7 +192,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findPaquetesWithoutPlanRutaSimulacion(idUbicacionOrigen, idSimulacion, fechaCorte);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findPaquetesWithoutPlanRutaSimulacion " + e.getMessage());
             return null;
         }
     }
@@ -202,7 +204,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findPaqueteSimulacionFechaCorte(idSimulacion, fechaCorte);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findPaqueteSimulacionFechaCorte " + e.getMessage());
             return null;
         }
     }
@@ -211,7 +213,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findPaquetesSinSimulacionYNoEntregados();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findPaquetesSinSimulacionYNoEntregados " + e.getMessage());
             return null;
         }
     }
@@ -220,7 +222,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findPaquetesWithoutPlanRuta(idUbicacionOrigen, fechaCorte);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findPaquetesWithoutPlanRuta " + e.getMessage());
             return null;
         }
     }
@@ -229,7 +231,7 @@ public class PaqueteService {
         try {
             return paqueteRepository.findPaquetesOperacionesDiaDia();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findPaquetesOperacionesDiaDia " + e.getMessage());
             return null;
         }
     }
@@ -240,7 +242,7 @@ public class PaqueteService {
             paqueteRepository.flush();
         }
         catch(Exception e){
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.deleteAll " + e.getMessage());
         }
     }
 
@@ -249,7 +251,27 @@ public class PaqueteService {
             return paqueteRepository.findById(id).get();
         }
         catch(Exception e){
-            LOGGER.error(e.getMessage());
+            LOGGER.error("PaqueteService.findById " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Paquete> findPaqueteSimulacionFechaCorteNoEntregados(int idSimulacion, Date fechaCorte){
+        try{
+            return paqueteRepository.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
+        }
+        catch(Exception e){
+            LOGGER.error("PaqueteService.findPaqueteSimulacionFechaCorteNoEntregados " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Paquete> findPaqueteDiaDiaEntreFechas(Date fechaInicio, Date fechaFin){
+        try{
+            return paqueteRepository.findPaqueteDiaDiaEntreFechas(fechaInicio, fechaFin);
+        }
+        catch(Exception e){
+            LOGGER.error("PaqueteService.findPaqueteDiaDiaEntreFechas " + e.getMessage());
             return null;
         }
     }

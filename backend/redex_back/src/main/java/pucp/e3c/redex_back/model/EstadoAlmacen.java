@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
 public class EstadoAlmacen {
 
@@ -56,13 +58,15 @@ public class EstadoAlmacen {
             registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFechaLlegada(), capacidades.get(IdVuelo));
         }
         for (int i = 0; i < paquetes.size(); i++) {
-            if (plan.get(i).getVuelos().size() == 0) {
-                continue;
-            }
             String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
             String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
 
             registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
+            
+            if (plan.get(i) == null || plan.get(i).getVuelos().size() == 0) {
+                continue;
+            }
+            
             Date newDate = removeTime(plan.get(i).getFin());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(newDate);
@@ -70,6 +74,26 @@ public class EstadoAlmacen {
             newDate = calendar.getTime();
             registrarCapacidad(aeropuertoLlegada, newDate, -1);
         }
+        for (String aeropuerto : aeropuertos) {
+            TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
+            int sumaAcumulada = 0;
+            for (Map.Entry<Date, Integer> entrada : capacidad.entrySet()) {
+                sumaAcumulada += entrada.getValue();
+                // Actualizar el TreeMap con el valor acumulado
+                capacidad.put(entrada.getKey(), sumaAcumulada);
+                if (sumaAcumulada < 0) {
+                    // throw new IllegalArgumentException("sumaAcumulada cannot be negative");
+                    // System.out.println("Suma acumulada cannot be negative");
+                }
+            }
+
+        }
+    }
+
+    public void sumaCalculada(){
+        ArrayList<String> aeropuertos = this.aeropuertos.stream()
+                .map(aeropuerto -> aeropuerto.getUbicacion().getId())
+                .collect(Collectors.toCollection(ArrayList::new));
         for (String aeropuerto : aeropuertos) {
             TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
             int sumaAcumulada = 0;
@@ -123,6 +147,25 @@ public class EstadoAlmacen {
         // fecha + ", Cambio=" + cambio);
         Integer capacidadActual = capacidades.getOrDefault(fecha, 0);
         capacidades.put(fecha, capacidadActual + cambio);
+    }
+
+    public void registrarCapacidadOperacionesDiaDia(String aeropuerto, Date fecha, int cambio) {
+        if (aeropuerto == null) {
+            throw new IllegalArgumentException("Aeropuerto no puede ser null");
+        }
+        TreeMap<Date, Integer> capacidades = this.uso_historico.get(aeropuerto);
+        if (capacidades == null) {
+            capacidades = new TreeMap<>();
+            this.uso_historico.put(aeropuerto, capacidades);
+        }
+        Entry<Date, Integer> entry = capacidades.floorEntry(fecha);
+        int capacidadActual = (entry != null) ? entry.getValue() : 0;
+        capacidades.put(fecha, capacidadActual + cambio);
+
+        SortedMap<Date, Integer> fechasPosteriores = capacidades.tailMap(fecha, false);
+        for (Map.Entry<Date, Integer> e : fechasPosteriores.entrySet()) {
+            e.setValue(e.getValue() + cambio);
+        }
     }
 
     public void consulta_historica() {

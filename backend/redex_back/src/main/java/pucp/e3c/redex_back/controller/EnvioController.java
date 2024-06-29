@@ -83,6 +83,21 @@ public class EnvioController {
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         envio = envioService.register(envio);
         //Envio envioBD = envioService.get(envio.getId());
+        while(true){
+            if(algoritmo.isPuedeRecibirPaquetesDiaDia()){
+                //LOGGER.info("Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " Va a guardar paquetes");
+                break;
+            }
+            else{
+                LOGGER.info("DIA DIA Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " NO PUEDE guardar paquetes AHORA");
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
+                continue;
+            }
+        }
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
             Aeropuerto aeropuerto = aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId());
@@ -96,15 +111,29 @@ public class EnvioController {
 
             if(envio.getSimulacionActual() == null){
                 algoritmo.agregarPaqueteEnAeropuertoDiaDia(paqueteBD);
+                
             }
         }
-        algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
-        return envioService.register(envio);
+        if(envio.getSimulacionActual() == null){
+            String aeropuerto = envio.getUbicacionOrigen().getId();
+            algoritmo.agregarPaquetesEstadoAlmacenDiaDia(aeropuerto,envio.getFechaRecepcion(),envio.getCantidadPaquetes());
+            algoritmo.enviarEstadoAlmacenSocketDiaDiaPorEnvio(envio.getId(),envio.getCantidadPaquetes(),envio.getUbicacionOrigen().getId());
+        }
+        return envio;
     }
 
     @PostMapping(value = "/codigo")
     public Envio registerByString(@RequestBody RegistrarEnvio registrarEnvio) {
         return envioService.registerByString(registrarEnvio);
+    }
+
+    @PostMapping(value = "/actualizarEstadoEntregado")
+    public Envio actualizarEstadoEntregado(@RequestBody Envio envio) {
+        Envio envioBD = envioService.get(envio.getId());
+        envioBD.setEstado("Entregado");
+        envioBD = envioService.update(envioBD);
+        return envioBD;
+        //return envioService.registerByString(registrarEnvio);
     }
 
     @PostMapping("/codigoAll")
@@ -116,7 +145,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())
@@ -135,7 +164,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByStringHoraSistema(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())
