@@ -199,16 +199,40 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion iniciada");
 
             // Ordenar paquetes por fecha de recepción
+            //CAMBIO AQUI .filter(p -> !p.isEntregado())
             paquetes.sort(Comparator.comparing(Paquete::obtenerFechaRecepcion));
+
+            /*List<Paquete> filteredPaquetes = paquetes.stream()
+                    .filter(p -> p.obtenerFechaRecepcion().before(now)
+                            && (p.getFechaDeEntrega() == null
+                                    || !p.getFechaDeEntrega().before(now)))
+                    .collect(Collectors.toList());*/
+            
 
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(paquetes, vueloService, now, 0, 1);
+
+            List<Paquete> paquetesProcesarFiltrados = paquetesProcesar.stream()
+                    .filter(p -> (p.getFechaDeEntrega() == null))
+                    .collect(Collectors.toList());
+
+            paquetesProcesar = new ArrayList<>(paquetesProcesarFiltrados);
             LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
 
             if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
                 LOGGER.info(tipoOperacion + " No hay paquetes que planificar");
+                long end = System.currentTimeMillis();
+                long saMillis = SA * 1000 - (end - start);
+                if (saMillis < 0)
+                    continue;
+
+                try {
+                    Thread.sleep(saMillis);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
                 continue;
             }
 
