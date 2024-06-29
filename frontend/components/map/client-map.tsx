@@ -41,7 +41,6 @@ function ClientMap({
 		"GET",
 		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 		(data: Aeropuerto[]) => {
-			console.log("Fetched airport data succesfully");
 			setAirports(data);
 		},
 		(error) => {
