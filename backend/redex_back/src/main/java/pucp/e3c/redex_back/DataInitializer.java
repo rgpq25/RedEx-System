@@ -133,7 +133,7 @@ public class DataInitializer {
 
         ZonedDateTime startDate = now.minusHours(1);
 
-        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V2.txt");
+        Resource resource = resourceLoader.getResource("classpath:static/envios_semanal_V4_P1.txt");
         InputStream input1 = resource.getInputStream();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input1))) {
@@ -241,7 +241,7 @@ public class DataInitializer {
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                    90);
+                    240);
         });
 
     }
