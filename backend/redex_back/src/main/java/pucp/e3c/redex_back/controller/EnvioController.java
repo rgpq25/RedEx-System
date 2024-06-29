@@ -83,6 +83,21 @@ public class EnvioController {
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
         envio = envioService.register(envio);
         //Envio envioBD = envioService.get(envio.getId());
+        while(true){
+            if(algoritmo.isPuedeRecibirPaquetesDiaDia()){
+                //LOGGER.info("Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " Va a guardar paquetes");
+                break;
+            }
+            else{
+                LOGGER.info("DIA DIA Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " NO PUEDE guardar paquetes AHORA");
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
+                continue;
+            }
+        }
         for (int i = 0; i < envio.getCantidadPaquetes(); i++) {
             Paquete paquete = new Paquete();
             Aeropuerto aeropuerto = aeropuertoService.findByUbicacion(envio.getUbicacionOrigen().getId());

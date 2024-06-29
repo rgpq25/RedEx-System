@@ -58,13 +58,15 @@ public class EstadoAlmacen {
             registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFechaLlegada(), capacidades.get(IdVuelo));
         }
         for (int i = 0; i < paquetes.size(); i++) {
-            if (plan.get(i).getVuelos().size() == 0) {
-                continue;
-            }
             String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
             String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
 
             registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
+            
+            if (plan.get(i) == null || plan.get(i).getVuelos().size() == 0) {
+                continue;
+            }
+            
             Date newDate = removeTime(plan.get(i).getFin());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(newDate);

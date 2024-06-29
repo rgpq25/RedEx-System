@@ -266,4 +266,14 @@ public class PaqueteService {
         }
     }
 
+    public ArrayList<Paquete> findPaqueteDiaDiaEntreFechas(Date fechaInicio, Date fechaFin){
+        try{
+            return paqueteRepository.findPaqueteDiaDiaEntreFechas(fechaInicio, fechaFin);
+        }
+        catch(Exception e){
+            LOGGER.error("PaqueteService.findPaqueteDiaDiaEntreFechas " + e.getMessage());
+            return null;
+        }
+    }
+
 }
