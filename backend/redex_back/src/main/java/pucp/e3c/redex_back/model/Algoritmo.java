@@ -1078,20 +1078,26 @@ public class Algoritmo {
     }
 
     public List<Paquete> obtenerPaquetesActualesDiaDia(PaqueteService paqueteService) {
+        //test time
+        long start = System.currentTimeMillis(); 
         List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
         Date now = new Date();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                         && (p.isEntregado() == false))
                 .collect(Collectors.toList());
-        List<Paquete> paquetesRespuesta = new ArrayList<>();
+        long end1 = System.currentTimeMillis();
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Tiempo de filtrado: " + (end1 - start) + " ms");
+        /*List<Paquete> paquetesRespuesta = new ArrayList<>();
         for (Paquete p : paquetes) {
             Paquete paqueteRespuesta = paqueteService.getPaqueteNoSimulacion(p.getId(), now);
             paquetesRespuesta.add(paqueteRespuesta);
         }
-        LOGGER.info("Paquetes actuales: " + paquetesRespuesta.size());
-        // && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))
-        return paquetesRespuesta;
+        long end2 = System.currentTimeMillis();
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Tiempo de consulta: " + (end2 - end1) + " ms");
+        LOGGER.info("Algoritmo.obtenerPaquetesActualesDiaDia - Paquetes actuales: " + paquetesRespuesta.size());
+        // && (p.getFechaDeEntrega() == null || !p.getFechaDeEntrega().before(now)))*/
+        return paquetes;
     }
 
     public EstadoAlmacen obtenerEstadoAlmacenDiaDia() {
