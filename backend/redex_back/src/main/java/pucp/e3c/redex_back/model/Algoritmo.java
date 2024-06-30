@@ -29,6 +29,7 @@ import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.VueloService;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -136,6 +137,7 @@ public class Algoritmo {
         GrafoVuelos grafoVuelos = null;
         HashMap<Integer, Paquete> hashTodosPaquetes = new HashMap<>();
         HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
+        Date ultimaMaxFechaEntrega;
 
         // Loop principal del día a día
         while (true) {
@@ -144,6 +146,7 @@ public class Algoritmo {
 
             long start = System.currentTimeMillis();
             Date now = new Date();
+           
 
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
@@ -181,10 +184,20 @@ public class Algoritmo {
                 }
                 continue;
             }
+            //add 4 minutes to Date now
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.MINUTE, 4);
+
+
 
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
-                grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
+                grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null,calendar.getTime());
+                Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+                Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+                ultimaMaxFechaEntrega = fin;
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().isEmpty()) {
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
@@ -192,8 +205,10 @@ public class Algoritmo {
                 }
                 primeraIteracionConPaquetes = false;
             } else {
-                grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
+                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService);
             }
+
+            
 
             // Agregar PlanRutaNT para los paquetes que no tienen
             for (Paquete paquete : paquetes) {
