@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -294,7 +295,7 @@ public class Funciones {
             Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos.csv");
             InputStream input = resource.getInputStream();
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
                 String line;
                 String currentContinent = "";
                 while ((line = reader.readLine()) != null) {

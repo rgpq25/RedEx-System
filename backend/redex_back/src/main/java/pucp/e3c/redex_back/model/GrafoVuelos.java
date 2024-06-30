@@ -8,14 +8,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import pucp.e3c.redex_back.service.VueloService;
 
+@Component
 public class GrafoVuelos {
     private HashMap<Ubicacion, TreeMap<Date, Vuelo>> grafo = new HashMap<>();
     private int rutaId = 0;
     private Date fecha_inicio;
     private Date fecha_fin;
     private HashMap<Integer, Vuelo> vuelos_hash = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrafoVuelos.class);
 
     public HashMap<Integer, Vuelo> getVuelosHash() {
         return vuelos_hash;
@@ -204,6 +210,8 @@ public class GrafoVuelos {
         Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
+        
+
         for (Vuelo vuelo : vuelos) {
             if (vuelo.getFechaSalida().before(this.fecha_fin)) {
                 continue;
@@ -223,6 +231,7 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
         Date fechaInicio = removeTime(inicio);
+        //LOGGER.info("GrafoVuelos.generarVuelos Date fin: " + fin.toString());
         Date fechaFin = removeTime(fin);
         Calendar cal = Calendar.getInstance();
         cal.setTime(fechaInicio);
@@ -230,13 +239,14 @@ public class GrafoVuelos {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-
+        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin: " + fechaFin.toString());
         Calendar finCal = Calendar.getInstance();
         finCal.setTime(fechaFin);
         finCal.set(Calendar.HOUR_OF_DAY, 0);
         finCal.set(Calendar.MINUTE, 0);
         finCal.set(Calendar.SECOND, 0);
         finCal.set(Calendar.MILLISECOND, 0);
+        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " + finCal.getTime().toString());
 
         while (!cal.after(finCal)) {
 
