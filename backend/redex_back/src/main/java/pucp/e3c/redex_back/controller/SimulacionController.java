@@ -388,7 +388,7 @@ public class SimulacionController {
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
 
-    @GetMapping("/obtenerReporteSimulacion")
+    @PostMapping("/obtenerReporteSimulacion")
     public List<RespuestaReporte> respuestaReporte(@RequestBody ReporteRequest reporteRequest) {
         try {
             int idSimulacion = reporteRequest.getIdSimulacion();

@@ -17,10 +17,12 @@ function ModalStopSimulation({
 	isOpen,
 	setIsModalOpen,
 	simulation,
+	redirectToReport
 }: {
 	isOpen: boolean;
 	setIsModalOpen: (value: boolean) => void;
 	simulation: Simulacion | undefined;
+	redirectToReport: () => void;
 }) {
 	return (
 		<AlertDialog open={isOpen} onOpenChange={setIsModalOpen}>
@@ -50,7 +52,8 @@ function ModalStopSimulation({
 								},
 								simulation
 							);
-							window.location.reload();
+
+							redirectToReport();
 						}}
 					>
 						Continuar

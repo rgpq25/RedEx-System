@@ -46,10 +46,10 @@ function ManagePackagesPage() {
 								<Plane className={twStyle} />
 								<p>Ver operaciones día a día</p>
 							</Link>
-							<Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/statistics"}>
+							{/* <Link className={cn(buttonVariants(), "col-span-2")} href={"/dashboard/statistics"}>
 								<BarChart className={twStyle} />
 								<p>Estadísticas de envíos</p>
-							</Link>
+							</Link> */}
 						</div>
 					</div>
 				</section>
