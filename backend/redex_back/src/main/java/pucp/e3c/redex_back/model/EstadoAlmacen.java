@@ -11,13 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+@Component
 public class EstadoAlmacen {
 
     private HashMap<String, TreeMap<Date, Integer>> uso_historico;
     private ArrayList<Aeropuerto> aeropuertos;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstadoAlmacen.class);
 
     public EstadoAlmacen(HashMap<String, TreeMap<Date, Integer>> uso_historico) {
         this.uso_historico = uso_historico;
@@ -37,6 +45,7 @@ public class EstadoAlmacen {
 
     public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> plan,
             HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> _aeropuertos) {
+        LOGGER.info("EstadoAlmacen Constructor");
         this.aeropuertos = _aeropuertos;
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
         this.uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
@@ -51,21 +60,33 @@ public class EstadoAlmacen {
             // Encuentra el aeropuerto de salida y llegada basado en el vuelo
             String aeropuertoSalida = vuelos.get(IdVuelo).getPlanVuelo().getCiudadOrigen().getId();
             String aeropuertoLlegada = vuelos.get(IdVuelo).getPlanVuelo().getCiudadDestino().getId();
-
+            /*if(aeropuertoSalida.equals("OAKB")){
+                LOGGER.info("EstadoAlmacen Vuelo " + vuelos.get(IdVuelo).getId() + " Aeropuerto de salida: " + aeropuertoSalida + " cambio capacidad: -" + capacidades.get(IdVuelo) + " - fecha: " + vuelos.get(IdVuelo).getFechaSalida());
+            }
+            if(aeropuertoLlegada.equals("OAKB")){
+                LOGGER.info("EstadoAlmacen Vuelo " + vuelos.get(IdVuelo).getId() + "Aeropuerto de llegada: " + aeropuertoLlegada + " cambio capacidad: +" + capacidades.get(IdVuelo) + " - fecha: " + vuelos.get(IdVuelo).getFechaLlegada());
+            }*/
             // Registrar salida de paquete
             registrarCapacidad(aeropuertoSalida, vuelos.get(IdVuelo).getFechaSalida(), -capacidades.get(IdVuelo));
 
             registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFechaLlegada(), capacidades.get(IdVuelo));
+
+            
         }
         for (int i = 0; i < paquetes.size(); i++) {
             String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
             String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
-
+            /*if(aeropuertoSalida.equals("OAKB")){
+                LOGGER.info("EstadoAlmacen Paquete "+ paquetes.get(i).getId()  +" Envio "+ paquetes.get(i).getEnvio().getId() +" Aeropuerto de salida: " + aeropuertoSalida + " cambio +1 - fecha: " + paquetes.get(i).getEnvio().getFechaRecepcion());
+            }*/
+            
+            
             registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
             
             if (plan.get(i) == null || plan.get(i).getVuelos().size() == 0) {
                 continue;
             }
+            
             
             Date newDate = removeTime(plan.get(i).getFin());
             Calendar calendar = Calendar.getInstance();
@@ -73,6 +94,9 @@ public class EstadoAlmacen {
             calendar.add(Calendar.MINUTE, 1);
             newDate = calendar.getTime();
             registrarCapacidad(aeropuertoLlegada, newDate, -1);
+            /*if(aeropuertoLlegada.equals("OAKB")){
+                LOGGER.info("EstadoAlmacen Paquete "+ paquetes.get(i).getId()  +" Envio "+ paquetes.get(i).getEnvio().getId() +" Aeropuerto de llegada: " + aeropuertoLlegada + " cambio -1 - fecha: " + plan.get(i).getFin());
+            }*/
         }
         for (String aeropuerto : aeropuertos) {
             TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
