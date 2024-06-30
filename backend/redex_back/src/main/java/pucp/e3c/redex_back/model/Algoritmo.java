@@ -46,6 +46,8 @@ public class Algoritmo {
 
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
 
+    private ArrayList<Paquete> paquetesProcesadosUltimaSimulacion = new ArrayList<>();
+
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
@@ -616,6 +618,8 @@ public class Algoritmo {
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
+            this.paquetesProcesadosUltimaSimulacion = new ArrayList<>(paquetesProcesar);
+            //paquetesProcesar;
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
             // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
             for (PlanRutaNT planRutaNT : planRutas) {
@@ -1302,6 +1306,16 @@ public class Algoritmo {
     public void setPuedeRecibirPaquetesDiaDia(boolean puedeRecibirPaquetesDiaDia) {
         this.puedeRecibirPaquetesDiaDia = puedeRecibirPaquetesDiaDia;
     }
+
+    public ArrayList<Paquete> getPaquetesProcesadosUltimaSimulacion() {
+        return paquetesProcesadosUltimaSimulacion;
+    }
+
+    public void setPaquetesProcesadosUltimaSimulacion(ArrayList<Paquete> paquetesProcesadosUltimaSimulacion) {
+        this.paquetesProcesadosUltimaSimulacion = paquetesProcesadosUltimaSimulacion;
+    }
+
+    
 
     
 
