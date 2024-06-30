@@ -69,32 +69,36 @@ public class GrafoVuelos {
         return calendar.getTime();
     }
 
-    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
-        // Encuentra el paquete con la fecha de recepción más temprana
-        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
-                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
-
-        // Encuentra el paquete con la fecha de entrega máxima más tardía
-        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
-                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
-
-        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
-        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
-
-        fecha_inicio = inicio;
-        fecha_fin = fin;
-
-        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
-        int i = 0;
-        for (Vuelo vuelo : vuelos) {
-            vuelo.setId(i);
-            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
-            agregarVuelo(vuelo);
-            i++;
-        }
-        System.out.println("Vuelos generados: " + vuelos.size());
-
-    }
+    /*
+     * public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
+     * // Encuentra el paquete con la fecha de recepción más temprana
+     * Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+     * .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
+     * 
+     * // Encuentra el paquete con la fecha de entrega máxima más tardía
+     * Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+     * .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+     * 
+     * Date inicio = minRecepcionPaquete.map(p ->
+     * p.getEnvio().getFechaRecepcion()).orElse(new Date());
+     * Date fin = maxEntregaPaquete.map(p ->
+     * p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+     * 
+     * fecha_inicio = inicio;
+     * fecha_fin = fin;
+     * 
+     * ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+     * int i = 0;
+     * for (Vuelo vuelo : vuelos) {
+     * vuelo.setId(i);
+     * vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+     * agregarVuelo(vuelo);
+     * i++;
+     * }
+     * System.out.println("Vuelos generados: " + vuelos.size());
+     * 
+     * }
+     */
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
             Simulacion simulacion) {
@@ -113,6 +117,35 @@ public class GrafoVuelos {
         fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
+            vuelo.setSimulacionActual(simulacion);
+            vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+        }
+        System.out.println("Vuelos generados: " + vuelos.size());
+    }
+
+    public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
+            Simulacion simulacion, Date fechaPlanificacionDiaDia) {
+        // Encuentra el paquete con la fecha de recepción más temprana
+        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
+
+        // Encuentra el paquete con la fecha de entrega máxima más tardía
+        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+
+        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
+        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+
+        fecha_inicio = inicio;
+        fecha_fin = fin;
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+        for (Vuelo vuelo : vuelos) {
+            if (vuelo.getFechaSalida().before(fechaPlanificacionDiaDia)) {
+                continue;
+            }
             vuelo.setSimulacionActual(simulacion);
             vuelo = vueloService.register(vuelo);
             vuelo = vueloService.get(vuelo.getId());
@@ -151,6 +184,30 @@ public class GrafoVuelos {
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
         for (Vuelo vuelo : vuelos) {
+            vuelo = vueloService.register(vuelo);
+            vuelo = vueloService.get(vuelo.getId());
+            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+            agregarVuelo(vuelo);
+        }
+        fecha_fin = nuevaFechaFin;
+    }
+
+    public void agregarVuelosParaPaquetesDiaDia(ArrayList<PlanVuelo> planV, ArrayList<Paquete> nuevosPaquetes,
+            VueloService vueloService) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.fecha_fin);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date tempInicio = cal.getTime();
+
+        Optional<Paquete> maxEntregaPaquete = nuevosPaquetes.stream()
+                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+        Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+
+        ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
+        for (Vuelo vuelo : vuelos) {
+            if (vuelo.getFechaSalida().before(this.fecha_fin)) {
+                continue;
+            }
             vuelo = vueloService.register(vuelo);
             vuelo = vueloService.get(vuelo.getId());
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
@@ -409,7 +466,7 @@ public class GrafoVuelos {
 
         Date fechaMinima = null;
         if (tiempoEnSimulacion != null && tiempoEnSimulacion.after(paquete.getEnvio().getFechaRecepcion())) {
-            fechaMinima = paquete.getEnvio().getFechaRecepcion();// tiempoEnSimulacion;
+            fechaMinima = tiempoEnSimulacion;
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
         }
@@ -424,6 +481,8 @@ public class GrafoVuelos {
             if (primerVuelo) {
                 aumentar = tiempoIntermedio;
                 primerVuelo = false;
+            } else {
+                aumentar = TA * 1000;
             }
 
             if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&

@@ -388,19 +388,21 @@ public class SimulacionController {
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
 
-    @PostMapping("/obtenerReporteSimulacion")
-    public List<RespuestaReporte> respuestaReporte(@RequestBody ReporteRequest reporteRequest) {
+    @GetMapping("/obtenerReporteUltimaPlanificacion")
+    public List<RespuestaReporte> respuestaReporte() {
         try {
-            int idSimulacion = reporteRequest.getIdSimulacion();
-            Date fechaCorte = reporteRequest.getFechaCorte();
+            //int idSimulacion = reporteRequest.getIdSimulacion();
+            //Date fechaCorte = reporteRequest.getFechaCorte();
             // 1 Se obtiene los paquetes por entregar
-            List<Paquete> paquetes = paqueteService.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
+            //List<Paquete> paquetes = paqueteService.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
+            List<Paquete> paquetes = algoritmo.getPaquetesProcesadosUltimaSimulacion();
             if(paquetes == null){
-                LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes para la simulacion: " + idSimulacion + " y fecha corte: " + fechaCorte);
+                //LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes para la simulacion: " + idSimulacion + " y fecha corte: " + fechaCorte);
+                LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes de ultima planificacion");
                 return new ArrayList<>();
             } 
-            LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size()+ " Fecha corte: " + fechaCorte);
-            
+            //LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size()+ " Fecha corte: " + fechaCorte);
+            LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size());
             // 2 Se agrupan los paquetes por envio
             Map<Integer, List<Paquete>> groupedByEnvioId = new HashMap<>();
             

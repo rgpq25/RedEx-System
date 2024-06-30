@@ -43,7 +43,7 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer> {
     @Query("SELECT p FROM Paquete p WHERE p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte ")
     public ArrayList<Paquete> findPaqueteSimulacionFechaCorte(int idSimulacion, Date fechaCorte);
 
-    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte AND (p.entregado IS FALSE OR p.fechaDeEntrega > :fechaCorte)")
+    @Query("SELECT p FROM Paquete p WHERE p.simulacionActual.id = :idSimulacion AND p.envio.fechaRecepcion < :fechaCorte AND (p.entregado = FALSE OR p.fechaDeEntrega > :fechaCorte)")
     public List<Paquete> findPaqueteSimulacionFechaCorteNoEntregados(int idSimulacion, Date fechaCorte);
 
     @Query("SELECT p FROM Paquete p WHERE p.simulacionActual IS NULL AND p.envio.fechaRecepcion > :fechaInicio AND p.envio.fechaRecepcion < :fechaFin")

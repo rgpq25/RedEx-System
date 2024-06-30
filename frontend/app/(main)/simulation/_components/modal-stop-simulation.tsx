@@ -1,3 +1,5 @@
+"use client"
+
 import {
 	AlertDialog,
 	AlertDialogTrigger,
@@ -9,21 +11,26 @@ import {
 	AlertDialogCancel,
 	AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { Simulacion } from "@/lib/types";
+import { useState } from "react";
 import { toast } from "sonner";
 
 function ModalStopSimulation({
 	isOpen,
 	setIsModalOpen,
 	simulation,
-	redirectToReport
+	redirectToReport,
 }: {
 	isOpen: boolean;
 	setIsModalOpen: (value: boolean) => void;
 	simulation: Simulacion | undefined;
 	redirectToReport: () => void;
 }) {
+
+	const [isLoading, setIsLoading] = useState(false);
+
 	return (
 		<AlertDialog open={isOpen} onOpenChange={setIsModalOpen}>
 			<AlertDialogContent>
@@ -32,9 +39,11 @@ function ModalStopSimulation({
 					<AlertDialogDescription>Esto hará que la simulación no continue, y la misma sera eliminada del sistema.</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel>Cancelar</AlertDialogCancel>
-					<AlertDialogAction
+					<AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+					<Button
 						onClick={async () => {
+							setIsLoading(true);
+							
 							if (simulation === undefined) {
 								toast.error("Simmulation is undefined, can't stop it");
 								console.log("Simmulation is undefined, can't stop it");
@@ -55,9 +64,11 @@ function ModalStopSimulation({
 
 							redirectToReport();
 						}}
+						isLoading={isLoading}
+						disabled={isLoading}
 					>
 						Continuar
-					</AlertDialogAction>
+					</Button>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

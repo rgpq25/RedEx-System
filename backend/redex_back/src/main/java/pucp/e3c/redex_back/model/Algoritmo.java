@@ -29,6 +29,7 @@ import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
 import pucp.e3c.redex_back.service.VueloService;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -45,6 +46,8 @@ public class Algoritmo {
     private boolean terminarPlanificacionDiaDia;
 
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
+
+    private ArrayList<Paquete> paquetesProcesadosUltimaSimulacion = new ArrayList<>();
 
     private ArrayList<Paquete> paquetesSimulacion = new ArrayList<>();
 
@@ -142,6 +145,7 @@ public class Algoritmo {
 
             long start = System.currentTimeMillis();
             Date now = new Date();
+           
 
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
@@ -179,10 +183,17 @@ public class Algoritmo {
                 }
                 continue;
             }
+            //add 4 minutes to Date now
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.MINUTE, 4);
+
+
 
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
-                grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
+                grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null,calendar.getTime());
+                //grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().isEmpty()) {
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
@@ -190,8 +201,11 @@ public class Algoritmo {
                 }
                 primeraIteracionConPaquetes = false;
             } else {
-                grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
+                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService);
+                //grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
             }
+
+            
 
             // Agregar PlanRutaNT para los paquetes que no tienen
             for (Paquete paquete : paquetes) {
@@ -256,8 +270,7 @@ public class Algoritmo {
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
                     planRutaService, null, null, messagingTemplate, tipoOperacion, null, 0);
             i++;
-
-            ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
+            //ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
             // Actualizar el hash map de rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
@@ -269,6 +282,27 @@ public class Algoritmo {
 
             realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService,
                     vueloService, planRutaXVueloService, hashTodosPaquetes);
+
+            HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
+            // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
+            List<PlanRutaNT> listPlanRutasNT = new ArrayList<>(hashPlanRutasNT.values());
+            if(listPlanRutasNT!=null){
+                for (PlanRutaNT planRutaNT : listPlanRutasNT) {
+                    if(planRutaNT.getVuelos()!=null){
+                        for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                            if (nuevaOcupacion.get(vuelo.getId()) == null) {
+                                nuevaOcupacion.put(vuelo.getId(), 1);
+                            } else {
+                                nuevaOcupacion.put(vuelo.getId(), nuevaOcupacion.get(vuelo.getId()) + 1);
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            
+
+            ocupacionVuelos = nuevaOcupacion;
 
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
             ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
@@ -293,7 +327,7 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
-            //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+            estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
             
             
             this.estadoAlmacenOpDiaDia = estadoAlmacen;
@@ -603,6 +637,8 @@ public class Algoritmo {
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
+            this.paquetesProcesadosUltimaSimulacion = new ArrayList<>(paquetesProcesar);
+            //paquetesProcesar;
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
             // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
             for (PlanRutaNT planRutaNT : planRutas) {
@@ -1256,7 +1292,7 @@ public class Algoritmo {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 "Envio ID " + id + " con " + cantidadPaquetes + "paquete(s) agregado(s) al aeropuerto " + aeropuerto);
-        //this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
         this.nConsultasDiaDia++;
     }
 
@@ -1265,7 +1301,7 @@ public class Algoritmo {
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
-        //this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
+        this.estadoAlmacenOpDiaDia.consulta_historicaTxt("ocupacionAeropuertosDiaDia" + nConsultasDiaDia + ".txt");
         this.nConsultasDiaDia++;
     }
 
@@ -1289,6 +1325,16 @@ public class Algoritmo {
     public void setPuedeRecibirPaquetesDiaDia(boolean puedeRecibirPaquetesDiaDia) {
         this.puedeRecibirPaquetesDiaDia = puedeRecibirPaquetesDiaDia;
     }
+
+    public ArrayList<Paquete> getPaquetesProcesadosUltimaSimulacion() {
+        return paquetesProcesadosUltimaSimulacion;
+    }
+
+    public void setPaquetesProcesadosUltimaSimulacion(ArrayList<Paquete> paquetesProcesadosUltimaSimulacion) {
+        this.paquetesProcesadosUltimaSimulacion = paquetesProcesadosUltimaSimulacion;
+    }
+
+    
 
     
 
