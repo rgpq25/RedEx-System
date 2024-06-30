@@ -137,7 +137,6 @@ public class Algoritmo {
         GrafoVuelos grafoVuelos = null;
         HashMap<Integer, Paquete> hashTodosPaquetes = new HashMap<>();
         HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
-        Date ultimaMaxFechaEntrega;
 
         // Loop principal del día a día
         while (true) {
@@ -194,10 +193,7 @@ public class Algoritmo {
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
                 grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null,calendar.getTime());
-                Optional<Paquete> maxEntregaPaquete = paquetes.stream()
-                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
-                Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
-                ultimaMaxFechaEntrega = fin;
+                //grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, null);
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().isEmpty()) {
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
@@ -206,6 +202,7 @@ public class Algoritmo {
                 primeraIteracionConPaquetes = false;
             } else {
                 grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService);
+                //grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
             }
 
             
