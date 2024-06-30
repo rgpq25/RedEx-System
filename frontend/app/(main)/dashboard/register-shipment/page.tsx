@@ -73,7 +73,7 @@ function NavigationButtons({ api, currentStep, openConfirmDialog, validateSender
                          (currentStep === 2 && !validatePackageCard());
 
   const navigateNext = () => {
-    if (isNextDisabled) {
+    if (isNextDisabled ) {
       toast.error("Por favor, complete correctamente todos los campos antes de continuar.");
       return;
     }
@@ -161,7 +161,8 @@ function RegisterShipmentPage() {
 
   const validatePackageCard = () => {
 
-    return originLocationId && destinationLocationId && packagesCount > 0 ;
+    return originLocationId && destinationLocationId &&
+           packagesCount > 0 && originLocationId !== destinationLocationId;
   };
 
   useEffect(() => {
@@ -234,6 +235,7 @@ function RegisterShipmentPage() {
       destination_location.pais=destination_location.pais;
     }
 
+    
 
     try {
       // Crear usuario
@@ -333,7 +335,7 @@ function RegisterShipmentPage() {
         "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
     };
 
-      const emailsender = await api("POST", `http://localhost:8080/back/email/send`, handleSuccess, handleError, dataToEmailSender);
+      const emailsender = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/email/send`, handleSuccess, handleError, dataToEmailSender);
       const emailreceiver = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/email/send`, handleSuccess, handleError, dataToEmailReceiver);
       console.log(emailsender);
       console.log(emailreceiver);
