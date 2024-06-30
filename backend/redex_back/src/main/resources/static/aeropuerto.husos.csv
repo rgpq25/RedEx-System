@@ -8,12 +8,12 @@
 7;SCEL;Santiago de Chile;Chile;sant;GMT-3;460;Latitude: 33 23 47 S;Longitude: 68 47 41 W
 8;SABE;Buenos Aires;Argentina;buen;GMT-3;460;Latitude: 34 33 33 S;Longitude: 58 24 56 W
 9;SGAS;Asunción;Paraguay;asun;GMT-4;400;Latitude: 25 14 24 S;Longitude: 57 31 12 W
-10;SUAA;Motenvideo;Uruguay;mont;GMT-3;400;Latitude: 34 47 21 S;Longitude: 56 15 53 W
+10;SUAA;Montevideo;Uruguay;mont;GMT-3;400;Latitude: 34 47 21 S;Longitude: 56 15 53 W
 #Continente: Europa;;;;;;;    ;    
 11;LATI;Tirana;Albania;tira;GMT+2;410;Latitude: 41 24 53 N;Longitude: 19 43 14 E
 12;EDDI;Berlin;Alemania;berl;GMT+2;480;Latitude: 52 28 25 N;Longitude: 13 24 6 E﻿
 13;LOWW;Viena;Austria;vien;GMT+2;430;Latitude: 48 6 39 N;Longitude: 16 34 15 E
-14;EBCI;Bruselas;Belgica;brus;GMT+2;440;Latitude: 50 27 33 N;Longitude: 4 27 13 E
+14;EBCI;Bruselas;Bélgica;brus;GMT+2;440;Latitude: 50 27 33 N;Longitude: 4 27 13 E
 15;UMMS;Minsk;Bielorrusia;mins;GMT+3;400;Latitude: 53 52 57 N;Longitude: 28 1 57 E
 16;LBSF;Sofia;Bulgaria;sofi;GMT+3;400;Latitude: 42 41 25 N;Longitude: 23 24 17 E
 17;LKPR;Praga;Checa;prag;GMT+2;400;Latitude: 50 6 5 N;Longitude: 14 15 56 E
@@ -25,9 +25,9 @@
 22;OSDI;Damasco;Siria;dama;GMT+3;400;Latitude: 33 24 41 N;Longitude: 36 30 56 E
 23;OERK;Riad;Arabia Saudita;riad;GMT+3;420;Latitude: 24 57 28 N;Longitude: 46 41 56 E
 24;OMDB;Dubai;Emiratos A.U;emir;GMT+4;420;Latitude: 25 15 10 N;Longitude: 55 21 52 E﻿
-25;OAKB;Kabul;Afganistan;kabu;GMT+4;480;Latitude: 34 33 56 N;Longitude: 69 12 39 E﻿
+25;OAKB;Kabul;Afganistán;kabu;GMT+4;480;Latitude: 34 33 56 N;Longitude: 69 12 39 E﻿
 26;OOMS;Mascate;Oman;masc;GMT+4;460;Latitude: 23 35 22 N;Longitude: 58 17 3 E
 27;OYSN;Sana;Yemen;sana;GMT+3;420;Latitude: 15 28 34 N;Longitude: 44 13 11 E
-28;OPKC;Karachi;Pakistan;kara;GMT+5;410;Latitude: 24 54 0 N;Longitude: 67 9 0 E
+28;OPKC;Karachi;Pakistán;kara;GMT+5;410;Latitude: 24 54 0 N;Longitude: 67 9 0 E
 29;UBBB;Baku;Azerbaiyan;baku;GMT+2;400;Latitude: 40 28 2 N;Longitude: 50 2 48 E
 30;OJAI;Aman;Jordania;aman;GMT+3;400;Latitude: 31 43 21 N;Longitude: 35 59 36 E

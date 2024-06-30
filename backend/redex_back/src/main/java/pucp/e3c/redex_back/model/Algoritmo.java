@@ -113,7 +113,7 @@ public class Algoritmo {
             PaqueteService paqueteService,
             PlanRutaXVueloService planRutaXVueloService,
             AeropuertoService aeropuertoService,
-            int SA) {
+            int SA, int TA) {
 
         // Inicia la operación dia a dia
         String tipoOperacion = "DIA A DIA";
@@ -234,7 +234,7 @@ public class Algoritmo {
                     .collect(Collectors.toList());
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
-            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados), vueloService, now, 0, 1);
+            ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados), vueloService, now, TA, 1);
             //paquetesProcesar = new ArrayList<>(paquetesProcesarFiltrados);
             LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
 
@@ -268,7 +268,7 @@ public class Algoritmo {
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, null, 0);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA);
             i++;
             //ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
