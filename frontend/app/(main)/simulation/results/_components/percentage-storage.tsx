@@ -73,10 +73,10 @@ function PercentageStorage({ className }: { className: string }) {
                             px-4 py-3 gap-1
             "
             >
-                {mockData.map(({ city, country, airportName, percentage }) => {
+                {mockData.map(({ city, country, airportName, percentage }, idx) => {
                     return (
                         <StorageRow
-                            key={city}
+                            key={idx}
                             title={`${city}, ${country}`}
                             airportName={airportName}
                             percentage={percentage}

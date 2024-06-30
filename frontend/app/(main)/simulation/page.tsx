@@ -213,7 +213,7 @@ function SimulationPage() {
 						return;
 					}
 					setSimulationContext(simulation);
-					router.push("/simulation/results");
+					window.location.replace("/simulation/results");
 				}}
 			/>
 			<MainContainer className="relative">
