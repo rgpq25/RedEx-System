@@ -292,7 +292,7 @@ public class Funciones {
     public ArrayList<Aeropuerto> leerAeropuertosCompletos() {
         ArrayList<Aeropuerto> aeropuertos = new ArrayList<>();
         try {
-            Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos.csv");
+            Resource resource = resourceLoader.getResource("classpath:static/aeropuerto.husos_v2.csv");
             InputStream input = resource.getInputStream();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
@@ -586,7 +586,7 @@ public class Funciones {
     public ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath)
             throws IOException {
         // Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
-        Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo.txt");
+        Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo_v2.txt");
         ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
         InputStream input = resource.getInputStream();
 
