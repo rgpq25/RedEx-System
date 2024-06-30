@@ -322,6 +322,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                                 </>
                                             )}
                                             <Stepper
+                                                size={'sm'}
                                                 index={activeStep}
                                                 orientation='vertical'
                                                 height='max-content'
