@@ -273,15 +273,22 @@ public class Algoritmo {
 
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
             // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
-            for (PlanRutaNT planRutaNT : planRutasRespuestaAlgoritmo) {
-                for (Vuelo vuelo : planRutaNT.getVuelos()) {
-                    if (nuevaOcupacion.get(vuelo.getId()) == null) {
-                        nuevaOcupacion.put(vuelo.getId(), 1);
-                    } else {
-                        nuevaOcupacion.put(vuelo.getId(), nuevaOcupacion.get(vuelo.getId()) + 1);
+            List<PlanRutaNT> listPlanRutasNT = new ArrayList<>(hashPlanRutasNT.values());
+            if(listPlanRutasNT!=null){
+                for (PlanRutaNT planRutaNT : listPlanRutasNT) {
+                    if(planRutaNT.getVuelos()!=null){
+                        for (Vuelo vuelo : planRutaNT.getVuelos()) {
+                            if (nuevaOcupacion.get(vuelo.getId()) == null) {
+                                nuevaOcupacion.put(vuelo.getId(), 1);
+                            } else {
+                                nuevaOcupacion.put(vuelo.getId(), nuevaOcupacion.get(vuelo.getId()) + 1);
+                            }
+                        }
                     }
+                    
                 }
             }
+            
 
             ocupacionVuelos = nuevaOcupacion;
 

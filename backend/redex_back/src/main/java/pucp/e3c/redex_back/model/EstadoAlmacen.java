@@ -45,7 +45,7 @@ public class EstadoAlmacen {
 
     public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> plan,
             HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> _aeropuertos) {
-        LOGGER.info("EstadoAlmacen Constructor");
+        //LOGGER.info("EstadoAlmacen Constructor");
         this.aeropuertos = _aeropuertos;
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
         this.uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
