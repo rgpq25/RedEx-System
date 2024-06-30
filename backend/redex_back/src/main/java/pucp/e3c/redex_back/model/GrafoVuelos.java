@@ -69,32 +69,36 @@ public class GrafoVuelos {
         return calendar.getTime();
     }
 
-    /*public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
-        // Encuentra el paquete con la fecha de recepción más temprana
-        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
-                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
-
-        // Encuentra el paquete con la fecha de entrega máxima más tardía
-        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
-                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
-
-        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
-        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
-
-        fecha_inicio = inicio;
-        fecha_fin = fin;
-
-        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
-        int i = 0;
-        for (Vuelo vuelo : vuelos) {
-            vuelo.setId(i);
-            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
-            agregarVuelo(vuelo);
-            i++;
-        }
-        System.out.println("Vuelos generados: " + vuelos.size());
-
-    }*/
+    /*
+     * public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
+     * // Encuentra el paquete con la fecha de recepción más temprana
+     * Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+     * .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
+     * 
+     * // Encuentra el paquete con la fecha de entrega máxima más tardía
+     * Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+     * .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+     * 
+     * Date inicio = minRecepcionPaquete.map(p ->
+     * p.getEnvio().getFechaRecepcion()).orElse(new Date());
+     * Date fin = maxEntregaPaquete.map(p ->
+     * p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+     * 
+     * fecha_inicio = inicio;
+     * fecha_fin = fin;
+     * 
+     * ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+     * int i = 0;
+     * for (Vuelo vuelo : vuelos) {
+     * vuelo.setId(i);
+     * vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+     * agregarVuelo(vuelo);
+     * i++;
+     * }
+     * System.out.println("Vuelos generados: " + vuelos.size());
+     * 
+     * }
+     */
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
             Simulacion simulacion) {
@@ -123,7 +127,7 @@ public class GrafoVuelos {
     }
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
-            Simulacion simulacion,Date fechaPlanificacionDiaDia) {
+            Simulacion simulacion, Date fechaPlanificacionDiaDia) {
         // Encuentra el paquete con la fecha de recepción más temprana
         Optional<Paquete> minRecepcionPaquete = paquetes.stream()
                 .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
@@ -139,7 +143,7 @@ public class GrafoVuelos {
         fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
-            if(vuelo.getFechaSalida().before(fechaPlanificacionDiaDia)){
+            if (vuelo.getFechaSalida().before(fechaPlanificacionDiaDia)) {
                 continue;
             }
             vuelo.setSimulacionActual(simulacion);
@@ -201,7 +205,7 @@ public class GrafoVuelos {
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
         for (Vuelo vuelo : vuelos) {
-            if(vuelo.getFechaSalida().before(this.fecha_fin)){
+            if (vuelo.getFechaSalida().before(this.fecha_fin)) {
                 continue;
             }
             vuelo = vueloService.register(vuelo);
@@ -478,7 +482,7 @@ public class GrafoVuelos {
                 aumentar = tiempoIntermedio;
                 primerVuelo = false;
             } else {
-                aumentar = TA;
+                aumentar = TA * 1000;
             }
 
             if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&
