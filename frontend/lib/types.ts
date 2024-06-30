@@ -156,6 +156,7 @@ export type Simulacion = {
 	fechaInicioSim: Date;
 	fechaFinSim: Date;
 	milisegundosPausados: number;
+	fechaDondeParoSimulacion?: Date;
 };
 
 export type RespuestaAlgoritmo = {

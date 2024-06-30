@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import Chip from "../ui/chip";
 import { AirportTable } from "./airport-table";
+import { formatDateTimeLongShort } from "@/lib/date";
 
 function getCurrentLocation(paquete: Paquete | undefined, planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
 	if (paquete === undefined) {
@@ -361,13 +362,11 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 							</p>
 
 							<p>
-								{"Fecha recepcion: " + envio?.fechaRecepcion.toLocaleDateString() + " " + envio?.fechaRecepcion.toLocaleTimeString()}
+								{"Fecha recepcion: " + formatDateTimeLongShort(envio?.fechaRecepcion || new Date())}
 							</p>
 							<p>
 								{"Fecha limite entrega: " +
-									envio?.fechaLimiteEntrega.toLocaleDateString() +
-									" " +
-									envio?.fechaLimiteEntrega.toLocaleTimeString()}
+									formatDateTimeLongShort(envio?.fechaLimiteEntrega || new Date())}
 							</p>
 							<AirportTable data={envio?.paquetes || []} columns={columns} />
 						</div>
