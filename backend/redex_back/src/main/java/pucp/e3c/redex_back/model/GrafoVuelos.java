@@ -424,6 +424,8 @@ public class GrafoVuelos {
             if (primerVuelo) {
                 aumentar = tiempoIntermedio;
                 primerVuelo = false;
+            } else {
+                aumentar = TA;
             }
 
             if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&
