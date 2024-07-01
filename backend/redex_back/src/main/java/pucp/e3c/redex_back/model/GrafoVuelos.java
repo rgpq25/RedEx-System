@@ -559,9 +559,10 @@ public class GrafoVuelos {
                             .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
-                throw new IllegalStateException(
+                System.out.println(
                         "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
                                 + paquete.toString());
+                return null;
 
             }
             if (rutaEncontrada == null) {
