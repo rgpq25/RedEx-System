@@ -911,16 +911,17 @@ public class Algoritmo {
             }
 
             // Formar respuesta a front
-            enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
-                    "/algoritmo/respuesta");
-            this.paquetesSimulacion = new ArrayList<>(paquetes);
-            this.planRutasSimulacion = new ArrayList<>();
-            for (PlanRutaNT planRutaNT : planRutas) {
-                PlanRutaNT clonedPlanRuta = new PlanRutaNT();
-                clonedPlanRuta.setVuelos(new ArrayList<>(planRutaNT.getVuelos()));
-                this.planRutasSimulacion.add(clonedPlanRuta);
-            }
-            LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
+            // enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo,
+            // fechaSgteCalculo,
+            // "/algoritmo/respuesta");
+            // this.paquetesSimulacion = new ArrayList<>(paquetes);
+            // this.planRutasSimulacion = new ArrayList<>();
+            // for (PlanRutaNT planRutaNT : planRutas) {
+            // PlanRutaNT clonedPlanRuta = new PlanRutaNT();
+            // clonedPlanRuta.setVuelos(new ArrayList<>(planRutaNT.getVuelos()));
+            // this.planRutasSimulacion.add(clonedPlanRuta);
+            // }
+            // LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada de simulacion");
 
             // System.out.println("Proxima planificacion en tiempo de simulacion " +
             // fechaSgteCalculo);
