@@ -210,7 +210,6 @@ public class GrafoVuelos {
         Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
-        
 
         for (Vuelo vuelo : vuelos) {
             if (vuelo.getFechaSalida().before(this.fecha_fin)) {
@@ -231,7 +230,7 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
         Date fechaInicio = removeTime(inicio);
-        //LOGGER.info("GrafoVuelos.generarVuelos Date fin: " + fin.toString());
+        // LOGGER.info("GrafoVuelos.generarVuelos Date fin: " + fin.toString());
         Date fechaFin = removeTime(fin);
         Calendar cal = Calendar.getInstance();
         cal.setTime(fechaInicio);
@@ -239,14 +238,15 @@ public class GrafoVuelos {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin: " + fechaFin.toString());
+        // LOGGER.info("GrafoVuelos.generarVuelos Fecha fin: " + fechaFin.toString());
         Calendar finCal = Calendar.getInstance();
         finCal.setTime(fechaFin);
         finCal.set(Calendar.HOUR_OF_DAY, 0);
         finCal.set(Calendar.MINUTE, 0);
         finCal.set(Calendar.SECOND, 0);
         finCal.set(Calendar.MILLISECOND, 0);
-        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " + finCal.getTime().toString());
+        // LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " +
+        // finCal.getTime().toString());
 
         while (!cal.after(finCal)) {
 

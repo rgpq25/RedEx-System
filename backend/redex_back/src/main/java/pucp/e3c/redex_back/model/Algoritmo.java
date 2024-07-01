@@ -708,6 +708,7 @@ public class Algoritmo {
         this.planRutasSimulacion = planRutas;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, simulacion);
+
         int i = 0;
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
@@ -717,7 +718,6 @@ public class Algoritmo {
                 simulacion);
 
         while (iniciar) {
-            Thread.sleep(1000);
             simulacion = simulacionService.get(simulacion.getId());
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
 
@@ -769,7 +769,10 @@ public class Algoritmo {
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
-                tiempoEnSimulacion = fechaSgteCalculo;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(fechaSgteCalculo);
+                calendar.add(Calendar.DAY_OF_MONTH, -2);
+                tiempoEnSimulacion = fechaSgteCalculo;// calendar.getTime();
                 continue;
             }
 
@@ -877,7 +880,10 @@ public class Algoritmo {
             // fechaSgteCalculo);
             LOGGER.info(tipoOperacion + " Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
-            tiempoEnSimulacion = fechaSgteCalculo;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(fechaSgteCalculo);
+            calendar.add(Calendar.DAY_OF_MONTH, -2);
+            tiempoEnSimulacion = fechaSgteCalculo;// calendar.getTime();
 
         }
         return planRutas;
