@@ -128,7 +128,11 @@ public class SAImplementation {
                                         grafoVuelos);
 
                         long startTimeInitialization = System.nanoTime();
-                        current.force_initialize(todasLasRutas, vueloService, tiempoEnSimulacion, TA);
+                        boolean inicio_correcto = current.force_initialize(todasLasRutas, vueloService,
+                                        tiempoEnSimulacion, TA);
+                        if (inicio_correcto == false) {
+                                return null;
+                        }
                         // Funciones.printRutasTXT(current.paquetes, current.rutas, "initial.txt");
                         System.out.println("Finished solution initialization in "
                                         + (System.nanoTime() - startTimeInitialization) / 1000000000 + " s");
@@ -152,9 +156,12 @@ public class SAImplementation {
                                 }
                                 ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
                                 for (int i = 0; i < neighbourCount; i++) {
-                                        neighbours.add(
-                                                        current.generateNeighbour(windowSize, vueloService,
-                                                                        tiempoEnSimulacion, TA));
+                                        Solucion newNeighbour = current.generateNeighbour(windowSize, vueloService,
+                                                        tiempoEnSimulacion, TA);
+                                        if (newNeighbour == null) {
+                                                return null;
+                                        }
+                                        neighbours.add(newNeighbour);
                                         // System.out.println("Vecino generado");
                                 }
                                 // System.out.println("\nNeighbours iterados\n");
@@ -220,6 +227,10 @@ public class SAImplementation {
                          */
                         LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: "
                                         + current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+                        boolean planificacion_fallida = false;
+                        if (current.costoDePaquetesYRutasErroneas > 0) {
+                                planificacion_fallida = true;
+                        }
                         /*
                          * ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
                          * 
@@ -284,6 +295,9 @@ public class SAImplementation {
                                         new ArrayList<>(current.vuelos_hash.values()),
                                         current.estado, current.rutas, simulacion);
                         respuestaAlgoritmo.setOcupacionVuelos(current.ocupacionVuelos);
+                        if (planificacion_fallida) {
+                                respuestaAlgoritmo.setCorrecta(false);
+                        }
                         return respuestaAlgoritmo;
                 } catch (Exception e) {
                         e.printStackTrace();
