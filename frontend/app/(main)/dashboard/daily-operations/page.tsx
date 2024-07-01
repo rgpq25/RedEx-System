@@ -11,8 +11,9 @@ import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../../_components/map-header";
-import { calculateAngle, structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import { calculateAngle, getAirportHashmap, getPorcentajeOcupacionAeropuertos, getPorcentajeOcupacionVuelos, structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
+import { Plane, Warehouse } from "lucide-react";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -36,6 +37,7 @@ function DailyOperationsPage() {
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [airportsHash, setAirportsHash] = useState<Map<string, Aeropuerto> | null>(null);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [envios, setEnvios] = useState<Envio[]>([]);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
@@ -44,21 +46,21 @@ function DailyOperationsPage() {
 
 	const [isLoadingFirstTime, setIsLoadingFirstTime] = useState(false);
 
-
-	const hasRun = useRef(false)
+	const hasRun = useRef(false);
 
 	useEffect(() => {
-
-		if(hasRun.current) return
-		hasRun.current = true
+		if (hasRun.current) return;
+		hasRun.current = true;
 
 		async function getData() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 				(data: Aeropuerto[]) => {
-					console.log("DATA DE /back/aeropuerto/: ", data)
+					console.log("DATA DE /back/aeropuerto/: ", data);
 					setAirports(data);
+					const airportHash = getAirportHashmap(data);
+					setAirportsHash(airportHash);
 				},
 				(error) => {
 					console.log(error);
@@ -98,7 +100,7 @@ function DailyOperationsPage() {
 
 					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-					
+
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
@@ -173,7 +175,24 @@ function DailyOperationsPage() {
 				</div>
 			</MapHeader>
 
-			<PlaneLegend className="absolute top-10 right-14 z-[50]" />
+			<PlaneLegend className="absolute bottom-16 right-14 z-[50]" />
+			<div className="flex flex-col items-end justify-center gap-1 absolute top-10 right-14 z-[20]">
+				<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
+					<a className="font-medium text-right w-full">Ocupación promedio: </a>{" "}
+					<div className="flex flex-row items-center gap-1 justify-end w-full">
+						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionAeropuertos(
+							airportsHash,
+							estadoAlmacen,
+							currentTime
+						)}%`}</p>
+						<Warehouse className="stroke-[1.1px] w-5 h-5" />
+					</div>
+					<div className="flex flex-row items-center gap-1 justify-end w-full">
+						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionVuelos(flights, currentTime)}%`}</p>
+						<Plane className="stroke-[1.2px] w-5 h-5" />
+					</div>
+				</div>
+			</div>
 
 			{isLoadingFirstTime && (
 				<>

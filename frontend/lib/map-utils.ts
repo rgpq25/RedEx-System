@@ -241,16 +241,22 @@ export function getPorcentajeOcupacionAeropuertos(
 export function getPorcentajeOcupacionVuelos(vuelos: Vuelo[], currentTime: Date | undefined) {
 	if (currentTime === undefined) return 0;
 
+	const currentVuelos = vuelos.filter(
+		(flight: Vuelo) => flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada
+	);
+
+	if (currentVuelos.length === 0) return 0;
+
 	let totalOcupacion = 0;
 
-	for (const vuelo of vuelos) {
+	for (const vuelo of currentVuelos) {
 		const currentOcupation = vuelo.capacidadUtilizada;
 		const maxOcupation = vuelo.planVuelo.capacidadMaxima;
 
 		totalOcupacion += (currentOcupation / maxOcupation) * 100;
 	}
 
-	return (totalOcupacion / vuelos.length).toFixed(2);
+	return (totalOcupacion / currentVuelos.length).toFixed(2);
 }
 
 export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAeropuerto: string, currentTime: Date | undefined, data: Paquete[]) {
@@ -275,10 +281,10 @@ export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAe
 		for (let i = 0; i < missingPackages; i++) {
 			new_data.push(selectedPackages[i]);
 		}
-		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`)
+		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`);
 	} else {
 		new_data = new_data.slice(0, currentOcupation);
-		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`)
+		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`);
 	}
 
 	return new_data;

@@ -260,7 +260,7 @@ function SimulationPage() {
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute top-24 right-14 z-[20]">
 					<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
-						<a className="font-medium text-right w-full">Ocupacion promedio: </a>{" "}
+						<a className="font-medium text-right w-full">Ocupación promedio: </a>{" "}
 						<div className="flex flex-row items-center gap-1 justify-end w-full">
 							<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionAeropuertos(airportsHash, estadoAlmacen, currentTime)}%`}</p>
 							<Warehouse className="stroke-[1.1px] w-5 h-5"/>
