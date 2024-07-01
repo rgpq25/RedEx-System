@@ -878,8 +878,7 @@ function Vuelos({
         }
         if (hasSearchFilter) {
             filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.id.toString().includes(search));
-        }
-        setFilteredFlights(filteredVuelos || []);
+        }        
         return filteredVuelos;
     }, [
         vuelos,
@@ -892,8 +891,11 @@ function Vuelos({
         maxCapacidad,
         paisOrigenFilter,
         paisDestinoFilter,
-        setFilteredFlights,
     ]);
+
+    useEffect(() => {
+        setFilteredFlights(filteredItems || []);
+    }, [filteredItems, setFilteredFlights]);
 
     const pages = Math.ceil((filteredItems?.length || 0) / rowsPerPage);
 
@@ -985,7 +987,7 @@ function Vuelos({
                                 min={DEFAULT_RANGO_CAPACIDAD_VUELOS[0]}
                                 max={DEFAULT_RANGO_CAPACIDAD_VUELOS[1]}
                                 defaultValue={DEFAULT_RANGO_CAPACIDAD_VUELOS}
-                                step={5}
+                                step={1}
                             />
                             <Separator />
                             <Small>Continente de origen:</Small>
