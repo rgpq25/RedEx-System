@@ -769,10 +769,7 @@ public class Algoritmo {
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(fechaSgteCalculo);
-                calendar.add(Calendar.DAY_OF_MONTH, -2);
-                tiempoEnSimulacion = fechaSgteCalculo;// calendar.getTime();
+                tiempoEnSimulacion = fechaSgteCalculo;
                 continue;
             }
 
@@ -880,9 +877,6 @@ public class Algoritmo {
             // fechaSgteCalculo);
             LOGGER.info(tipoOperacion + " Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(fechaSgteCalculo);
-            calendar.add(Calendar.DAY_OF_MONTH, -2);
             tiempoEnSimulacion = fechaSgteCalculo;// calendar.getTime();
 
         }
