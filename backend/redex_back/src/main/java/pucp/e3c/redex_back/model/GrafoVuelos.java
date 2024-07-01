@@ -196,11 +196,12 @@ public class GrafoVuelos {
 
     public void agregarVuelosParaPaquetesDiaDia(ArrayList<PlanVuelo> planV, ArrayList<Paquete> nuevosPaquetes,
             VueloService vueloService) {
+        //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Inicio " + this.fecha_fin.toString());
         Calendar cal = Calendar.getInstance();
         cal.setTime(this.fecha_fin);
         cal.add(Calendar.DAY_OF_MONTH, 1);
         Date tempInicio = cal.getTime();
-
+        //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Temp Inicio " + tempInicio.toString());
         Optional<Paquete> maxEntregaPaquete = nuevosPaquetes.stream()
                 .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
         Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
@@ -212,15 +213,36 @@ public class GrafoVuelos {
             if(vuelo.getFechaSalida().before(this.fecha_fin)){
                 continue;
             }
+            //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Vuelo ID:  Vuelo a agregar " + vuelo.toString());
             vuelo = vueloService.register(vuelo);
+            //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Vuelo ID: " + vuelo.getId());
             vuelo = vueloService.get(vuelo.getId());
             vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
             agregarVuelo(vuelo);
         }
         fecha_fin = nuevaFechaFin;
+        //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia nueva fecha Fin " + this.fecha_fin.toString());
     }
 
     public GrafoVuelos() {
+    }
+
+    private boolean verificaPlanesVueloObservados(PlanVuelo planVuelo) {
+        if (planVuelo.getHoraCiudadOrigen().equals("18:25") &&
+            planVuelo.getHoraCiudadDestino().equals("00:00") &&
+            planVuelo.getCiudadOrigen().getId().equals("SKBO") &&
+            planVuelo.getCiudadDestino().getId().equals("OPKC")
+        ) {
+            return true;
+        }
+        if (planVuelo.getHoraCiudadOrigen().equals("18:54") &&
+            planVuelo.getHoraCiudadDestino().equals("00:54") &&
+            planVuelo.getCiudadOrigen().getId().equals("SPIM") &&
+            planVuelo.getCiudadDestino().getId().equals("OOMS") 
+        ) {
+            return true;
+        }
+        return false;
     }
 
     private ArrayList<Vuelo> generarVuelos(ArrayList<PlanVuelo> planesVuelo, Date inicio, Date fin) {
@@ -242,26 +264,52 @@ public class GrafoVuelos {
         finCal.set(Calendar.MINUTE, 0);
         finCal.set(Calendar.SECOND, 0);
         finCal.set(Calendar.MILLISECOND, 0);
+<<<<<<< Updated upstream
         //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " + finCal.getTime().toString());
+=======
+        // LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " +
+        // finCal.getTime().toString());
+        //LOGGER.info("GrafoVuelos.generarVuelos Generando vuelos ");
+>>>>>>> Stashed changes
 
         while (!cal.after(finCal)) {
 
             for (PlanVuelo plan : planesVuelo) {
+                boolean planVueloObservado = false;
+                //planVueloObservado = verificaPlanesVueloObservados(plan);
                 // Usa la función hora_local_a_fecha_generica para configurar la hora de partida
                 // en GMT+0.
                 Date fechaPartida = hora_local_a_fecha_generica(cal.getTime(), plan.getHoraCiudadOrigen(),
                         Funciones.stringGmt2Int(plan.getCiudadOrigen().getZonaHoraria()));
-                ;
+
+                /*if(planVueloObservado) {
+                    LOGGER.info("GrafoVuelos.generarVuelos Fecha de partida: " + fechaPartida.toString());
+                }*/
+                
                 // Clona 'cal' para configurar la hora de llegada.
                 Calendar calLlegada = (Calendar) cal.clone();
                 Date fechaLlegada = hora_local_a_fecha_generica(calLlegada.getTime(), plan.getHoraCiudadDestino(),
                         Funciones.stringGmt2Int(plan.getCiudadDestino().getZonaHoraria()));
+
+                /*if(planVueloObservado) {
+                    LOGGER.info("GrafoVuelos.generarVuelos Fecha de llegada: " + fechaLlegada.toString());
+                }*/
 
                 calLlegada.setTime(fechaLlegada);
                 // Ajusta la fecha de llegada si es necesario.
                 if (!fechaLlegada.after(fechaPartida)) {
                     calLlegada.add(Calendar.HOUR_OF_DAY, 24);
                     fechaLlegada = calLlegada.getTime();
+                    /*if(planVueloObservado) {
+                        LOGGER.info("GrafoVuelos.generarVuelos Fecha de llegada ajustada: " + fechaLlegada.toString());
+                    }*/
+                }
+                if (!fechaLlegada.after(fechaPartida)) {
+                    calLlegada.add(Calendar.HOUR_OF_DAY, 24);
+                    fechaLlegada = calLlegada.getTime();
+                    /*if(planVueloObservado) {
+                        LOGGER.info("GrafoVuelos.generarVuelos Fecha de llegada ajustada (segunda vez): " + fechaLlegada.toString());
+                    }*/
                 }
                 // Vuelo vuelo = new Vuelo(plan, fechaPartida, fechaLlegada);
                 Vuelo vuelo = new Vuelo();

@@ -246,10 +246,25 @@ public class SAImplementation {
                                 }
                         }
 
+<<<<<<< Updated upstream
                         // Funciones.printLineInLog(
                         // "Final cost: " + current.getSolutionCost() +
                         // " | Packages left: " + current.costoDePaquetesYRutasErroneas +
                         // " | Temperature: " + temperature);
+=======
+					/*HashMap<Integer, Vuelo> vueloHashMap = current.grafoVuelos.getVuelosHash();
+					try (PrintWriter writer = new PrintWriter("vuelos.txt")) {
+						for (Vuelo vuelo : vueloHashMap.values()) {
+							if ((vuelo.getPlanVuelo().getCiudadOrigen().getId()
+									.equals(paquete.getEnvio().getUbicacionOrigen().getId())
+									&& vuelo.getFechaSalida().after(paquete.getEnvio().getFechaRecepcion())) ||
+									(vuelo.getPlanVuelo().getCiudadDestino().getId()
+											.equals(paquete.getEnvio().getUbicacionDestino().getId())
+											&& vuelo.getFechaLlegada()
+													.before(paquete.getEnvio().getFechaLimiteEntrega()))) {
+								// System.out.println("Vuelo: " + vuelo.toString());
+								LOGGER.info(tipoOperacion + "|| Vuelo: " + vuelo.toString());
+>>>>>>> Stashed changes
 
                         // current.printCosts();
                         // current.printCostsInLog();
@@ -262,8 +277,16 @@ public class SAImplementation {
                         // current.printAirportHistoricOcupation("ocupacionAeropuertos" + iteracion +
                         // ".txt");
 
+<<<<<<< Updated upstream
                         // Guardar vuelos
                         for (int id : current.ocupacionVuelos.keySet()) {
+=======
+							}
+						}
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}*/
+>>>>>>> Stashed changes
 
                                 Vuelo vuelo = current.vuelos_hash.get(id);
                                 if (simulacion != null) {
