@@ -9,8 +9,19 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import Chip from "../ui/chip";
 import { AirportTable } from "./airport-table";
+import { formatDateTimeLongShort } from "@/lib/date";
 
-function getCurrentLocation(planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
+function getCurrentLocation(paquete: Paquete | undefined, planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
+	if (paquete === undefined) {
+		toast.error("No se encontró paquete");
+		return <p>---</p>;
+	}
+
+	//@ts-ignore
+	if (paquete.isFill === true) {
+		return <p>---</p>;
+	}
+
 	if (planRutaVuelos.length === 0) {
 		return <p>---</p>;
 	}
@@ -39,6 +50,11 @@ function getCurrentAirport(
 ) {
 	if (paquete === undefined) {
 		toast.error("No se encontró paquete");
+		return <p>---</p>;
+	}
+
+	//@ts-ignore
+	if (paquete.isFill === true) {
 		return <p>---</p>;
 	}
 
@@ -79,6 +95,10 @@ function getCurrentAirport(
 	}
 
 	if (_currentTime >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada)) {
+		if (_currentTime.getTime() >= new Date(planRutaVuelos[planRutaVuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000) {
+			return <p>---</p>;
+		}
+
 		return (
 			<>
 				<p className="truncate">{`${planRutaVuelos[planRutaVuelos.length - 1].planVuelo.ciudadDestino.ciudad}, ${
@@ -113,7 +133,22 @@ function getCurrentAirport(
 	}
 }
 
-export function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
+export function getPackageState(paquete: Paquete | undefined, planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
+	if (paquete === undefined) {
+		return {
+			descripcion: "Sin plan de ruta",
+			color: "red",
+		};
+	}
+
+	//@ts-ignore
+	if (paquete.isFill === true) {
+		return {
+			descripcion: "Entregado",
+			color: "green",
+		};
+	}
+
 	if (planRutaVuelos.length === 0) {
 		return {
 			descripcion: "En aeropuerto origen",
@@ -135,6 +170,7 @@ export function getPackageState(planRutaVuelos: Vuelo[], _currentTime: Date): Es
 				color: "green",
 			};
 		}
+
 		return {
 			descripcion: "En aeropuerto destino",
 			color: "purple",
@@ -201,7 +237,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			cell: ({ row }) => (
 				<div className="text-start flex flex-row gap-2 items-center w-[250px] line-clamp-1 truncate">
 					{planeMap !== null && currentTime !== undefined
-						? getCurrentLocation(planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
+						? getCurrentLocation(envio?.paquetes[row.index], planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
 								lockToFlight(vuelo);
 								setIsOpen(false);
 						  })
@@ -241,7 +277,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 			cell: ({ row }) => (
 				<div className="w-[170px]">
 					{planeMap !== null && currentTime !== undefined
-						? renderStatusChip(getPackageState(planeMap[row.original.id], currentTime))
+						? renderStatusChip(getPackageState(envio?.paquetes[row.index], planeMap[row.original.id], currentTime))
 						: "---"}
 				</div>
 			),
@@ -255,11 +291,16 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 				return;
 			}
 
-			const packagesIds = envio.paquetes.map((paquete) => {
-				return {
-					id: paquete.id,
-				};
-			});
+			const packagesIds = envio.paquetes
+				.filter((paquete) => {
+					//@ts-ignore
+					return paquete.isFill === undefined || paquete.isFill === false;
+				})
+				.map((paquete) => {
+					return {
+						id: paquete.id,
+					};
+				});
 
 			console.log(packagesIds);
 
@@ -321,13 +362,11 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 							</p>
 
 							<p>
-								{"Fecha recepcion: " + envio?.fechaRecepcion.toLocaleDateString() + " " + envio?.fechaRecepcion.toLocaleTimeString()}
+								{"Fecha recepcion: " + formatDateTimeLongShort(envio?.fechaRecepcion || new Date())}
 							</p>
 							<p>
 								{"Fecha limite entrega: " +
-									envio?.fechaLimiteEntrega.toLocaleDateString() +
-									" " +
-									envio?.fechaLimiteEntrega.toLocaleTimeString()}
+									formatDateTimeLongShort(envio?.fechaLimiteEntrega || new Date())}
 							</p>
 							<AirportTable data={envio?.paquetes || []} columns={columns} />
 						</div>

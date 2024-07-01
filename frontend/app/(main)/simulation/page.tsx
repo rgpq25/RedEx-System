@@ -165,16 +165,16 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
-		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-			event.preventDefault();
-			event.returnValue = "Mensaje de prueba"; // Standard for most browsers
-			return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
-		};
+		// const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+		// 	event.preventDefault();
+		// 	event.returnValue = "Mensaje de prueba"; // Standard for most browsers
+		// 	return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
+		// };
 
-		window.addEventListener("beforeunload", handleBeforeUnload);
+		// window.addEventListener("beforeunload", handleBeforeUnload);
 
 		return () => {
-			window.removeEventListener("beforeunload", handleBeforeUnload);
+			// window.removeEventListener("beforeunload", handleBeforeUnload);
 
 			if (client) {
 				client.deactivate();
@@ -182,19 +182,22 @@ function SimulationPage() {
 		};
 	}, []);
 
-	useEffect(()=>{
-		if(currentTime && simulation){
+	useEffect(() => {
+		if (currentTime && simulation) {
 			const date1 = new Date(currentTime);
 			const date2 = new Date(simulation.fechaInicioSim);
 			const diffTime = Math.abs(date2.getTime() - date1.getTime());
 			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-			if(diffDays > 7 && envios.length === 0){
+			if (diffDays > 7 && envios.length === 0) {
 				toast.info("Simulation ended successfully");
-				// router.push("/simulation/results");
-				window.location.replace("/simulation/results");
+
+				const saved_simu = { ...simulation };
+				saved_simu.fechaDondeParoSimulacion = new Date();
+				setSimulationContext(saved_simu);
+				router.push("/simulation/results");
 			}
 		}
-	},[currentTime, simulation]);
+	}, [currentTime, simulation]);
 
 	return (
 		<>
@@ -207,12 +210,17 @@ function SimulationPage() {
 				isOpen={isStoppingModalOpen}
 				setIsModalOpen={setIsStoppingModalOpen}
 				simulation={simulation}
-				redirectToReport={() => {
+				redirectToReport={async () => {
 					if (simulation === undefined) {
 						toast.error("No se ha cargado la simulación");
 						return;
 					}
-					setSimulationContext(simulation);
+
+					await pauseSimulation(simulation);
+
+					const saved_simu = { ...simulation };
+					saved_simu.fechaDondeParoSimulacion = new Date();
+					setSimulationContext(saved_simu);
 					router.push("/simulation/results");
 				}}
 			/>

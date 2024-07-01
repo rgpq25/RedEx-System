@@ -183,7 +183,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 						</DialogHeader>
 						<div className="text-black flex-1 flex flex-col">
 							<div>
-								<p>{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}</p>
+								<p>{`Ubicación: ${aeropuerto?.ubicacion.ciudad}, ${aeropuerto?.ubicacion.pais} (${aeropuerto?.ubicacion.id})`}</p>
 							</div>
 							<div className="flex flex-row items-center gap-1">
 								<p>{`Capacidad actual: ${paquetes.length}/${aeropuerto?.capacidadMaxima}`} </p>

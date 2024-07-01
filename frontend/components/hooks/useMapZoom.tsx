@@ -188,12 +188,12 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 	};
 
 	const getCurrentlyPausedTime = () => {
-		if(pausingTime.current === null) return ref_milisecondsPaused.current;
+		if (pausingTime.current === null) return ref_milisecondsPaused.current;
 		const pauseDate: number = pausingTime.current;
 		const currentDate = new Date().getTime();
 		const milisecondsPaused = currentDate - pauseDate;
 		return ref_milisecondsPaused.current + milisecondsPaused;
-	}
+	};
 
 	function onMove() {
 		if (isLockedToFlight && currentlyLockedFlight) {
@@ -247,7 +247,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		zoomToUbicacion,
 		pauseSimulation,
 		playSimulation,
-		getCurrentlyPausedTime
+		getCurrentlyPausedTime,
 	};
 };
 
