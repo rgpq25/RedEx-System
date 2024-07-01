@@ -193,8 +193,10 @@ function SimulationPage() {
 				const date2 = new Date(simulation.fechaInicioSim);
 				const diffTime = Math.abs(date2.getTime() - date1.getTime());
 				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-				if (diffDays > 7 && envios.length === 0) {
-					toast.info("Simulation ended successfully");
+				if (diffDays > 7) {
+					toast.info("Simulation ended successfully", {
+						position: "bottom-center"
+					});
 
 					await api(
 						"PUT",
