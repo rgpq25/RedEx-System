@@ -4,8 +4,8 @@ import { Vuelo } from "@/lib/types";
 import React, { createContext, useContext, useState } from "react";
 
 interface FilteredFlightsContextType {
-    filteredFlights: Vuelo[] | undefined;
-    setFilteredFlights: React.Dispatch<React.SetStateAction<Vuelo[] | undefined>>;
+    filteredFlights: Vuelo[];
+    setFilteredFlights: React.Dispatch<React.SetStateAction<Vuelo[]>>;
 }
 
 const FilteredFlightsContext = createContext<FilteredFlightsContextType | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useFilteredFlightsContext = () => {
 };
 
 export const FilteredFlightsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [filteredFlights, setFilteredFlights] = useState<Vuelo[] | undefined>(undefined);
+    const [filteredFlights, setFilteredFlights] = useState<Vuelo[]>([]);
 
     return <FilteredFlightsContext.Provider value={{ filteredFlights, setFilteredFlights }}>{children}</FilteredFlightsContext.Provider>;
 };

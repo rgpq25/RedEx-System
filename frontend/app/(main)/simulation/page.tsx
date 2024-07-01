@@ -29,6 +29,7 @@ import ElapsedRealTime from "@/app/_components/elapsed-real-time";
 import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
 import { useRouter } from "next/navigation";
 import { SimulationContext } from "@/components/contexts/simulation-provider";
+import { FilteredFlightsProvider } from "@/components/contexts/flights-filter";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -330,41 +331,43 @@ function SimulationPage() {
 					</>
 				)}
 
-				<Sidebar
-					envios={envios}
-					vuelos={flights}
-					aeropuertos={airports}
-					estadoAlmacen={estadoAlmacen}
-					onClicksEnvio={{
-						onClickLocation: (envio: Envio) => {},
-						onClickInfo: (envio: Envio) => {
-							openEnvioModal(envio);
-						},
-					}}
-					onClicksAeropuerto={{
-						onClickLocation: (aeropuerto: Aeropuerto) => {
-							zoomToAirport(aeropuerto);
-						},
-						onClickInfo: (aeropuerto: Aeropuerto) => {
-							openAirportModal(aeropuerto);
-						},
-					}}
-					onClickVuelo={(vuelo: Vuelo) => {
-						lockToFlight(vuelo);
-						openFlightModal(vuelo);
-					}}
-					tiempoActual={currentTime}
-				/>
-				<Map
-					isSimulation={true}
-					mapModalAttributes={mapModalAttributes}
-					attributes={attributes}
-					className="absolute top-1 bottom-3 left-3 right-3"
-					//airports={airports}
-					flights={flights}
-					estadoAlmacen={estadoAlmacen}
-					simulation={simulation}
-				/>
+				<FilteredFlightsProvider>
+					<Sidebar
+						envios={envios}
+						vuelos={flights}
+						aeropuertos={airports}
+						estadoAlmacen={estadoAlmacen}
+						onClicksEnvio={{
+							onClickLocation: (envio: Envio) => {},
+							onClickInfo: (envio: Envio) => {
+								openEnvioModal(envio);
+							},
+						}}
+						onClicksAeropuerto={{
+							onClickLocation: (aeropuerto: Aeropuerto) => {
+								zoomToAirport(aeropuerto);
+							},
+							onClickInfo: (aeropuerto: Aeropuerto) => {
+								openAirportModal(aeropuerto);
+							},
+						}}
+						onClickVuelo={(vuelo: Vuelo) => {
+							lockToFlight(vuelo);
+							openFlightModal(vuelo);
+						}}
+						tiempoActual={currentTime}
+					/>
+					<Map
+						isSimulation={true}
+						mapModalAttributes={mapModalAttributes}
+						attributes={attributes}
+						className="absolute top-1 bottom-3 left-3 right-3"
+						//airports={airports}
+						flights={flights}
+						estadoAlmacen={estadoAlmacen}
+						simulation={simulation}
+					/>
+				</FilteredFlightsProvider>
 			</MainContainer>
 		</>
 	);

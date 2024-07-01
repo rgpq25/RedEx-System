@@ -879,7 +879,7 @@ function Vuelos({
         if (hasSearchFilter) {
             filteredVuelos = filteredVuelos?.filter((vuelo) => vuelo.id.toString().includes(search));
         }
-        setFilteredFlights(filteredVuelos);
+        setFilteredFlights(filteredVuelos || []);
         return filteredVuelos;
     }, [
         vuelos,
