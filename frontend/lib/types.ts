@@ -203,3 +203,8 @@ export type ReporteData = {
 	envio: Envio;
 	infoPaquete: PaqueteConVuelos[];
 };
+
+
+export type AeropuertoHash = {
+	[key: string]: Aeropuerto;
+}

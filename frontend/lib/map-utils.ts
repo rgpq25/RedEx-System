@@ -1,5 +1,5 @@
 //@ts-ignore
-import { Envio, HistoricoValores, Paquete, RespuestaAlgoritmo, Vuelo } from "./types";
+import { Aeropuerto, Envio, EstadoAlmacen, HistoricoValores, Paquete, RespuestaAlgoritmo, UsoHistorico, Vuelo } from "./types";
 
 export function getFlightPosition(
 	departureTime: Date,
@@ -180,23 +180,106 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 
 	const newEnviosNoDuplicates = Array.from(envioMap.values());
 
-	newEnviosNoDuplicates.map((envio)=>{
-		if(envio.cantidadPaquetes !== envio.paquetes.length){
+	newEnviosNoDuplicates.map((envio) => {
+		if (envio.cantidadPaquetes !== envio.paquetes.length) {
 			const missingPaquetes = envio.cantidadPaquetes - envio.paquetes.length;
 
-			for(let i = 0; i < missingPaquetes; i++){
+			for (let i = 0; i < missingPaquetes; i++) {
 				envio.paquetes.push({
 					//@ts-ignore
-					isFill: true
-				})
+					isFill: true,
+				});
 			}
 
 			// console.log(`Envio ${envio.id} tiene ${missingPaquetes} paquetes faltantes`)
 		}
-	})
+	});
 
-	
 	return {
 		db_envios: newEnviosNoDuplicates,
 	};
+}
+
+export function getAirportHashmap(aeropuertos: Aeropuerto[]) {
+	const airportMap = new Map<string, Aeropuerto>();
+
+	for (const aeropuerto of aeropuertos) {
+		airportMap.set(aeropuerto.ubicacion.id, aeropuerto);
+	}
+
+	return airportMap;
+}
+
+export function getPorcentajeOcupacionAeropuertos(
+	aeropuertosMap: Map<string, Aeropuerto> | null,
+	estadoAlmacen: EstadoAlmacen | null,
+	currentTime: Date | undefined
+) {
+	//esta funcion recorre el estado almacen de todos los aeropuertos, sacando su porcentaje de ocupacion actual. luego, suma todos los porcentajes y los divide por la cantidad de aeropuertos
+	if (aeropuertosMap === null || estadoAlmacen === null || currentTime === undefined) return 0;
+
+	let totalOcupacion = 0;
+	const arrayOcupaciones = [];
+
+	const uso_historico = estadoAlmacen.uso_historico;
+
+	for (const [key, value] of Object.entries(uso_historico)) {
+		const currentOcupation = getCurrentAirportOcupation(value, currentTime);
+		const currentAirport = aeropuertosMap.get(key);
+
+		if (currentAirport === undefined) {
+			throw new Error(`No se encontró aeropuerto con id ${key}`);
+		}
+
+		arrayOcupaciones.push((currentOcupation / currentAirport.capacidadMaxima) * 100);
+		totalOcupacion += (currentOcupation / currentAirport.capacidadMaxima) * 100;
+	}
+
+	return (totalOcupacion / aeropuertosMap.size).toFixed(2);
+}
+
+export function getPorcentajeOcupacionVuelos(vuelos: Vuelo[], currentTime: Date | undefined) {
+	if (currentTime === undefined) return 0;
+
+	let totalOcupacion = 0;
+
+	for (const vuelo of vuelos) {
+		const currentOcupation = vuelo.capacidadUtilizada;
+		const maxOcupation = vuelo.planVuelo.capacidadMaxima;
+
+		totalOcupacion += (currentOcupation / maxOcupation) * 100;
+	}
+
+	return (totalOcupacion / vuelos.length).toFixed(2);
+}
+
+export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAeropuerto: string, currentTime: Date | undefined, data: Paquete[]) {
+	if (estadoAlmacen === null) return data;
+	if (estadoAlmacen.uso_historico[idAeropuerto] === undefined) return data;
+	if (currentTime === undefined) return data;
+	if (data.length === 0) return [] as Paquete[];
+
+	// we get the current airport ocupation
+	const currentOcupation = getCurrentAirportOcupation(estadoAlmacen.uso_historico[idAeropuerto], currentTime);
+
+	if (currentOcupation === data.length) return data;
+
+	let new_data = [...data];
+
+	if (currentOcupation > new_data.length) {
+		const missingPackages = currentOcupation - new_data.length;
+
+		const shuffled_data = new_data.sort(() => 0.5 - Math.random());
+		const selectedPackages = shuffled_data.slice(0, missingPackages);
+
+		for (let i = 0; i < missingPackages; i++) {
+			new_data.push(selectedPackages[i]);
+		}
+		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`)
+	} else {
+		new_data = new_data.slice(0, currentOcupation);
+		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`)
+	}
+
+	return new_data;
 }

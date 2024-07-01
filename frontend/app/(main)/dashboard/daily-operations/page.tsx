@@ -57,6 +57,7 @@ function DailyOperationsPage() {
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 				(data: Aeropuerto[]) => {
+					console.log("DATA DE /back/aeropuerto/: ", data)
 					setAirports(data);
 				},
 				(error) => {
