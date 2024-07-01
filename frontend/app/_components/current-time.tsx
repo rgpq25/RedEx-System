@@ -1,3 +1,4 @@
+import { formatDateTimeLongShort } from "@/lib/date";
 import { Clock } from "lucide-react";
 
 function CurrentTime({ currentTime }: { currentTime: Date | undefined }) {
@@ -8,7 +9,7 @@ function CurrentTime({ currentTime }: { currentTime: Date | undefined }) {
 	return (
 		<div className="flex flex-row gap-1 border rounded-3xl border-blue-700 min-w-[200px] text-center text-blue-700 stroke-blue-700 p-1 shadow-md bg-blue-100/70 pr-4">
 			<Clock />
-			<p className="text-center flex-1">{currentTime.toLocaleDateString() + " " + currentTime.toLocaleTimeString()}</p>
+			<p className="text-center flex-1">{formatDateTimeLongShort(currentTime)}</p>
 		</div>
 	);
 }

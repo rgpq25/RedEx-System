@@ -26,7 +26,9 @@ import { api } from "@/lib/api";
 import { getCurrentAirportOcupation } from "@/lib/map-utils";
 import Chip from "@/components/ui/chip";
 
-const DEFAULT_RANGO_CAPACIDAD: [number, number] = [0, 1000];
+const DEFAULT_RANGO_CAPACIDAD_ENVIOS: [number, number] = [0, 200];
+const DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS: [number, number] = [1000, 2000];
+const DEFAULT_RANGO_CAPACIDAD_VUELOS: [number, number] = [0, 600];
 
 interface SidebarProps {
 	envios?: Envio[];
@@ -161,7 +163,7 @@ function Envios({
 	const [continentesDestinoFilter, setContinentesDestinoFilter] = useState<string[]>(continentes);
 	const [paisOrigenFilter, setPaisOrigenFilter] = useState<string | undefined>(undefined);
 	const [paisDestinoFilter, setPaisDestinoFilter] = useState<string | undefined>(undefined);
-	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
+	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD_ENVIOS);
 
 	const minCapacidad = Math.min(...rangoCapacidadFilter);
 	const maxCapacidad = Math.max(...rangoCapacidadFilter);
@@ -244,7 +246,7 @@ function Envios({
 	const onClearFilters = useCallback(() => {
 		setReceptionDateStart(undefined);
 		setReceptionDateEnd(undefined);
-		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD_ENVIOS);
 		setContinentesOrigenFilter(continentes);
 		setContinentesDestinoFilter(continentes);
 		setPaisOrigenFilter(undefined);
@@ -293,10 +295,10 @@ function Envios({
 									setRangoCapacidadFilter([newMin, newMax]);
 								}}
 								value={rangoCapacidadFilter}
-								min={DEFAULT_RANGO_CAPACIDAD[0]}
-								max={DEFAULT_RANGO_CAPACIDAD[1]}
-								defaultValue={DEFAULT_RANGO_CAPACIDAD}
-								step={10}
+								min={DEFAULT_RANGO_CAPACIDAD_ENVIOS[0]}
+								max={DEFAULT_RANGO_CAPACIDAD_ENVIOS[1]}
+								defaultValue={DEFAULT_RANGO_CAPACIDAD_ENVIOS}
+								step={1}
 							/>
 							<Separator />
 							{/* <Small>Rango de fecha de recepción:</Small>
@@ -399,7 +401,7 @@ function Envios({
 										</SelectTrigger>
 										<SelectContent>
 											{ubicaciones
-												.sort((a, b) => a.pais.localeCompare(b.pais))
+												?.sort((a, b) => a.pais.localeCompare(b.pais))
 												.map((ubicacion) => (
 													<SelectItem key={ubicacion.pais} value={ubicacion.pais}>
 														{ubicacion.pais}
@@ -422,7 +424,7 @@ function Envios({
 										</SelectTrigger>
 										<SelectContent>
 											{ubicaciones
-												.sort((a, b) => a.pais.localeCompare(b.pais))
+												?.sort((a, b) => a.pais.localeCompare(b.pais))
 												.map((ubicacion) => (
 													<SelectItem key={ubicacion.pais} value={ubicacion.pais}>
 														{ubicacion.pais}
@@ -532,7 +534,7 @@ function Aeropuertos({
 	const [search, setSearch] = useState<string>("");
 	const hasSearchFilter = Boolean(search);
 	const [continentesFilter, setContinentesFilter] = useState<string[]>(continentes);
-	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
+	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS);
 	const [gmtFilter, setGmtFilter] = useState<string | undefined>(undefined);
 
 	const minCapacidad = Math.min(...rangoCapacidadFilter);
@@ -571,7 +573,7 @@ function Aeropuertos({
 	}, []);
 	const onClearFilters = useCallback(() => {
 		setContinentesFilter(continentes);
-		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS);
 		setGmtFilter(undefined);
 	}, []);
 
@@ -635,7 +637,7 @@ function Aeropuertos({
 				</Card>
 			);
 		},
-		[onClicks]
+		[onClicks, currentTime]
 	);
 
 	const renderFilters = useCallback(() => {
@@ -650,7 +652,7 @@ function Aeropuertos({
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent align="start" className="w-fit flex flex-col gap-4">
-							<Small>Rango de capacidad usada:</Small>
+							<Small>Rango de capacidad maxima:</Small>
 							<div className="flex justify-between">
 								<Small>{minCapacidad}</Small>
 								<Small>{maxCapacidad}</Small>
@@ -661,10 +663,10 @@ function Aeropuertos({
 									setRangoCapacidadFilter([newMin, newMax]);
 								}}
 								value={rangoCapacidadFilter}
-								min={DEFAULT_RANGO_CAPACIDAD[0]}
-								max={DEFAULT_RANGO_CAPACIDAD[1]}
-								defaultValue={DEFAULT_RANGO_CAPACIDAD}
-								step={10}
+								min={DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS[0]}
+								max={DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS[1]}
+								defaultValue={DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS}
+								step={5}
 							/>
 							<Separator />
 							<Small>Continente:</Small>
@@ -688,7 +690,7 @@ function Aeropuertos({
 								</SelectTrigger>
 								<SelectContent>
 									{ubicaciones
-										.reduce((acc, ubicacion) => {
+										?.reduce((acc, ubicacion) => {
 											if (!acc.includes(ubicacion.zonaHoraria)) {
 												acc.push(ubicacion.zonaHoraria);
 											}
@@ -766,7 +768,7 @@ function Vuelos({
 	const [continentesFilter, setContinentesFilter] = useState<string[]>(continentes);
 	const [paisOrigenFilter, setPaisOrigenFilter] = useState<string | undefined>(undefined);
 	const [paisDestinoFilter, setPaisDestinoFilter] = useState<string | undefined>(undefined);
-	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD);
+	const [rangoCapacidadFilter, setRangoCapacidadFilter] = useState<[number, number]>(DEFAULT_RANGO_CAPACIDAD_VUELOS);
 
 	const minCapacidad = Math.min(...rangoCapacidadFilter);
 	const maxCapacidad = Math.max(...rangoCapacidadFilter);
@@ -837,7 +839,7 @@ function Vuelos({
 	}, []);
 	const onClearFilters = useCallback(() => {
 		setContinentesFilter(continentes);
-		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD);
+		setRangoCapacidadFilter(DEFAULT_RANGO_CAPACIDAD_VUELOS);
 		setPaisOrigenFilter(undefined);
 		setPaisDestinoFilter(undefined);
 	}, []);
@@ -885,10 +887,10 @@ function Vuelos({
 									setRangoCapacidadFilter([newMin, newMax]);
 								}}
 								value={rangoCapacidadFilter}
-								min={DEFAULT_RANGO_CAPACIDAD[0]}
-								max={DEFAULT_RANGO_CAPACIDAD[1]}
-								defaultValue={DEFAULT_RANGO_CAPACIDAD}
-								step={10}
+								min={DEFAULT_RANGO_CAPACIDAD_VUELOS[0]}
+								max={DEFAULT_RANGO_CAPACIDAD_VUELOS[1]}
+								defaultValue={DEFAULT_RANGO_CAPACIDAD_VUELOS}
+								step={5}
 							/>
 							<Separator />
 							<Small>Continente de origen:</Small>
@@ -919,7 +921,7 @@ function Vuelos({
 										</SelectTrigger>
 										<SelectContent>
 											{ubicaciones
-												.sort((a, b) => a.pais.localeCompare(b.pais))
+												?.sort((a, b) => a.pais.localeCompare(b.pais))
 												.map((ubicacion) => (
 													<SelectItem key={ubicacion.pais} value={ubicacion.pais}>
 														{ubicacion.pais}
@@ -942,7 +944,7 @@ function Vuelos({
 										</SelectTrigger>
 										<SelectContent>
 											{ubicaciones
-												.sort((a, b) => a.pais.localeCompare(b.pais))
+												?.sort((a, b) => a.pais.localeCompare(b.pais))
 												.map((ubicacion) => (
 													<SelectItem key={ubicacion.pais} value={ubicacion.pais}>
 														{ubicacion.pais}
