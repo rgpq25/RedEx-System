@@ -26,15 +26,7 @@ export interface MapProps {
 	className?: string;
 }
 
-function ClientMap({
-	isSimulation,
-	mapModalAttributes,
-	attributes,
-	flights,
-	simulation,
-	estadoAlmacen,
-	className,
-}: MapProps) {
+function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simulation, estadoAlmacen, className }: MapProps) {
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 
 	const { isLoading } = useApi(
@@ -100,7 +92,7 @@ function ClientMap({
 								aeropuerto={aeropuerto}
 								coordinates={[latitud, longitud] as [number, number]}
 								onClick={(coordinates: [number, number]) => {
-									console.log(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {})
+									console.log(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {});
 									zoomToAirport(aeropuerto);
 									openAirportModal(aeropuerto);
 								}}
@@ -115,9 +107,7 @@ function ClientMap({
 					flights
 						.filter(
 							(flight: Vuelo) =>
-								flight.capacidadUtilizada !== 0 &&
-								flight.fechaSalida <= currentTime &&
-								currentTime <= flight.fechaLlegada
+								flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada
 						)
 						.map((vuelo, idx) => {
 							return (
@@ -169,11 +159,7 @@ function ClientMap({
 				lockToFlight={lockToFlight}
 				zoomToUbicacion={zoomToUbicacion}
 			/>
-			<div
-				className={cn("border rounded-xl flex justify-center items-center  overflow-hidden z-[10]", className)}
-			>
-				{displayMap}
-			</div>
+			<div className={cn("border rounded-xl flex justify-center items-center  overflow-hidden z-[10]", className)}>{displayMap}</div>
 		</>
 	);
 }

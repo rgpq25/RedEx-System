@@ -106,7 +106,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 				return i;
 		}
 
-		return array_total.length - 1;
+		return array_total.length;
 	};
 
 	useEffect(() => {

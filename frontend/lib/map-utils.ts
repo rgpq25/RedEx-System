@@ -1,5 +1,5 @@
 //@ts-ignore
-import { Envio, HistoricoValores, Paquete, RespuestaAlgoritmo, Vuelo } from "./types";
+import { Aeropuerto, Envio, EstadoAlmacen, HistoricoValores, Paquete, RespuestaAlgoritmo, Vuelo } from "./types";
 
 export function getFlightPosition(
 	departureTime: Date,
@@ -199,4 +199,54 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 	return {
 		db_envios: newEnviosNoDuplicates,
 	};
+}
+
+export function getAirportHashmap(aeropuertos: Aeropuerto[]) {
+	const airportMap = new Map<string, Aeropuerto>();
+
+	for (const aeropuerto of aeropuertos) {
+		airportMap.set(aeropuerto.ubicacion.id, aeropuerto);
+	}
+
+	return airportMap;
+}
+
+
+export function getPorcentajeOcupacionAeropuertos(aeropuertosMap: Map<string, Aeropuerto> | null, estadoAlmacen: EstadoAlmacen | null, currentTime: Date | undefined){
+	//esta funcion recorre el estado almacen de todos los aeropuertos, sacando su porcentaje de ocupacion actual. luego, suma todos los porcentajes y los divide por la cantidad de aeropuertos
+	if(aeropuertosMap === null || estadoAlmacen === null || currentTime === undefined) return 0;
+
+	let totalOcupacion = 0;
+	const arrayOcupaciones = []
+
+	const uso_historico = estadoAlmacen.uso_historico;
+
+	for(const [key, value] of Object.entries(uso_historico)){
+		const currentOcupation = getCurrentAirportOcupation(value, currentTime);
+		const currentAirport = aeropuertosMap.get(key);
+
+		if(currentAirport === undefined){
+			throw new Error(`No se encontró aeropuerto con id ${key}`);
+		}
+
+		arrayOcupaciones.push((currentOcupation / currentAirport.capacidadMaxima) * 100);
+		totalOcupacion += (currentOcupation / currentAirport.capacidadMaxima) * 100;
+	}
+
+	return (totalOcupacion / aeropuertosMap.size).toFixed(2);
+}
+
+export function getPorcentajeOcupacionVuelos(vuelos: Vuelo[], currentTime: Date | undefined){
+	if(currentTime === undefined) return 0;
+
+	let totalOcupacion = 0;
+
+	for(const vuelo of vuelos){
+		const currentOcupation = vuelo.capacidadUtilizada;
+		const maxOcupation = vuelo.planVuelo.capacidadMaxima;
+
+		totalOcupacion += (currentOcupation / maxOcupation) * 100;
+	}
+
+	return (totalOcupacion / vuelos.length).toFixed(2);
 }
