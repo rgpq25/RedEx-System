@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { AirportTable } from "./airport-table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Aeropuerto, Envio, Paquete, Simulacion } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, Simulacion } from "@/lib/types";
 import Chip from "../ui/chip";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowUpDown, Loader2 } from "lucide-react";
+import { getPackagesFromAirport } from "@/lib/map-utils";
 
 interface AirportModalProps {
 	isSimulation: boolean;
@@ -18,6 +19,7 @@ interface AirportModalProps {
 	simulacion: Simulacion | undefined;
 	currentTime: Date | undefined;
 	getCurrentlyPausedTime: () => number;
+	estadoAlmacen: EstadoAlmacen | null;
 }
 
 const columns: ColumnDef<Paquete>[] = [
@@ -94,7 +96,7 @@ const columns: ColumnDef<Paquete>[] = [
 	},
 ];
 
-function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime, getCurrentlyPausedTime }: AirportModalProps) {
+function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion, currentTime, getCurrentlyPausedTime, estadoAlmacen }: AirportModalProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fechaConsulta, setFechaConsulta] = useState<Date | null>(null);
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
@@ -120,16 +122,14 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 
 				const _temp_sim = {...simulacion};
 				_temp_sim.milisegundosPausados = getCurrentlyPausedTime();
-
-				console.log("The current simulation object is: ", _temp_sim);
 				setIsLoading(true);
 
 				await api(
 					"POST",
 					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesfromsimulation`,
 					(data: Paquete[]) => {
-						console.log(data);
-						setPaquetes(data);
+						const _paquetes_filtrados = getPackagesFromAirport(estadoAlmacen, aeropuerto.ubicacion.id, currentTime, data);
+						setPaquetes(_paquetes_filtrados);
 						setFechaConsulta(new Date(currentTime));
 						setIsLoading(false);
 					},
@@ -147,9 +147,8 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 					"GET",
 					`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/${aeropuerto.id}/paquetesDiaDia`,
 					(data: Paquete[]) => {
-						console.log("Finished fetch");
-						console.log(data);
-						setPaquetes(data);
+						const _paquetes_filtrados = getPackagesFromAirport(estadoAlmacen, aeropuerto.ubicacion.id, currentTime, data);
+						setPaquetes(_paquetes_filtrados);
 						setFechaConsulta(new Date());
 						setIsLoading(false);
 					},
@@ -183,7 +182,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 						</DialogHeader>
 						<div className="text-black flex-1 flex flex-col">
 							<div>
-								<p>{"Ubicación: " + aeropuerto?.ubicacion.ciudad + ", " + aeropuerto?.ubicacion.pais}</p>
+								<p>{`Ubicación: ${aeropuerto?.ubicacion.ciudad}, ${aeropuerto?.ubicacion.pais} (${aeropuerto?.ubicacion.id})`}</p>
 							</div>
 							<div className="flex flex-row items-center gap-1">
 								<p>{`Capacidad actual: ${paquetes.length}/${aeropuerto?.capacidadMaxima}`} </p>

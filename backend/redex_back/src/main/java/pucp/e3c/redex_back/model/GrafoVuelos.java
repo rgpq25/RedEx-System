@@ -75,32 +75,36 @@ public class GrafoVuelos {
         return calendar.getTime();
     }
 
-    /*public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
-        // Encuentra el paquete con la fecha de recepción más temprana
-        Optional<Paquete> minRecepcionPaquete = paquetes.stream()
-                .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
-
-        // Encuentra el paquete con la fecha de entrega máxima más tardía
-        Optional<Paquete> maxEntregaPaquete = paquetes.stream()
-                .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
-
-        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
-        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
-
-        fecha_inicio = inicio;
-        fecha_fin = fin;
-
-        ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
-        int i = 0;
-        for (Vuelo vuelo : vuelos) {
-            vuelo.setId(i);
-            vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
-            agregarVuelo(vuelo);
-            i++;
-        }
-        System.out.println("Vuelos generados: " + vuelos.size());
-
-    }*/
+    /*
+     * public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes) {
+     * // Encuentra el paquete con la fecha de recepción más temprana
+     * Optional<Paquete> minRecepcionPaquete = paquetes.stream()
+     * .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
+     * 
+     * // Encuentra el paquete con la fecha de entrega máxima más tardía
+     * Optional<Paquete> maxEntregaPaquete = paquetes.stream()
+     * .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
+     * 
+     * Date inicio = minRecepcionPaquete.map(p ->
+     * p.getEnvio().getFechaRecepcion()).orElse(new Date());
+     * Date fin = maxEntregaPaquete.map(p ->
+     * p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+     * 
+     * fecha_inicio = inicio;
+     * fecha_fin = fin;
+     * 
+     * ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
+     * int i = 0;
+     * for (Vuelo vuelo : vuelos) {
+     * vuelo.setId(i);
+     * vuelos_hash.putIfAbsent(vuelo.getId(), vuelo);
+     * agregarVuelo(vuelo);
+     * i++;
+     * }
+     * System.out.println("Vuelos generados: " + vuelos.size());
+     * 
+     * }
+     */
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
             Simulacion simulacion) {
@@ -129,7 +133,7 @@ public class GrafoVuelos {
     }
 
     public GrafoVuelos(ArrayList<PlanVuelo> planV, ArrayList<Paquete> paquetes, VueloService vueloService,
-            Simulacion simulacion,Date fechaPlanificacionDiaDia) {
+            Simulacion simulacion, Date fechaPlanificacionDiaDia) {
         // Encuentra el paquete con la fecha de recepción más temprana
         Optional<Paquete> minRecepcionPaquete = paquetes.stream()
                 .min(Comparator.comparing(p -> p.getEnvio().getFechaRecepcion()));
@@ -145,7 +149,7 @@ public class GrafoVuelos {
         fecha_fin = fin;
         ArrayList<Vuelo> vuelos = generarVuelos(planV, inicio, fin);
         for (Vuelo vuelo : vuelos) {
-            if(vuelo.getFechaSalida().before(fechaPlanificacionDiaDia)){
+            if (vuelo.getFechaSalida().before(fechaPlanificacionDiaDia)) {
                 continue;
             }
             vuelo.setSimulacionActual(simulacion);
@@ -207,10 +211,9 @@ public class GrafoVuelos {
         Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
-        
 
         for (Vuelo vuelo : vuelos) {
-            if(vuelo.getFechaSalida().before(this.fecha_fin)){
+            if (vuelo.getFechaSalida().before(this.fecha_fin)) {
                 continue;
             }
             //LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Vuelo ID:  Vuelo a agregar " + vuelo.toString());
@@ -249,7 +252,7 @@ public class GrafoVuelos {
         ArrayList<Vuelo> vuelos = new ArrayList<>();
 
         Date fechaInicio = removeTime(inicio);
-        //LOGGER.info("GrafoVuelos.generarVuelos Date fin: " + fin.toString());
+        // LOGGER.info("GrafoVuelos.generarVuelos Date fin: " + fin.toString());
         Date fechaFin = removeTime(fin);
         Calendar cal = Calendar.getInstance();
         cal.setTime(fechaInicio);
@@ -257,20 +260,17 @@ public class GrafoVuelos {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin: " + fechaFin.toString());
+        // LOGGER.info("GrafoVuelos.generarVuelos Fecha fin: " + fechaFin.toString());
         Calendar finCal = Calendar.getInstance();
         finCal.setTime(fechaFin);
         finCal.set(Calendar.HOUR_OF_DAY, 0);
         finCal.set(Calendar.MINUTE, 0);
         finCal.set(Calendar.SECOND, 0);
         finCal.set(Calendar.MILLISECOND, 0);
-<<<<<<< Updated upstream
-        //LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " + finCal.getTime().toString());
-=======
+
+
         // LOGGER.info("GrafoVuelos.generarVuelos Fecha fin Cal: " +
         // finCal.getTime().toString());
-        //LOGGER.info("GrafoVuelos.generarVuelos Generando vuelos ");
->>>>>>> Stashed changes
 
         while (!cal.after(finCal)) {
 
@@ -536,7 +536,7 @@ public class GrafoVuelos {
                 aumentar = tiempoIntermedio;
                 primerVuelo = false;
             } else {
-                aumentar = TA;
+                aumentar = TA * 1000;
             }
 
             if (fechaHoraActual.getTime() + aumentar < (vuelo.getFechaSalida().getTime()) &&
@@ -603,9 +603,10 @@ public class GrafoVuelos {
                             .equals(paquete.getEnvio().getUbicacionDestino().getContinente()),
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
-                throw new IllegalStateException(
+                System.out.println(
                         "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
                                 + paquete.toString());
+                return null;
 
             }
             if (rutaEncontrada == null) {

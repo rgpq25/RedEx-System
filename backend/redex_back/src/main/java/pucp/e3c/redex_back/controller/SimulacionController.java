@@ -11,7 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +117,8 @@ public class SimulacionController {
         return new ResponseEntity<>(registeredSimulacion, HttpStatus.CREATED);
     }
 
-    public boolean lineaDentroDeRangoDeFecha(String linea, Date fechaInicio, Date fechaFin,  HashMap<String, Ubicacion> ubicacionMap) throws ParseException {
+    public boolean lineaDentroDeRangoDeFecha(String linea, Date fechaInicio, Date fechaFin,
+            HashMap<String, Ubicacion> ubicacionMap) throws ParseException {
         SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
         String fechaRecibo = linea.split("-")[2];
         String horaRecibo = linea.split("-")[3] + ":00";
@@ -126,10 +130,10 @@ public class SimulacionController {
         String origenCode = linea.split("-")[0];
         Ubicacion origen = ubicacionMap.get(origenCode);
         Date fecha_recepcion_GMT0 = Funciones.convertTimeZone(
-            fecha_recepcion_GMTOrigin,
+                fecha_recepcion_GMTOrigin,
                 origen.getZonaHoraria(),
                 "UTC");
-        //Date fecha = formato.parse(fechaStr);
+        // Date fecha = formato.parse(fechaStr);
         return fecha_recepcion_GMT0.after(fechaInicio) && fecha_recepcion_GMT0.before(fechaFin);
     }
 
@@ -171,17 +175,19 @@ public class SimulacionController {
             System.out.println(lines.size() + "\n\n");
             ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
             for (String line : lines) {
-                /*String fechaStr = line.split("-")[2];
-                Date fecha = formato.parse(fechaStr);
-                if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
-                    continue;
-                }*/
+                /*
+                 * String fechaStr = line.split("-")[2];
+                 * Date fecha = formato.parse(fechaStr);
+                 * if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
+                 * continue;
+                 * }
+                 */
                 if (!lineaDentroDeRangoDeFecha(line, fechaInicio, fechaFin, ubicacionMap)) {
                     continue;
                 }
-                //LOGGER.info("1. Linea a considerar " + line);
-                //LOGGER.info("2. FechaStr a considerar " + fechaStr);
-                //LOGGER.info("3. Fecha parseada de envio a considerar " + fecha);
+                // LOGGER.info("1. Linea a considerar " + line);
+                // LOGGER.info("2. FechaStr a considerar " + fechaStr);
+                // LOGGER.info("3. Fecha parseada de envio a considerar " + fecha);
                 RegistrarEnvio registrarEnvio = new RegistrarEnvio();
                 registrarEnvio.setCodigo(line);
                 registrarEnvio.setSimulacion(simulacion);
@@ -369,6 +375,97 @@ public class SimulacionController {
 
     }
 
+    @PostMapping("/runAlgorithmColapse/")
+    public Simulacion correrSimulacion_colapso(@RequestBody Simulacion simulacion) throws ParseException, IOException {
+        ArrayList<Aeropuerto> aeropuertos = (ArrayList<Aeropuerto>) aeropuertoService.getAll();
+
+        List<Ubicacion> ubicaciones = ubicacionService.getAll();
+        HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
+        for (Ubicacion u : ubicaciones) {
+            ubicacionMap.put(u.getId(), u);
+        }
+
+        simulacion.setMilisegundosPausados(0);
+        simulacion = simulacionService.register(simulacion);
+        Simulacion simuFinal = simulacion;
+        LOGGER.info("inicializarSimulacionColapso - Registrando simulacion - Simulacion ID" + simulacion.getId());
+        LOGGER.info("Fecha inicio simulacion" + simulacion.getFechaInicioSim());
+        Resource resource1 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P1.txt");
+        Resource resource2 = resourceLoader.getResource("classpath:static/envios_semanal_V4_P2.txt");
+        InputStream input1 = resource1.getInputStream();
+        InputStream input2 = resource2.getInputStream();
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader1 = new BufferedReader(new InputStreamReader(input1));
+                BufferedReader reader2 = new BufferedReader(new InputStreamReader(input2))) {
+
+            lines.addAll(reader1.lines().collect(Collectors.toList()));
+            lines.addAll(reader2.lines().collect(Collectors.toList()));
+
+            Date fechaInicio = simulacion.getFechaInicioSim();
+            Date fechaFin = simulacion.getFechaFinSim();
+
+            HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
+            for (Aeropuerto aeropuerto : aeropuertos) {
+                aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
+            }
+            SimpleDateFormat formato = new SimpleDateFormat("yyyyMMdd");
+            System.out.println(lines.size() + "\n\n");
+            ArrayList<RegistrarEnvio> registrarEnvios = new ArrayList<>();
+            for (String line : lines) {
+                /*
+                 * String fechaStr = line.split("-")[2];
+                 * Date fecha = formato.parse(fechaStr);
+                 * if (fecha.before(fechaInicio) || fecha.after(fechaFin)) {
+                 * continue;
+                 * }
+                 */
+                if (!lineaDentroDeRangoDeFecha(line, fechaInicio, fechaFin, ubicacionMap)) {
+                    continue;
+                }
+                // LOGGER.info("1. Linea a considerar " + line);
+                // LOGGER.info("2. FechaStr a considerar " + fechaStr);
+                // LOGGER.info("3. Fecha parseada de envio a considerar " + fecha);
+                RegistrarEnvio registrarEnvio = new RegistrarEnvio();
+                registrarEnvio.setCodigo(line);
+                registrarEnvio.setSimulacion(simulacion);
+                registrarEnvios.add(registrarEnvio);
+            }
+
+            ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
+
+            int totalPaquetes = envios.stream()
+                    .mapToInt(envio -> envio.getCantidadPaquetes())
+                    .sum();
+            System.out.println("Se generaron " + totalPaquetes + " paquetes.");
+        } catch (
+
+        IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
+
+        ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findBySimulacionId(simulacion.getId())
+                .stream()
+                .filter(paquete -> paquete.obtenerFechaRecepcion().after(simuFinal.getFechaInicioSim()))
+                .collect(Collectors.toList());
+        ;
+        ArrayList<PlanVuelo> planVuelos = (ArrayList<PlanVuelo>) planVueloService.getAll();
+        // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                algoritmo.loopPrincipalColapso(aeropuertos, planVuelos, paquetes,
+                        vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
+                        simulacionService, simuFinal,
+                        900, 60);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return simulacion;
+
+    }
+
     @GetMapping("/obtenerFechaSimulada/{id}")
     public Date obtenerFechaSimulada(@PathVariable("id") int id) {
         Simulacion simulacion = simulacionService.get(id);
@@ -391,21 +488,25 @@ public class SimulacionController {
     @GetMapping("/obtenerReporteUltimaPlanificacion")
     public List<RespuestaReporte> respuestaReporte() {
         try {
-            //int idSimulacion = reporteRequest.getIdSimulacion();
-            //Date fechaCorte = reporteRequest.getFechaCorte();
+            // int idSimulacion = reporteRequest.getIdSimulacion();
+            // Date fechaCorte = reporteRequest.getFechaCorte();
             // 1 Se obtiene los paquetes por entregar
-            //List<Paquete> paquetes = paqueteService.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion, fechaCorte);
+            // List<Paquete> paquetes =
+            // paqueteService.findPaqueteSimulacionFechaCorteNoEntregados(idSimulacion,
+            // fechaCorte);
             List<Paquete> paquetes = algoritmo.getPaquetesProcesadosUltimaSimulacion();
-            if(paquetes == null){
-                //LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes para la simulacion: " + idSimulacion + " y fecha corte: " + fechaCorte);
+            if (paquetes == null) {
+                // LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes para la
+                // simulacion: " + idSimulacion + " y fecha corte: " + fechaCorte);
                 LOGGER.error("REPORTE SIMULACION: No se encontraron paquetes de ultima planificacion");
                 return new ArrayList<>();
-            } 
-            //LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size()+ " Fecha corte: " + fechaCorte);
+            }
+            // LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size()+
+            // " Fecha corte: " + fechaCorte);
             LOGGER.info("REPORTE SIMULACION: Paquetes por entregar: " + paquetes.size());
             // 2 Se agrupan los paquetes por envio
             Map<Integer, List<Paquete>> groupedByEnvioId = new HashMap<>();
-            
+
             for (Paquete paquete : paquetes) {
                 int envioId = paquete.getEnvio().getId();
                 groupedByEnvioId.computeIfAbsent(envioId, k -> new ArrayList<>()).add(paquete);
@@ -418,14 +519,16 @@ public class SimulacionController {
                 RespuestaReporte respuestaReporte = new RespuestaReporte();
                 Envio envio = entry.getValue().get(0).getEnvio();
                 envio = envioService.get(envio.getId());
-                if(envio == null) continue;
+                if (envio == null)
+                    continue;
                 respuestaReporte.setEnvio(envio);
 
                 List<RespuestaReportePaquete> respuestaReportePaquetes = new ArrayList<>();
                 for (Paquete paquete : entry.getValue()) {
                     RespuestaReportePaquete respuestaReportePaquete = new RespuestaReportePaquete();
                     respuestaReportePaquete.setPaquete(paquete);
-                    respuestaReportePaquete.setVuelos(planRutaXVueloService.findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId()));
+                    respuestaReportePaquete.setVuelos(planRutaXVueloService
+                            .findVuelosByPlanRutaOrdenadosIndice(paquete.getPlanRutaActual().getId()));
                     respuestaReportePaquetes.add(respuestaReportePaquete);
                 }
 

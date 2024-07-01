@@ -79,7 +79,7 @@ public class Solucion {
 
     }
 
-    public void force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService,
+    public boolean force_initialize(HashMap<String, ArrayList<PlanRutaNT>> todasLasRutas, VueloService vueloService,
             Date tiempoEnSimulacion, int TA) {
         // We do 5 attempts to try to initialize the solution
         ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
@@ -105,6 +105,9 @@ public class Solucion {
                     tempPaquetesArray.add(paquetes.get(i));
                     ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
                             vueloService, tiempoEnSimulacion, TA);
+                    if (tempPaquetesArray == null) {
+                        return false;
+                    }
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                     if (copiedRutas.get(i).getVuelos().size() > 0) {
@@ -127,7 +130,7 @@ public class Solucion {
 
             }
 
-            return;
+            return true;
             // } else {
             // this.rutas.clear();
             // t
@@ -221,6 +224,9 @@ public class Solucion {
 
                 ArrayList<PlanRutaNT> tempRoutesArray = grafoVuelos.generarRutasParaPaquetes(tempPaquetesArray,
                         vueloService, tiempoEnSimulacion, TA);
+                if (tempPaquetesArray == null) {
+                    return null;
+                }
                 PlanRutaNT randomRoute = tempRoutesArray.get(0);
 
                 // check if origin and destiny is different

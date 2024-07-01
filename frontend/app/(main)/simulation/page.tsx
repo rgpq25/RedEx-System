@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useContext, useEffect, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
-import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
+import { Aeropuerto, AeropuertoHash, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import { ModalIntro } from "./_components/modal-intro";
 import CurrentTime from "@/app/_components/current-time";
@@ -13,11 +13,17 @@ import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-cus
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { CircleStop, Pause, Play } from "lucide-react";
+import { CircleStop, Pause, Plane, Play, Warehouse } from "lucide-react";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../_components/map-header";
 import { Map } from "@/components/map/map";
-import { structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import {
+	getAirportHashmap,
+	getPorcentajeOcupacionAeropuertos,
+	getPorcentajeOcupacionVuelos,
+	structureDataFromRespuestaAlgoritmo,
+	structureEnviosFromPaquetes,
+} from "@/lib/map-utils";
 import ModalStopSimulation from "./_components/modal-stop-simulation";
 import ElapsedRealTime from "@/app/_components/elapsed-real-time";
 import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
@@ -55,25 +61,13 @@ function SimulationPage() {
 	const [isStoppingModalOpen, setIsStoppingModalOpen] = useState(false);
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [airportsHash, setAirportsHash] = useState<Map<string, Aeropuerto> | null>(null);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [envios, setEnvios] = useState<Envio[]>([]);
 	const [simulation, setSimulation] = useState<Simulacion | undefined>(undefined);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
 
 	const [client, setClient] = useState<Client | null>(null);
-
-	const { isLoading } = useApi(
-		"GET",
-		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
-		(data: Aeropuerto[]) => {
-			console.log("Fetched airport data succesfully");
-			setAirports(data);
-		},
-		(error) => {
-			console.log(error);
-			toast.error("Error al cargar aeropuertos");
-		}
-	);
 
 	const getTimeByMs = useCallback((timeInMiliseconds: number) => {
 		const h = Math.floor(timeInMiliseconds / 1000 / 60 / 60);
@@ -107,10 +101,8 @@ function SimulationPage() {
 
 				setSimulation((prev) => {
 					if (prev === undefined) {
-						console.log("Setting simulation");
 						return { ...data.simulacion };
 					} else {
-						console.log("Simulation already set, not updating it again.");
 						return prev;
 					}
 				});
@@ -133,7 +125,6 @@ function SimulationPage() {
 
 				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-				console.log("See db_estadoAlmacen: ", db_estadoAlmacen);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
@@ -165,16 +156,26 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
-		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-			event.preventDefault();
-			event.returnValue = "Mensaje de prueba"; // Standard for most browsers
-			return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
-		};
+		async function getAirports(){
+			await api(
+				"GET",
+				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
+				(data: Aeropuerto[]) => {
+					console.log("Data from /back/aeropuerto/: ", data);
+					setAirports(data);
+					const airportHash = getAirportHashmap(data);
+					setAirportsHash(airportHash);
+				},
+				(error) => {
+					console.log(error);
+					toast.error("Error al cargar aeropuertos");
+				}
+			);
+		}
 
-		window.addEventListener("beforeunload", handleBeforeUnload);
+		getAirports();
 
 		return () => {
-			window.removeEventListener("beforeunload", handleBeforeUnload);
 
 			if (client) {
 				client.deactivate();
@@ -182,19 +183,42 @@ function SimulationPage() {
 		};
 	}, []);
 
-	useEffect(()=>{
-		if(currentTime && simulation){
-			const date1 = new Date(currentTime);
-			const date2 = new Date(simulation.fechaInicioSim);
-			const diffTime = Math.abs(date2.getTime() - date1.getTime());
-			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-			if(diffDays > 7 && envios.length === 0){
-				toast.info("Simulation ended successfully");
-				// router.push("/simulation/results");
-				window.location.replace("/simulation/results");
+	useEffect(() => {
+		async function finishSimulation() {
+			if (currentTime && simulation) {
+				const date1 = new Date(currentTime);
+				const date2 = new Date(simulation.fechaInicioSim);
+				const diffTime = Math.abs(date2.getTime() - date1.getTime());
+				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				if (diffDays > 7) {
+					toast.info("Simulation ended successfully", {
+						position: "bottom-center"
+					});
+
+					await api(
+						"PUT",
+						`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+						(data: any) => {
+							console.log("Respuesta de /back/simulacion/detener: ", data);
+						},
+						(error) => {
+							console.log("Error en /back/simulacion/detener: ", error);
+						},
+						simulation
+					);
+
+					await pauseSimulation(simulation);
+
+					const saved_simu = { ...simulation };
+					saved_simu.fechaDondeParoSimulacion = new Date();
+					setSimulationContext(saved_simu);
+					router.push("/simulation/results");
+				}
 			}
 		}
-	},[currentTime, simulation]);
+
+		finishSimulation();
+	}, [currentTime, simulation]);
 
 	return (
 		<>
@@ -207,12 +231,17 @@ function SimulationPage() {
 				isOpen={isStoppingModalOpen}
 				setIsModalOpen={setIsStoppingModalOpen}
 				simulation={simulation}
-				redirectToReport={() => {
+				redirectToReport={async () => {
 					if (simulation === undefined) {
 						toast.error("No se ha cargado la simulación");
 						return;
 					}
-					setSimulationContext(simulation);
+
+					await pauseSimulation(simulation);
+
+					const saved_simu = { ...simulation };
+					saved_simu.fechaDondeParoSimulacion = new Date();
+					setSimulationContext(saved_simu);
 					router.push("/simulation/results");
 				}}
 			/>
@@ -222,8 +251,24 @@ function SimulationPage() {
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
+						
 					</div>
 				</MapHeader>
+
+				<PlaneLegend className="absolute bottom-[115px] right-7 z-[50]" />
+
+				<div className="flex flex-col items-end justify-center gap-1 absolute top-24 right-14 z-[20]">
+					<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
+						<a className="font-medium text-right w-full">Ocupacion promedio: </a>{" "}
+						<div className="flex flex-row items-center gap-1 justify-end w-full">
+							<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionAeropuertos(airportsHash, estadoAlmacen, currentTime)}%`}</p>
+							<Warehouse className="stroke-[1.1px] w-5 h-5"/>
+						</div>
+						<div className="flex flex-row items-center gap-1 justify-end w-full">
+						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionVuelos(flights, currentTime)}%`}</p>
+							<Plane className="stroke-[1.2px] w-5 h-5"/></div>
+					</div>
+				</div>
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
 					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
