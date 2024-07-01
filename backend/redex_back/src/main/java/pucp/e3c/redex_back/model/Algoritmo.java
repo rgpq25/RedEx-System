@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.Thread;
 
 import org.slf4j.Logger;
@@ -626,6 +627,14 @@ public class Algoritmo {
                     TA * (int) simulacion.getMultiplicadorTiempo());
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
                 simulacion.setEstado(3);
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
@@ -850,6 +859,13 @@ public class Algoritmo {
                     TA * (int) simulacion.getMultiplicadorTiempo());
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
                 simulacion.setEstado(3);
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
