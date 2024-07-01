@@ -625,7 +625,7 @@ public class Algoritmo {
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion,
                     TA * (int) simulacion.getMultiplicadorTiempo());
             if (respuestaAlgoritmo == null) {
-                LOGGER.error(tipoOperacion + ": Colpaso");
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 simulacion.setEstado(3);
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
@@ -849,7 +849,7 @@ public class Algoritmo {
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion,
                     TA * (int) simulacion.getMultiplicadorTiempo());
             if (respuestaAlgoritmo == null) {
-                LOGGER.error(tipoOperacion + ": Colpaso");
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 simulacion.setEstado(3);
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
