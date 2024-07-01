@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -398,11 +400,9 @@ public class SimulacionController {
 
             lines.addAll(reader1.lines().collect(Collectors.toList()));
             lines.addAll(reader2.lines().collect(Collectors.toList()));
-            Date fechaInicio = new Date(1241424000000L);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(fechaInicio);
-            calendar.add(Calendar.MONTH, 1);
-            Date fechaFin = calendar.getTime();
+
+            Date fechaInicio = simulacion.getFechaInicioSim();
+            Date fechaFin = simulacion.getFechaFinSim();
 
             HashMap<String, Aeropuerto> aeropuertoMap = new HashMap<>();
             for (Aeropuerto aeropuerto : aeropuertos) {
@@ -452,10 +452,14 @@ public class SimulacionController {
         // Algoritmo algoritmo = new Algoritmo(messagingTemplate);
 
         CompletableFuture.runAsync(() -> {
-            algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
-                    vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
-                    simulacionService, simuFinal,
-                    30, 10);
+            try {
+                algoritmo.loopPrincipalColapso(aeropuertos, planVuelos, paquetes,
+                        vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
+                        simulacionService, simuFinal,
+                    300, 30);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
 
         return simulacion;

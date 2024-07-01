@@ -699,7 +699,7 @@ public class Algoritmo {
             PaqueteService paqueteService, AeropuertoService aeropuertoService,
             PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService,
-            Simulacion simulacion, int SA, int TA) {
+            Simulacion simulacion, int SA, int TA) throws InterruptedException {
         Date fechaMinima = simulacion.getFechaInicioSim();
         boolean replanificar = true;
         String tipoOperacion = "SIMULACION HASTA COLPASO";
@@ -717,13 +717,15 @@ public class Algoritmo {
                 simulacion);
 
         while (iniciar) {
+            Thread.sleep(1000);
             simulacion = simulacionService.get(simulacion.getId());
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
 
             // Calculo del limie de planificacion
             Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
             fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
-
+            System.out.println("Paquetes: " + paquetes.size());
+            System.out.println("Fecha limite calculo" + fechaLimiteCalculo);
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
@@ -767,7 +769,7 @@ public class Algoritmo {
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
-                tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
+                tiempoEnSimulacion = fechaSgteCalculo;
                 continue;
             }
 
@@ -1321,7 +1323,7 @@ public class Algoritmo {
         double coolingRate = 0.08;
         int neighbourCount = 1;
         int windowSize = tamanhoPaquetes / 3;
-        boolean stopWhenNoPackagesLeft = false;
+        boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
         double badSolutionPenalization = 100;
