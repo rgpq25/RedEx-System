@@ -27,6 +27,7 @@ export default function ReceptionPackage() {
     const [envio, setEnvio] = useState<Envio>();
     const [paquetes, setPaquetes] = useState<Paquete[]>();
     const [selectedIdPaquete, setSelectedIdPaquete] = useState<number>();
+    const [isEnvioToReceive, setIsEnvioToReceive] = useState<boolean>(false);
 
     const selectedPaquete = paquetes?.find((paquete) => paquete.id === selectedIdPaquete);
 
@@ -70,6 +71,52 @@ export default function ReceptionPackage() {
         }
     }, [getEnvio, getPaquetesEnvio]);
 
+    const handleConfirmReception = useCallback(async () => {
+        if (selectedPaquete) {
+            await api(
+                "POST",
+                `${process.env.NEXT_PUBLIC_API}/back/envio/actualizarEstadoEntregado`,
+                (data) => {
+                    toast.success("Paquete recibido con éxito", {
+                        position: "bottom-right",
+                        duration: 3000,
+                    });
+                    handleReceptionData();
+                },
+                (error) => {
+                    toast.error("No se pudo confirmar la recepción del paquete", {
+                        position: "bottom-right",
+                        duration: 3000,
+                    });
+                },
+                { id: envio?.id }
+            );
+        }
+    }, [envio, selectedPaquete, handleReceptionData]);
+
+    const defineIsEnvioReceived = useCallback(() => {
+        if (selectedPaquete) {
+            let currentTimestamp = new Date();
+            // Entre todos los paquetes del envío, se define cual es el tiempo del ultimo vuelo
+            let lastVuelo: Vuelo | undefined;
+            if (paquetes === undefined) return;
+            for (const paquete of paquetes) {
+                if (paquete?.planRutaActual && paquete?.planRutaActual?.vuelos) {
+                    for (const vuelo of paquete?.planRutaActual?.vuelos) {
+                        if (lastVuelo === undefined || vuelo.fechaLlegada > lastVuelo.fechaLlegada) {
+                            lastVuelo = vuelo;
+                        }
+                    }
+                }
+            }
+            if (lastVuelo && lastVuelo.fechaLlegada < currentTimestamp && envio?.estado !== "Entregado") {
+                setIsEnvioToReceive(true);
+            } else {
+                setIsEnvioToReceive(false);
+            }
+        }
+    }, [selectedPaquete, paquetes, envio]);
+
     useEffect(() => {
         const getVuelosPaquetes = async (paquete: Paquete) => {
             if (paquete.planRutaActual === null) return;
@@ -105,6 +152,10 @@ export default function ReceptionPackage() {
     useEffect(() => {
         handleReceptionData();
     }, [handleReceptionData]);
+
+    useEffect(() => {
+        defineIsEnvioReceived();
+    }, [defineIsEnvioReceived]);
 
     console.log(paquetes);
 
@@ -170,8 +221,7 @@ export default function ReceptionPackage() {
                                 </Card>
                             </>
                         ) : (
-                            <>
-                            </>
+                            <></>
                         )}
                         <Card>
                             <CardHeader>
@@ -281,7 +331,13 @@ export default function ReceptionPackage() {
                         </Card>
                     </section>
                     <section className='flex flex-row justify-center gap-16'>
-                        <Button variant='default'>Confirmar</Button>
+                        <Button
+                            variant='default'
+                            disabled={!isEnvioToReceive}
+                            onClick={handleConfirmReception}
+                        >
+                            Confirmar recepcion
+                        </Button>
                         <Link
                             className={cn(buttonVariants({ variant: "outline" }))}
                             href={"/dashboard"}

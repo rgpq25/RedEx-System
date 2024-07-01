@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useMemo } from "react";
-import { ChevronsRight, ChevronsLeft } from "lucide-react";
+import { ChevronsRight, ChevronsLeft, MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -125,7 +125,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                 id: `${ultimoVuelo.id}-aeropuerto-destino`,
                 ciudad: ultimoVuelo.planVuelo.ciudadDestino.ciudad,
                 fechaSalida: ultimoVuelo.fechaLlegada,
-                tiempoEnAlmacen: "Destino final",
+                tiempoEnAlmacen: "Almacen final",
             });
         }
         return steps;
@@ -248,7 +248,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                         <SelectGroup>
                                             {shipment?.paquetes
                                                 ?.sort((a, b) => {
-                                                    const estadoComparison = a.estado.localeCompare(b.estado);
+                                                    const estadoComparison = a.estado?.localeCompare(b.estado ?? "");
                                                     if (estadoComparison !== 0) return estadoComparison;
 
                                                     const getMaxFechaLlegada = (pkg: any) => {
@@ -278,7 +278,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                                             {pkg.id}
                                                             {pkg.planRutaActual?.vuelos && currentTime && (
                                                                 <StatusChip
-                                                                    status={getPackageState(pkg.planRutaActual?.vuelos, currentTime)}
+                                                                    status={getPackageState(pkg, pkg.planRutaActual?.vuelos, currentTime)}
                                                                 />
                                                             )}
                                                         </div>
@@ -322,7 +322,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                                 </>
                                             )}
                                             <Stepper
-                                                size={'sm'}
+                                                size={"sm"}
                                                 index={activeStep}
                                                 orientation='vertical'
                                                 height='max-content'
@@ -345,7 +345,9 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                                                 <>
                                                                     <StepTitle>{step.ciudad}</StepTitle>
                                                                     <StepDescription>
-                                                                        Tiempo en almacén: {step.tiempoEnAlmacen}
+                                                                        {step.tiempoEnAlmacen === "Almacen final"
+                                                                            ? step.tiempoEnAlmacen
+                                                                            : `Tiempo en almacén: ${step.tiempoEnAlmacen}`}
                                                                     </StepDescription>
                                                                 </>
                                                             ) : (
@@ -355,6 +357,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                                                                             <StepTitle>{`${step.origen}`}</StepTitle>
                                                                             <StepDescription>{`${formatDateTimeLongShort(step.fechaSalida)}`}</StepDescription>
                                                                         </div>
+                                                                        <MoveRight className='stroke-[1.2px] w-8 h-8 shrink-0' />
                                                                         <div className='flex flex-col text-right'>
                                                                             <StepTitle>{`${step.destino}`}</StepTitle>
                                                                             <StepDescription>{`${formatDateTimeLongShort(step.fechaLlegada)}`}</StepDescription>
