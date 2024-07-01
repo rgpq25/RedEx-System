@@ -456,7 +456,7 @@ public class SimulacionController {
                 algoritmo.loopPrincipalColapso(aeropuertos, planVuelos, paquetes,
                         vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
                         simulacionService, simuFinal,
-                    300, 30);
+                        900, 60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
