@@ -251,8 +251,11 @@ function SimulationPage() {
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
+						
 					</div>
 				</MapHeader>
+
+				<PlaneLegend className="absolute bottom-[115px] right-7 z-[50]" />
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute top-24 right-14 z-[20]">
 					<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
