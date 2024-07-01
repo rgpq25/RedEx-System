@@ -101,10 +101,8 @@ function SimulationPage() {
 
 				setSimulation((prev) => {
 					if (prev === undefined) {
-						console.log("Setting simulation");
 						return { ...data.simulacion };
 					} else {
-						console.log("Simulation already set, not updating it again.");
 						return prev;
 					}
 				});
@@ -127,7 +125,6 @@ function SimulationPage() {
 
 				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-				console.log("See db_estadoAlmacen: ", db_estadoAlmacen);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);

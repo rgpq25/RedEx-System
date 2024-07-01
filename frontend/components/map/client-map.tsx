@@ -92,7 +92,6 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 								aeropuerto={aeropuerto}
 								coordinates={[latitud, longitud] as [number, number]}
 								onClick={(coordinates: [number, number]) => {
-									console.log(estadoAlmacen?.uso_historico[aeropuerto.ubicacion.id] || {});
 									zoomToAirport(aeropuerto);
 									openAirportModal(aeropuerto);
 								}}
@@ -148,6 +147,7 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 				simulacion={simulation}
 				currentTime={currentTime}
 				getCurrentlyPausedTime={getCurrentlyPausedTime}
+				estadoAlmacen={estadoAlmacen}
 			/>
 			<EnvioModal
 				currentTime={currentTime}
