@@ -69,21 +69,6 @@ function SimulationPage() {
 
 	const [client, setClient] = useState<Client | null>(null);
 
-	const { isLoading } = useApi(
-		"GET",
-		`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
-		(data: Aeropuerto[]) => {
-			console.log("Data from /back/aeropuerto/: ", data);
-			setAirports(data);
-			const airportHash = getAirportHashmap(data);
-			setAirportsHash(airportHash);
-		},
-		(error) => {
-			console.log(error);
-			toast.error("Error al cargar aeropuertos");
-		}
-	);
-
 	const getTimeByMs = useCallback((timeInMiliseconds: number) => {
 		const h = Math.floor(timeInMiliseconds / 1000 / 60 / 60);
 		const m = Math.floor((timeInMiliseconds / 1000 / 60 / 60 - h) * 60);
@@ -174,16 +159,26 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
-		// const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-		// 	event.preventDefault();
-		// 	event.returnValue = "Mensaje de prueba"; // Standard for most browsers
-		// 	return "Mensaje de prueba"; // Some browsers may require this for the dialog to show up
-		// };
+		async function getAirports(){
+			await api(
+				"GET",
+				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
+				(data: Aeropuerto[]) => {
+					console.log("Data from /back/aeropuerto/: ", data);
+					setAirports(data);
+					const airportHash = getAirportHashmap(data);
+					setAirportsHash(airportHash);
+				},
+				(error) => {
+					console.log(error);
+					toast.error("Error al cargar aeropuertos");
+				}
+			);
+		}
 
-		// window.addEventListener("beforeunload", handleBeforeUnload);
+		getAirports();
 
 		return () => {
-			// window.removeEventListener("beforeunload", handleBeforeUnload);
 
 			if (client) {
 				client.deactivate();
