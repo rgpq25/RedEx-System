@@ -701,14 +701,13 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) throws InterruptedException {
         Date fechaMinima = simulacion.getFechaInicioSim();
-        boolean replanificar = true;
-        String tipoOperacion = "SIMULACION HASTA COLPASO";
+        boolean replanificar = false;
+        String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;
         this.planRutasSimulacion = planRutas;
         HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         GrafoVuelos grafoVuelos = new GrafoVuelos(planVuelos, paquetes, vueloService, simulacion);
-
         int i = 0;
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnSimulacion = simulacion.getFechaInicioSim();
@@ -721,11 +720,54 @@ public class Algoritmo {
             simulacion = simulacionService.get(simulacion.getId());
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnSimulacion, aeropuertoService);
 
+            // Gestion de pausa detencion
+            if (simulacion.estado == 1) {
+                // System.out.println("Simulacion terminada");
+                LOGGER.info(tipoOperacion + " Simulacion terminada");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                        new RespuestaAlgoritmoEstado("Simulacion terminada", simulacion));
+                break;
+            }
+
+            // Gestion de pausa
+            if (simulacion.getEstado() == 2) {
+                LOGGER.info(tipoOperacion + " Simulacion pausada");
+                // System.out.println("Simulacion pausada");
+
+                if (primera_iter) {
+                    simulacion.setFechaInicioSistema(new Date());
+                    simulacion = simulacionService.update(simulacion);
+                    primera_iter = false;
+
+                }
+                continue;
+            }
+
+            // Lapso de tiempo entre planificaciones
+            if (tiempoEnSimulacion.before(fechaSgteCalculo)) {
+                tiempoEnSimulacion = fechaSgteCalculo;
+                // System.out.println("Aun no es tiempo de planificar, la fecha en simulacion es
+                // " + tiempoEnSimulacion);
+                LOGGER.info(tipoOperacion + " Aun no es tiempo de planificar, la fecha en simulacion es "
+                        + tiempoEnSimulacion);
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
+                if (primera_iter) {
+                    simulacion.setFechaInicioSistema(new Date());
+                    simulacion = simulacionService.update(simulacion);
+                    primera_iter = false;
+
+                }
+                continue;
+            }
+
             // Calculo del limie de planificacion
             Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
             fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
-            System.out.println("Paquetes: " + paquetes.size());
-            System.out.println("Fecha limite calculo" + fechaLimiteCalculo);
+
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
@@ -769,7 +811,7 @@ public class Algoritmo {
                 }
                 enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
-                tiempoEnSimulacion = fechaSgteCalculo;
+                tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
                 continue;
             }
 
@@ -814,15 +856,6 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 return null;
             }
-            if (!respuestaAlgoritmo.isCorrecta()) {
-                LOGGER.error(tipoOperacion + ": Colpaso");
-                simulacion.setEstado(3);
-                respuestaAlgoritmo = new RespuestaAlgoritmo();
-                respuestaAlgoritmo.setSimulacion(simulacion);
-                respuestaAlgoritmo.setCorrecta(false);
-                return null;
-            }
-
             i++;
 
             // Guardar resultados
@@ -877,11 +910,10 @@ public class Algoritmo {
             // fechaSgteCalculo);
             LOGGER.info(tipoOperacion + " Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
 
-            tiempoEnSimulacion = fechaSgteCalculo;// calendar.getTime();
+            tiempoEnSimulacion = calcularTiempoSimulacion(simulacion);
 
         }
         return planRutas;
-
     }
 
     private void printRutasAlgoritmo(ArrayList<PlanRutaNT> planRutas, ArrayList<Paquete> paquetes, int i) {
