@@ -712,7 +712,14 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 return null;
             }
+            while (true) {
+                simulacion = simulacionService.get(simulacion.getId());
+                LOGGER.info(tipoOperacion + " Simulacion pausada");
+                if (simulacion.getEstado() != 2) {
+                    break;
+                }
 
+            }
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
                     "/algoritmo/respuesta");

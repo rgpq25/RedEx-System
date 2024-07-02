@@ -147,13 +147,7 @@ public class SAImplementation {
 
 			while (temperature > 1) {
 				// System.out.println("\nIteracion en loop\n");
-				if (simulacionService != null) {
-					simulacion = simulacionService.get(simulacion.getId());
-					if (simulacion.getEstado() == 2) {
 
-						continue;
-					}
-				}
 				ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
 				for (int i = 0; i < neighbourCount; i++) {
 					Solucion newNeighbour = current.generateNeighbour(windowSize, vueloService,
@@ -256,8 +250,6 @@ public class SAImplementation {
 					LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
 				}
 			}
-
-
 
 			// Guardar vuelos
 			for (int id : current.ocupacionVuelos.keySet()) {
