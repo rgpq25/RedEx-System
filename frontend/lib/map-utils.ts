@@ -180,20 +180,20 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 
 	const newEnviosNoDuplicates = Array.from(envioMap.values());
 
-	newEnviosNoDuplicates.map((envio) => {
-		if (envio.cantidadPaquetes !== envio.paquetes.length) {
-			const missingPaquetes = envio.cantidadPaquetes - envio.paquetes.length;
+	// newEnviosNoDuplicates.map((envio) => {
+	// 	if (envio.cantidadPaquetes !== envio.paquetes.length) {
+	// 		const missingPaquetes = envio.cantidadPaquetes - envio.paquetes.length;
 
-			for (let i = 0; i < missingPaquetes; i++) {
-				envio.paquetes.push({
-					//@ts-ignore
-					isFill: true,
-				});
-			}
+	// 		for (let i = 0; i < missingPaquetes; i++) {
+	// 			envio.paquetes.push({
+	// 				//@ts-ignore
+	// 				isFill: true,
+	// 			});
+	// 		}
 
-			// console.log(`Envio ${envio.id} tiene ${missingPaquetes} paquetes faltantes`)
-		}
-	});
+	// 		// console.log(`Envio ${envio.id} tiene ${missingPaquetes} paquetes faltantes`)
+	// 	}
+	// });
 
 	return {
 		db_envios: newEnviosNoDuplicates,
@@ -277,10 +277,10 @@ export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAe
 		for (let i = 0; i < missingPackages; i++) {
 			new_data.push(selectedPackages[i]);
 		}
-		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`);
+		// console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`);
 	} else {
 		new_data = new_data.slice(0, currentOcupation);
-		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`);
+		// console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`);
 	}
 
 	return new_data;

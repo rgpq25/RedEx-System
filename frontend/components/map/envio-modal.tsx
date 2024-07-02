@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Aeropuerto, Envio, EstadoAlmacen, EstadoPaquete, Paquete, PlanRuta, Simulacion, Ubicacion, Vuelo } from "@/lib/types";
 import { ArrowUpDown, Eye, Loader2 } from "lucide-react";
 import { EnvioTable } from "./envio-table";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -131,6 +131,8 @@ function getCurrentAirport(
 			);
 		}
 	}
+
+	return <p>---</p>;
 }
 
 export function getPackageState(paquete: Paquete | undefined, planRutaVuelos: Vuelo[], _currentTime: Date): EstadoPaquete {
@@ -209,80 +211,122 @@ type DataType = {
 	[key: number]: Vuelo[];
 };
 
+type ColumnPropType = {
+	getCurrentAirport_Callback: (row: Row<Paquete>) => JSX.Element;
+	getCurrentFlight_Callback: (row: Row<Paquete>) => JSX.Element;
+	getCurrentStatus_Callback: (row: Row<Paquete>) => JSX.Element;
+	setCurrentlyViewingPlanRuta: (row: Row<Paquete>) => void;
+};
+
+export const getColumns = ({
+	getCurrentAirport_Callback,
+	getCurrentFlight_Callback,
+	getCurrentStatus_Callback,
+	setCurrentlyViewingPlanRuta,
+}: ColumnPropType): ColumnDef<Paquete>[] => [
+	{
+		accessorKey: "numero",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center w-[40px]">
+					<p className="text-center w-full">#</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
+	},
+	{
+		accessorKey: "planRutaVuelos",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center">
+					<p>Vuelo actual</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className="text-start flex flex-row gap-2 items-centerline-clamp-1 truncate">{getCurrentFlight_Callback(row)}</div>,
+	},
+	{
+		accessorKey: "Origen",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center">
+					<p>Aeropuerto actual</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className="truncate flex flex-row gap-2 items-center">{getCurrentAirport_Callback(row)}</div>,
+	},
+	{
+		accessorKey: "statusAlmacen",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center">
+					<p>Estado</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className="">{getCurrentStatus_Callback(row)}</div>,
+	},
+	{
+		accessorKey: "Ruta",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center">
+					<p>Ruta</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => (
+			<div className="">
+				<Button size="icon" className="w-7 h-7 shrink-0" variant="outline" onClick={() => setCurrentlyViewingPlanRuta(row)}>
+					<Eye className="w-4 h-4" />
+				</Button>
+			</div>
+		),
+	},
+];
+
 function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simulacion, zoomToUbicacion, lockToFlight }: EnvioModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [planeMap, setPlaneMap] = useState<DataType | null>(null);
+	const [currentPlanRuta, setCurrentPlanRuta] = useState<Vuelo[] | null>(null);
+	const [numPaqueteSelected, setNumPaqueteSelected] = useState<number | null>(null);
+	const [paquetesEnvio, setPaquetesEnvio] = useState<Paquete[]>([]);
 
-	const columns: ColumnDef<Paquete>[] = [
-		{
-			accessorKey: "numero",
-			header: ({ column }) => {
-				return (
-					<div className="flex items-center w-[40px]">
-						<p className="text-center w-full">Paquete</p>
-					</div>
-				);
-			},
-			cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
-		},
-		{
-			accessorKey: "planRutaVuelos",
-			header: ({ column }) => {
-				return (
-					<div className="flex items-center  w-[250px]">
-						<p>Vuelo actual</p>
-					</div>
-				);
-			},
-			cell: ({ row }) => (
-				<div className="text-start flex flex-row gap-2 items-center w-[250px] line-clamp-1 truncate">
-					{planeMap !== null && currentTime !== undefined
-						? getCurrentLocation(envio?.paquetes[row.index], planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
-								lockToFlight(vuelo);
-								setIsOpen(false);
-						  })
-						: "---"}
-				</div>
-			),
-		},
-		{
-			accessorKey: "Origen",
-			header: ({ column }) => {
-				return (
-					<div className="flex items-center  w-[250px]">
-						<p>Aeropuerto actual</p>
-					</div>
-				);
-			},
-			cell: ({ row }) => (
-				<div className="truncate flex flex-row gap-2 items-center  w-[250px]">
-					{planeMap !== null && currentTime !== undefined
-						? getCurrentAirport(envio?.paquetes[row.index], planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
-								zoomToUbicacion(ubicacion);
-								setIsOpen(false);
-						  })
-						: "---"}
-				</div>
-			),
-		},
-		{
-			accessorKey: "statusAlmacen",
-			header: ({ column }) => {
-				return (
-					<div className="flex items-center w-[170px]">
-						<p>Estado</p>
-					</div>
-				);
-			},
-			cell: ({ row }) => (
-				<div className="w-[170px]">
-					{planeMap !== null && currentTime !== undefined
-						? renderStatusChip(getPackageState(envio?.paquetes[row.index], planeMap[row.original.id], currentTime))
-						: "---"}
-				</div>
-			),
-		},
-	];
+	const getCurrentAirport_Callback = (row: Row<Paquete>) => {
+		if (planeMap === null || currentTime === undefined || planeMap[row.original.id] === undefined) return <p>---</p>;
+		return getCurrentAirport(paquetesEnvio[row.index], planeMap[row.original.id], currentTime, (ubicacion: Ubicacion) => {
+			zoomToUbicacion(ubicacion);
+			setIsOpen(false);
+		});
+	};
+
+	const getCurrentFlight_Callback = (row: Row<Paquete>) => {
+		if (planeMap === null || currentTime === undefined || planeMap[row.original.id] === undefined) return <p>---</p>;
+		return getCurrentLocation(paquetesEnvio[row.index], planeMap[row.original.id], currentTime, (vuelo: Vuelo) => {
+			lockToFlight(vuelo);
+			setIsOpen(false);
+		});
+	};
+
+	const getCurrentStatus_Callback = (row: Row<Paquete>) => {
+		if (planeMap === null || currentTime === undefined || planeMap[row.original.id] === undefined) return <p>---</p>;
+		return renderStatusChip(getPackageState(paquetesEnvio[row.index], planeMap[row.original.id], currentTime));
+	};
+
+	const setCurrentlyViewingPlanRuta = (row: Row<Paquete>) => {
+		if (planeMap === null) return;
+		setCurrentPlanRuta(planeMap[row.original.id]);
+		setNumPaqueteSelected(row.index + 1);
+	};
+
+	const columns = getColumns({
+		getCurrentAirport_Callback,
+		getCurrentFlight_Callback,
+		getCurrentStatus_Callback,
+		setCurrentlyViewingPlanRuta,
+	});
 
 	useEffect(() => {
 		async function getPlanRutaPaquetes() {
@@ -291,27 +335,39 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 				return;
 			}
 
-			const packagesIds = envio.paquetes
-				.filter((paquete) => {
-					//@ts-ignore
-					return paquete.isFill === undefined || paquete.isFill === false;
-				})
-				.map((paquete) => {
-					return {
-						id: paquete.id,
-					};
-				});
-
-			console.log(packagesIds);
-
-			console.log(`Fetching packages of envio with id ${envio.id}`);
 			setIsLoading(true);
+			setCurrentPlanRuta(null);
+
+			let newEnvio: Envio = { ...envio };
+
+			await api(
+				"GET",
+				`${process.env.NEXT_PUBLIC_API}/back/paquete/envio/${envio.id}`,
+				(data: Paquete[]) => {
+					// console.log("Paquetes de envio: ", data);
+					newEnvio.paquetes = data;
+					setPaquetesEnvio(data);
+				},
+				(error) => {
+					console.log(error);
+					setIsOpen(false);
+					toast.error("Error al cargar paquetes de envio");
+				}
+			);
+
+			const packagesIds = newEnvio.paquetes.map((paquete) => {
+				return {
+					id: paquete.id,
+				};
+			});
+
+			console.log(`Fetching packages of envio with id ${newEnvio.id}`);
 
 			await api(
 				"POST",
 				`${process.env.NEXT_PUBLIC_API}/back/vuelo/paqueteAll`,
 				(data: DataType) => {
-					console.log(data);
+					// console.log(data);
 
 					setPlaneMap(data);
 
@@ -343,7 +399,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 						<DialogHeader>
 							<DialogTitle className="text-2xl">Información de envío</DialogTitle>
 						</DialogHeader>
-						<div className="flex-1 flex flex-col">
+						<div className="flex-1 flex flex-col relative">
 							<p>
 								{"Origen: " +
 									envio?.ubicacionOrigen.ciudad +
@@ -361,14 +417,35 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 									")"}
 							</p>
 
-							<p>
-								{"Fecha recepcion: " + formatDateTimeLongShort(envio?.fechaRecepcion || new Date())}
-							</p>
-							<p>
-								{"Fecha limite entrega: " +
-									formatDateTimeLongShort(envio?.fechaLimiteEntrega || new Date())}
-							</p>
-							<AirportTable data={envio?.paquetes || []} columns={columns} />
+							<p>{"Fecha recepcion: " + formatDateTimeLongShort(envio?.fechaRecepcion || new Date())}</p>
+							<p>{"Fecha limite entrega: " + formatDateTimeLongShort(envio?.fechaLimiteEntrega || new Date())}</p>
+							<AirportTable data={paquetesEnvio} columns={columns} />
+
+							{currentPlanRuta && (
+								<div className="w-[350px] p-4 absolute top-10 -right-[390px] bottom-10 bg-white rounded-lg flex flex-col gap-2">
+									<p className="text-lg font-medium leading-5">{`Ruta de paquete seleccionado: (${numPaqueteSelected})`}</p>
+									<div className="flex-1 flex flex-col gap-3">
+										{currentPlanRuta.map((vuelo, index) => {
+											return (
+												<div className="flex flex-row justify-between items-center overflow-hidden" key={vuelo.id}>
+													<div className="flex flex-col items-start justify-center flex-1 overflow-hidden">
+														<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadOrigen.pais} (${vuelo.planVuelo.ciudadOrigen.id})`}</p>
+														<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
+															vuelo.fechaSalida
+														)}`}</p>
+													</div>
+													<div className="flex flex-col items-end justify-center flex-1 overflow-hidden">
+														<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadDestino.pais} (${vuelo.planVuelo.ciudadDestino.id})`}</p>
+														<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
+															vuelo.fechaLlegada
+														)}`}</p>
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</div>
+							)}
 						</div>
 					</>
 				)}

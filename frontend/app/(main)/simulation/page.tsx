@@ -114,6 +114,20 @@ function SimulationPage() {
 			client.subscribe("/algoritmo/respuesta", async (msg) => {
 				setIsSimulationLoading(false);
 				if ((JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.id !== simulacion.id) return;
+				if (
+					(JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.estado === 3 &&
+					(JSON.parse(msg.body) as RespuestaAlgoritmo).correcta === false
+				) {
+					toast.error("Simulación ha colapsado");
+
+					setFlights([]);
+					await pauseSimulation(simulacion);
+					const saved_simu = { ...simulacion };
+					saved_simu.fechaDondeParoSimulacion = new Date();
+					setSimulationContext(saved_simu);
+					router.push("/simulation/results");
+					return;
+				}
 
 				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);

@@ -109,7 +109,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					"GET",
 					`${process.env.NEXT_PUBLIC_API}/back/vuelo/${vuelo.id}/paquetes`,
 					(data: Paquete[]) => {
-						console.log(data);
+						// console.log(data);
 						setPaquetes(data);
 						setIsLoading(false);
 					},

@@ -123,7 +123,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 
 	const onFlightClick = useCallback(
 		(flight: Vuelo) => {
-			console.log("About to lock to flight: ", flight);
+			// console.log("About to lock to flight: ", flight);
 			setCurrentlyLockedFlight(flight);
 			setTimeout(() => {
 				setIsLockedToFlight(true);

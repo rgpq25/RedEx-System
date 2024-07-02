@@ -105,9 +105,7 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead key={header.id} className="bg-mainRed/20 text-black">
-											{header.isPlaceholder
-												? null
-												: flexRender(header.column.columnDef.header, header.getContext())}
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 										</TableHead>
 									);
 								})}
@@ -119,9 +117,7 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 							table.getRowModel().rows.map((row) => (
 								<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
+										<TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
 									))}
 								</TableRow>
 							))
@@ -136,15 +132,10 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 				</Table>
 			</div>
 			<div className="flex items-center justify-end  pt-4">
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
+				<Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
 					Previo
 				</Button>
-				<p className="w-[50px] text-center font-medium">{pagination.pageIndex  + 1}</p>
+				<p className="w-[50px] text-center font-medium">{pagination.pageIndex + 1}</p>
 				<Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 					Siguiente
 				</Button>

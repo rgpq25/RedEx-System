@@ -190,6 +190,11 @@ function Envios({
     const minCapacidad = Math.min(...rangoCapacidadFilter);
     const maxCapacidad = Math.max(...rangoCapacidadFilter);
 
+
+    useEffect(()=>{
+        setPage(1)
+    },[search, continentesOrigenFilter, continentesDestinoFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad])
+
     const filteredItems = useMemo(() => {
         let filteredEnvios = envios;
         if (tiempoActual) {
@@ -588,6 +593,7 @@ function Aeropuertos({
 
     const minCapacidad = Math.min(...rangoCapacidadFilter);
     const maxCapacidad = Math.max(...rangoCapacidadFilter);
+    
 
     const items = useMemo(() => {
         let filteredAeropuertos = aeropuertos;
@@ -856,6 +862,10 @@ function Vuelos({
         getFilteredFlights } = useFilteredFlightsContext();
     const [page, setPage] = useState<number>(1);
     const rowsPerPage = 10;
+
+    useEffect(()=>{
+        setPage(1)
+    },[search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad])
 
     const filteredItems = vuelos;
 
