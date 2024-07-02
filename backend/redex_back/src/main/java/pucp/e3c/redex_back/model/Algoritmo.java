@@ -701,15 +701,15 @@ public class Algoritmo {
             if (colapso) {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
-               
+
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
                 try {
-                    //PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    //writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    // writer.println("Colpaso en fecha " + tiempoEnSimulacion);
                     messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "Colpaso en fecha " + tiempoEnSimulacion);
-                    //writer.close();
+                            "Colpaso en fecha " + tiempoEnSimulacion);
+                    // writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
@@ -729,7 +729,7 @@ public class Algoritmo {
             }
             // Formar respuesta a front
             enviarRespuesta(respuestaAlgoritmo, simulacion, fechaLimiteCalculo, fechaSgteCalculo,
-                    "/algoritmo/respuesta");
+                    "/algoritmo/respuesta", tiempoEnSimulacion);
             this.paquetesSimulacion = new ArrayList<>(paquetes);
             this.planRutasSimulacion = new ArrayList<>();
             for (PlanRutaNT planRutaNT : planRutas) {
@@ -1217,10 +1217,11 @@ public class Algoritmo {
     }
 
     private void enviarRespuesta(RespuestaAlgoritmo respuestaAlgoritmo, Simulacion simulacion, Date fechaLimiteCalculo,
-            Date fechaSgteCalculo, String canal) {
+            Date fechaSgteCalculo, String canal, Date tiempoEnsimulacion) {
         respuestaAlgoritmo.setSimulacion(simulacion);
 
-        respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
+        respuestaAlgoritmo.getVuelos().removeIf(
+                vuelo -> vuelo.getCapacidadUtilizada() == 0 || vuelo.getFechaLlegada().before(tiempoEnsimulacion));
         System.out.println("Se filtraron los vuelos");
         respuestaAlgoritmo.setOcupacionVuelos(null);
         respuestaAlgoritmo.setPaquetes(null);
@@ -1230,6 +1231,13 @@ public class Algoritmo {
                 new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + fechaLimiteCalculo, simulacion));
 
         System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
+    }
+
+    private Date agregarHoras(Date tiempoEnsimulacion, int i) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(tiempoEnsimulacion);
+        calendar.add(Calendar.HOUR_OF_DAY, i);
+        return calendar.getTime();
     }
 
     private void realizarGuardado(ArrayList<Paquete> paquetesTotal, ArrayList<PlanRutaNT> planRutaNTs,
@@ -1419,7 +1427,7 @@ public class Algoritmo {
             Simulacion simulacion, SimpMessagingTemplate messagingTemplate, String tipoOperacion,
             Date tiempoEnSimulacion, int TA) {
         // Simmulated Annealing Parameters
-        double temperature = 1000;
+        double temperature = 1500;
         double coolingRate = 0.08;
         int neighbourCount = 1;
         int windowSize = tamanhoPaquetes / 3;
