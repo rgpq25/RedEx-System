@@ -680,11 +680,9 @@ public class Algoritmo {
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
-            
-            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
 
-            
-                    
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(tiempoEnSimulacion));
+
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -696,8 +694,8 @@ public class Algoritmo {
             colapso = colapsoVuelos || colapsoAlmacen;
 
             if (colapso) {
-                LOGGER.info("Boolean colapsoVuelos "+ colapsoVuelos);
-                LOGGER.info("Boolean colapsoAlmacen "+ colapsoAlmacen);
+                LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
                 estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
@@ -940,19 +938,19 @@ public class Algoritmo {
             boolean colapso = false;
             boolean colapsoVuelos = false;
             boolean colapsoAlmacen = false;
-            if(hashVuelos == null){
+            if (hashVuelos == null) {
                 LOGGER.error(tipoOperacion + " ERROR: Hash de grafovuelos vacio.");
                 messagingTemplate.convertAndSend("/algoritmo/estado",
                         new RespuestaAlgoritmoEstado("Detenido, error en generar vuelos", simulacion));
                 return null;
             }
             for (Integer idVuelo : hashVuelos.keySet()) {
-                if(ocupacionVuelos.get(idVuelo) == null){
-                    //LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
+                if (ocupacionVuelos.get(idVuelo) == null) {
+                    // LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
                     continue;
                 }
                 if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
-                    //colapso = true;
+                    // colapso = true;
                     colapsoVuelos = true;
                 }
             }
@@ -962,11 +960,13 @@ public class Algoritmo {
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
 
-            //colapso = !(estadoAlmacen.verificar_capacidad_maxima());
-            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
-            /*if(!colapso){
-                colapso = !(estadoAlmacen.verificar_capacidad_maxima());
-            }*/            
+            // colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(tiempoEnSimulacion));
+            /*
+             * if(!colapso){
+             * colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+             * }
+             */
 
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
@@ -980,8 +980,8 @@ public class Algoritmo {
             colapso = colapsoVuelos || colapsoAlmacen;
 
             if (colapso) {
-                LOGGER.info("Boolean colapsoVuelos "+ colapsoVuelos);
-                LOGGER.info("Boolean colapsoAlmacen "+ colapsoAlmacen);
+                LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
                 estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
