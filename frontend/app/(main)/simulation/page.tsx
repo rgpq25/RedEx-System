@@ -66,8 +66,17 @@ function SimulationPage() {
 
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } =
-		attributes;
+	const {
+		currentTime,
+		elapsedRealTime,
+		elapsedSimulationTime,
+		setCurrentTime,
+		zoomToAirport,
+		lockToFlight,
+		pauseSimulation,
+		playSimulation,
+		pauseSimulationOnlyFrontend,
+	} = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
@@ -121,7 +130,7 @@ function SimulationPage() {
 					toast.error("Simulación ha colapsado");
 
 					setFlights([]);
-					await pauseSimulation(simulacion);
+					pauseSimulationOnlyFrontend();
 					const saved_simu = { ...simulacion };
 					saved_simu.fechaDondeParoSimulacion = new Date();
 					setSimulationContext(saved_simu);
@@ -223,7 +232,7 @@ function SimulationPage() {
 				const diffTime = Math.abs(date2.getTime() - date1.getTime());
 				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 				if (diffDays > 7) {
-					toast.info("Simulation ended successfully", {
+					toast.info("Simulation terminada con exito", {
 						position: "bottom-center",
 					});
 
@@ -240,8 +249,7 @@ function SimulationPage() {
 					);
 
 					setFlights([]);
-
-					await pauseSimulation(simulation);
+					pauseSimulationOnlyFrontend();
 
 					const saved_simu = { ...simulation };
 					saved_simu.fechaDondeParoSimulacion = new Date();
@@ -272,13 +280,29 @@ function SimulationPage() {
 				setIsModalOpen={setIsStoppingModalOpen}
 				simulation={simulation}
 				redirectToReport={async () => {
-					setFlights([]);
 					if (simulation === undefined) {
 						toast.error("No se ha cargado la simulación");
 						return;
 					}
 
-					await pauseSimulation(simulation);
+					toast.info("Simulation terminada con exito", {
+						position: "bottom-center",
+					});
+
+					await api(
+						"PUT",
+						`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+						(data: any) => {
+							console.log("Respuesta de /back/simulacion/detener: ", data);
+						},
+						(error) => {
+							console.log("Error en /back/simulacion/detener: ", error);
+						},
+						simulation
+					);
+
+					setFlights([]);
+					pauseSimulationOnlyFrontend();
 
 					const saved_simu = { ...simulation };
 					saved_simu.fechaDondeParoSimulacion = new Date();
