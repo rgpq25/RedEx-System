@@ -1225,6 +1225,7 @@ public class Algoritmo {
         System.out.println("Se filtraron los vuelos");
         respuestaAlgoritmo.setOcupacionVuelos(null);
         respuestaAlgoritmo.setPaquetes(null);
+        respuestaAlgoritmo.setPlanesRutas(null);
         messagingTemplate.convertAndSend(canal, respuestaAlgoritmo);
         System.out.println("Planificacion terminada en tiempo de simulacion hasta " + fechaLimiteCalculo);
         messagingTemplate.convertAndSend("/algoritmo/estado",
