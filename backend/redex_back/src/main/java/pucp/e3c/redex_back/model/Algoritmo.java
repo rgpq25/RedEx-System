@@ -668,9 +668,11 @@ public class Algoritmo {
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
             HashMap<Integer, Vuelo> hashVuelos = grafoVuelos.getVuelosHash();
             boolean colapso = false;
+            boolean colapsoVuelos = false;
+            boolean colapsoAlmacen = false;
             for (Integer idVuelo : hashVuelos.keySet()) {
                 if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
-                    colapso = true;
+                    colapsoVuelos = true;
                 }
             }
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
@@ -678,9 +680,11 @@ public class Algoritmo {
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
-            if(!colapso){
-                colapso = !(estadoAlmacen.verificar_capacidad_maxima());
-            }         
+            
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+
+            
+                    
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -689,7 +693,12 @@ public class Algoritmo {
 
             }
 
+            colapso = colapsoVuelos || colapsoAlmacen;
+
             if (colapso) {
+                LOGGER.info("Boolean colapsoVuelos "+ colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen "+ colapsoAlmacen);
+                estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
                 try {
@@ -884,6 +893,7 @@ public class Algoritmo {
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnSimulacion,
                     TA * (int) simulacion.getMultiplicadorTiempo());
+            LOGGER.info(tipoOperacion + " Paquetes procesados");
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 try {
@@ -906,6 +916,7 @@ public class Algoritmo {
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
             this.paquetesProcesadosUltimaSimulacion = new ArrayList<>(paquetesProcesar);
+            LOGGER.info(tipoOperacion + " Paquetes guardados");
             // paquetesProcesar;
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
             // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
@@ -924,21 +935,38 @@ public class Algoritmo {
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
 
+            LOGGER.info(tipoOperacion + " Verificacion vuelos");
             HashMap<Integer, Vuelo> hashVuelos = grafoVuelos.getVuelosHash();
             boolean colapso = false;
+            boolean colapsoVuelos = false;
+            boolean colapsoAlmacen = false;
+            if(hashVuelos == null){
+                LOGGER.error(tipoOperacion + " ERROR: Hash de grafovuelos vacio.");
+                messagingTemplate.convertAndSend("/algoritmo/estado",
+                        new RespuestaAlgoritmoEstado("Detenido, error en generar vuelos", simulacion));
+                return null;
+            }
             for (Integer idVuelo : hashVuelos.keySet()) {
+                if(ocupacionVuelos.get(idVuelo) == null){
+                    //LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
+                    continue;
+                }
                 if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
-                    colapso = true;
+                    //colapso = true;
+                    colapsoVuelos = true;
                 }
             }
-
+            LOGGER.info(tipoOperacion + " Estado almacen");
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
-            if(!colapso){
+
+            //colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+            /*if(!colapso){
                 colapso = !(estadoAlmacen.verificar_capacidad_maxima());
-            }            
+            }*/            
 
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
@@ -949,7 +977,12 @@ public class Algoritmo {
 
             }
 
+            colapso = colapsoVuelos || colapsoAlmacen;
+
             if (colapso) {
+                LOGGER.info("Boolean colapsoVuelos "+ colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen "+ colapsoAlmacen);
+                estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
                 try {
