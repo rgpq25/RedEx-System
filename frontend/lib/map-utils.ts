@@ -241,22 +241,18 @@ export function getPorcentajeOcupacionAeropuertos(
 export function getPorcentajeOcupacionVuelos(vuelos: Vuelo[], currentTime: Date | undefined) {
 	if (currentTime === undefined) return 0;
 
-	const currentVuelos = vuelos.filter(
-		(flight: Vuelo) => flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada
-	);
-
-	if (currentVuelos.length === 0) return 0;
+	if (vuelos.length === 0) return 0;
 
 	let totalOcupacion = 0;
 
-	for (const vuelo of currentVuelos) {
+	for (const vuelo of vuelos) {
 		const currentOcupation = vuelo.capacidadUtilizada;
 		const maxOcupation = vuelo.planVuelo.capacidadMaxima;
 
 		totalOcupacion += (currentOcupation / maxOcupation) * 100;
 	}
 
-	return (totalOcupacion / currentVuelos.length).toFixed(2);
+	return (totalOcupacion / vuelos.length).toFixed(2);
 }
 
 export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAeropuerto: string, currentTime: Date | undefined, data: Paquete[]) {

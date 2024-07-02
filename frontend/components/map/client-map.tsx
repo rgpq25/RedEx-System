@@ -29,8 +29,6 @@ export interface MapProps {
 
 function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simulation, estadoAlmacen, className }: MapProps) {
 
-	const { filteredFlights, setFilteredFlights } = useFilteredFlightsContext();
-
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 
 	const { isLoading } = useApi(
@@ -107,28 +105,23 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 
 				{map &&
 					currentTime &&
-					filteredFlights
-						.filter(
-							(flight: Vuelo) =>
-								flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada
-						)
-						.map((vuelo, idx) => {
-							return (
-								<PlaneMarker
-									key={idx}
-									currentTime={currentTime}
-									vuelo={vuelo}
-									onClick={(vuelo: Vuelo) => {
-										lockToFlight(vuelo);
-										openFlightModal(vuelo);
-									}}
-									focusedAirplane={currentlyLockedFlight}
-								/>
-							);
-						})}
+					flights.map((vuelo, idx) => {
+						return (
+							<PlaneMarker
+								key={idx}
+								currentTime={currentTime}
+								vuelo={vuelo}
+								onClick={(vuelo: Vuelo) => {
+									lockToFlight(vuelo);
+									openFlightModal(vuelo);
+								}}
+								focusedAirplane={currentlyLockedFlight}
+							/>
+						);
+					})}
 			</MapContainer>
 		),
-		[currentTime, filteredFlights, airports]
+		[currentTime, flights, airports]
 	);
 
 	return (

@@ -6,14 +6,23 @@ import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Vuelo } 
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../../_components/map-header";
-import { calculateAngle, getAirportHashmap, getPorcentajeOcupacionAeropuertos, getPorcentajeOcupacionVuelos, structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import {
+	calculateAngle,
+	getAirportHashmap,
+	getPorcentajeOcupacionAeropuertos,
+	getPorcentajeOcupacionVuelos,
+	structureDataFromRespuestaAlgoritmo,
+	structureEnviosFromPaquetes,
+} from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
 import { Plane, Warehouse } from "lucide-react";
+import { useFilteredFlightsContext } from "@/components/contexts/flights-filter";
+import AverageOcupation from "../../simulation/_components/average-ocupation";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -31,6 +40,23 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 function DailyOperationsPage() {
+	const {
+		search,
+		setSearch,
+		hasSearchFilter,
+		continentesFilter,
+		setContinentesFilter,
+		paisOrigenFilter,
+		setPaisOrigenFilter,
+		paisDestinoFilter,
+		setPaisDestinoFilter,
+		rangoCapacidadFilter,
+		setRangoCapacidadFilter,
+		minCapacidad,
+		maxCapacidad,
+		getFilteredFlights,
+	} = useFilteredFlightsContext();
+
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
@@ -165,6 +191,12 @@ function DailyOperationsPage() {
 		};
 	}, []);
 
+	const filtered_vuelos = useMemo(() => {
+		if (currentTime === undefined) return [];
+		const current_flights = flights.filter((vuelo) => vuelo.fechaSalida <= currentTime && vuelo.fechaLlegada >= currentTime);
+		return getFilteredFlights(current_flights);
+	}, [flights, currentTime, search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+
 	return (
 		<MainContainer className="relative">
 			<MapHeader>
@@ -176,23 +208,14 @@ function DailyOperationsPage() {
 			</MapHeader>
 
 			<PlaneLegend className="absolute bottom-16 right-14 z-[50]" />
-			<div className="flex flex-col items-end justify-center gap-1 absolute top-10 right-14 z-[20]">
-				<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
-					<a className="font-medium text-right w-full">Ocupación promedio: </a>{" "}
-					<div className="flex flex-row items-center gap-1 justify-end w-full">
-						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionAeropuertos(
-							airportsHash,
-							estadoAlmacen,
-							currentTime
-						)}%`}</p>
-						<Warehouse className="stroke-[1.1px] w-5 h-5" />
-					</div>
-					<div className="flex flex-row items-center gap-1 justify-end w-full">
-						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionVuelos(flights, currentTime)}%`}</p>
-						<Plane className="stroke-[1.2px] w-5 h-5" />
-					</div>
-				</div>
-			</div>
+
+			<AverageOcupation
+				className="absolute top-10 right-14 z-[20]"
+				airportsHash={airportsHash}
+				currentTime={currentTime}
+				estadoAlmacen={estadoAlmacen}
+				filtered_vuelos={filtered_vuelos}
+			/>
 
 			{isLoadingFirstTime && (
 				<>
@@ -208,7 +231,7 @@ function DailyOperationsPage() {
 			<Sidebar
 				aeropuertos={airports}
 				envios={envios}
-				vuelos={flights}
+				vuelos={filtered_vuelos}
 				estadoAlmacen={estadoAlmacen}
 				onClicksEnvio={{
 					onClickLocation: (envio: Envio) => {},
@@ -235,8 +258,7 @@ function DailyOperationsPage() {
 				mapModalAttributes={mapModalAttributes}
 				attributes={attributes}
 				className="absolute top-1 bottom-3 left-3 right-3"
-				//airports={airports}
-				flights={flights}
+				flights={filtered_vuelos}
 				estadoAlmacen={estadoAlmacen}
 				simulation={undefined}
 			/>

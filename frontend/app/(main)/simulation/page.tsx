@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Sidebar from "@/app/_components/sidebar";
 import { Aeropuerto, AeropuertoHash, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaEstado, Simulacion, Vuelo } from "@/lib/types";
 import useMapZoom from "@/components/hooks/useMapZoom";
@@ -29,7 +29,8 @@ import ElapsedRealTime from "@/app/_components/elapsed-real-time";
 import ElapsedSimuTime from "@/app/_components/elapsed-simu-time";
 import { useRouter } from "next/navigation";
 import { SimulationContext } from "@/components/contexts/simulation-provider";
-import { FilteredFlightsProvider } from "@/components/contexts/flights-filter";
+import { FilteredFlightsProvider, useFilteredFlightsContext } from "@/components/contexts/flights-filter";
+import AverageOcupation from "./_components/average-ocupation";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -45,6 +46,23 @@ const breadcrumbItems: BreadcrumbItem[] = [
 function SimulationPage() {
 	const router = useRouter();
 	const { setSimulation: setSimulationContext } = useContext(SimulationContext);
+
+	const {
+		search,
+		setSearch,
+		hasSearchFilter,
+		continentesFilter,
+		setContinentesFilter,
+		paisOrigenFilter,
+		setPaisOrigenFilter,
+		paisDestinoFilter,
+		setPaisDestinoFilter,
+		rangoCapacidadFilter,
+		setRangoCapacidadFilter,
+		minCapacidad,
+		maxCapacidad,
+		getFilteredFlights,
+	} = useFilteredFlightsContext();
 
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
@@ -157,7 +175,7 @@ function SimulationPage() {
 	};
 
 	useEffect(() => {
-		async function getAirports(){
+		async function getAirports() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
@@ -177,7 +195,6 @@ function SimulationPage() {
 		getAirports();
 
 		return () => {
-
 			if (client) {
 				client.deactivate();
 			}
@@ -193,7 +210,7 @@ function SimulationPage() {
 				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 				if (diffDays > 7) {
 					toast.info("Simulation ended successfully", {
-						position: "bottom-center"
+						position: "bottom-center",
 					});
 
 					await api(
@@ -208,6 +225,8 @@ function SimulationPage() {
 						simulation
 					);
 
+					setFlights([]);
+
 					await pauseSimulation(simulation);
 
 					const saved_simu = { ...simulation };
@@ -221,6 +240,12 @@ function SimulationPage() {
 		finishSimulation();
 	}, [currentTime, simulation]);
 
+	const filtered_vuelos = useMemo(() => {
+		if (currentTime === undefined) return [];
+		const current_flights = flights.filter((vuelo) => vuelo.fechaSalida <= currentTime && vuelo.fechaLlegada >= currentTime);
+		return getFilteredFlights(current_flights);
+	}, [flights, currentTime, search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+
 	return (
 		<>
 			<ModalIntro
@@ -233,6 +258,7 @@ function SimulationPage() {
 				setIsModalOpen={setIsStoppingModalOpen}
 				simulation={simulation}
 				redirectToReport={async () => {
+					setFlights([]);
 					if (simulation === undefined) {
 						toast.error("No se ha cargado la simulación");
 						return;
@@ -252,24 +278,18 @@ function SimulationPage() {
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
-						
 					</div>
 				</MapHeader>
 
 				<PlaneLegend className="absolute bottom-[115px] right-7 z-[50]" />
 
-				<div className="flex flex-col items-end justify-center gap-1 absolute top-24 right-14 z-[20]">
-					<div className="border rounded-xl border-purple-700 text-purple-700 bg-purple-200/70 py-1 proportional-nums w-fit text-start shadow-md px-3 flex flex-col gap-1 items-center justify-end">
-						<a className="font-medium text-right w-full">Ocupación promedio: </a>{" "}
-						<div className="flex flex-row items-center gap-1 justify-end w-full">
-							<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionAeropuertos(airportsHash, estadoAlmacen, currentTime)}%`}</p>
-							<Warehouse className="stroke-[1.1px] w-5 h-5"/>
-						</div>
-						<div className="flex flex-row items-center gap-1 justify-end w-full">
-						<p className="proportional-nums text-lg">{`${getPorcentajeOcupacionVuelos(flights, currentTime)}%`}</p>
-							<Plane className="stroke-[1.2px] w-5 h-5"/></div>
-					</div>
-				</div>
+				<AverageOcupation
+					className="absolute top-24 right-14 z-[20]"
+					airportsHash={airportsHash}
+					currentTime={currentTime}
+					estadoAlmacen={estadoAlmacen}
+					filtered_vuelos={filtered_vuelos}
+				/>
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
 					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
@@ -331,43 +351,40 @@ function SimulationPage() {
 					</>
 				)}
 
-				<FilteredFlightsProvider>
-					<Sidebar
-						envios={envios}
-						vuelos={flights}
-						aeropuertos={airports}
-						estadoAlmacen={estadoAlmacen}
-						onClicksEnvio={{
-							onClickLocation: (envio: Envio) => {},
-							onClickInfo: (envio: Envio) => {
-								openEnvioModal(envio);
-							},
-						}}
-						onClicksAeropuerto={{
-							onClickLocation: (aeropuerto: Aeropuerto) => {
-								zoomToAirport(aeropuerto);
-							},
-							onClickInfo: (aeropuerto: Aeropuerto) => {
-								openAirportModal(aeropuerto);
-							},
-						}}
-						onClickVuelo={(vuelo: Vuelo) => {
-							lockToFlight(vuelo);
-							openFlightModal(vuelo);
-						}}
-						tiempoActual={currentTime}
-					/>
-					<Map
-						isSimulation={true}
-						mapModalAttributes={mapModalAttributes}
-						attributes={attributes}
-						className="absolute top-1 bottom-3 left-3 right-3"
-						//airports={airports}
-						flights={flights}
-						estadoAlmacen={estadoAlmacen}
-						simulation={simulation}
-					/>
-				</FilteredFlightsProvider>
+				<Sidebar
+					envios={envios}
+					vuelos={filtered_vuelos}
+					aeropuertos={airports}
+					estadoAlmacen={estadoAlmacen}
+					onClicksEnvio={{
+						onClickLocation: (envio: Envio) => {},
+						onClickInfo: (envio: Envio) => {
+							openEnvioModal(envio);
+						},
+					}}
+					onClicksAeropuerto={{
+						onClickLocation: (aeropuerto: Aeropuerto) => {
+							zoomToAirport(aeropuerto);
+						},
+						onClickInfo: (aeropuerto: Aeropuerto) => {
+							openAirportModal(aeropuerto);
+						},
+					}}
+					onClickVuelo={(vuelo: Vuelo) => {
+						lockToFlight(vuelo);
+						openFlightModal(vuelo);
+					}}
+					tiempoActual={currentTime}
+				/>
+				<Map
+					isSimulation={true}
+					mapModalAttributes={mapModalAttributes}
+					attributes={attributes}
+					className="absolute top-1 bottom-3 left-3 right-3"
+					flights={filtered_vuelos}
+					estadoAlmacen={estadoAlmacen}
+					simulation={simulation}
+				/>
 			</MainContainer>
 		</>
 	);
