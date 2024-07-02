@@ -1221,9 +1221,7 @@ public class Algoritmo {
         respuestaAlgoritmo.setSimulacion(simulacion);
 
         respuestaAlgoritmo.getVuelos().removeIf(
-                vuelo -> vuelo.getCapacidadUtilizada() == 0 || vuelo.getFechaLlegada().before(tiempoEnsimulacion) ||
-                        vuelo.getFechaSalida().before(agregarHoras(tiempoEnsimulacion, -2)) ||
-                        vuelo.getFechaSalida().after(agregarHoras(tiempoEnsimulacion, 2)));
+                vuelo -> vuelo.getCapacidadUtilizada() == 0 || vuelo.getFechaLlegada().before(tiempoEnsimulacion));
         System.out.println("Se filtraron los vuelos");
         respuestaAlgoritmo.setOcupacionVuelos(null);
         respuestaAlgoritmo.setPaquetes(null);
