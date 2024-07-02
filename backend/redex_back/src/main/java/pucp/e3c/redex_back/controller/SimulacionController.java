@@ -487,6 +487,12 @@ public class SimulacionController {
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
 
+    @GetMapping("/obtenerEnviosSimulacionEnCurso/{id}")
+    public ResponseEntity<List<Envio>> obtenerEnviosSimulacionEnCurso(@PathVariable("id") int id) {
+        List<Envio> envios = algoritmo.obtener_envios_simulacion(id);
+        return new ResponseEntity<>(envios, HttpStatus.OK);
+    }
+
     @GetMapping("/obtenerReporteUltimaPlanificacion")
     public List<RespuestaReporte> respuestaReporte() {
         try {
