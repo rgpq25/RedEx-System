@@ -43,25 +43,6 @@ function ModalStopSimulation({
 					<Button
 						onClick={async () => {
 							setIsLoading(true);
-							
-							if (simulation === undefined) {
-								toast.error("Simmulation is undefined, can't stop it");
-								console.log("Simmulation is undefined, can't stop it");
-								return;
-							}
-
-							await api(
-								"PUT",
-								`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
-								(data: any) => {
-									console.log("Respuesta de /back/simulacion/detener: ", data);
-								},
-								(error) => {
-									console.log("Error en /back/simulacion/detener: ", error);
-								},
-								simulation
-							);
-
 							redirectToReport();
 						}}
 						isLoading={isLoading}
