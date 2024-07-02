@@ -678,7 +678,9 @@ public class Algoritmo {
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
-            colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            if(!colapso){
+                colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            }         
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
@@ -934,7 +936,9 @@ public class Algoritmo {
                     ocupacionVuelos,
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
-            colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            if(!colapso){
+                colapso = !(estadoAlmacen.verificar_capacidad_maxima());
+            }            
 
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
             // Solo en la primera iter, definir el inicio de la simulacion
