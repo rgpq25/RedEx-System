@@ -671,7 +671,12 @@ public class Algoritmo {
             boolean colapsoVuelos = false;
             boolean colapsoAlmacen = false;
             for (Integer idVuelo : hashVuelos.keySet()) {
+                if (ocupacionVuelos.get(idVuelo) == null) {
+                    // LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
+                    continue;
+                }
                 if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
+                    // colapso = true;
                     colapsoVuelos = true;
                 }
             }
