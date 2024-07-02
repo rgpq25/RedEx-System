@@ -41,7 +41,7 @@ import { RowShipmentType } from "@/lib/types";
 export const columns: ColumnDef<RowShipmentType>[] = [
     {
         accessorKey: "id",
-        header: "Envio",
+        header: "Envío",
         cell: ({ row }) => <div className="">{row.getValue("id")}</div>,
     },
     {
@@ -69,7 +69,7 @@ export const columns: ColumnDef<RowShipmentType>[] = [
         header: ({ column }) => {
             return (
                 <div className="flex items-center">
-                    <p>Fecha de envio</p>
+                    <p>Fecha de envío</p>
                     <Button
                         variant="ghost"
                         onClick={() =>

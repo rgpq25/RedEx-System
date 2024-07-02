@@ -101,7 +101,7 @@ export function ModalIntro({
 				<DialogHeader>
 					<DialogTitle>Inicia una simulación</DialogTitle>
 					<DialogDescription>
-						Usa datos de envios variados para simular su projección semanal o hasta el colapso de las
+						Usa datos de envíos variados para realizar una simulación semanal o hasta el colapso de las
 						operaciones
 					</DialogDescription>
 				</DialogHeader>

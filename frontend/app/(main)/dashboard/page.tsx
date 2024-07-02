@@ -35,7 +35,7 @@ function ManagePackagesPage() {
 						<div className="grid grid-cols-2 gap-[5px] w-[410px] mt-[6px]">
 							<Link className={cn(buttonVariants(), "col-span-1")} href={"/dashboard/register-shipment"}>
 								<PackagePlus className={twStyle} />
-								<p>Registrar envio</p>
+								<p>Registrar envío</p>
 							</Link>
 							<Link className={cn(buttonVariants(), "col-span-1")} href={"/dashboard/file-shipment"}>
 								<FileUp className={twStyle} />
