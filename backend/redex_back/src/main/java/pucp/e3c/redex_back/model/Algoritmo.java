@@ -1221,7 +1221,9 @@ public class Algoritmo {
         respuestaAlgoritmo.setSimulacion(simulacion);
 
         respuestaAlgoritmo.getVuelos().removeIf(
-                vuelo -> vuelo.getCapacidadUtilizada() == 0 || vuelo.getFechaLlegada().before(tiempoEnsimulacion));
+                vuelo -> vuelo.getCapacidadUtilizada() == 0 || vuelo.getFechaLlegada().before(tiempoEnsimulacion) ||
+                        vuelo.getFechaSalida().before(agregarHoras(tiempoEnsimulacion, -2)) ||
+                        vuelo.getFechaSalida().after(agregarHoras(tiempoEnsimulacion, 2)));
         System.out.println("Se filtraron los vuelos");
         respuestaAlgoritmo.setOcupacionVuelos(null);
         respuestaAlgoritmo.setPaquetes(null);
@@ -1231,6 +1233,13 @@ public class Algoritmo {
                 new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + fechaLimiteCalculo, simulacion));
 
         System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
+    }
+
+    private Date agregarHoras(Date tiempoEnsimulacion, int i) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(tiempoEnsimulacion);
+        calendar.add(Calendar.HOUR_OF_DAY, i);
+        return calendar.getTime();
     }
 
     private void realizarGuardado(ArrayList<Paquete> paquetesTotal, ArrayList<PlanRutaNT> planRutaNTs,
