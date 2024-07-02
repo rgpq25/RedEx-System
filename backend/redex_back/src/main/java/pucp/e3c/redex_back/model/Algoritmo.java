@@ -751,7 +751,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SA, int TA) throws InterruptedException {
         Date fechaMinima = simulacion.getFechaInicioSim();
-        boolean replanificar = false;
+        boolean replanificar = true;
         String tipoOperacion = "SIMULACION HASTA COLAPSO";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;
