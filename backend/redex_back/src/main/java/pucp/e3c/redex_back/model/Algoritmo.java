@@ -666,18 +666,42 @@ public class Algoritmo {
             ocupacionVuelos = nuevaOcupacion;
             respuestaAlgoritmo.setPaquetes(new ArrayList<>(paquetesRest));
             respuestaAlgoritmo.setOcupacionVuelos(nuevaOcupacion);
-
+            HashMap<Integer, Vuelo> hashVuelos = grafoVuelos.getVuelosHash();
+            boolean colapso = false;
+            for (Integer idVuelo : hashVuelos.keySet()) {
+                if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
+                    colapso = true;
+                }
+            }
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(paquetes, planRutas, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos,
                     aeropuertos);
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
             respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
+            colapso = !(estadoAlmacen.verificar_capacidad_maxima());
             // Solo en la primera iter, definir el inicio de la simulacion
             if (primera_iter) {
                 simulacion.setFechaInicioSistema(new Date());
                 simulacion = simulacionService.update(simulacion);
                 primera_iter = false;
 
+            }
+
+            if (colapso) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                simulacion.setEstado(3);
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.setCorrecta(false);
+                return null;
             }
 
             // Formar respuesta a front
