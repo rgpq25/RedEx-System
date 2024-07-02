@@ -15,6 +15,7 @@ import { MapModalAttributes } from "../hooks/useMapModals";
 import EnvioModal from "./envio-modal";
 import useApi from "../hooks/useApi";
 import { toast } from "sonner";
+import { useFilteredFlightsContext } from "../contexts/flights-filter";
 
 export interface MapProps {
 	isSimulation: boolean;
@@ -27,6 +28,7 @@ export interface MapProps {
 }
 
 function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simulation, estadoAlmacen, className }: MapProps) {
+
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
 
 	const { isLoading } = useApi(
@@ -103,25 +105,20 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 
 				{map &&
 					currentTime &&
-					flights
-						.filter(
-							(flight: Vuelo) =>
-								flight.capacidadUtilizada !== 0 && flight.fechaSalida <= currentTime && currentTime <= flight.fechaLlegada
-						)
-						.map((vuelo, idx) => {
-							return (
-								<PlaneMarker
-									key={idx}
-									currentTime={currentTime}
-									vuelo={vuelo}
-									onClick={(vuelo: Vuelo) => {
-										lockToFlight(vuelo);
-										openFlightModal(vuelo);
-									}}
-									focusedAirplane={currentlyLockedFlight}
-								/>
-							);
-						})}
+					flights.map((vuelo, idx) => {
+						return (
+							<PlaneMarker
+								key={idx}
+								currentTime={currentTime}
+								vuelo={vuelo}
+								onClick={(vuelo: Vuelo) => {
+									lockToFlight(vuelo);
+									openFlightModal(vuelo);
+								}}
+								focusedAirplane={currentlyLockedFlight}
+							/>
+						);
+					})}
 			</MapContainer>
 		),
 		[currentTime, flights, airports]

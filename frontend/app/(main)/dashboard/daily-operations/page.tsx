@@ -6,13 +6,23 @@ import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Vuelo } 
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { api } from "@/lib/api";
 import useMapModals from "@/components/hooks/useMapModals";
 import MapHeader from "../../_components/map-header";
-import { calculateAngle, structureDataFromRespuestaAlgoritmo, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import {
+	calculateAngle,
+	getAirportHashmap,
+	getPorcentajeOcupacionAeropuertos,
+	getPorcentajeOcupacionVuelos,
+	structureDataFromRespuestaAlgoritmo,
+	structureEnviosFromPaquetes,
+} from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
+import { Plane, Warehouse } from "lucide-react";
+import { useFilteredFlightsContext } from "@/components/contexts/flights-filter";
+import AverageOcupation from "../../simulation/_components/average-ocupation";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -30,12 +40,30 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 function DailyOperationsPage() {
+	const {
+		search,
+		setSearch,
+		hasSearchFilter,
+		continentesFilter,
+		setContinentesFilter,
+		paisOrigenFilter,
+		setPaisOrigenFilter,
+		paisDestinoFilter,
+		setPaisDestinoFilter,
+		rangoCapacidadFilter,
+		setRangoCapacidadFilter,
+		minCapacidad,
+		maxCapacidad,
+		getFilteredFlights,
+	} = useFilteredFlightsContext();
+
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
 	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
+	const [airportsHash, setAirportsHash] = useState<Map<string, Aeropuerto> | null>(null);
 	const [flights, setFlights] = useState<Vuelo[]>([]);
 	const [envios, setEnvios] = useState<Envio[]>([]);
 	const [estadoAlmacen, setEstadoAlmacen] = useState<EstadoAlmacen | null>(null);
@@ -44,21 +72,21 @@ function DailyOperationsPage() {
 
 	const [isLoadingFirstTime, setIsLoadingFirstTime] = useState(false);
 
-
-	const hasRun = useRef(false)
+	const hasRun = useRef(false);
 
 	useEffect(() => {
-
-		if(hasRun.current) return
-		hasRun.current = true
+		if (hasRun.current) return;
+		hasRun.current = true;
 
 		async function getData() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/aeropuerto/`,
 				(data: Aeropuerto[]) => {
-					console.log("DATA DE /back/aeropuerto/: ", data)
+					console.log("DATA DE /back/aeropuerto/: ", data);
 					setAirports(data);
+					const airportHash = getAirportHashmap(data);
+					setAirportsHash(airportHash);
 				},
 				(error) => {
 					console.log(error);
@@ -98,7 +126,7 @@ function DailyOperationsPage() {
 
 					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
-					
+
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
@@ -163,6 +191,12 @@ function DailyOperationsPage() {
 		};
 	}, []);
 
+	const filtered_vuelos = useMemo(() => {
+		if (currentTime === undefined) return [];
+		const current_flights = flights.filter((vuelo) => vuelo.fechaSalida <= currentTime && vuelo.fechaLlegada >= currentTime);
+		return getFilteredFlights(current_flights);
+	}, [flights, currentTime, search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
+
 	return (
 		<MainContainer className="relative">
 			<MapHeader>
@@ -173,7 +207,15 @@ function DailyOperationsPage() {
 				</div>
 			</MapHeader>
 
-			<PlaneLegend className="absolute top-10 right-14 z-[50]" />
+			<PlaneLegend className="absolute bottom-16 right-14 z-[50]" />
+
+			<AverageOcupation
+				className="absolute top-10 right-14 z-[20]"
+				airportsHash={airportsHash}
+				currentTime={currentTime}
+				estadoAlmacen={estadoAlmacen}
+				filtered_vuelos={filtered_vuelos}
+			/>
 
 			{isLoadingFirstTime && (
 				<>
@@ -189,7 +231,7 @@ function DailyOperationsPage() {
 			<Sidebar
 				aeropuertos={airports}
 				envios={envios}
-				vuelos={flights}
+				vuelos={filtered_vuelos}
 				estadoAlmacen={estadoAlmacen}
 				onClicksEnvio={{
 					onClickLocation: (envio: Envio) => {},
@@ -216,8 +258,7 @@ function DailyOperationsPage() {
 				mapModalAttributes={mapModalAttributes}
 				attributes={attributes}
 				className="absolute top-1 bottom-3 left-3 right-3"
-				//airports={airports}
-				flights={flights}
+				flights={filtered_vuelos}
 				estadoAlmacen={estadoAlmacen}
 				simulation={undefined}
 			/>

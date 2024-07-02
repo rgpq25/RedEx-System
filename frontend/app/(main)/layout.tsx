@@ -4,12 +4,9 @@ import Navbar from "../_components/navbar";
 import { useRouter } from "next/navigation";
 import { RoleType } from "@/lib/types";
 import { Toaster } from "sonner";
+import { FilteredFlightsProvider } from "@/components/contexts/flights-filter";
 
-export default function SimulationLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function SimulationLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [role, setRole] = useState<RoleType>(null);
@@ -33,19 +30,21 @@ export default function SimulationLayout({
             //router.push("/dashboard");
             setIsLoading(false);
         }
-        if(role === "user") {
+        if (role === "user") {
             setRole("user");
             setIsLoading(false);
-        }   
+        }
     }, []);
 
     return (
         <>
-            <div className="overflow-x-hidden h-dvh w-dvw flex flex-col">
-                <Navbar role={role}/>
-                {isLoading ? <p>Loading...</p> : children}
-            </div>
-            <Toaster richColors/>
+            <FilteredFlightsProvider>
+                <div className='overflow-x-hidden h-dvh w-dvw flex flex-col'>
+                    <Navbar role={role} />
+                    {isLoading ? <p>Loading...</p> : children}
+                </div>
+                <Toaster richColors />
+            </FilteredFlightsProvider>
         </>
     );
 }

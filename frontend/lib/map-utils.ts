@@ -241,6 +241,8 @@ export function getPorcentajeOcupacionAeropuertos(
 export function getPorcentajeOcupacionVuelos(vuelos: Vuelo[], currentTime: Date | undefined) {
 	if (currentTime === undefined) return 0;
 
+	if (vuelos.length === 0) return 0;
+
 	let totalOcupacion = 0;
 
 	for (const vuelo of vuelos) {
@@ -275,10 +277,10 @@ export function getPackagesFromAirport(estadoAlmacen: EstadoAlmacen | null, idAe
 		for (let i = 0; i < missingPackages; i++) {
 			new_data.push(selectedPackages[i]);
 		}
-		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`)
+		console.log(`Original airport ocupation was ${currentOcupation}, added ${missingPackages} packages`);
 	} else {
 		new_data = new_data.slice(0, currentOcupation);
-		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`)
+		console.log(`Original airport ocupation was ${currentOcupation}, removed ${data.length - currentOcupation} packages`);
 	}
 
 	return new_data;
