@@ -701,13 +701,15 @@ public class Algoritmo {
             if (colapso) {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
-                estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertos" + i + ".txt");
+               
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
                 // imprimir en un txt
                 try {
-                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
-                    writer.close();
+                    //PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    //writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                        "Colpaso en fecha " + tiempoEnSimulacion);
+                    //writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
