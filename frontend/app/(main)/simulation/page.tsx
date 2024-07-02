@@ -127,9 +127,15 @@ function SimulationPage() {
 					(JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.estado === 3 &&
 					(JSON.parse(msg.body) as RespuestaAlgoritmo).correcta === false
 				) {
-					toast.error("Simulación ha colapsado");
+					if (client) {
+						client.deactivate();
+						client.forceDisconnect();
+					}
+
+					toast.info("Simulación ha colapsado", { position: "top-center" });
 
 					setFlights([]);
+					setEnvios([]);
 					pauseSimulationOnlyFrontend();
 					const saved_simu = { ...simulacion };
 					saved_simu.fechaDondeParoSimulacion = new Date();
@@ -138,7 +144,7 @@ function SimulationPage() {
 					return;
 				}
 
-				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
+				// console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 				setSimulation((prev) => {
@@ -151,31 +157,34 @@ function SimulationPage() {
 
 				setCurrentTime(data.simulacion);
 
-				let _paquetes: Paquete[] = [];
+				let db_envios: Envio[] = [];
 				await api(
 					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}`,
-					(data: Paquete[]) => {
-						console.log(`Data from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, data);
-						_paquetes = [...data];
+					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerEnviosSimulacionEnCurso/${simulacion.id}`,
+					(data: Envio[]) => {
+						db_envios = data.map((envio) => {
+							envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+							envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+							return envio;
+						});
 					},
 					(error) => {
 						console.log(`Error from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, error);
-						_paquetes = [];
+						db_envios = [];
 					}
 				);
 
-				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
 				setEstadoAlmacen(db_estadoAlmacen);
+				console.log("Se actualizo el mapa por mensaje de algoritmo/respuesta");
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				if ((JSON.parse(msg.body) as RespuestaEstado).simulacion.id !== simulacion.id) return;
 
-				console.log("MENSAJE DE /algoritmo/estado: ", JSON.parse(msg.body) as RespuestaEstado);
+				console.log("MENSAJE DE /algoritmo/estado: ", (JSON.parse(msg.body) as RespuestaEstado).estado);
 				const data: RespuestaEstado = JSON.parse(msg.body);
 				setLoadingMessages((prev) => [...prev, data.estado]);
 			});
@@ -226,40 +235,50 @@ function SimulationPage() {
 
 	useEffect(() => {
 		async function finishSimulation() {
-			if (currentTime && simulation) {
-				const date1 = new Date(currentTime);
-				const date2 = new Date(simulation.fechaInicioSim);
-				const diffTime = Math.abs(date2.getTime() - date1.getTime());
-				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-				if (diffDays > 7) {
-					toast.info("Simulation terminada con exito", {
-						position: "bottom-center",
-					});
+			if (currentTime === undefined || simulation === undefined) return;
 
-					await api(
-						"PUT",
-						`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
-						(data: any) => {
-							console.log("Respuesta de /back/simulacion/detener: ", data);
-						},
-						(error) => {
-							console.log("Error en /back/simulacion/detener: ", error);
-						},
-						simulation
-					);
-
-					setFlights([]);
-					pauseSimulationOnlyFrontend();
-
-					const saved_simu = { ...simulation };
-					saved_simu.fechaDondeParoSimulacion = new Date();
-					setSimulationContext(saved_simu);
-					router.push("/simulation/results");
-				}
+			if (client) {
+				client.deactivate();
+				client.forceDisconnect();
 			}
+
+			toast.info("Simulation terminada con exito", {
+				position: "bottom-center",
+			});
+
+			await api(
+				"PUT",
+				`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+				(data: any) => {
+					console.log("Respuesta de /back/simulacion/detener: ", data);
+				},
+				(error) => {
+					console.log("Error en /back/simulacion/detener: ", error);
+				},
+				simulation
+			);
+
+			setFlights([]);
+			setEnvios([]);
+			pauseSimulationOnlyFrontend();
+
+			const saved_simu = { ...simulation };
+			saved_simu.fechaDondeParoSimulacion = new Date();
+			setSimulationContext(saved_simu);
+
+			console.log("Redirecting to /simulation/results");
+			router.push("/simulation/results");
 		}
 
-		finishSimulation();
+		if (currentTime && simulation) {
+			const date1 = new Date(currentTime);
+			const date2 = new Date(simulation.fechaInicioSim);
+			const diffTime = Math.abs(date2.getTime() - date1.getTime());
+			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+			if (diffDays > 7) {
+				finishSimulation();
+			}
+		}
 	}, [currentTime, simulation]);
 
 	const filtered_vuelos = useMemo(() => {
@@ -285,6 +304,11 @@ function SimulationPage() {
 						return;
 					}
 
+					if (client) {
+						client.deactivate();
+						client.forceDisconnect();
+					}
+
 					toast.info("Simulation terminada con exito", {
 						position: "bottom-center",
 					});
@@ -302,6 +326,7 @@ function SimulationPage() {
 					);
 
 					setFlights([]);
+					setEnvios([]);
 					pauseSimulationOnlyFrontend();
 
 					const saved_simu = { ...simulation };

@@ -425,24 +425,28 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 								<div className="w-[350px] p-4 absolute top-10 -right-[390px] bottom-10 bg-white rounded-lg flex flex-col gap-2">
 									<p className="text-lg font-medium leading-5">{`Ruta de paquete seleccionado: (${numPaqueteSelected})`}</p>
 									<div className="flex-1 flex flex-col gap-3">
-										{currentPlanRuta.map((vuelo, index) => {
-											return (
-												<div className="flex flex-row justify-between items-center overflow-hidden" key={vuelo.id}>
-													<div className="flex flex-col items-start justify-center flex-1 overflow-hidden">
-														<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadOrigen.pais} (${vuelo.planVuelo.ciudadOrigen.id})`}</p>
-														<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
-															vuelo.fechaSalida
-														)}`}</p>
+										{currentPlanRuta.length !== 0 ? (
+											currentPlanRuta.map((vuelo, index) => {
+												return (
+													<div className="flex flex-row justify-between items-center overflow-hidden" key={vuelo.id}>
+														<div className="flex flex-col items-start justify-center flex-1 overflow-hidden">
+															<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadOrigen.pais} (${vuelo.planVuelo.ciudadOrigen.id})`}</p>
+															<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
+																vuelo.fechaSalida
+															)}`}</p>
+														</div>
+														<div className="flex flex-col items-end justify-center flex-1 overflow-hidden">
+															<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadDestino.pais} (${vuelo.planVuelo.ciudadDestino.id})`}</p>
+															<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
+																vuelo.fechaLlegada
+															)}`}</p>
+														</div>
 													</div>
-													<div className="flex flex-col items-end justify-center flex-1 overflow-hidden">
-														<p className="line-clamp-1">{`${vuelo.planVuelo.ciudadDestino.pais} (${vuelo.planVuelo.ciudadDestino.id})`}</p>
-														<p className="text-sm text-muted-foreground leading-3">{`${formatDateTimeLongShort(
-															vuelo.fechaLlegada
-														)}`}</p>
-													</div>
-												</div>
-											);
-										})}
+												);
+											})
+										) : (
+											<div className="text-muted-foreground m-auto text-center  leading-5">Este paquete aun no tiene una ruta definida</div>
+										)}
 									</div>
 								</div>
 							)}

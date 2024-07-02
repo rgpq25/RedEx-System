@@ -132,7 +132,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 
 	return (
 		<div className={cn("flex flex-col gap-2 p-5 overflow-hidden", className)}>
-			<p className="font-poppins text-2xl font-medium">Planes de ruta de envios (Ultima planificacion)</p>
+			<p className="font-poppins text-2xl font-medium">Planes de ruta de envios (Ultima planificación)</p>
 			<div className="flex flex-row items-center gap-1">
 				<Combobox value={selectedEnvio} setValue={setSelectedEnvio} envios={reporteData} />
 				<SelectPaquete selectedPaquete={selectedPaquete} setSelectedPaquete={setSelectedPaquete} selectedEnvio={selectedEnvio} />
