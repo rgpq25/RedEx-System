@@ -179,22 +179,7 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 	}
 
 	const newEnviosNoDuplicates = Array.from(envioMap.values());
-
-	// newEnviosNoDuplicates.map((envio) => {
-	// 	if (envio.cantidadPaquetes !== envio.paquetes.length) {
-	// 		const missingPaquetes = envio.cantidadPaquetes - envio.paquetes.length;
-
-	// 		for (let i = 0; i < missingPaquetes; i++) {
-	// 			envio.paquetes.push({
-	// 				//@ts-ignore
-	// 				isFill: true,
-	// 			});
-	// 		}
-
-	// 		// console.log(`Envio ${envio.id} tiene ${missingPaquetes} paquetes faltantes`)
-	// 	}
-	// });
-
+	
 	return {
 		db_envios: newEnviosNoDuplicates,
 	};
