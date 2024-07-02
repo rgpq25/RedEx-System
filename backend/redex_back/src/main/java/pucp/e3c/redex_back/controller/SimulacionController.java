@@ -322,6 +322,7 @@ public class SimulacionController {
         simulacion = simulacionService.get(simulacion.getId());
         if (simulacion.getEstado() == 0) {
             simulacion.setEstado(2);
+            simulacion.setFechaUltimaPausa(new Date());
             Simulacion updatedSimulacion = simulacionService.update(simulacion);
             return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
         } else {
@@ -332,7 +333,8 @@ public class SimulacionController {
     @PutMapping("/reanudar")
     public ResponseEntity<Simulacion> reanudarSimulacion(@RequestBody Simulacion simulacion) {
         simulacion = simulacionService.get(simulacion.getId());
-        simulacion.setMilisegundosPausados(simulacion.getMilisegundosPausados());
+        long tiempoPausado = (new Date()).getTime() - simulacion.getFechaUltimaPausa().getTime();
+        simulacion.setMilisegundosPausados(simulacion.getMilisegundosPausados() + tiempoPausado);
         if (simulacion.getEstado() == 2) {
             simulacion.setEstado(0);
             Simulacion updatedSimulacion = simulacionService.update(simulacion);

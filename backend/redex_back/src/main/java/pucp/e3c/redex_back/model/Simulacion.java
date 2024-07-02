@@ -20,6 +20,7 @@ public class Simulacion {
     Date fechaInicioSistema;
     double multiplicadorTiempo;
     long milisegundosPausados;
+    Date fechaUltimaPausa;
     int estado;
     // tiempoActual = fechaInicioSim + (time - fechaInicioSistema) * multiplicador
     // String resultado;
@@ -90,6 +91,14 @@ public class Simulacion {
 
     public void setMilisegundosPausados(long milisegundosPausados) {
         this.milisegundosPausados = milisegundosPausados;
+    }
+
+    public Date getFechaUltimaPausa() {
+        return fechaUltimaPausa;
+    }
+
+    public void setFechaUltimaPausa(Date fechaUltimaPausa) {
+        this.fechaUltimaPausa = fechaUltimaPausa;
     }
 
     @Override
