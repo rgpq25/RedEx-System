@@ -1540,6 +1540,33 @@ public class Algoritmo {
     public List<Envio> obtener_envios_simulacion(Integer id_simulacion) {
         List<Envio> envios = new ArrayList<>();
         List<Paquete> paquetes = paquetes_por_simulacion.get(id_simulacion);
+        if(paquetes == null) {
+            return envios;
+        }
+
+        Map<Integer, Envio> enviosMap = new HashMap<>();
+        for (Paquete paquete : paquetes) {
+            int envioId = paquete.getEnvio().getId();
+            if (!enviosMap.containsKey(envioId)) {
+                Envio envio = paquete.getEnvio();
+                enviosMap.put(envioId, envio);
+            }
+        }
+        envios.addAll(enviosMap.values());
+        return envios;
+    }
+
+    public List<Envio> obtener_envios_dia_dia() {
+        List<Envio> envios = new ArrayList<>();
+        List<Paquete> paquetes = this.paquetesOpDiaDia;
+        if(paquetes == null) {
+            return envios;
+        }
+        Date now = new Date();
+        paquetes = paquetes.stream()
+                .filter(p -> p.obtenerFechaRecepcion().before(now)
+                        && (p.isEntregado() == false))
+                .collect(Collectors.toList());
 
         Map<Integer, Envio> enviosMap = new HashMap<>();
         for (Paquete paquete : paquetes) {

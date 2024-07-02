@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Aeropuerto;
 import pucp.e3c.redex_back.model.Algoritmo;
+import pucp.e3c.redex_back.model.Envio;
 import pucp.e3c.redex_back.model.EstadoAlmacen;
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.model.PlanVuelo;
@@ -80,6 +81,11 @@ public class OperacionesDiaDiaController {
     @GetMapping("/obtenerPaquetes")
     public List<Paquete> obtenerPaquetes(){        
         return algoritmo.obtenerPaquetesActualesDiaDia(paqueteService);
+    }
+
+    @GetMapping("/obtenerEnvios")
+    public List<Envio> obtenerEnvios(){
+        return algoritmo.obtener_envios_dia_dia();
     }
 
     @GetMapping("/obtenerEstadoAlmacen")
