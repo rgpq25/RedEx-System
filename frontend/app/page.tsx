@@ -34,7 +34,7 @@ export default function Home() {
                 </section>
                 <MainLogo className="h-[310px] w-[310px]" />
             </div>
-            <div className="flex flex-row w-screen h-screen justify-center items-center gap-18">
+            {/* <div className="flex flex-row w-screen h-screen justify-center items-center gap-18">
                 <p>nosotros</p>
             </div>
             <div className="flex flex-row w-screen h-screen justify-center items-center gap-18">
@@ -42,7 +42,7 @@ export default function Home() {
             </div>
             <div className="flex flex-row w-screen h-screen justify-center items-center gap-18">
                 <p>preguntas</p>
-            </div>
+            </div> */}
         </main>
     );
 }

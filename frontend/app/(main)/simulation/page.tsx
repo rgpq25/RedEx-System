@@ -243,8 +243,9 @@ function SimulationPage() {
 				client.forceDisconnect();
 			}
 
-			toast.info("Simulation terminada con exito", {
+			toast.info("Simulación terminada con éxito", {
 				position: "bottom-center",
+                closeButton: true,
 			});
 
 			await api(
@@ -310,8 +311,9 @@ function SimulationPage() {
 						client.forceDisconnect();
 					}
 
-					toast.info("Simulation terminada con exito", {
+					toast.info("Simulación terminada con éxito", {
 						position: "bottom-center",
+                        closeButton: true,
 					});
 
 					await api(
