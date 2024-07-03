@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { SimulationContext } from "@/components/contexts/simulation-provider";
 import { FilteredFlightsProvider, useFilteredFlightsContext } from "@/components/contexts/flights-filter";
 import AverageOcupation from "./_components/average-ocupation";
+import SimulationIndicator from "./_components/simulation-indicator";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -337,14 +338,39 @@ function SimulationPage() {
 			/>
 			<MainContainer className="relative">
 				<MapHeader>
-					<BreadcrumbCustom items={breadcrumbItems} />
+					<BreadcrumbCustom
+						items={breadcrumbItems}
+						onClickAnyLink={async () => {
+							if (simulation === undefined) return;
+							console.log("Desactivando simulación y conexion a socket");
+
+							if (client) {
+								client.deactivate();
+								client.forceDisconnect();
+							}
+
+							await api(
+								"PUT",
+								`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+								(data: any) => {
+									console.log("Respuesta de /back/simulacion/detener: ", data);
+								},
+								(error) => {
+									console.log("Error en /back/simulacion/detener: ", error);
+								},
+								simulation
+							);
+
+							pauseSimulationOnlyFrontend();
+						}}
+					/>
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
 				</MapHeader>
 
-				<PlaneLegend className="absolute bottom-[115px] right-7 z-[50]" />
+				<PlaneLegend className="absolute bottom-[155px] right-7 z-[50]" />
 
 				<AverageOcupation
 					className="absolute top-24 right-14 z-[20]"
@@ -355,6 +381,7 @@ function SimulationPage() {
 				/>
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
+					<SimulationIndicator simulation={simulation} />
 					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
 					<ElapsedSimuTime>{getTimeByMs(elapsedSimulationTime)}</ElapsedSimuTime>
 				</div>

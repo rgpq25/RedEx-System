@@ -527,7 +527,7 @@ function Envios({
                 SidebarSkeleton()
             ) : (
                 <>
-                    <Muted>Cantidad de envios: {filteredItems?.length}</Muted>
+                    <Muted>Cantidad de envíos: {filteredItems?.length}</Muted>
                     {renderFilters()}
                     {items.length === 0 ? (
                         <div className='h-screen flex'>

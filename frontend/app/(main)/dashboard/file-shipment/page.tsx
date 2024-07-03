@@ -189,7 +189,7 @@ export default function FileShipment() {
                         checked={useCustomDate}
                         onCheckedChange={() => setUseCustomDate(!useCustomDate)}
                     />
-                    <Label htmlFor='check'>Usar fecha actual del sistema para todos los envios</Label>
+                    <Label htmlFor='check'>Usar fecha actual del sistema para todos los envíos</Label>
                 </div>
                 <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
                     <DatePicker
@@ -240,7 +240,7 @@ export default function FileShipment() {
                 />
                 {file !== undefined && (
                     <Lead className='mx-auto'>
-                        Se han detectado <strong>{shipments.length}</strong> envios y{" "}
+                        Se han detectado <strong>{shipments.length}</strong> envíos y{" "}
                         <strong>{shipments.reduce((acc, shipment) => acc + shipment.amountPackages, 0)}</strong> paquetes
                     </Lead>
                 )}
