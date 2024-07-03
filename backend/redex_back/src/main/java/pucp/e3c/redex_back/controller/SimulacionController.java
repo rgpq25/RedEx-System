@@ -296,7 +296,7 @@ public class SimulacionController {
     @PutMapping("/detener")
     public ResponseEntity<Simulacion> detenerSimulacion(@RequestBody Simulacion simulacion) {
         simulacion = simulacionService.get(simulacion.getId());
-        if (simulacion.getEstado() == 0) {
+        if (simulacion.getEstado() != 1) {
             simulacion.setEstado(1);
             Simulacion updatedSimulacion = simulacionService.update(simulacion);
             return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
