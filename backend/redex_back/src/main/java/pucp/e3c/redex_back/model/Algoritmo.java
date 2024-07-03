@@ -91,7 +91,7 @@ public class Algoritmo {
                 + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador);
     }
 
-    private Date agregarSAyTA(Date fechaEnSimulacion, int TA, int SA, double multiplicador) {
+    private Date agregarSAPyTA(Date fechaEnSimulacion, int TA, int SAP, double multiplicador) {
         // Supongamos que tienes una fecha, por ejemplo:
 
         // Crea un objeto Calendar y establece la fecha
@@ -99,7 +99,7 @@ public class Algoritmo {
         calendar.setTime(fechaEnSimulacion);
 
         // Añade 10 minutos a la fecha
-        calendar.add(Calendar.SECOND, (TA + SA) * (int) multiplicador);
+        calendar.add(Calendar.SECOND, (TA + SAP) * (int) multiplicador);
 
         // Obtiene la nueva fecha con los minutos añadidos
         Date fechaActualizada = calendar.getTime();
@@ -478,7 +478,7 @@ public class Algoritmo {
             PaqueteService paqueteService, AeropuertoService aeropuertoService,
             PlanRutaXVueloService planRutaXVueloService,
             SimulacionService simulacionService,
-            Simulacion simulacion, int SA, int TA) {
+            Simulacion simulacion, int SAP, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
         boolean replanificar = false;
         String tipoOperacion = "SIMULACION SEMANAL";
@@ -542,10 +542,16 @@ public class Algoritmo {
                 }
                 continue;
             }
-
             // Calculo del limie de planificacion
-            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
-            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
+            Date fechaLimiteCalculo;
+            if (primera_iter) {
+                fechaLimiteCalculo = agregarSAPyTA(tiempoEnSimulacion, 10, 20, simulacion.getMultiplicadorTiempo());
+                fechaSgteCalculo = agregarSAPyTA(tiempoEnSimulacion, 0, 20, simulacion.getMultiplicadorTiempo());
+            } else {
+                fechaLimiteCalculo = agregarSAPyTA(tiempoEnSimulacion, TA, SAP,
+                        simulacion.getMultiplicadorTiempo());
+                fechaSgteCalculo = agregarSAPyTA(tiempoEnSimulacion, 0, SAP, simulacion.getMultiplicadorTiempo());
+            }
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
@@ -822,8 +828,8 @@ public class Algoritmo {
             }
 
             // Calculo del limie de planificacion
-            Date fechaLimiteCalculo = agregarSAyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
-            fechaSgteCalculo = agregarSAyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
+            Date fechaLimiteCalculo = agregarSAPyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
+            fechaSgteCalculo = agregarSAPyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
@@ -1186,7 +1192,7 @@ public class Algoritmo {
         if (paquetesProcesar == null)
             return new ArrayList<>();
         ArrayList<Integer> indicesAEliminar = new ArrayList<>();
-        Date fechaMaxima = agregarSAyTA(tiempoEnSimulacion, TA, 0, multiplicador);
+        Date fechaMaxima = agregarSAPyTA(tiempoEnSimulacion, TA, 0, multiplicador);
         for (int i = 0; i < paquetesProcesar.size(); i++) {
             // for (Paquete paquete : paquetesProcesar) {
 
