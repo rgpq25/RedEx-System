@@ -118,6 +118,7 @@ public class Algoritmo {
 
         // Inicia la operación dia a dia
         String tipoOperacion = "DIA A DIA";
+        boolean replanificar = true;
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
 
         // Enviar mensaje de inicio de loop principal
@@ -150,8 +151,10 @@ public class Algoritmo {
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
             if (paquetesDiaDia != null) {
+                LOGGER.info(tipoOperacion + " Se encontraron " + paquetesDiaDia.size() + " paquetes para procesar.");
                 paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService,
                         paqueteService);
+                LOGGER.info(tipoOperacion + " Paquetes actualizados");
             }
 
             // Agregar paquetes al hash map
@@ -209,7 +212,7 @@ public class Algoritmo {
             }
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
-            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion iniciada");
+            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificación iniciada");
 
             // Ordenar paquetes por fecha de recepción
             // CAMBIO AQUI .filter(p -> !p.isEntregado())
@@ -226,14 +229,16 @@ public class Algoritmo {
             // ArrayList<Paquete> paquetesAL = new ArrayList<>(paquetes);
             LOGGER.info(tipoOperacion + " Filtro entrega");
             List<Paquete> paquetesProcesarFiltrados = paquetes.stream()
-                    .filter(p -> (p.getFechaDeEntrega() == null))
+                    .filter(p -> (p.getFechaDeEntrega() == null)
+                    || (replanificar && now.before(p.getFechaDeEntrega()))
+                    )
                     .collect(Collectors.toList());
+            LOGGER.info(tipoOperacion + " Fin filtro entrega: " + paquetesProcesarFiltrados.size() + " paquetes restantes");
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
                     vueloService, now, TA, 1);
-            // paquetesProcesar = new ArrayList<>(paquetesProcesarFiltrados);
-            LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos");
+            LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
             if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
@@ -251,7 +256,7 @@ public class Algoritmo {
                 continue;
             }
 
-            LOGGER.info(tipoOperacion + " Se van a procesar " + paquetesProcesar.size() + " paquetes, hasta " + now);
+            LOGGER.info(tipoOperacion + " Se van a PROCESAR " + paquetesProcesar.size() + " paquetes, hasta " + now);
 
             // Crear listas de rutas y IDs para los paquetes a procesar
             ArrayList<PlanRutaNT> planRutasPaquetesProcesar = new ArrayList<>();
@@ -555,7 +560,7 @@ public class Algoritmo {
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
-                    new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
+                    new RespuestaAlgoritmoEstado("Planificación iniciada", simulacion));
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
@@ -833,7 +838,7 @@ public class Algoritmo {
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/estado",
-                    new RespuestaAlgoritmoEstado("Planificacion iniciada", simulacion));
+                    new RespuestaAlgoritmoEstado("Planificación iniciada", simulacion));
 
             // Filtrar paquetes a calcular
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesValidos(paquetes, tiempoEnSimulacion,
@@ -1172,6 +1177,7 @@ public class Algoritmo {
         }
 
     }
+
 
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
             Date fechaLimiteCalculo, boolean replanificar) {

@@ -193,6 +193,7 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 
@@ -432,6 +433,7 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 
