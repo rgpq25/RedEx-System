@@ -1,21 +1,24 @@
 import Link from "next/link";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "./breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./breadcrumb";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export type BreadcrumbItem = {
 	label: string;
 	link: string;
 };
 
-function BreadcrumbCustom({ items, className }: { items: BreadcrumbItem[]; className?: string}) {
+function BreadcrumbCustom({
+	items,
+	className,
+	onClickAnyLink,
+}: {
+	items: BreadcrumbItem[];
+	className?: string;
+	onClickAnyLink?: () => Promise<void>;
+}) {
+	const router = useRouter();
 	if (items.length < 2) throw new Error("Breadcrumb must have atleast 2 items");
 
 	return (
@@ -23,7 +26,19 @@ function BreadcrumbCustom({ items, className }: { items: BreadcrumbItem[]; class
 			<BreadcrumbList>
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>
-						<Link href={items[0].link}>{items[0].label}</Link>
+						{/* <Link href={items[0].link}>{items[0].label}</Link> */}
+						<p
+							className="cursor-pointer"
+							onClick={async () => {
+								if (onClickAnyLink) {
+									await onClickAnyLink();
+								}
+
+								router.push(items[0].link);
+							}}
+						>
+							{items[0].label}
+						</p>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
 				<BreadcrumbSeparator />
@@ -34,10 +49,22 @@ function BreadcrumbCustom({ items, className }: { items: BreadcrumbItem[]; class
 							<Fragment key={item.link}>
 								<BreadcrumbItem>
 									<BreadcrumbLink asChild>
-										<Link href={item.link}>{item.label}</Link>
+										{/* <Link href={item.link}>{item.label}</Link> */}
+										<p
+										className="cursor-pointer"
+											onClick={async () => {
+												if (onClickAnyLink) {
+													await onClickAnyLink();
+												}
+
+												router.push(item.link);
+											}}
+										>
+											{item.label}
+										</p>
 									</BreadcrumbLink>
 								</BreadcrumbItem>
-								<BreadcrumbSeparator/>
+								<BreadcrumbSeparator />
 							</Fragment>
 						);
 					})}

@@ -214,7 +214,7 @@ const SidebarShipment = ({ shipment, currentTime }: { shipment: Envio | undefine
                         </div>
                     ) : (
                         <div className='flex flex-col w-full items-start'>
-                            <H3 className='mb-2'>Envio</H3>
+                            <H3 className='mb-2'>Envío</H3>
                             <div className='flex flex-row'>
                                 <Muted>{`Origen: ${shipment.ubicacionOrigen.ciudadAbreviada.toUpperCase()}`}</Muted>
                                 <Muted className='ml-4'>{`Destino: ${shipment.ubicacionDestino.ciudadAbreviada.toUpperCase()}`}</Muted>
