@@ -370,7 +370,7 @@ public class SimulacionController {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                     vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
                     simulacionService, simulacion,
-                    30, 10);
+                    60, 20);
         });
 
         return simulacion;
