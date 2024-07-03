@@ -202,7 +202,17 @@ function DailyOperationsPage() {
 	return (
 		<MainContainer className="relative">
 			<MapHeader>
-				<BreadcrumbCustom items={breadcrumbItems} />
+				<BreadcrumbCustom
+					items={breadcrumbItems}
+					onClickAnyLink={async () => {
+						console.log("Desactivando conexion a socket");
+
+						if (client) {
+							client.deactivate();
+							client.forceDisconnect();
+						}
+					}}
+				/>
 				<div className="flex flex-row gap-4 items-center ">
 					<h1 className="text-4xl font-bold font-poppins">Operaciones día a día</h1>
 					<CurrentTime currentTime={currentTime} />

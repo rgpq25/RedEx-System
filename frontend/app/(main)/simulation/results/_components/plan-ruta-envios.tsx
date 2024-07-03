@@ -72,7 +72,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 			almacen: array_vuelos[array_vuelos.length - 1].planVuelo.ciudadDestino,
 			vuelo: null,
 			fecha1: array_vuelos[array_vuelos.length - 1].fechaLlegada,
-			fecha2: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 5 * 60 * 1000),
+			fecha2: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
 			chip: { color: "purple", descripcion: "En aeropuerto destino" },
 		});
 
@@ -80,7 +80,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 			type: "entrega",
 			almacen: null,
 			vuelo: null,
-			fecha1: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 5 * 60 * 1000),
+			fecha1: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
 			fecha2: null,
 			chip: { color: "green", descripcion: "Entregado" },
 		});

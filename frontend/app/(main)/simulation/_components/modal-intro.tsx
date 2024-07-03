@@ -2,15 +2,7 @@
 import { startWeeklySimulation } from "@/actions/simulation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,7 +16,7 @@ import { currentTimeString } from "@/lib/date";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { api } from "@/lib/api";
-import { Simulacion } from "@/lib/types";
+import { Simulacion, SimulationType } from "@/lib/types";
 
 export function ModalIntro({
 	isOpen,
@@ -37,6 +29,7 @@ export function ModalIntro({
 }) {
 	//const fileInputRef = useRef<HTMLInputElement>(null);
 	//const [file, setFile] = useState<File | undefined>();
+	const [simulationType, setSimulationType] = useState<SimulationType>("weekly");
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 	const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
 	const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
@@ -60,7 +53,8 @@ export function ModalIntro({
 		if (
 			//!file ||
 			!selectedDate ||
-			!selectedTime
+			!selectedTime ||
+			!simulationType
 		) {
 			toast.error("Complete todos los campos");
 			return;
@@ -82,7 +76,7 @@ export function ModalIntro({
 		realDate.setMilliseconds(0);
 
 		//Register new simulation and all shipments
-		const simulacion = await startWeeklySimulation(realDate);
+		const simulacion = await startWeeklySimulation(realDate, simulationType);
 
 		if (simulacion === undefined || simulacion.id === 0) {
 			toast.error("Error al registrar la simulación");
@@ -101,8 +95,7 @@ export function ModalIntro({
 				<DialogHeader>
 					<DialogTitle>Inicia una simulación</DialogTitle>
 					<DialogDescription>
-						Usa datos de envíos variados para realizar una simulación semanal o hasta el colapso de las
-						operaciones
+						Usa datos de envíos variados para realizar una simulación semanal o hasta el colapso de las operaciones
 					</DialogDescription>
 				</DialogHeader>
 
@@ -111,13 +104,17 @@ export function ModalIntro({
 						<Label htmlFor="name" className="text-right">
 							Tipo
 						</Label>
-						<Select disabled={isRegisterLoading === true}>
+						<Select
+							disabled={isRegisterLoading === true}
+							onValueChange={(value) => setSimulationType(value as SimulationType)}
+							value={simulationType}
+						>
 							<SelectTrigger className="w-[77%]">
 								<SelectValue placeholder="Seleccione un tipo de simulación" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="light">Semanal</SelectItem>
-								<SelectItem value="dark">Hasta colapso</SelectItem>
+								<SelectItem value="weekly">Semanal</SelectItem>
+								<SelectItem value="colapse">Hasta colapso</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>

@@ -208,3 +208,5 @@ export type ReporteData = {
 export type AeropuertoHash = {
 	[key: string]: Aeropuerto;
 }
+
+export type SimulationType = "weekly" | "colapse";
