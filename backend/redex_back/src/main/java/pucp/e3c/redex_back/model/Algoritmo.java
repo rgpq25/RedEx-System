@@ -88,7 +88,7 @@ public class Algoritmo {
         long multiplicador = (long) simulacion.getMultiplicadorTiempo();
 
         return new Date(inicioSimulacion
-                + (tiempoActual - inicioSistema - milisegundosPausados) * multiplicador + milisegundosDeVentaja);
+                + (tiempoActual - inicioSistema - milisegundosPausados + milisegundosDeVentaja) * multiplicador);
     }
 
     private Date agregarSAPyTA(Date fechaEnSimulacion, int TA, int SAP, double multiplicador) {
@@ -230,15 +230,16 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Filtro entrega");
             List<Paquete> paquetesProcesarFiltrados = paquetes.stream()
                     .filter(p -> (p.getFechaDeEntrega() == null)
-                    || (replanificar && now.before(p.getFechaDeEntrega()))
-                    )
+                            || (replanificar && now.before(p.getFechaDeEntrega())))
                     .collect(Collectors.toList());
-            LOGGER.info(tipoOperacion + " Fin filtro entrega: " + paquetesProcesarFiltrados.size() + " paquetes restantes");
+            LOGGER.info(
+                    tipoOperacion + " Fin filtro entrega: " + paquetesProcesarFiltrados.size() + " paquetes restantes");
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
                     vueloService, now, TA, 1);
-            LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
+            LOGGER.info(
+                    tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
             if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
@@ -485,7 +486,7 @@ public class Algoritmo {
             SimulacionService simulacionService,
             Simulacion simulacion, int SAP, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
-        boolean replanificar = false;
+        boolean replanificar = true;
         long milisegundosDeVentaja = 60000;
         String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
@@ -496,7 +497,8 @@ public class Algoritmo {
         int i = 0;
         Date fechaSgteCalculo = simulacion.getFechaInicioSim();
         Date tiempoEnFront = simulacion.getFechaInicioSim();
-        Date tiempoEnBack = new Date(simulacion.getFechaInicioSim().getTime() + milisegundosDeVentaja);
+        Date tiempoEnBack = new Date(simulacion.getFechaInicioSim().getTime()
+                + milisegundosDeVentaja * (int) simulacion.getMultiplicadorTiempo());
         boolean primera_iter = true;
         // Inicializar simulacion
         boolean iniciar = inicializarLoop(paquetes, fechaMinima, planRutas, planVuelos, grafoVuelos, tipoOperacion,
@@ -504,7 +506,11 @@ public class Algoritmo {
 
         while (iniciar) {
             simulacion = simulacionService.get(simulacion.getId());
+            long startTime = System.currentTimeMillis();
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnFront, aeropuertoService);
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+            System.out.println("Tiempo de actualizacion de paquetes: " + duration + " milisegundos");
 
             // Gestion de detencion
             if (simulacion.estado == 1) {
@@ -629,10 +635,15 @@ public class Algoritmo {
             }
 
             // Realizar planificacion
+            startTime = System.currentTimeMillis();
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
                     TA * (int) simulacion.getMultiplicadorTiempo());
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
+
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnBack);
                 // imprimir en un txt
@@ -652,9 +663,11 @@ public class Algoritmo {
             i++;
 
             // Guardar resultados
+            startTime = System.currentTimeMillis();
             realizarGuardado(paquetes, planRutas, paquetesProcesar, respuestaAlgoritmo, simulacion, paqueteService,
                     planRutaService,
                     vueloService, planRutaXVueloService, "/algoritmo/estado");
+
             this.paquetesProcesadosUltimaSimulacion = new ArrayList<>(paquetesProcesar);
             // paquetesProcesar;
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
@@ -726,6 +739,10 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 return null;
             }
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.println("Tiempo de guardado: " + duration + " milisegundos");
+
             while (true) {
                 simulacion = simulacionService.get(simulacion.getId());
                 LOGGER.info(tipoOperacion + " Simulacion pausada");
@@ -1174,7 +1191,6 @@ public class Algoritmo {
 
     }
 
-
     private ArrayList<Paquete> filtrarPaquetesValidos(ArrayList<Paquete> paquetes, Date tiempoEnSimulacion,
             boolean replanificar) {
         Collections.sort(paquetes, Comparator.comparing(Paquete::obtenerFechaRecepcion));
@@ -1249,6 +1265,8 @@ public class Algoritmo {
                 new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + tiempoEnsimulacion, simulacion));
 
         System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
+        LOGGER.info("GUARDADO || SIMULACION SEMANAL || Respuesta Enviada");
+
     }
 
     private Date agregarHoras(Date tiempoEnsimulacion, int i) {
@@ -1346,6 +1364,8 @@ public class Algoritmo {
             }
 
         }
+        LOGGER.info("GUARDADO || SIMULACION SEMANAL || Realizado");
+
     }
 
     private ArrayList<Paquete> actualizarPaquetesDiaDia(ArrayList<Paquete> paquetes,
@@ -1392,7 +1412,10 @@ public class Algoritmo {
 
     private ArrayList<Paquete> actualizarPaquetes(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
             Date fechaEnSimulacion, AeropuertoService aeropuertoService) {
-        for (int i = 0; i < paquetes.size(); i++) {
+        ArrayList<Paquete> paquetesActualizar = (ArrayList<Paquete>) paquetes.stream()
+                .filter(p -> p.getFechaDeEntrega() != null && p.getFechaDeEntrega().before(fechaEnSimulacion))
+                .collect(Collectors.toList());
+        for (int i = 0; i < paquetesActualizar.size(); i++) {
             if (planRutaNTs != null) {
                 boolean primero = true;
                 for (Vuelo vuelo : planRutaNTs.get(i).getVuelos()) {
