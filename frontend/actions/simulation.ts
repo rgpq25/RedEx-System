@@ -12,7 +12,7 @@ export const startWeeklySimulation = async (startDate: Date, simulationType: Sim
 		fechaInicioSim: startDate,
 		fechaFinSim: finishDate,
 		fechaInicioSistema: new Date(),
-		multiplicadorTiempo: simulationType === "weekly" ? 270 : 150,
+		multiplicadorTiempo: simulationType === "weekly" ? 270 : 100,
 	};
 
 	await api(

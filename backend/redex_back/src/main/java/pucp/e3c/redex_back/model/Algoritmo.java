@@ -561,7 +561,7 @@ public class Algoritmo {
             // Calculo de la sgte planificacion
             fechaSgteCalculo = agregarSAPyTA(tiempoEnBack, TA, SAP, simulacion.getMultiplicadorTiempo());
 
-            LOGGER.info(tipoOperacion + " Planificacion iniciada");
+            LOGGER.info(tipoOperacion + " Planificacion iniciada en " + tiempoEnBack);
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     new RespuestaAlgoritmoEstado("Planificación iniciada", simulacion));
 
@@ -655,6 +655,22 @@ public class Algoritmo {
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
 
             if (respuestaAlgoritmo == null) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnBack);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnBack);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                simulacion.setEstado(3);
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.setCorrecta(false);
+                return null;
+            }
+            if (respuestaAlgoritmo.isCorrecta() == false) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnBack);
                 // imprimir en un txt
                 try {
@@ -860,7 +876,7 @@ public class Algoritmo {
             Date fechaLimiteCalculo = agregarSAPyTA(tiempoEnSimulacion, TA, SA, simulacion.getMultiplicadorTiempo());
             fechaSgteCalculo = agregarSAPyTA(tiempoEnSimulacion, 0, SA, simulacion.getMultiplicadorTiempo());
 
-            LOGGER.info(tipoOperacion + " Planificacion iniciada");
+            LOGGER.info(tipoOperacion + " Planificacion iniciada en " + tiempoEnSimulacion);
             messagingTemplate.convertAndSend("/algoritmo/estado",
                     new RespuestaAlgoritmoEstado("Planificación iniciada", simulacion));
 
@@ -1279,9 +1295,6 @@ public class Algoritmo {
         System.out.println("Planificacion terminada en tiempo de simulacion hasta " + tiempoEnsimulacion);
         messagingTemplate.convertAndSend("/algoritmo/estado",
                 new RespuestaAlgoritmoEstado("Planificacion terminada hasta " + tiempoEnsimulacion, simulacion));
-
-        System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
-        LOGGER.info("GUARDADO || SIMULACION SEMANAL || Respuesta Enviada");
 
     }
 
