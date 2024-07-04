@@ -237,8 +237,14 @@ public class Algoritmo {
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
 
+            ArrayList<PlanRutaNT> temp_planesRutaActuales = new ArrayList<>();
+
+            for (int j = 0; j < paquetesProcesarFiltrados.size(); j++) {
+                temp_planesRutaActuales.add(hashPlanRutasNT.get(paquetesProcesarFiltrados.get(j).getId()));
+            }
+            LOGGER.info(tipoOperacion + " Filtrando vuelos Array Temp Construido");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
-                    new ArrayList<PlanRutaNT>(), now, TA, 1);
+                temp_planesRutaActuales, now, TA, 1);
             LOGGER.info(
                     tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
