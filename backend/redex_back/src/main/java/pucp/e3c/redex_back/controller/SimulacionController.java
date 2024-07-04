@@ -193,7 +193,8 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
-            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio + " - " + fechaFin);
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio
+                    + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 
@@ -371,7 +372,7 @@ public class SimulacionController {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                     vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
                     simulacionService, simulacion,
-                    20, 60);
+                    60, 60);
         });
 
         return simulacion;
@@ -433,7 +434,8 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
-            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio + " - " + fechaFin);
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio
+                    + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 
