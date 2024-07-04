@@ -243,7 +243,7 @@ public class DataInitializer {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
                     //60, 40);
-                    80, 60);
+                    240, 60);
         });
 
     }

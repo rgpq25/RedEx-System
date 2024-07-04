@@ -189,7 +189,7 @@ public class Algoritmo {
             // add 4 minutes to Date now
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
-            calendar.add(Calendar.MINUTE, 4);
+            calendar.add(Calendar.MINUTE, 2);
 
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
