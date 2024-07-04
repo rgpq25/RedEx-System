@@ -244,7 +244,7 @@ public class Algoritmo {
             }
             LOGGER.info(tipoOperacion + " Filtrando vuelos Array Temp Construido");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
-                temp_planesRutaActuales, now, TA, 1);
+                    temp_planesRutaActuales, now, TA, 1);
             LOGGER.info(
                     tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
@@ -677,7 +677,7 @@ public class Algoritmo {
                 return null;
             }
             if (respuestaAlgoritmo.isCorrecta() == false) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnBack);
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + tiempoEnBack);
                 // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
@@ -758,7 +758,6 @@ public class Algoritmo {
                 // imprimir en un txt
                 try {
                     // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    // writer.println("Colpaso en fecha " + tiempoEnSimulacion);
                     messagingTemplate.convertAndSend("/algoritmo/estado",
                             "Colpaso en fecha " + tiempoEnBack);
                     // writer.close();
