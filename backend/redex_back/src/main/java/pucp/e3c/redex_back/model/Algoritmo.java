@@ -1227,7 +1227,7 @@ public class Algoritmo {
             return new ArrayList<>();
         ArrayList<Integer> indicesAEliminar = new ArrayList<>();
         Date fechaMaxima = agregarSAPyTA(tiempoEnSimulacion, TA, 0, multiplicador);
-        Date fechaMaxima_entrega = agregarSAPyTA(tiempoEnSimulacion, 2 * TA, 0, multiplicador);
+        Date fechaMaxima_entrega = agregarSAPyTA(tiempoEnSimulacion, TA, 0, multiplicador);
         for (int i = 0; i < paquetesProcesar.size(); i++) {
             // for (Paquete paquete : paquetesProcesar) {
 
