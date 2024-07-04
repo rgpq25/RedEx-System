@@ -236,8 +236,9 @@ public class Algoritmo {
                     tipoOperacion + " Fin filtro entrega: " + paquetesProcesarFiltrados.size() + " paquetes restantes");
             // Filtrar paquetes que están volando
             LOGGER.info(tipoOperacion + " Filtrando vuelos");
+
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
-                    vueloService, now, TA, 1);
+                    new ArrayList<PlanRutaNT>(), now, TA, 1);
             LOGGER.info(
                     tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
@@ -617,8 +618,17 @@ public class Algoritmo {
             }
 
             // Filtrar paquetes que estan volando
-            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnBack, TA,
+            startTime = System.currentTimeMillis();
+            ArrayList<PlanRutaNT> temp_planesRutaActuales = new ArrayList<>();
+
+            for (int j = 0; j < paquetesProcesar.size(); j++) {
+                temp_planesRutaActuales.add(planRutas.get(paquetes.indexOf(paquetesProcesar.get(j))));
+            }
+            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, temp_planesRutaActuales, tiempoEnBack, TA,
                     simulacion.getMultiplicadorTiempo());
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.println("Tiempo de filtrado de vuelos: " + duration + " milisegundos");
 
             // Recalcular el tamanho de paquetes
             tamanhoPaquetes = paquetesProcesar.size();
@@ -904,9 +914,14 @@ public class Algoritmo {
                 simulacionService.update(simulacion);
                 break;
             }
+            ArrayList<PlanRutaNT> temp_planesRutaActuales = new ArrayList<>();
 
+            for (int j = 0; j < paquetesProcesar.size(); j++) {
+                temp_planesRutaActuales.add(planRutas.get(paquetes.indexOf(paquetesProcesar.get(j))));
+            }
             // Filtrar paquetes que estan volando
-            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, vueloService, tiempoEnSimulacion, TA,
+
+            paquetesProcesar = filtrarPaquetesVolando(paquetesProcesar, temp_planesRutaActuales, tiempoEnSimulacion, TA,
                     simulacion.getMultiplicadorTiempo());
 
             // Recalcular el tamanho de paquetes
@@ -1205,7 +1220,8 @@ public class Algoritmo {
         return paquetesProcesar;
     }
 
-    private ArrayList<Paquete> filtrarPaquetesVolando(ArrayList<Paquete> paquetesProcesar, VueloService vueloService,
+    private ArrayList<Paquete> filtrarPaquetesVolando(ArrayList<Paquete> paquetesProcesar,
+            ArrayList<PlanRutaNT> planRutasProcesar,
             Date tiempoEnSimulacion, int TA, double multiplicador) {
         if (paquetesProcesar == null)
             return new ArrayList<>();
@@ -1218,8 +1234,8 @@ public class Algoritmo {
             if (paquetesProcesar.get(i).planRutaActual == null) {
                 continue;
             }
-            ArrayList<Vuelo> vuelos = vueloService.findVuelosByPaqueteId(paquetesProcesar.get(i).getId());
-            if (vuelos == null) {
+            ArrayList<Vuelo> vuelos = planRutasProcesar.get(i).getVuelos();
+            if (vuelos == null || vuelos.size() == 0) {
                 System.out.println("El paquete tiene planRuta pero no vuelo");
             }
 
