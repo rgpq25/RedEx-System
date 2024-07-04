@@ -1227,7 +1227,7 @@ public class Algoritmo {
             return new ArrayList<>();
         ArrayList<Integer> indicesAEliminar = new ArrayList<>();
         Date fechaMaxima = agregarSAPyTA(tiempoEnSimulacion, TA, 0, multiplicador);
-        Date fechaMinima_entrega = agregarSAPyTA(tiempoEnSimulacion, -3 * TA, 0, multiplicador);
+        Date fechaMaxima_entrega = agregarSAPyTA(tiempoEnSimulacion, 2 * TA, 0, multiplicador);
         for (int i = 0; i < paquetesProcesar.size(); i++) {
             // for (Paquete paquete : paquetesProcesar) {
 
@@ -1241,7 +1241,7 @@ public class Algoritmo {
 
             // Agregado, si el paquete ya esta por ser entregado no se replanificara
             if (paquetesProcesar.get(i).getFechaDeEntrega() != null
-                    && paquetesProcesar.get(i).getFechaDeEntrega().after(fechaMinima_entrega)) {
+                    && paquetesProcesar.get(i).getFechaDeEntrega().before(fechaMaxima_entrega)) {
                 indicesAEliminar.add(i);
                 continue;
             }
