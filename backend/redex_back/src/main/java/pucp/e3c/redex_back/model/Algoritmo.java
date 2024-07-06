@@ -279,6 +279,39 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
                     planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA);
+            if (respuestaAlgoritmo == null) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println(tipoOperacion + " Colpaso en fecha " + now);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                return;
+            }
+
+            if (respuestaAlgoritmo.isCorrecta() == false) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + now);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println(tipoOperacion +" Colpaso en fecha " + now);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                return;
+            }
+            
             i++;
             // ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
@@ -968,6 +1001,23 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Paquetes procesados");
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnSimulacion);
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                simulacion.setEstado(3);
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.setCorrecta(false);
+                return null;
+            }
+
+            if (respuestaAlgoritmo.isCorrecta() == false) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + tiempoEnSimulacion);
+                // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
                     writer.println("Colpaso en fecha " + tiempoEnSimulacion);
