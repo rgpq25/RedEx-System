@@ -292,6 +292,7 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
                 return;
             }
 
@@ -309,6 +310,7 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
                 return;
             }
             
@@ -346,6 +348,22 @@ public class Algoritmo {
 
             ocupacionVuelos = nuevaOcupacion;
 
+            HashMap<Integer, Vuelo> hashVuelos = grafoVuelos.getVuelosHash();
+            //Revision de colapso en caso de Ocupacion de Vuelos
+            boolean colapso = false;
+            boolean colapsoVuelos = false;
+            boolean colapsoAlmacen = false;
+            for (Integer idVuelo : hashVuelos.keySet()) {
+                if (ocupacionVuelos.get(idVuelo) == null) {
+                    // LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
+                    continue;
+                }
+                if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
+                    // colapso = true;
+                    colapsoVuelos = true;
+                }
+            }
+
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
             ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
             for (Entry<Integer, Paquete> entry : hashTodosPaquetes.entrySet()) {
@@ -368,6 +386,33 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
+
+            //verificacion de colapso en almacen
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+
+            colapso = colapsoVuelos || colapsoAlmacen;
+
+            if (colapso) {
+                LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
+
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                // imprimir en un txt
+                try {
+                    // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                            "Colpaso en fecha " + now);
+                    // writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+                return;
+            }
 
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
             // ".txt");
