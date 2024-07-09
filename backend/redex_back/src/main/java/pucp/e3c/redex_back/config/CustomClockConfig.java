@@ -12,7 +12,7 @@ public class CustomClockConfig {
     @Bean
     public Clock customClock() {
         Clock baseClock = Clock.systemDefaultZone();
-        Instant fixedInstant = Instant.parse("2024-07-22T06:00:00Z");
+        Instant fixedInstant = Instant.parse("2024-07-22T11:00:00Z");
         return Clock.offset(baseClock, Duration.between(Instant.now(), fixedInstant));
     }
 
