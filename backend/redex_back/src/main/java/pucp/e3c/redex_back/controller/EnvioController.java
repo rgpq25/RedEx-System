@@ -75,7 +75,9 @@ public class EnvioController {
         } else {
             agregar = 2;
         }
-        
+        if(envio.getSimulacionActual() == null){
+            envio.setFechaRecepcion(timeService.now());
+        }        
         
         Date fecha_recepcion_origen = Funciones.convertTimeZone(
             envio.getFechaRecepcion(),"UTC",origen.getZonaHoraria());
@@ -85,9 +87,7 @@ public class EnvioController {
             fecha_maxima_entrega_GMTDestino,destino.getZonaHoraria(),"UTC");     
         envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
-        if(envio.getSimulacionActual() == null){
-            envio.setFechaRecepcion(timeService.now());
-        }
+        
         envio = envioService.register(envio);
         //Envio envioBD = envioService.get(envio.getId());
         while(true){

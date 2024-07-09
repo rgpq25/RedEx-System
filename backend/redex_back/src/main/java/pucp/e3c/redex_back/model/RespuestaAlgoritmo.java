@@ -1,6 +1,7 @@
 package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class RespuestaAlgoritmo {
@@ -11,7 +12,8 @@ public class RespuestaAlgoritmo {
     private ArrayList<Paquete> paquetes;
     private HashMap<Integer, Integer> ocupacionVuelos;
     private boolean correcta;
-    private boolean iniciandoPrimeraPlanificacionDiaDia; 
+    private boolean iniciandoPrimeraPlanificacionDiaDia;
+    private Date fechaActualDiaDia; 
 
     public HashMap<Integer, Integer> getOcupacionVuelos() {
         return ocupacionVuelos;
@@ -30,6 +32,7 @@ public class RespuestaAlgoritmo {
         this.ocupacionVuelos = new HashMap<>();
         this.correcta = true;
         this.iniciandoPrimeraPlanificacionDiaDia = false;
+        this.fechaActualDiaDia = new Date();
     }
 
     public RespuestaAlgoritmo(ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen,
@@ -126,5 +129,12 @@ public class RespuestaAlgoritmo {
         this.iniciandoPrimeraPlanificacionDiaDia = iniciandoPrimeraPlanificacionDiaDia;
     }
 
+    public Date getFechaActualDiaDia() {
+        return fechaActualDiaDia;
+    }
+
+    public void setFechaActualDiaDia(Date fechaActualDiaDia) {
+        this.fechaActualDiaDia = fechaActualDiaDia;
+    }
     
 }

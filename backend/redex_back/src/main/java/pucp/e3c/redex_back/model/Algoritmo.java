@@ -1702,7 +1702,8 @@ public class Algoritmo {
     }
 
     public RespuestaAlgoritmo getUltimaRespuestaOperacionDiaDia() {
-        return ultimaRespuestaOperacionDiaDia;
+        this.ultimaRespuestaOperacionDiaDia.setFechaActualDiaDia(timeService.now());
+        return this.ultimaRespuestaOperacionDiaDia;
     }
 
     public HashMap<Integer, List<Paquete>> getPaquetes_por_simulacion() {
