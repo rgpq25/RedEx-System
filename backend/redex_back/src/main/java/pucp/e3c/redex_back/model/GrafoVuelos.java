@@ -620,8 +620,19 @@ public class GrafoVuelos {
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
                 System.out.println(
-                        "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
+                        "En fecha: " + tiempoEnSimulacion
+                                + " no se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
                                 + paquete.toString());
+
+                for (Vuelo vuelo : vuelos_hash.values()) {
+                    System.out.println("Imprimiendo Vuelos");
+                    if ((vuelo.getPlanVuelo().getCiudadOrigen() == paquete.getEnvio().getUbicacionOrigen()
+                            && vuelo.getFechaSalida().after(paquete.getEnvio().getFechaRecepcion())) ||
+                            (vuelo.getPlanVuelo().getCiudadDestino() == paquete.getEnvio().getUbicacionDestino()
+                                    && vuelo.getFechaLlegada().before(paquete.getEnvio().getFechaLimiteEntrega()))) {
+                        System.out.println(vuelo.toString());
+                    }
+                }
                 return null;
 
             }

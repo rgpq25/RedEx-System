@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { H1, Large, Lead, Muted } from "@/components/ui/typography";
+import { H1, Large, Lead, Muted, Small } from "@/components/ui/typography";
 import { FileUp } from "lucide-react";
 
 import { RowShipmentType } from "@/lib/types";
@@ -26,7 +26,7 @@ export default function FileShipment() {
     const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
     const [shipments, setShipments] = useState<RowShipmentType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [useCustomDate, setUseCustomDate] = useState(false);
+    const [useCustomDate, setUseCustomDate] = useState(true);
     const isDisabled = shipments.length === 0 || loading;
 
     useEffect(() => {
@@ -184,12 +184,14 @@ export default function FileShipment() {
             </section>
             <section className='flex flex-col items-start justify-start gap-4 mb-10'>
                 <div className='flex flex-row items-center gap-2'>
-                    <Checkbox
+                    {/* <Checkbox
                         id='check'
                         checked={useCustomDate}
                         onCheckedChange={() => setUseCustomDate(!useCustomDate)}
-                    />
-                    <Label htmlFor='check'>Usar fecha actual del sistema para todos los envios</Label>
+                    /> 
+                    <Label htmlFor='check'>Usar fecha actual del sistema para todos los envíos</Label>
+                    */}
+                    <Small>Se usa la fecha actual del sistema para todos los envios</Small>
                 </div>
                 <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
                     <DatePicker
@@ -240,7 +242,7 @@ export default function FileShipment() {
                 />
                 {file !== undefined && (
                     <Lead className='mx-auto'>
-                        Se han detectado <strong>{shipments.length}</strong> envios y{" "}
+                        Se han detectado <strong>{shipments.length}</strong> envíos y{" "}
                         <strong>{shipments.reduce((acc, shipment) => acc + shipment.amountPackages, 0)}</strong> paquetes
                     </Lead>
                 )}

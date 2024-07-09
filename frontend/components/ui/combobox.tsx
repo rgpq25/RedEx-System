@@ -24,15 +24,15 @@ export function Combobox({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-					{value ? "Envio de ID: " + value.envio.id : "Selecciona un envio..."}
+					{value ? "Envío de ID: " + value.envio.id : "Selecciona un envío..."}
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-[--radix-popover-trigger-width] p-0">
 				<Command>
-					<CommandInput placeholder="Search framework..." />
+					<CommandInput placeholder="Buscar un envío..." />
 					<CommandList>
-						<CommandEmpty>No framework found.</CommandEmpty>
+						<CommandEmpty>No se ha encontrado el envío</CommandEmpty>
 						<CommandGroup>
 							{envios.map((envio) => (
 								<CommandItem
@@ -50,7 +50,7 @@ export function Combobox({
 									}}
 								>
 									<Check className={cn("mr-2 h-4 w-4", value?.envio.id === envio.envio.id ? "opacity-100" : "opacity-0")} />
-									{"Envio de ID: " + envio.envio.id}
+									{"Envío de ID: " + envio.envio.id}
 								</CommandItem>
 							))}
 						</CommandGroup>

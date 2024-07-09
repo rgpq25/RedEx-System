@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { SimulationContext } from "@/components/contexts/simulation-provider";
 import { FilteredFlightsProvider, useFilteredFlightsContext } from "@/components/contexts/flights-filter";
 import AverageOcupation from "./_components/average-ocupation";
+import SimulationIndicator from "./_components/simulation-indicator";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -66,8 +67,17 @@ function SimulationPage() {
 
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, elapsedRealTime, elapsedSimulationTime, setCurrentTime, zoomToAirport, lockToFlight, pauseSimulation, playSimulation } =
-		attributes;
+	const {
+		currentTime,
+		elapsedRealTime,
+		elapsedSimulationTime,
+		setCurrentTime,
+		zoomToAirport,
+		lockToFlight,
+		pauseSimulation,
+		playSimulation,
+		pauseSimulationOnlyFrontend,
+	} = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [isSimulationLoading, setIsSimulationLoading] = useState<boolean>(false);
@@ -118,10 +128,16 @@ function SimulationPage() {
 					(JSON.parse(msg.body) as RespuestaAlgoritmo).simulacion.estado === 3 &&
 					(JSON.parse(msg.body) as RespuestaAlgoritmo).correcta === false
 				) {
-					toast.error("Simulación ha colapsado");
+					if (client) {
+						client.deactivate();
+						client.forceDisconnect();
+					}
+
+					toast.info("Simulación ha colapsado", { position: "top-center" });
 
 					setFlights([]);
-					await pauseSimulation(simulacion);
+					setEnvios([]);
+					pauseSimulationOnlyFrontend();
 					const saved_simu = { ...simulacion };
 					saved_simu.fechaDondeParoSimulacion = new Date();
 					setSimulationContext(saved_simu);
@@ -129,7 +145,7 @@ function SimulationPage() {
 					return;
 				}
 
-				console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
+				// console.log("MENSAJE DE /algoritmo/respuesta: ", JSON.parse(msg.body) as RespuestaAlgoritmo);
 				const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 				setSimulation((prev) => {
@@ -142,31 +158,34 @@ function SimulationPage() {
 
 				setCurrentTime(data.simulacion);
 
-				let _paquetes: Paquete[] = [];
+				let db_envios: Envio[] = [];
 				await api(
 					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}`,
-					(data: Paquete[]) => {
-						console.log(`Data from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, data);
-						_paquetes = [...data];
+					`${process.env.NEXT_PUBLIC_API}/back/simulacion/obtenerEnviosSimulacionEnCurso/${simulacion.id}`,
+					(data: Envio[]) => {
+						db_envios = data.map((envio) => {
+							envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+							envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+							return envio;
+						});
 					},
 					(error) => {
 						console.log(`Error from /back/simulacion/obtenerPaquetesSimulacionEnCurso/${simulacion.id}: `, error);
-						_paquetes = [];
+						db_envios = [];
 					}
 				);
 
-				const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 				const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 				setFlights(db_vuelos);
 				setEnvios(db_envios);
 				setEstadoAlmacen(db_estadoAlmacen);
+				console.log("Se actualizo el mapa por mensaje de algoritmo/respuesta");
 			});
 			client.subscribe("/algoritmo/estado", (msg) => {
 				if ((JSON.parse(msg.body) as RespuestaEstado).simulacion.id !== simulacion.id) return;
 
-				console.log("MENSAJE DE /algoritmo/estado: ", JSON.parse(msg.body) as RespuestaEstado);
+				console.log("MENSAJE DE /algoritmo/estado: ", (JSON.parse(msg.body) as RespuestaEstado).estado);
 				const data: RespuestaEstado = JSON.parse(msg.body);
 				setLoadingMessages((prev) => [...prev, data.estado]);
 			});
@@ -217,41 +236,51 @@ function SimulationPage() {
 
 	useEffect(() => {
 		async function finishSimulation() {
-			if (currentTime && simulation) {
-				const date1 = new Date(currentTime);
-				const date2 = new Date(simulation.fechaInicioSim);
-				const diffTime = Math.abs(date2.getTime() - date1.getTime());
-				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-				if (diffDays > 7) {
-					toast.info("Simulation ended successfully", {
-						position: "bottom-center",
-					});
+			if (currentTime === undefined || simulation === undefined) return;
 
-					await api(
-						"PUT",
-						`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
-						(data: any) => {
-							console.log("Respuesta de /back/simulacion/detener: ", data);
-						},
-						(error) => {
-							console.log("Error en /back/simulacion/detener: ", error);
-						},
-						simulation
-					);
-
-					setFlights([]);
-
-					await pauseSimulation(simulation);
-
-					const saved_simu = { ...simulation };
-					saved_simu.fechaDondeParoSimulacion = new Date();
-					setSimulationContext(saved_simu);
-					router.push("/simulation/results");
-				}
+			if (client) {
+				client.deactivate();
+				client.forceDisconnect();
 			}
+
+			toast.info("Simulación terminada con éxito", {
+				position: "bottom-center",
+                closeButton: true,
+			});
+
+			await api(
+				"PUT",
+				`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+				(data: any) => {
+					console.log("Respuesta de /back/simulacion/detener: ", data);
+				},
+				(error) => {
+					console.log("Error en /back/simulacion/detener: ", error);
+				},
+				simulation
+			);
+
+			setFlights([]);
+			setEnvios([]);
+			pauseSimulationOnlyFrontend();
+
+			const saved_simu = { ...simulation };
+			saved_simu.fechaDondeParoSimulacion = new Date();
+			setSimulationContext(saved_simu);
+
+			console.log("Redirecting to /simulation/results");
+			router.push("/simulation/results");
 		}
 
-		finishSimulation();
+		if (currentTime && simulation) {
+			const date1 = new Date(currentTime);
+			const date2 = new Date(simulation.fechaInicioSim);
+			const diffTime = Math.abs(date2.getTime() - date1.getTime());
+			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+			if (diffDays > 7) {
+				finishSimulation();
+			}
+		}
 	}, [currentTime, simulation]);
 
 	const filtered_vuelos = useMemo(() => {
@@ -272,13 +301,36 @@ function SimulationPage() {
 				setIsModalOpen={setIsStoppingModalOpen}
 				simulation={simulation}
 				redirectToReport={async () => {
-					setFlights([]);
 					if (simulation === undefined) {
 						toast.error("No se ha cargado la simulación");
 						return;
 					}
 
-					await pauseSimulation(simulation);
+					if (client) {
+						client.deactivate();
+						client.forceDisconnect();
+					}
+
+					toast.info("Simulación terminada con éxito", {
+						position: "bottom-center",
+                        closeButton: true,
+					});
+
+					await api(
+						"PUT",
+						`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+						(data: any) => {
+							console.log("Respuesta de /back/simulacion/detener: ", data);
+						},
+						(error) => {
+							console.log("Error en /back/simulacion/detener: ", error);
+						},
+						simulation
+					);
+
+					setFlights([]);
+					setEnvios([]);
+					pauseSimulationOnlyFrontend();
 
 					const saved_simu = { ...simulation };
 					saved_simu.fechaDondeParoSimulacion = new Date();
@@ -288,14 +340,39 @@ function SimulationPage() {
 			/>
 			<MainContainer className="relative">
 				<MapHeader>
-					<BreadcrumbCustom items={breadcrumbItems} />
+					<BreadcrumbCustom
+						items={breadcrumbItems}
+						onClickAnyLink={async () => {
+							if (simulation === undefined) return;
+							console.log("Desactivando simulación y conexion a socket");
+
+							if (client) {
+								client.deactivate();
+								client.forceDisconnect();
+							}
+
+							await api(
+								"PUT",
+								`${process.env.NEXT_PUBLIC_API}/back/simulacion/detener`,
+								(data: any) => {
+									console.log("Respuesta de /back/simulacion/detener: ", data);
+								},
+								(error) => {
+									console.log("Error en /back/simulacion/detener: ", error);
+								},
+								simulation
+							);
+
+							pauseSimulationOnlyFrontend();
+						}}
+					/>
 					<div className="flex flex-row gap-4 items-center ">
 						<h1 className="text-4xl font-bold font-poppins">Visualizador de simulación</h1>
 						<CurrentTime currentTime={currentTime} />
 					</div>
 				</MapHeader>
 
-				<PlaneLegend className="absolute bottom-[115px] right-7 z-[50]" />
+				<PlaneLegend className="absolute bottom-[155px] right-7 z-[50]" />
 
 				<AverageOcupation
 					className="absolute top-24 right-14 z-[20]"
@@ -306,6 +383,7 @@ function SimulationPage() {
 				/>
 
 				<div className="flex flex-col items-end justify-center gap-1 absolute bottom-10 right-6 z-[20]">
+					<SimulationIndicator simulation={simulation} />
 					<ElapsedRealTime>{getTimeByMs(elapsedRealTime)}</ElapsedRealTime>
 					<ElapsedSimuTime>{getTimeByMs(elapsedSimulationTime)}</ElapsedSimuTime>
 				</div>

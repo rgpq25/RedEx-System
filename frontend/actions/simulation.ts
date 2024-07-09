@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
-import { Simulacion } from "@/lib/types";
+import { Simulacion, SimulationType } from "@/lib/types";
 
-export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion> => {
+export const startWeeklySimulation = async (startDate: Date, simulationType: SimulationType): Promise<Simulacion> => {
 	let idSimulacion: number = 0;
 	let simulacion: Simulacion | undefined = undefined;
 	const finishDate = new Date(startDate);
@@ -12,7 +12,7 @@ export const startWeeklySimulation = async (startDate: Date): Promise<Simulacion
 		fechaInicioSim: startDate,
 		fechaFinSim: finishDate,
 		fechaInicioSistema: new Date(),
-		multiplicadorTiempo: 270,
+		multiplicadorTiempo: simulationType === "weekly" ? 270 : 100,
 	};
 
 	await api(

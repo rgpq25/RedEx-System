@@ -102,34 +102,36 @@ function DailyOperationsPage() {
 			client.onConnect = () => {
 				console.log("Connected to WebSocket");
 				client.subscribe("/algoritmo/diaDiaRespuesta", async (msg) => {
-					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
+					// console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 					if (data.iniciandoPrimeraPlanificacionDiaDia === false) {
 						setIsLoadingFirstTime(false);
 					}
 
-					let _paquetes: Paquete[] = [];
+					let db_envios: Envio[] = [];
 					await api(
 						"GET",
-						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-						(data: Paquete[]) => {
-							console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
-							_paquetes = [...data];
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+						(data: Envio[]) => {
+							db_envios = data.map((envio) => {
+								envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+								envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+								return envio;
+							});
 						},
 						(error) => {
-							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-							_paquetes = [];
+							console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+							db_envios = [];
 						}
 					);
-					console.log(" ===== Finished fetching paquetes");
 
-					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
 					setEnvios(db_envios);
 					setEstadoAlmacen(db_estadoAlmacen);
+					console.log("Se actualizó el mapa por mensaje de /algoritmo/diaDiaRespuesta");
 				});
 				client.subscribe("/algoritmo/diaDiaEstado", (msg) => {
 					console.log("MENSAJE DE /algoritmo/diaDiaEstado: ", msg.body);
@@ -200,7 +202,17 @@ function DailyOperationsPage() {
 	return (
 		<MainContainer className="relative">
 			<MapHeader>
-				<BreadcrumbCustom items={breadcrumbItems} />
+				<BreadcrumbCustom
+					items={breadcrumbItems}
+					onClickAnyLink={async () => {
+						console.log("Desactivando conexion a socket");
+
+						if (client) {
+							client.deactivate();
+							client.forceDisconnect();
+						}
+					}}
+				/>
 				<div className="flex flex-row gap-4 items-center ">
 					<h1 className="text-4xl font-bold font-poppins">Operaciones día a día</h1>
 					<CurrentTime currentTime={currentTime} />

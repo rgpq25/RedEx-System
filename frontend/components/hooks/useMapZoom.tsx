@@ -20,6 +20,7 @@ export type MapZoomAttributes = {
 	pauseSimulation: (_simu: Simulacion) => Promise<void>;
 	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => Promise<void>;
 	getCurrentlyPausedTime: () => number;
+	pauseSimulationOnlyFrontend: () => void;
 };
 
 const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0): MapZoomAttributes => {
@@ -155,6 +156,16 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		}
 	};
 
+	const pauseSimulationOnlyFrontend = () => {
+		if (curInterval.current) {
+			console.log("Pausing simulation");
+			clearInterval(curInterval.current);
+			curInterval.current = null;
+			pausingTime.current = new Date().getTime();
+			isTimerPaused.current = true;
+		}
+	};
+
 	const playSimulation = async (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => {
 		//set the new simulation object with the new milisegundosPausados;
 		if (pausingTime.current !== null) {
@@ -248,6 +259,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		pauseSimulation,
 		playSimulation,
 		getCurrentlyPausedTime,
+		pauseSimulationOnlyFrontend
 	};
 };
 

@@ -72,7 +72,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 			almacen: array_vuelos[array_vuelos.length - 1].planVuelo.ciudadDestino,
 			vuelo: null,
 			fecha1: array_vuelos[array_vuelos.length - 1].fechaLlegada,
-			fecha2: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 5 * 60 * 1000),
+			fecha2: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
 			chip: { color: "purple", descripcion: "En aeropuerto destino" },
 		});
 
@@ -80,7 +80,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 			type: "entrega",
 			almacen: null,
 			vuelo: null,
-			fecha1: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 5 * 60 * 1000),
+			fecha1: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
 			fecha2: null,
 			chip: { color: "green", descripcion: "Entregado" },
 		});
@@ -132,7 +132,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 
 	return (
 		<div className={cn("flex flex-col gap-2 p-5 overflow-hidden", className)}>
-			<p className="font-poppins text-2xl font-medium">Planes de ruta de envios (Ultima planificacion)</p>
+			<p className="font-poppins text-2xl font-medium">Planes de ruta de envíos (Última planificación)</p>
 			<div className="flex flex-row items-center gap-1">
 				<Combobox value={selectedEnvio} setValue={setSelectedEnvio} envios={reporteData} />
 				<SelectPaquete selectedPaquete={selectedPaquete} setSelectedPaquete={setSelectedPaquete} selectedEnvio={selectedEnvio} />
@@ -141,7 +141,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 			{selectedEnvio !== null && (
 				<>
 					<div className="px-4 mt-2">
-						<p className="text-xl font-medium">Informacion del envio:</p>
+						<p className="text-xl font-medium">Informacion del envío:</p>
 						<p>{`Origen - Destino: ${selectedEnvio.envio.ubicacionOrigen.ciudad}, ${selectedEnvio.envio.ubicacionOrigen.pais} (${selectedEnvio.envio.ubicacionOrigen.id}) - ${selectedEnvio.envio.ubicacionDestino.ciudad}, ${selectedEnvio.envio.ubicacionDestino.pais} (${selectedEnvio.envio.ubicacionDestino.id})`}</p>
 						<p>{`Fecha de recepcion: ${formatDateTimeLongShort(selectedEnvio.envio.fechaRecepcion)}`}</p>
 						<p>{`Cantidad de paquetes: ${selectedEnvio.envio.cantidadPaquetes}`}</p>
@@ -169,7 +169,7 @@ function PlanRutaEnvios({ className, reporteData, finishSimTime }: { className: 
 							))}
 						</Stepper>
 					) : (
-						<p className="m-auto text-muted-foreground">Seleccione un envio para ver su plan de ruta</p>
+						<p className="m-auto text-muted-foreground">Seleccione un envío para ver su plan de ruta</p>
 					)}
 				</div>
 			</div>
