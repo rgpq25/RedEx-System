@@ -18,6 +18,7 @@ import java.lang.Thread;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
+import pucp.e3c.redex_back.service.TimeService;
 import pucp.e3c.redex_back.service.VueloService;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -63,6 +65,9 @@ public class Algoritmo {
     private int nConsultasDiaDia = 0;
 
     private boolean puedeRecibirPaquetesDiaDia = true;
+
+    @Autowired
+    private TimeService timeService;
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -146,7 +151,8 @@ public class Algoritmo {
                 break;
 
             long start = System.currentTimeMillis();
-            Date now = new Date();
+            //Date now = new Date();
+            Date now = timeService.now();
 
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
@@ -190,6 +196,7 @@ public class Algoritmo {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
             calendar.add(Calendar.MINUTE, 2);
+            LOGGER.info(tipoOperacion + " Fecha agregada, inicio Grafo: " + calendar.getTime());
 
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
@@ -202,7 +209,7 @@ public class Algoritmo {
                 }
                 primeraIteracionConPaquetes = false;
             } else {
-                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService);
+                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService, timeService);
                 // grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
             }
 
@@ -373,7 +380,7 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Inicio Calculo Estado Almacen, NO PUEDE recibir paquetes");
             this.puedeRecibirPaquetesDiaDia = false;
 
-            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, new Date());
+            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
 
             if (nuevosPaquetes != null) {
                 LOGGER.info(tipoOperacion + " Se encontraron " + nuevosPaquetes.size() + " nuevos paquetes");
@@ -1731,7 +1738,8 @@ public class Algoritmo {
         if (paquetes == null) {
             return envios;
         }
-        Date now = new Date();
+        //Date now = new Date();
+        Date now = timeService.now();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                         && (p.isEntregado() == false))
@@ -1757,7 +1765,8 @@ public class Algoritmo {
         // test time
         long start = System.currentTimeMillis();
         List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
-        Date now = new Date();
+        //Date now = new Date();
+        Date now = timeService.now();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                         && (p.isEntregado() == false))
@@ -1844,7 +1853,8 @@ public class Algoritmo {
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId, PaqueteService paqueteService) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
-        Date fechaCorte = new Date();
+        //Date fechaCorte = new Date();
+        Date fechaCorte = timeService.now();
 
         for (int i = 0; i < this.paquetesOpDiaDia.size(); i++) {
             Paquete paquete = this.paquetesOpDiaDia.get(i);

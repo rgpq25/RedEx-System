@@ -30,6 +30,7 @@ import pucp.e3c.redex_back.model.Ubicacion;
 import pucp.e3c.redex_back.service.AeropuertoService;
 import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.TimeService;
 import pucp.e3c.redex_back.service.UbicacionService;
 
 @RestController
@@ -51,6 +52,9 @@ public class EnvioController {
 
     @Autowired
     private UbicacionService ubicacionService;
+
+    @Autowired
+    private TimeService timeService;
 
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger("EnvioController");
 
@@ -81,6 +85,9 @@ public class EnvioController {
             fecha_maxima_entrega_GMTDestino,destino.getZonaHoraria(),"UTC");     
         envio.setFechaLimiteEntrega(fecha_maxima_entrega_GMT0);
         envio.setFechaLimiteEntregaZonaHorariaDestino(fecha_maxima_entrega_GMTDestino);
+        if(envio.getSimulacionActual() == null){
+            envio.setFechaRecepcion(timeService.now());
+        }
         envio = envioService.register(envio);
         //Envio envioBD = envioService.get(envio.getId());
         while(true){

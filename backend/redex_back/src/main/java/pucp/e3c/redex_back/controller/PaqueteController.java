@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pucp.e3c.redex_back.model.Paquete;
 import pucp.e3c.redex_back.service.PaqueteService;
+import pucp.e3c.redex_back.service.TimeService;
 
 @RestController
 @CrossOrigin(origins = "https://inf226-981-3c.inf.pucp.edu.pe")
@@ -24,6 +25,9 @@ import pucp.e3c.redex_back.service.PaqueteService;
 public class PaqueteController {
     @Autowired
     private PaqueteService paqueteService;
+
+    @Autowired
+    private TimeService timeService;
 
     @PostMapping(value = "/")
     public Paquete register(@RequestBody Paquete paquete) {
@@ -68,7 +72,8 @@ public class PaqueteController {
     @GetMapping(value = "/envio_sin_simulacion/{id}")
     public ArrayList<Paquete> getPaquetesDelEvioNoSimulacion(@PathVariable("id") Integer id) {
         ArrayList<Paquete> paquetes = (ArrayList<Paquete>) paqueteService.findByEnvioId(id);
-        Date fechaCorte = new Date();
+        //Date fechaCorte = new Date();
+        Date fechaCorte = timeService.now();
         for (Paquete paquete : paquetes) {
             paquete = paqueteService.getPaqueteNoSimulacion(paquete.getId(),fechaCorte);
         }
@@ -88,7 +93,8 @@ public class PaqueteController {
 
     @GetMapping(value = "/sin_simulacion/{id}")
     public Paquete getPaqueteNoSimulacion(@PathVariable("id") Integer id) {
-        Date fechaCorte = new Date();
+        //Date fechaCorte = new Date();
+        Date fechaCorte = timeService.now();
         return paqueteService.getPaqueteNoSimulacion(id,fechaCorte);
     }
 }
