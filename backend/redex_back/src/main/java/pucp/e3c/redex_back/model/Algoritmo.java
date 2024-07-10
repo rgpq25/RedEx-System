@@ -2,6 +2,7 @@ package pucp.e3c.redex_back.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,9 +57,13 @@ public class Algoritmo {
 
     private ArrayList<PlanRutaNT> planRutasSimulacion = new ArrayList<>();
 
-    private ArrayList<Paquete> paquetesOpDiaDia = new ArrayList<>();
+    //private ArrayList<Paquete> paquetesOpDiaDia = new ArrayList<>();
 
-    private ArrayList<PlanRutaNT> planRutasOpDiaDia = new ArrayList<>();
+    //private ArrayList<PlanRutaNT> planRutasOpDiaDia = new ArrayList<>();
+
+    private HashMap<Integer, Paquete> hashTodosPaquetesDiaDia = new HashMap<>();
+
+    private HashMap<Integer, PlanRutaNT> hashPlanRutasNTDiaDia = new HashMap<>();
 
     private EstadoAlmacen estadoAlmacenOpDiaDia = new EstadoAlmacen();
 
@@ -142,8 +147,8 @@ public class Algoritmo {
         boolean primeraIteracionConPaquetes = true;
         ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
         GrafoVuelos grafoVuelos = null;
-        HashMap<Integer, Paquete> hashTodosPaquetes = new HashMap<>();
-        HashMap<Integer, PlanRutaNT> hashPlanRutasNT = new HashMap<>();
+        //HashMap<Integer, Paquete> hashTodosPaquetesDiaDia = new HashMap<>();
+        //HashMap<Integer, PlanRutaNT> hashPlanRutasNTDiaDia = new HashMap<>();
 
         // Loop principal del día a día
         while (true) {
@@ -157,15 +162,15 @@ public class Algoritmo {
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
             if (paquetesDiaDia != null) {
-                LOGGER.info(tipoOperacion + " Se encontraron " + paquetesDiaDia.size() + " paquetes para procesar.");
-                paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNT, now, aeropuertoService,
+                LOGGER.info(tipoOperacion + " Se encontraron " + paquetesDiaDia.size() + " paquetes correspondientes a Dia Dia.");
+                paquetesDiaDia = actualizarPaquetesDiaDia(paquetesDiaDia, hashPlanRutasNTDiaDia, now, aeropuertoService,
                         paqueteService);
                 LOGGER.info(tipoOperacion + " Paquetes actualizados");
             }
 
             // Agregar paquetes al hash map
             for (Paquete paquete : paquetesDiaDia) {
-                hashTodosPaquetes.put(paquete.getId(), paquete);
+                hashTodosPaquetesDiaDia.put(paquete.getId(), paquete);
             }
 
             // Filtrar paquetes por entrega y fecha de recepción
@@ -215,25 +220,15 @@ public class Algoritmo {
 
             // Agregar PlanRutaNT para los paquetes que no tienen
             for (Paquete paquete : paquetes) {
-                hashPlanRutasNT.computeIfAbsent(paquete.getId(), k -> new PlanRutaNT());
+                hashPlanRutasNTDiaDia.computeIfAbsent(paquete.getId(), k -> new PlanRutaNT());
             }
 
             LOGGER.info(tipoOperacion + " Planificacion iniciada");
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificación iniciada");
 
             // Ordenar paquetes por fecha de recepción
-            // CAMBIO AQUI .filter(p -> !p.isEntregado())
             paquetes.sort(Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
-            /*
-             * List<Paquete> filteredPaquetes = paquetes.stream()
-             * .filter(p -> p.obtenerFechaRecepcion().before(now)
-             * && (p.getFechaDeEntrega() == null
-             * || !p.getFechaDeEntrega().before(now)))
-             * .collect(Collectors.toList());
-             */
-
-            // ArrayList<Paquete> paquetesAL = new ArrayList<>(paquetes);
             LOGGER.info(tipoOperacion + " Filtro entrega");
             List<Paquete> paquetesProcesarFiltrados = paquetes.stream()
                     .filter(p -> (p.getFechaDeEntrega() == null)
@@ -247,7 +242,7 @@ public class Algoritmo {
             ArrayList<PlanRutaNT> temp_planesRutaActuales = new ArrayList<>();
 
             for (int j = 0; j < paquetesProcesarFiltrados.size(); j++) {
-                temp_planesRutaActuales.add(hashPlanRutasNT.get(paquetesProcesarFiltrados.get(j).getId()));
+                temp_planesRutaActuales.add(hashPlanRutasNTDiaDia.get(paquetesProcesarFiltrados.get(j).getId()));
             }
             LOGGER.info(tipoOperacion + " Filtrando vuelos Array Temp Construido");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
@@ -277,7 +272,7 @@ public class Algoritmo {
             ArrayList<PlanRutaNT> planRutasPaquetesProcesar = new ArrayList<>();
             ArrayList<Integer> idsPaquetesProcesar = new ArrayList<>();
             for (Paquete paquete : paquetesProcesar) {
-                PlanRutaNT planRutaNT = hashPlanRutasNT.get(paquete.getId());
+                PlanRutaNT planRutaNT = hashPlanRutasNTDiaDia.get(paquete.getId());
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
@@ -322,22 +317,21 @@ public class Algoritmo {
             }
             
             i++;
-            // ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
             // Actualizar el hash map de rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
             for (int j = 0; j < idsPaquetesProcesar.size(); j++) {
-                hashPlanRutasNT.put(idsPaquetesProcesar.get(j), planRutasRespuestaAlgoritmo.get(j));
+                hashPlanRutasNTDiaDia.put(idsPaquetesProcesar.get(j), planRutasRespuestaAlgoritmo.get(j));
             }
 
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
 
             realizarGuardadoDiaDia(paquetesProcesar, planRutasRespuestaAlgoritmo, paqueteService, planRutaService,
-                    vueloService, planRutaXVueloService, hashTodosPaquetes);
+                    vueloService, planRutaXVueloService, hashTodosPaquetesDiaDia);
 
             HashMap<Integer, Integer> nuevaOcupacion = new HashMap<>();
             // LLena la nuevaOcupacion recorriendo cada vuelo de cada planruta en planRutas
-            List<PlanRutaNT> listPlanRutasNT = new ArrayList<>(hashPlanRutasNT.values());
+            List<PlanRutaNT> listPlanRutasNT = new ArrayList<>(hashPlanRutasNTDiaDia.values());
             if (listPlanRutasNT != null) {
                 for (PlanRutaNT planRutaNT : listPlanRutasNT) {
                     if (planRutaNT.getVuelos() != null) {
@@ -371,31 +365,31 @@ public class Algoritmo {
                 }
             }
 
+            this.puedeRecibirPaquetesDiaDia = false;
+            LOGGER.info(tipoOperacion + " Inicio Calculo Estado Almacen, NO PUEDE recibir paquetes");
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
             ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
-            for (Entry<Integer, Paquete> entry : hashTodosPaquetes.entrySet()) {
+            for (Entry<Integer, Paquete> entry : hashTodosPaquetesDiaDia.entrySet()) {
                 currentPaquetes.add(entry.getValue());
-                currentPlanRutas.add(hashPlanRutasNT.get(entry.getKey()));
+                currentPlanRutas.add(hashPlanRutasNTDiaDia.get(entry.getKey()));
             }
-            LOGGER.info(tipoOperacion + " Inicio Calculo Estado Almacen, NO PUEDE recibir paquetes");
-            this.puedeRecibirPaquetesDiaDia = false;
-
+            
             ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
 
-            if (nuevosPaquetes != null) {
+            /*if (nuevosPaquetes != null) {
                 LOGGER.info(tipoOperacion + " Se encontraron " + nuevosPaquetes.size() + " nuevos paquetes");
                 currentPaquetes.addAll(nuevosPaquetes);
                 currentPlanRutas.addAll(Collections.nCopies(nuevosPaquetes.size(), new PlanRutaNT()));
             } else {
                 LOGGER.info(tipoOperacion + " No se encontraron nuevos paquetes");
-            }
+            }*/
 
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
 
             //verificacion de colapso en almacen
-            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));
 
             colapso = colapsoVuelos || colapsoAlmacen;
 
@@ -413,6 +407,9 @@ public class Algoritmo {
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
+
+                estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+                
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
@@ -424,8 +421,8 @@ public class Algoritmo {
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
             // ".txt");
             this.estadoAlmacenOpDiaDia = estadoAlmacen;
-            this.paquetesOpDiaDia = currentPaquetes;
-            this.planRutasOpDiaDia = currentPlanRutas;
+            //this.paquetesOpDiaDia = currentPaquetes;
+            //this.planRutasOpDiaDia = currentPlanRutas;
 
             // Formar respuesta para el front
             respuestaAlgoritmo.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
@@ -1735,8 +1732,10 @@ public class Algoritmo {
 
     public List<Envio> obtener_envios_dia_dia() {
         List<Envio> envios = new ArrayList<>();
-        List<Paquete> paquetes = this.paquetesOpDiaDia;
-        if (paquetes == null) {
+        //List<Paquete> paquetes = this.paquetesOpDiaDia;
+        Collection<Paquete> paquetesCollection = this.hashTodosPaquetesDiaDia.values();
+        List<Paquete> paquetes = new ArrayList<>(paquetesCollection);
+        if (paquetes.isEmpty()) {
             return envios;
         }
         //Date now = new Date();
@@ -1765,7 +1764,11 @@ public class Algoritmo {
     public List<Paquete> obtenerPaquetesActualesDiaDia(PaqueteService paqueteService) {
         // test time
         long start = System.currentTimeMillis();
-        List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
+        Collection<Paquete> paquetesCollection = this.hashTodosPaquetesDiaDia.values();
+        List<Paquete> paquetes = new ArrayList<>(paquetesCollection);
+        if (paquetes.isEmpty()) {
+            return paquetes;
+        }
         //Date now = new Date();
         Date now = timeService.now();
         paquetes = paquetes.stream()
@@ -1856,12 +1859,27 @@ public class Algoritmo {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
         //Date fechaCorte = new Date();
         Date fechaCorte = timeService.now();
+        List<Paquete> paquetes = new ArrayList<>();
+        List<PlanRutaNT> planRutas = new ArrayList<>();
+        /*for (Entry<Integer, Paquete> entry : hashTodosPaquetesDiaDia.entrySet()){
+            if(entry.getValue().getEnvio().getFechaRecepcion().before(fechaCorte)){
+                paquetes.add(entry.getValue());
+                planRutas.add(hashPlanRutasNTDiaDia.get(entry.getKey()));
+            }
+        }*/
 
-        for (int i = 0; i < this.paquetesOpDiaDia.size(); i++) {
-            Paquete paquete = this.paquetesOpDiaDia.get(i);
+        hashTodosPaquetesDiaDia.entrySet().stream()
+        .filter(entry -> entry.getValue().getEnvio().getFechaRecepcion().before(fechaCorte))
+        .forEach(entry -> {
+            paquetes.add(entry.getValue());
+            planRutas.add(hashPlanRutasNTDiaDia.get(entry.getKey()));
+        });
+
+        for (int i = 0; i < paquetes.size(); i++) {
+            Paquete paquete = paquetes.get(i);
             ArrayList<Vuelo> vuelos = new ArrayList<>();
-            if (this.planRutasOpDiaDia.get(i) != null) {
-                vuelos = this.planRutasOpDiaDia.get(i).getVuelos();
+            if (planRutas.get(i) != null) {
+                vuelos = planRutas.get(i).getVuelos();
             }
 
             Collections.sort(vuelos, Comparator.comparing(Vuelo::getFechaSalida));
@@ -1907,8 +1925,28 @@ public class Algoritmo {
     }
 
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
-        this.paquetesOpDiaDia.add(paquete);
-        this.planRutasOpDiaDia.add(new PlanRutaNT());
+        //this.paquetesOpDiaDia.add(paquete);
+        //this.planRutasOpDiaDia.add(new PlanRutaNT());
+
+        while(true){
+            if(this.isPuedeRecibirPaquetesDiaDia()){
+                //LOGGER.info("Envio: " + envio.getId() + " - Fecha de recepcion: " + envio.getFechaRecepcion() + " Va a guardar paquetes");
+                break;
+            }
+            else{
+                LOGGER.info("DIA DIA Paquete: " + paquete.getId() + " NO PUEDE guardar paquetes AHORA");
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Error en sleep");
+                }
+                continue;
+            }
+        }
+
+        this.hashTodosPaquetesDiaDia.put(paquete.getId(), paquete);
+        this.hashPlanRutasNTDiaDia.put(paquete.getId(), new PlanRutaNT());
+
         // String aeropuerto = paquete.getEnvio().getUbicacionOrigen().getId();
         // EstadoAlmacen estado =
         // this.ultimaRespuestaOperacionDiaDia.getEstadoAlmacen();
