@@ -612,7 +612,7 @@ function Aeropuertos({
         if (hasSearchFilter) {
             filteredAeropuertos = filteredAeropuertos?.filter(
                 (aeropuerto) =>
-                    aeropuerto.ubicacion.ciudadAbreviada.toLowerCase().includes(search.toLowerCase()) ||
+                    aeropuerto.ubicacion.id.toLowerCase().includes(search.toLowerCase()) ||
                     aeropuerto.ubicacion.ciudad.toLowerCase().includes(search.toLowerCase())
             );
         }
@@ -649,7 +649,7 @@ function Aeropuertos({
                 >
                     <CardHeader>
                         <Large>
-                            {aeropuerto.ubicacion.ciudad} ({aeropuerto.ubicacion.ciudadAbreviada.toUpperCase()})
+                            {aeropuerto.ubicacion.ciudad} ({aeropuerto.ubicacion.id.toUpperCase()})
                         </Large>
                     </CardHeader>
                     <CardContent>
