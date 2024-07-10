@@ -169,6 +169,17 @@ export type RespuestaAlgoritmo = {
 	iniciandoPrimeraPlanificacionDiaDia: boolean;
 };
 
+export type RespuestaDiaDia = {
+	correcta: boolean;
+	estadoAlmacen: EstadoAlmacen;
+	planesRutas: PlanRuta[];
+	simulacion: Simulacion;
+	vuelos: Vuelo[];
+	paquetes: Paquete[];
+	iniciandoPrimeraPlanificacionDiaDia: boolean;
+	fechaActualDiaDia: Date | string;
+}
+
 export type RespuestaEstado = {
 	estado: string;
 	simulacion: Simulacion;

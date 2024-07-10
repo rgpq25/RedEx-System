@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import pucp.e3c.redex_back.service.TimeService;
 import pucp.e3c.redex_back.service.VueloService;
 
 @Component
@@ -150,8 +151,8 @@ public class GrafoVuelos {
         Optional<Paquete> maxEntregaPaquete = paquetes.stream()
                 .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
 
-        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(new Date());
-        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+        Date inicio = minRecepcionPaquete.map(p -> p.getEnvio().getFechaRecepcion()).orElse(fechaPlanificacionDiaDia);
+        Date fin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(fechaPlanificacionDiaDia);
 
         fecha_inicio = inicio;
         fecha_fin = fin;
@@ -207,7 +208,7 @@ public class GrafoVuelos {
     }
 
     public void agregarVuelosParaPaquetesDiaDia(ArrayList<PlanVuelo> planV, ArrayList<Paquete> nuevosPaquetes,
-            VueloService vueloService) {
+            VueloService vueloService, TimeService timeService) {
         // LOGGER.info("GrafoVuelos.agregarVuelosParaPaquetesDiaDia Inicio " +
         // this.fecha_fin.toString());
         Calendar cal = Calendar.getInstance();
@@ -218,7 +219,7 @@ public class GrafoVuelos {
         // tempInicio.toString());
         Optional<Paquete> maxEntregaPaquete = nuevosPaquetes.stream()
                 .max(Comparator.comparing(p -> p.getEnvio().getFechaLimiteEntrega()));
-        Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(new Date());
+        Date nuevaFechaFin = maxEntregaPaquete.map(p -> p.getEnvio().getFechaLimiteEntrega()).orElse(timeService.now());
 
         ArrayList<Vuelo> vuelos = generarVuelos(planV, tempInicio, nuevaFechaFin);
 
@@ -620,8 +621,19 @@ public class GrafoVuelos {
                     paquete, tiempoEnSimulacion, TA);
             if (rutaEncontrada == null && rutaPrevia.getVuelos().size() <= 0) {
                 System.out.println(
-                        "No se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
+                        "En fecha: " + tiempoEnSimulacion
+                                + " no se pudo encontrar una ruta para el paquete, y tampoco tenia ruta previa "
                                 + paquete.toString());
+
+                for (Vuelo vuelo : vuelos_hash.values()) {
+                    System.out.println("Imprimiendo Vuelos");
+                    if ((vuelo.getPlanVuelo().getCiudadOrigen() == paquete.getEnvio().getUbicacionOrigen()
+                            && vuelo.getFechaSalida().after(paquete.getEnvio().getFechaRecepcion())) ||
+                            (vuelo.getPlanVuelo().getCiudadDestino() == paquete.getEnvio().getUbicacionDestino()
+                                    && vuelo.getFechaLlegada().before(paquete.getEnvio().getFechaLimiteEntrega()))) {
+                        System.out.println(vuelo.toString());
+                    }
+                }
                 return null;
 
             }

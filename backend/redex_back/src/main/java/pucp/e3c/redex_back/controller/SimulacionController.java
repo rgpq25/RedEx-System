@@ -193,6 +193,8 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio
+                    + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 
@@ -296,7 +298,7 @@ public class SimulacionController {
     @PutMapping("/detener")
     public ResponseEntity<Simulacion> detenerSimulacion(@RequestBody Simulacion simulacion) {
         simulacion = simulacionService.get(simulacion.getId());
-        if (simulacion.getEstado() == 0) {
+        if (simulacion.getEstado() != 1) {
             simulacion.setEstado(1);
             Simulacion updatedSimulacion = simulacionService.update(simulacion);
             return new ResponseEntity<>(updatedSimulacion, HttpStatus.OK);
@@ -370,7 +372,7 @@ public class SimulacionController {
             algoritmo.loopPrincipal(aeropuertos, planVuelos, paquetes,
                     vueloService, planRutaService, paqueteService, aeropuertoService, planRutaXVueloService,
                     simulacionService, simulacion,
-                    60, 20);
+                    60, 60);
         });
 
         return simulacion;
@@ -432,6 +434,8 @@ public class SimulacionController {
                 registrarEnvio.setSimulacion(simulacion);
                 registrarEnvios.add(registrarEnvio);
             }
+            LOGGER.info("Cantidad de envios a registrar: " + registrarEnvios.size() + " en las fechas: " + fechaInicio
+                    + " - " + fechaFin);
 
             ArrayList<Envio> envios = envioService.registerAllByRegistrarEnvio(registrarEnvios, aeropuertoMap);
 

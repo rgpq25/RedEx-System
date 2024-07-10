@@ -324,12 +324,12 @@ public class AeropuertoController {
         return paquetesEnAeropuerto;
     }
 
-    public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {
+    /*public void actualizaPaquetesNoSimulacion(ArrayList<Paquete> paquetes) {
         Date fechaCorte = new Date();
         for (Paquete paquete : paquetes) {
             paquete = paqueteService.actualizaEstadoPaqueteNoSimulacion(paquete,fechaCorte);
         }
-    }
+    }*/
 
     /*@GetMapping(value = "/{idAeropuerto}/paquetes")
     public ArrayList<Paquete> getPaquetes(@PathVariable("idAeropuerto") Integer idAeropuerto) {

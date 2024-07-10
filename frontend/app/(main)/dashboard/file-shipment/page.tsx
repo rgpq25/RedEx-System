@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { H1, Large, Lead, Muted } from "@/components/ui/typography";
+import { H1, Large, Lead, Muted, Small } from "@/components/ui/typography";
 import { FileUp } from "lucide-react";
 
 import { RowShipmentType } from "@/lib/types";
@@ -188,8 +188,10 @@ export default function FileShipment() {
                         id='check'
                         checked={useCustomDate}
                         onCheckedChange={() => setUseCustomDate(!useCustomDate)}
-                    />
+                    /> 
                     <Label htmlFor='check'>Usar fecha actual del sistema para todos los envíos</Label>
+                    
+                    {/* <Small>Se usa la fecha actual del sistema para todos los envios</Small> */}
                 </div>
                 <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
                     <DatePicker

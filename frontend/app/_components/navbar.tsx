@@ -31,13 +31,13 @@ function Navbar({
                     Red<span className="text-mainRed">Ex</span>
                 </p>
             </Link>
-            {hasNavigation && (
+            {/* {hasNavigation && (
                 <ul className="flex justify-center items-center gap-3 flex-1 ">
                     <Button variant="ghost">Nosotros</Button>
                     <Button variant="ghost">Servicios</Button>
                     <Button variant="ghost">Preguntas</Button>
                 </ul>
-            )}
+            )} */}
             {hasLoginButton && (
                 <div className="flex-1  flex justify-end">
                     <Link

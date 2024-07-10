@@ -245,7 +245,9 @@ public class SAImplementation {
 			 */
 			ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
 			if (paquetesSinSentido != null) {
+
 				for (Paquete paquete : paquetesSinSentido) {
+					planificacion_fallida = true;
 					// System.out.println("Paquete sin sentido: " + paquete.toString());
 					LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
 				}

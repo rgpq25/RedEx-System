@@ -11,7 +11,7 @@ export type MapZoomAttributes = {
 	elapsedSimulationTime: number;
 	currentlyLockedFlight: Vuelo | null;
 	setCurrentTime: (simulacion: Simulacion) => void;
-	setCurrentTimeNoSimulation: () => void;
+	setCurrentTimeNoSimulation: (startDate: Date) => void;
 	map: MapType | null;
 	setMap: (map: MapType) => void;
 	zoomToAirport: (airport: Aeropuerto) => void;
@@ -91,14 +91,21 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		return () => clearInterval(interval);
 	};
 
-	const handleSetTimeNoSimulation = () => {
+	const handleSetTimeNoSimulation = (startDate: Date) => {
 		if (curInterval.current !== null) return;
-		const curDate = new Date();
+		const curDate = startDate;
 		setCurrentTime(curDate);
 
 		const interval = setInterval(() => {
-			const newDate = new Date();
-			setCurrentTime(newDate);
+			// const newDate = new Date();
+			//the new date is just going to be +1 each interval, but considering the time that has passed since the start
+
+			setCurrentTime((prev)=>{
+				if(prev){
+					return new Date(prev.getTime() + 1000);
+				}
+				return new Date();
+			});
 		}, 1000);
 
 		curInterval.current = interval;
@@ -259,7 +266,7 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		pauseSimulation,
 		playSimulation,
 		getCurrentlyPausedTime,
-		pauseSimulationOnlyFrontend
+		pauseSimulationOnlyFrontend,
 	};
 };
 

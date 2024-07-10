@@ -149,7 +149,7 @@ function AirportModal({ isSimulation, isOpen, setIsOpen, aeropuerto, simulacion,
 					(data: Paquete[]) => {
 						const _paquetes_filtrados = getPackagesFromAirport(estadoAlmacen, aeropuerto.ubicacion.id, currentTime, data);
 						setPaquetes(_paquetes_filtrados);
-						setFechaConsulta(new Date());
+						setFechaConsulta(new Date(currentTime));
 						setIsLoading(false);
 					},
 					(error) => {
