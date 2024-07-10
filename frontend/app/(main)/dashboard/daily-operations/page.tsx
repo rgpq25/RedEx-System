@@ -2,7 +2,7 @@
 import Sidebar from "@/app/_components/sidebar";
 import useMapZoom from "@/components/hooks/useMapZoom";
 import BreadcrumbCustom, { BreadcrumbItem } from "@/components/ui/breadcrumb-custom";
-import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, Vuelo } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, RespuestaAlgoritmo, RespuestaDiaDia, Vuelo } from "@/lib/types";
 import CurrentTime from "@/app/_components/current-time";
 import PlaneLegend from "@/app/_components/plane-legend";
 import MainContainer from "../../_components/main-container";
@@ -102,7 +102,7 @@ function DailyOperationsPage() {
 			client.onConnect = () => {
 				console.log("Connected to WebSocket");
 				client.subscribe("/algoritmo/diaDiaRespuesta", async (msg) => {
-					// console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
+					console.log("MENSAJE DE /algoritmo/diaDiaRespuesta: ", JSON.parse(msg.body));
 					const data: RespuestaAlgoritmo = JSON.parse(msg.body);
 
 					if (data.iniciandoPrimeraPlanificacionDiaDia === false) {
@@ -145,9 +145,9 @@ function DailyOperationsPage() {
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
-				async (data: RespuestaAlgoritmo) => {
+				async (data: RespuestaDiaDia) => {
 					console.log("DATA DE operacionesDiaDia/diaDiaRespuesta: ", data);
-					setCurrentTimeNoSimulation();
+					setCurrentTimeNoSimulation(new Date(data.fechaActualDiaDia));
 
 					if (data.iniciandoPrimeraPlanificacionDiaDia === true) {
 						setIsLoadingFirstTime(true);
