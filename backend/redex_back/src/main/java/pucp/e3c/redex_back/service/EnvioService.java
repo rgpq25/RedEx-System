@@ -413,6 +413,9 @@ public class EnvioService {
             Envio envio = Funciones.stringToEnvio(envioString, ubicacionMap,
                     null,
                     aeropuertoRepository);
+            if(envio.getFechaLimiteEntrega().before(timeService.now())){
+                continue;
+            }
             Envio envioGuardado = envioRepository.save(envio);
             envios.add(envioGuardado);
             //LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
