@@ -308,8 +308,8 @@ public class Algoritmo {
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
-                respuestaAlgoritmo = new RespuestaAlgoritmo();
-                respuestaAlgoritmo.setCorrecta(false);
+                //respuestaAlgoritmo = new RespuestaAlgoritmo();
+                //respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
@@ -410,7 +410,7 @@ public class Algoritmo {
 
                 estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
                 
-                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                //respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
