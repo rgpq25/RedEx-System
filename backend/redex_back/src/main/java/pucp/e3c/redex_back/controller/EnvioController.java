@@ -152,7 +152,7 @@ public class EnvioController {
             aeropuertoMap.put(aeropuerto.getUbicacion().getId(), aeropuerto);
         }
 
-        ArrayList<Envio> envios = envioService.registerAllEnviosByString(enviosString, aeropuertoMap, paqueteService);
+        ArrayList<Envio> envios = envioService.registerAllEnviosByStringMasivo(enviosString, aeropuertoMap, paqueteService);
 
         int totalPaquetes = envios.stream()
                 .mapToInt(envio -> envio.getCantidadPaquetes())

@@ -400,7 +400,7 @@ public class EnvioService {
         return envios;
     }
 
-    public ArrayList<Envio> registerAllEnviosByString(ArrayList<String> enviosString,
+    public ArrayList<Envio> registerAllEnviosByStringMasivo(ArrayList<String> enviosString,
             HashMap<String, Aeropuerto> hashAeropuertos, PaqueteService paqueteService) {
         List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
         HashMap<String, Ubicacion> ubicacionMap = new HashMap<String, Ubicacion>();
@@ -415,7 +415,7 @@ public class EnvioService {
                     aeropuertoRepository);
             Envio envioGuardado = envioRepository.save(envio);
             envios.add(envioGuardado);
-            LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
+            //LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
         }
         // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 
