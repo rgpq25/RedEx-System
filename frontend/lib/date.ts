@@ -109,3 +109,7 @@ export function formatDateTimeLongShortWithSeconds (date: Date | string): string
 export function currentTimeString (): string {
     return new Date().toLocaleTimeString(localeIdentifier, { hour: "2-digit", minute: "2-digit" });
 }
+
+export function getTimeString(date: string): string {
+    return new Date(date).toLocaleTimeString(localeIdentifier, { hour: "2-digit", minute: "2-digit" });
+} 

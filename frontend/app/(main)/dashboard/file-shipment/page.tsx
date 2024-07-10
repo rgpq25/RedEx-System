@@ -14,26 +14,41 @@ import { FileUp } from "lucide-react";
 import { RowShipmentType } from "@/lib/types";
 import { ShipmentTable } from "../_components/shipment-table";
 
-import { api } from "@/lib/api";
-import { currentTimeString } from "@/lib/date";
+import { api, apiT } from "@/lib/api";
+import { currentTimeString, getTimeString } from "@/lib/date";
 import { Label } from "@/components/ui/label";
 import { DatePicker } from "@/components/ui/date-picker";
+
+// API to get the date from backend server.
+const getCurrentDate = async () => {
+    try {
+        const response = await apiT<string>(
+            "GET",
+            `${process.env.NEXT_PUBLIC_API}/back/time/now`
+        );
+        return response;
+    } catch (error) {
+        console.error("Error al obtener la fecha del servidor", error);
+    }
+};
 
 export default function FileShipment() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | undefined>(undefined);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-    const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedTime, setSelectedTime] = useState<string>('');
     const [shipments, setShipments] = useState<RowShipmentType[]>([]);
     const [loading, setLoading] = useState(false);
     const [useCustomDate, setUseCustomDate] = useState(false);
     const isDisabled = shipments.length === 0 || loading;
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            const now = new Date();
-            setSelectedDate(now);
-            setSelectedTime(now.toTimeString().split(" ")[0].substring(0, 5));
+        const intervalId = setInterval(async () => {
+            let stringDate = await getCurrentDate();
+            let date = new Date(stringDate || '');
+
+            setSelectedDate(new Date(date));
+            setSelectedTime(getTimeString(stringDate || ''));
         }, 1000);
 
         return () => clearInterval(intervalId); // Cleanup interval on component unmount
