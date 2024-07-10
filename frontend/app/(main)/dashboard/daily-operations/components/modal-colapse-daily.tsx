@@ -1,6 +1,7 @@
 import {
 	AlertDialog,
 	AlertDialogAction,
+	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
@@ -19,6 +20,9 @@ function ModalColapseDaily({ open, onOpenChange }: { open: boolean; onOpenChange
 						completada.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel>Cerrar</AlertDialogCancel>
+				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
 	);
