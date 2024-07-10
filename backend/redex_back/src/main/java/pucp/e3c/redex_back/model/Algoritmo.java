@@ -18,6 +18,7 @@ import java.lang.Thread;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
+import pucp.e3c.redex_back.service.TimeService;
 import pucp.e3c.redex_back.service.VueloService;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -63,6 +65,9 @@ public class Algoritmo {
     private int nConsultasDiaDia = 0;
 
     private boolean puedeRecibirPaquetesDiaDia = true;
+
+    @Autowired
+    private TimeService timeService;
 
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -146,7 +151,8 @@ public class Algoritmo {
                 break;
 
             long start = System.currentTimeMillis();
-            Date now = new Date();
+            //Date now = new Date();
+            Date now = timeService.now();
 
             // Obtener paquetes para operaciones del día a día
             paquetesDiaDia = paqueteService.findPaquetesOperacionesDiaDia();
@@ -190,6 +196,7 @@ public class Algoritmo {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
             calendar.add(Calendar.MINUTE, 2);
+            LOGGER.info(tipoOperacion + " Fecha agregada, inicio Grafo: " + calendar.getTime());
 
             // Crear o actualizar el grafo de vuelos
             if (primeraIteracionConPaquetes) {
@@ -202,7 +209,7 @@ public class Algoritmo {
                 }
                 primeraIteracionConPaquetes = false;
             } else {
-                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService);
+                grafoVuelos.agregarVuelosParaPaquetesDiaDia(planVuelos, paquetes, vueloService, timeService);
                 // grafoVuelos.agregarVuelosParaPaquetes(planVuelos, paquetes, vueloService);
             }
 
@@ -279,6 +286,41 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
                     planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA);
+            if (respuestaAlgoritmo == null) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println(tipoOperacion + " Colpaso en fecha " + now);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+                return;
+            }
+
+            if (respuestaAlgoritmo.isCorrecta() == false) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + now);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println(tipoOperacion +" Colpaso en fecha " + now);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+                return;
+            }
+            
             i++;
             // ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
@@ -313,6 +355,22 @@ public class Algoritmo {
 
             ocupacionVuelos = nuevaOcupacion;
 
+            HashMap<Integer, Vuelo> hashVuelos = grafoVuelos.getVuelosHash();
+            //Revision de colapso en caso de Ocupacion de Vuelos
+            boolean colapso = false;
+            boolean colapsoVuelos = false;
+            boolean colapsoAlmacen = false;
+            for (Integer idVuelo : hashVuelos.keySet()) {
+                if (ocupacionVuelos.get(idVuelo) == null) {
+                    // LOGGER.info(tipoOperacion + " Ocupacion de vuelos vacio.");
+                    continue;
+                }
+                if (ocupacionVuelos.get(idVuelo) > hashVuelos.get(idVuelo).getPlanVuelo().getCapacidadMaxima()) {
+                    // colapso = true;
+                    colapsoVuelos = true;
+                }
+            }
+
             ArrayList<Paquete> currentPaquetes = new ArrayList<>();
             ArrayList<PlanRutaNT> currentPlanRutas = new ArrayList<>();
             for (Entry<Integer, Paquete> entry : hashTodosPaquetes.entrySet()) {
@@ -322,7 +380,7 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Inicio Calculo Estado Almacen, NO PUEDE recibir paquetes");
             this.puedeRecibirPaquetesDiaDia = false;
 
-            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, new Date());
+            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
 
             if (nuevosPaquetes != null) {
                 LOGGER.info(tipoOperacion + " Se encontraron " + nuevosPaquetes.size() + " nuevos paquetes");
@@ -335,6 +393,33 @@ public class Algoritmo {
             EstadoAlmacen estadoAlmacen = new EstadoAlmacen(currentPaquetes, currentPlanRutas,
                     grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
+
+            //verificacion de colapso en almacen
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+
+            colapso = colapsoVuelos || colapsoAlmacen;
+
+            if (colapso) {
+                LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
+
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                // imprimir en un txt
+                try {
+                    // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                            "Colpaso en fecha " + now);
+                    // writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+                return;
+            }
 
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
             // ".txt");
@@ -981,6 +1066,23 @@ public class Algoritmo {
                 respuestaAlgoritmo.setCorrecta(false);
                 return null;
             }
+
+            if (respuestaAlgoritmo.isCorrecta() == false) {
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + tiempoEnSimulacion);
+                // imprimir en un txt
+                try {
+                    PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    writer.println("Colpaso en fecha " + tiempoEnSimulacion);
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+                simulacion.setEstado(3);
+                respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setSimulacion(simulacion);
+                respuestaAlgoritmo.setCorrecta(false);
+                return null;
+            }
             i++;
 
             // Guardar resultados
@@ -1600,7 +1702,8 @@ public class Algoritmo {
     }
 
     public RespuestaAlgoritmo getUltimaRespuestaOperacionDiaDia() {
-        return ultimaRespuestaOperacionDiaDia;
+        this.ultimaRespuestaOperacionDiaDia.setFechaActualDiaDia(timeService.now());
+        return this.ultimaRespuestaOperacionDiaDia;
     }
 
     public HashMap<Integer, List<Paquete>> getPaquetes_por_simulacion() {
@@ -1636,7 +1739,8 @@ public class Algoritmo {
         if (paquetes == null) {
             return envios;
         }
-        Date now = new Date();
+        //Date now = new Date();
+        Date now = timeService.now();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                         && (p.isEntregado() == false))
@@ -1662,7 +1766,8 @@ public class Algoritmo {
         // test time
         long start = System.currentTimeMillis();
         List<Paquete> paquetes = new ArrayList<>(this.paquetesOpDiaDia);
-        Date now = new Date();
+        //Date now = new Date();
+        Date now = timeService.now();
         paquetes = paquetes.stream()
                 .filter(p -> p.obtenerFechaRecepcion().before(now)
                         && (p.isEntregado() == false))
@@ -1749,7 +1854,8 @@ public class Algoritmo {
 
     public ArrayList<Paquete> obtenerPaquetesEnAeropuertoDiaDia(String aeropuertoId, PaqueteService paqueteService) {
         ArrayList<Paquete> paquetesEnAeropuerto = new ArrayList<>();
-        Date fechaCorte = new Date();
+        //Date fechaCorte = new Date();
+        Date fechaCorte = timeService.now();
 
         for (int i = 0; i < this.paquetesOpDiaDia.size(); i++) {
             Paquete paquete = this.paquetesOpDiaDia.get(i);

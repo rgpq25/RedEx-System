@@ -28,6 +28,7 @@ import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
 import pucp.e3c.redex_back.service.PlanVueloService;
 import pucp.e3c.redex_back.service.SimulacionService;
+import pucp.e3c.redex_back.service.TimeService;
 import pucp.e3c.redex_back.service.VueloService;
 
 @RestController
@@ -62,6 +63,9 @@ public class OperacionesDiaDiaController {
     @Autowired
     private Algoritmo algoritmo;
 
+    @Autowired
+    private TimeService timeService;
+
     @GetMapping(value = "/diaDiaRespuesta")
     public RespuestaAlgoritmo resendLastMessage() {
         return algoritmo.getUltimaRespuestaOperacionDiaDia();
@@ -75,7 +79,7 @@ public class OperacionesDiaDiaController {
 
     @GetMapping(value = "/fechaActual")
     public Date getFechaActual(){
-        return new Date();
+        return timeService.now();
     }
 
     @GetMapping("/obtenerPaquetes")

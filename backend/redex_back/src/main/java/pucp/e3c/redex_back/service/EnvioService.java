@@ -51,6 +51,9 @@ public class EnvioService {
     @Autowired
     PaqueteRepository paqueteRepository;
 
+    @Autowired
+    TimeService timeService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EnvioService.class);
 
     public Envio register(Envio envio) {
@@ -340,7 +343,8 @@ public class EnvioService {
             ubicacionMap.put(u.getId(), u);
         }
         ArrayList<Envio> envios = new ArrayList<>();
-        Date now = new Date();
+        //Date now = new Date();
+        Date now = timeService.now();
         for (String envioString : enviosString) {
 
             Envio envio = Funciones.stringToEnvioHoraSistemaEnvio(envioString, ubicacionMap,
