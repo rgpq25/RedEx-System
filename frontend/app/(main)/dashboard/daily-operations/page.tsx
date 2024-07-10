@@ -152,7 +152,6 @@ function DailyOperationsPage() {
 			client.activate();
 			setClient(client);
 
-			console.log("Getting data");
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
@@ -165,22 +164,23 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					let _paquetes: Paquete[] = [];
+					let db_envios: Envio[] = [];
 					await api(
 						"GET",
-						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-						(data: Paquete[]) => {
-							console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
-							_paquetes = [...data];
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+						(data: Envio[]) => {
+							db_envios = data.map((envio) => {
+								envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+								envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+								return envio;
+							});
 						},
 						(error) => {
-							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-							_paquetes = [];
+							console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+							db_envios = [];
 						}
 					);
-					console.log(" ===== Finished fetching paquetes");
 
-					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
@@ -191,6 +191,31 @@ function DailyOperationsPage() {
 					console.log(error);
 				}
 			);
+
+			const interval = setInterval(async () => {
+				let db_envios_inter: Envio[] = [];
+				await api(
+					"GET",
+					`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+					(data: Envio[]) => {
+						db_envios_inter = data.map((envio) => {
+							envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+							envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+							return envio;
+						});
+					},
+					(error) => {
+						console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+						db_envios_inter = [];
+					}
+				);
+				console.log(" ===== Finished fetching envios");
+				setEnvios(db_envios_inter);
+			}, 1000 * 60);
+
+			return () => {
+				clearInterval(interval);
+			};
 		}
 
 		getData();
