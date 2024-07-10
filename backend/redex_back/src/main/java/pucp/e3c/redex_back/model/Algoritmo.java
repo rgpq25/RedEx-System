@@ -222,18 +222,8 @@ public class Algoritmo {
             messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificación iniciada");
 
             // Ordenar paquetes por fecha de recepción
-            // CAMBIO AQUI .filter(p -> !p.isEntregado())
             paquetes.sort(Comparator.comparing(Paquete::obtenerFechaRecepcion));
 
-            /*
-             * List<Paquete> filteredPaquetes = paquetes.stream()
-             * .filter(p -> p.obtenerFechaRecepcion().before(now)
-             * && (p.getFechaDeEntrega() == null
-             * || !p.getFechaDeEntrega().before(now)))
-             * .collect(Collectors.toList());
-             */
-
-            // ArrayList<Paquete> paquetesAL = new ArrayList<>(paquetes);
             LOGGER.info(tipoOperacion + " Filtro entrega");
             List<Paquete> paquetesProcesarFiltrados = paquetes.stream()
                     .filter(p -> (p.getFechaDeEntrega() == null)
@@ -322,7 +312,6 @@ public class Algoritmo {
             }
             
             i++;
-            // ocupacionVuelos = respuestaAlgoritmo.getOcupacionVuelos();
 
             // Actualizar el hash map de rutas
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
