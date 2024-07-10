@@ -20,9 +20,11 @@ import {
 	structureEnviosFromPaquetes,
 } from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
-import { Plane, Warehouse } from "lucide-react";
+import { Plane, Warehouse, ZoomIn, ZoomOut } from "lucide-react";
 import { useFilteredFlightsContext } from "@/components/contexts/flights-filter";
 import AverageOcupation from "../../simulation/_components/average-ocupation";
+import AirplaneRouteHandler from "@/app/_components/airplane-route-handler";
+import { Button } from "@/components/ui/button";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -59,7 +61,16 @@ function DailyOperationsPage() {
 
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
+	const {
+		currentTime,
+		setCurrentTimeNoSimulation,
+		zoomToAirport,
+		lockToFlight,
+		isAllRoutesVisible,
+		setIsAllRoutesVisible,
+		zoomInSlightly,
+		zoomOutSlightly,
+	} = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
@@ -220,6 +231,21 @@ function DailyOperationsPage() {
 			</MapHeader>
 
 			<PlaneLegend className="absolute bottom-16 right-14 z-[50]" />
+
+			<AirplaneRouteHandler
+				className="absolute top-28 right-14 z-[20]"
+				isAllRoutesVisible={isAllRoutesVisible}
+				setIsAllRoutesVisible={setIsAllRoutesVisible}
+			/>
+
+			<div className="absolute top-[158px] right-14 z-[20] flex flex-row gap-1">
+				<Button size={"icon"} onClick={() => zoomInSlightly(0.1)}>
+					<ZoomIn className="w-5 h-5 shrink-0" />
+				</Button>
+				<Button size={"icon"} onClick={() => zoomOutSlightly(0.1)}>
+					<ZoomOut className="w-5 h-5 shrink-0" />
+				</Button>
+			</div>
 
 			<AverageOcupation
 				className="absolute top-10 right-14 z-[20]"

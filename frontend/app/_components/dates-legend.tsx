@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatDateTimeLongShortWithSeconds } from "@/lib/date";
 import { Large } from "@/components/ui/typography";
 
-function DatesLegend({ currentTime }: { currentTime: Date }) {
+function DatesLegend({ currentTime }: { currentTime: Date | undefined}) {
     const [realDate, setRealDate] = useState<Date>(new Date());
 
     useEffect(() => {

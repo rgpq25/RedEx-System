@@ -71,6 +71,31 @@ export function getTrayectory(vuelo: Vuelo) {
 	return dotPositions as [number, number][];
 }
 
+export function getTrayectoryFromPosition(vuelo: Vuelo, position: [number, number]) {
+	const dotPositions = [];
+	let steps = 50;
+
+	const originCoordinate = [position[1], position[0]] as [number, number];
+	const destinationCoordinate = [vuelo.planVuelo.ciudadDestino.latitud, vuelo.planVuelo.ciudadDestino.longitud] as [number, number];
+
+	const distance = Math.sqrt(
+		Math.pow(destinationCoordinate[0] - originCoordinate[0], 2) + Math.pow(destinationCoordinate[1] - originCoordinate[1], 2)
+	);
+
+	steps = Math.floor(distance / 2);
+
+	dotPositions.push(originCoordinate);
+	//we get 20 steps from the origin coordinate to the destination coordinate and return them in an array
+	for (let i = 0; i < steps; i++) {
+		const x = originCoordinate[0] + ((destinationCoordinate[0] - originCoordinate[0]) * i) / steps;
+		const y = originCoordinate[1] + ((destinationCoordinate[1] - originCoordinate[1]) * i) / steps;
+		dotPositions.push([x, y]);
+	}
+	dotPositions.push(destinationCoordinate);
+
+	return dotPositions as [number, number][];
+}
+
 export function getCurrentAirportOcupation_Old(estadoAlmacen: HistoricoValores, fecha: Date | undefined): number {
 	if (fecha === undefined) {
 		//console.log("Fecha no definida");
@@ -179,7 +204,7 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 	}
 
 	const newEnviosNoDuplicates = Array.from(envioMap.values());
-	
+
 	return {
 		db_envios: newEnviosNoDuplicates,
 	};
