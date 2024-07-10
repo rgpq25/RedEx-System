@@ -210,6 +210,35 @@ export function structureEnviosFromPaquetes(_paquetes: Paquete[]) {
 	};
 }
 
+
+export function structureEnviosFromPaquetesOnlyCurrentPaquetes(_paquetes: Paquete[]) {
+	const envioMap = new Map<number, Envio>();
+
+	for (const paquete of _paquetes) {
+		const envio = paquete.envio;
+
+		if (envioMap.has(envio.id) === false) {
+			envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+			envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+			envio.paquetes = [];
+			envio.cantidadPaquetes = 0;
+			envioMap.set(envio.id, envio);
+		}
+
+		const currentEnvio = envioMap.get(envio.id)!;
+		currentEnvio.paquetes.push(paquete);
+		currentEnvio.cantidadPaquetes++;
+	}
+
+	const newEnviosNoDuplicates = Array.from(envioMap.values());
+
+	return {
+		db_envios: newEnviosNoDuplicates,
+	};
+}
+
+
+
 export function getAirportHashmap(aeropuertos: Aeropuerto[]) {
 	const airportMap = new Map<string, Aeropuerto>();
 

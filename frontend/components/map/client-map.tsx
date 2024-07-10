@@ -123,7 +123,7 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 					})}
 			</MapContainer>
 		),
-		[currentTime, flights, airports]
+		[currentTime, flights, airports, isAllRoutesVisible, currentlyLockedFlight]
 	);
 
 	return (
