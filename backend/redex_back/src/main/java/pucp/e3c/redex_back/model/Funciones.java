@@ -586,7 +586,7 @@ public class Funciones {
     public ArrayList<PlanVuelo> leerPlanesVuelo(HashMap<String, Ubicacion> ubicacionMap, String inputPath)
             throws IOException {
         // Con esta funcion leeremos los planes_vuelo.v3.txt de /rawData
-        Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo_v2.txt");
+        Resource resource = resourceLoader.getResource("classpath:static/planes_vuelo_v3.txt");
         ArrayList<PlanVuelo> vuelos_list = new ArrayList<PlanVuelo>();
         InputStream input = resource.getInputStream();
 
