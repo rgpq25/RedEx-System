@@ -1,5 +1,5 @@
 "use client";
-import { getFlightPosition, getTrayectory } from "@/lib/map-utils";
+import { getFlightPosition, getTrayectoryFromPosition } from "@/lib/map-utils";
 import { Vuelo } from "@/lib/types";
 import { Icon } from "leaflet";
 import { useState } from "react";
@@ -11,6 +11,7 @@ interface PlaneMarkerProps {
 	currentTime: Date;
 	onClick: (vuelo: Vuelo) => void;
 	focusedAirplane: Vuelo | null;
+	isAllRoutesVisible: boolean;
 }
 
 function haversine(lon1: number, lat1: number, lon2: number, lat2: number) {
@@ -26,7 +27,7 @@ function haversine(lon1: number, lat1: number, lon2: number, lat2: number) {
 	return Math.round(R * c);
 }
 
-function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMarkerProps) {
+function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane, isAllRoutesVisible }: PlaneMarkerProps) {
 	const [isHovering, setIsHovering] = useState(false);
 
 	const coordinates = getFlightPosition(
@@ -36,6 +37,8 @@ function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMark
 		[vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud] as [number, number],
 		currentTime
 	);
+
+	const vueloTrayectoryLeft = isAllRoutesVisible === false ? [] : getTrayectoryFromPosition(vuelo, coordinates);
 
 	const kmLeft = haversine(coordinates[0], coordinates[1], vuelo.planVuelo.ciudadDestino.longitud, vuelo.planVuelo.ciudadDestino.latitud);
 
@@ -66,7 +69,9 @@ function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane }: PlaneMark
 
 	return (
 		<>
-			{isHovering && <Polyline positions={vuelo.posicionesRuta} lineJoin="round" />}
+			{isHovering === true && <Polyline positions={vuelo.posicionesRuta} lineJoin="round" />}
+
+			{isAllRoutesVisible === true && <Polyline positions={vueloTrayectoryLeft} lineJoin="round" className="stroke-[1px] stroke-mainRed" />}
 
 			{vuelo.id === focusedAirplane?.id && (
 				<Marker position={[coordinates[1], coordinates[0]] as [number, number]} icon={airplaneIndicator} zIndexOffset={52} />

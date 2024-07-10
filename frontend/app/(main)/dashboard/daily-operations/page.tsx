@@ -20,9 +20,11 @@ import {
 	structureEnviosFromPaquetes,
 } from "@/lib/map-utils";
 import { Map } from "@/components/map/map";
-import { Plane, Warehouse } from "lucide-react";
+import { Plane, Warehouse, ZoomIn, ZoomOut } from "lucide-react";
 import { useFilteredFlightsContext } from "@/components/contexts/flights-filter";
 import AverageOcupation from "../../simulation/_components/average-ocupation";
+import AirplaneRouteHandler from "@/app/_components/airplane-route-handler";
+import { Button } from "@/components/ui/button";
 
 const breadcrumbItems: BreadcrumbItem[] = [
 	{
@@ -59,7 +61,16 @@ function DailyOperationsPage() {
 
 	const attributes = useMapZoom();
 	const mapModalAttributes = useMapModals();
-	const { currentTime, setCurrentTimeNoSimulation, zoomToAirport, lockToFlight } = attributes;
+	const {
+		currentTime,
+		setCurrentTimeNoSimulation,
+		zoomToAirport,
+		lockToFlight,
+		isAllRoutesVisible,
+		setIsAllRoutesVisible,
+		zoomInSlightly,
+		zoomOutSlightly,
+	} = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
 	const [airports, setAirports] = useState<Aeropuerto[]>([]);
@@ -141,7 +152,6 @@ function DailyOperationsPage() {
 			client.activate();
 			setClient(client);
 
-			console.log("Getting data");
 			await api(
 				"GET",
 				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/diaDiaRespuesta`,
@@ -154,22 +164,23 @@ function DailyOperationsPage() {
 						return;
 					}
 
-					let _paquetes: Paquete[] = [];
+					let db_envios: Envio[] = [];
 					await api(
 						"GET",
-						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerPaquetes`,
-						(data: Paquete[]) => {
-							console.log("DATA DE operacionesDiaDia/obtenerPaquetes: ", data);
-							_paquetes = [...data];
+						`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+						(data: Envio[]) => {
+							db_envios = data.map((envio) => {
+								envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+								envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+								return envio;
+							});
 						},
 						(error) => {
-							console.log(`Error from /back/operacionesDiaDia/obtenerPaquetes: `, error);
-							_paquetes = [];
+							console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+							db_envios = [];
 						}
 					);
-					console.log(" ===== Finished fetching paquetes");
 
-					const { db_envios } = structureEnviosFromPaquetes(_paquetes);
 					const { db_vuelos, db_estadoAlmacen } = structureDataFromRespuestaAlgoritmo(data);
 
 					setFlights(db_vuelos);
@@ -180,6 +191,31 @@ function DailyOperationsPage() {
 					console.log(error);
 				}
 			);
+
+			const interval = setInterval(async () => {
+				let db_envios_inter: Envio[] = [];
+				await api(
+					"GET",
+					`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+					(data: Envio[]) => {
+						db_envios_inter = data.map((envio) => {
+							envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+							envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+							return envio;
+						});
+					},
+					(error) => {
+						console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+						db_envios_inter = [];
+					}
+				);
+				console.log(" ===== Finished fetching envios");
+				setEnvios(db_envios_inter);
+			}, 1000 * 60);
+
+			return () => {
+				clearInterval(interval);
+			};
 		}
 
 		getData();
@@ -220,6 +256,21 @@ function DailyOperationsPage() {
 			</MapHeader>
 
 			<PlaneLegend className="absolute bottom-16 right-14 z-[50]" />
+
+			<AirplaneRouteHandler
+				className="absolute top-28 right-14 z-[20]"
+				isAllRoutesVisible={isAllRoutesVisible}
+				setIsAllRoutesVisible={setIsAllRoutesVisible}
+			/>
+
+			<div className="absolute top-[158px] right-14 z-[20] flex flex-row gap-1">
+				<Button size={"icon"} onClick={() => zoomInSlightly(0.1)}>
+					<ZoomIn className="w-5 h-5 shrink-0" />
+				</Button>
+				<Button size={"icon"} onClick={() => zoomOutSlightly(0.1)}>
+					<ZoomOut className="w-5 h-5 shrink-0" />
+				</Button>
+			</div>
 
 			<AverageOcupation
 				className="absolute top-10 right-14 z-[20]"

@@ -15,7 +15,7 @@ import { api , apiT} from "@/lib/api";
 import { toast } from "sonner";
 import Link from 'next/link'; 
 import { buttonVariants } from "@/components/ui/button"
-import { currentTimeString } from "@/lib/date";
+import { currentTimeString , getTimeString} from "@/lib/date";
 import { DatePicker } from "@/components/ui/date-picker";
 
 
@@ -108,6 +108,18 @@ function NavigationButtons({ api, currentStep, openConfirmDialog, validateSender
   );
 }
 
+const getCurrentDate = async () => {
+  try {
+      const response = await apiT<string>(
+          "GET",
+          `${process.env.NEXT_PUBLIC_API}/back/time/now`
+      );
+      return response;
+  } catch (error) {
+      console.error("Error al obtener la fecha del servidor", error);
+  }
+};
+
 function RegisterShipmentPage() {
 
   const [carouselApi, setCarouselApi] = React.useState<CarouselApi>();
@@ -133,15 +145,17 @@ function RegisterShipmentPage() {
   const [receiverNames, setReceiverNames] = useState('');
   const [receiverSurnames, setReceiverSurnames] = useState('');
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedTime, setSelectedTime] = useState<string>('');
 
 
   useEffect(() => {
-      const intervalId = setInterval(() => {
-          const now = new Date();
-          setSelectedDate(now);
-          setSelectedTime(now.toTimeString().split(" ")[0].substring(0, 5));
+    const intervalId = setInterval(async () => {
+      let stringDate = await getCurrentDate();
+      let date = new Date(stringDate || '');
+
+      setSelectedDate(new Date(date));
+      setSelectedTime(getTimeString(stringDate || ''));
       }, 1000);
 
       return () => clearInterval(intervalId); // Cleanup interval on component unmount
@@ -287,10 +301,15 @@ function RegisterShipmentPage() {
       console.log("data respuesta: cliente receptor", receiverClientResponse);
       */
       // Datos para el envío
+
+      const fecha_back = await apiT<RegisterResponse>("GET", `${process.env.NEXT_PUBLIC_API}/back/time/now`);
+      console.log("Fecha traida de back: " + fecha_back);
+
+      console.log("Fecha registrada en frontend: " + formattedDate);
       const dataToSend = {
         ubicacionOrigen: { id: originLocationId },
         ubicacionDestino: { id: destinationLocationId },
-        fechaRecepcion: formattedDate,
+        fechaRecepcion: fecha_back,
         fechaLimiteEntrega: "",
         estado: 'En Almacen',
         cantidadPaquetes: packagesCount,
@@ -299,13 +318,13 @@ function RegisterShipmentPage() {
         receptor: { id: receiverUserResponse.cliente.id }, // Suponemos que tienes el ID del receptor de alguna manera
       };
       
-      console.log("fecha registro", formattedDate);
       console.log("data enviada al back/envio", dataToSend);
 
       // Registrar el envío
       const registerResponse = await apiT<RegisterResponse>("POST", `${process.env.NEXT_PUBLIC_API}/back/envio/`,   dataToSend);
       console.log(registerResponse);
 
+      
 
       const dataToEmailSender = {
           toEmail: senderEmail,
@@ -318,7 +337,7 @@ function RegisterShipmentPage() {
           "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
           "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
           "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
-          "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+          "Hora de Registro: " + fecha_back + "\n" ,
       };
 
       const dataToEmailReceiver = {
@@ -332,7 +351,7 @@ function RegisterShipmentPage() {
         "Cantidad de paquetes: " + dataToSend.cantidadPaquetes + "\n"+
         "Lugar de Origen: " + (origin_location ? origin_location.ciudad : "Desconocido") + " " + (origin_location ? origin_location.pais : "Desconocido") + "\n" +
         "Lugar de Destino: " + (destination_location ? destination_location.ciudad : "Desconocido") + " " + (destination_location ? destination_location.pais : "Desconocido") + "\n" +
-        "Hora de Registro: " + dataToSend.fechaRecepcion + "\n" ,
+        "Hora de Registro: " + fecha_back + "\n" ,
     };
 
       const emailsender = await api("POST", `${process.env.NEXT_PUBLIC_API}/back/email/send`, handleSuccess, handleError, dataToEmailSender);

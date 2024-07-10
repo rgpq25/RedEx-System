@@ -21,6 +21,10 @@ export type MapZoomAttributes = {
 	playSimulation: (oldSimulation: Simulacion, setSimulation: (simulacion: Simulacion) => void) => Promise<void>;
 	getCurrentlyPausedTime: () => number;
 	pauseSimulationOnlyFrontend: () => void;
+	isAllRoutesVisible: boolean;
+	setIsAllRoutesVisible: (value: boolean) => void;
+	zoomInSlightly: (zoomFactor: number) => void;
+	zoomOutSlightly: (zoomFactor: number) => void;
 };
 
 const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0): MapZoomAttributes => {
@@ -36,6 +40,20 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 	const [elapsedRealTime, setElapsedRealTime] = useState<number>(0);
 	const [currentlyLockedFlight, setCurrentlyLockedFlight] = useState<Vuelo | null>(null);
 	const [isLockedToFlight, setIsLockedToFlight] = useState(false);
+
+	const [isAllRoutesVisible, setIsAllRoutesVisible] = useState(false);
+
+	const zoomInSlightly = (zoomFactor: number) => {
+		if (map) {
+			map.zoomIn(zoomFactor);
+		}
+	};
+
+	const zoomOutSlightly = (zoomFactor: number) => {
+		if (map) {
+			map.zoomOut(zoomFactor);
+		}
+	};
 
 	const handleSetTime = (simulacion: Simulacion) => {
 		if (isTimerPaused.current === true) return;
@@ -100,8 +118,8 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 			// const newDate = new Date();
 			//the new date is just going to be +1 each interval, but considering the time that has passed since the start
 
-			setCurrentTime((prev)=>{
-				if(prev){
+			setCurrentTime((prev) => {
+				if (prev) {
 					return new Date(prev.getTime() + 1000);
 				}
 				return new Date();
@@ -267,6 +285,10 @@ const useMapZoom = (initialZoom = 1, initialLongitude = 0, initialLatitude = 0):
 		playSimulation,
 		getCurrentlyPausedTime,
 		pauseSimulationOnlyFrontend,
+		isAllRoutesVisible,
+		setIsAllRoutesVisible,
+		zoomInSlightly,
+		zoomOutSlightly,
 	};
 };
 

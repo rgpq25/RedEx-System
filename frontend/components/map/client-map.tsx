@@ -43,7 +43,7 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 		}
 	);
 
-	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight, getCurrentlyPausedTime } = attributes;
+	const { currentTime, map, setMap, zoomToAirport, lockToFlight, zoomToUbicacion, currentlyLockedFlight, getCurrentlyPausedTime, isAllRoutesVisible } = attributes;
 
 	const {
 		isAirportModalOpen,
@@ -74,6 +74,7 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 				className="z-[10]"
 				ref={setMap as LegacyRef<MapType>}
 				zoomControl={false}
+				zoomSnap={0.1}
 			>
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -116,6 +117,7 @@ function ClientMap({ isSimulation, mapModalAttributes, attributes, flights, simu
 									openFlightModal(vuelo);
 								}}
 								focusedAirplane={currentlyLockedFlight}
+								isAllRoutesVisible={isAllRoutesVisible}
 							/>
 						);
 					})}
