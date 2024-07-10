@@ -71,7 +71,7 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 	return (
 		<div className="flex-1 flex flex-col mt-2 overflow-x-hidden">
 			<div className="flex items-center">
-				<p className="text-lg font-medium">{data.length} paquete(s)</p>
+				<p className="text-lg font-medium">{data.length} envío(s)</p>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">

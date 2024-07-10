@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { FlightTable } from "./flight-table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Envio, Paquete, Simulacion, Vuelo } from "@/lib/types";
+import { Envio, Paquete, Simulacion, Ubicacion, Vuelo } from "@/lib/types";
 import Chip from "../ui/chip";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -11,6 +11,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowUpDown, Loader2 } from "lucide-react";
 import { AirportTable } from "./airport-table";
+import { structureEnviosFromPaquetesOnlyCurrentPaquetes } from "@/lib/map-utils";
 
 interface FlightModalProps {
 	isSimulation: boolean;
@@ -20,7 +21,71 @@ interface FlightModalProps {
 	simulacion: Simulacion | undefined;
 }
 
-const columns: ColumnDef<Paquete>[] = [
+// const columns: ColumnDef<Paquete>[] = [
+// 	{
+// 		accessorKey: "numero",
+// 		header: ({ column }) => {
+// 			return (
+// 				<div className="flex items-center w-[40px]">
+// 					<p className="text-center w-full">Nro.</p>
+// 				</div>
+// 			);
+// 		},
+// 		cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
+// 	},
+// 	{
+// 		accessorKey: "envio",
+// 		header: ({ column }) => {
+// 			return (
+// 				<div className="flex items-center gap-1 flex-1">
+// 					<p>Envío asociado</p>
+// 					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+// 						<ArrowUpDown className="h-4 w-4" />
+// 					</Button> */}
+// 				</div>
+// 			);
+// 		},
+// 		cell: ({ row }) => <div className="truncate text-start flex-1">{(row.getValue("envio") as Envio).id }</div>,
+// 	},
+// 	{
+// 		accessorKey: "Origen",
+// 		header: ({ column }) => {
+// 			return (
+// 				<div className="flex items-center flex-1 w-[250px]">
+// 					<p>Origen</p>
+// 					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+// 						<ArrowUpDown className="h-4 w-4" />
+// 					</Button> */}
+// 				</div>
+// 			);
+// 		},
+// 		cell: ({ row }) => (
+// 			<div className="flex-1 truncate w-[250px]">
+// 				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais + " (" + (row.getValue("envio") as Envio).ubicacionOrigen.id + ")"}
+// 			</div>
+// 		),
+// 	},
+// 	{
+// 		accessorKey: "Destino",
+// 		header: ({ column }) => {
+// 			return (
+// 				<div className="flex items-center w-[250px]">
+// 					<p>Destino</p>
+// 					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
+// 						<ArrowUpDown className="h-4 w-4" />
+// 					</Button> */}
+// 				</div>
+// 			);
+// 		},
+// 		cell: ({ row }) => (
+// 			<div className="w-[250px] truncate">
+// 				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais + " (" + (row.getValue("envio") as Envio).ubicacionDestino.id + ")"}
+// 			</div>
+// 		),
+// 	}
+// ];
+
+const columns: ColumnDef<Envio>[] = [
 	{
 		accessorKey: "numero",
 		header: ({ column }) => {
@@ -33,60 +98,75 @@ const columns: ColumnDef<Paquete>[] = [
 		cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
 	},
 	{
-		accessorKey: "envio",
+		accessorKey: "id",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center gap-1 flex-1">
-					<p>Envío asociado</p>
-					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
-						<ArrowUpDown className="h-4 w-4" />
-					</Button> */}
+				<div className="flex items-center  gap-1">
+					<p>Envío</p>
 				</div>
 			);
 		},
-		cell: ({ row }) => <div className="truncate text-start flex-1">{(row.getValue("envio") as Envio).id }</div>,
+		cell: ({ row }) => <div className=" text-start">{row.getValue("id")}</div>,
 	},
+
 	{
-		accessorKey: "Origen",
+		accessorKey: "cantidadPaquetes",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center flex-1 w-[250px]">
+				<div className="flex items-center  gap-1">
+					<p># Paquetes</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className=" text-start">{row.getValue("cantidadPaquetes")}</div>,
+	},
+
+	{
+		accessorKey: "ubicacionOrigen",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center flex-grow flex-1">
 					<p>Origen</p>
-					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
-						<ArrowUpDown className="h-4 w-4" />
-					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="flex-1 truncate w-[250px]">
-				{(row.getValue("envio") as Envio).ubicacionOrigen.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionOrigen.pais + " (" + (row.getValue("envio") as Envio).ubicacionOrigen.id + ")"}
+			<div className="flex-1 truncate">
+				{(row.getValue("ubicacionOrigen") as Ubicacion).ciudad +
+					", " +
+					(row.getValue("ubicacionOrigen") as Ubicacion).pais +
+					" (" +
+					(row.getValue("ubicacionOrigen") as Ubicacion).id +
+					")"}
 			</div>
 		),
 	},
 	{
-		accessorKey: "Destino",
+		accessorKey: "ubicacionDestino",
 		header: ({ column }) => {
 			return (
-				<div className="flex items-center w-[250px]">
+				<div className="flex items-center  flex-grow flex-1">
 					<p>Destino</p>
-					{/* <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} size={"icon"}>
-						<ArrowUpDown className="h-4 w-4" />
-					</Button> */}
 				</div>
 			);
 		},
 		cell: ({ row }) => (
-			<div className="w-[250px] truncate">
-				{(row.getValue("envio") as Envio).ubicacionDestino.ciudad + ", " + (row.getValue("envio") as Envio).ubicacionDestino.pais + " (" + (row.getValue("envio") as Envio).ubicacionDestino.id + ")"}
+			<div className="flex-1 truncate">
+				{(row.getValue("ubicacionDestino") as Ubicacion).ciudad +
+					", " +
+					(row.getValue("ubicacionDestino") as Ubicacion).pais +
+					" (" +
+					(row.getValue("ubicacionDestino") as Ubicacion).id +
+					")"}
 			</div>
 		),
-	}
+	},
 ];
 
 function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: FlightModalProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [paquetes, setPaquetes] = useState<Paquete[]>([]);
+	const [envios, setEnvios] = useState<Envio[]>([]);
 
 	useEffect(() => {
 		async function getFlightShipments() {
@@ -109,8 +189,12 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					"GET",
 					`${process.env.NEXT_PUBLIC_API}/back/vuelo/${vuelo.id}/paquetes`,
 					(data: Paquete[]) => {
-						// console.log(data);
 						setPaquetes(data);
+
+						const { db_envios } = structureEnviosFromPaquetesOnlyCurrentPaquetes(data);
+						setEnvios(db_envios);
+						console.log(db_envios);
+
 						setIsLoading(false);
 					},
 					(error) => {
@@ -126,8 +210,12 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 					"GET",
 					`${process.env.NEXT_PUBLIC_API}/back/vuelo/${vuelo.id}/paquetes`,
 					(data: Paquete[]) => {
-						console.log(data);
 						setPaquetes(data);
+
+						const { db_envios } = structureEnviosFromPaquetesOnlyCurrentPaquetes(data);
+						setEnvios(db_envios);
+						console.log(db_envios);
+
 						setIsLoading(false);
 					},
 					(error) => {
@@ -187,7 +275,7 @@ function FlightModal({ isSimulation, isOpen, setIsOpen, vuelo, simulacion }: Fli
 										<Chip color="red">Alto</Chip>
 									))}
 							</div>
-							<AirportTable data={paquetes} columns={columns} />
+							<AirportTable data={envios} columns={columns} />
 						</div>
 					</>
 				)}

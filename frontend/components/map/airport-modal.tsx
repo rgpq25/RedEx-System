@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { AirportTable } from "./airport-table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Aeropuerto, Envio, EstadoAlmacen, Paquete, Simulacion } from "@/lib/types";
+import { Aeropuerto, Envio, EstadoAlmacen, Paquete, Simulacion, Ubicacion } from "@/lib/types";
 import Chip from "../ui/chip";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowUpDown, Loader2 } from "lucide-react";
-import { getPackagesFromAirport, structureEnviosFromPaquetes } from "@/lib/map-utils";
+import { getPackagesFromAirport, structureEnviosFromPaquetes, structureEnviosFromPaquetesOnlyCurrentPaquetes } from "@/lib/map-utils";
 
 interface AirportModalProps {
 	isSimulation: boolean;
@@ -22,7 +22,7 @@ interface AirportModalProps {
 	estadoAlmacen: EstadoAlmacen | null;
 }
 
-const columns: ColumnDef<Paquete>[] = [
+const columnsPaquete: ColumnDef<Paquete>[] = [
 	{
 		accessorKey: "numero",
 		header: ({ column }) => {
@@ -96,6 +96,84 @@ const columns: ColumnDef<Paquete>[] = [
 	},
 ];
 
+const columns: ColumnDef<Envio>[] = [
+	{
+		accessorKey: "numero",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center w-[40px]">
+					<p className="text-center w-full">Nro.</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className="text-muted-foreground text-center w-[40px]">{row.index + 1}</div>,
+	},
+	{
+		accessorKey: "id",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center  gap-1">
+					<p>Envío</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className=" text-start">{row.getValue("id")}</div>,
+	},
+
+	{
+		accessorKey: "cantidadPaquetes",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center  gap-1">
+					<p># Paquetes</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => <div className=" text-start">{row.getValue("cantidadPaquetes")}</div>,
+	},
+
+	{
+		accessorKey: "ubicacionOrigen",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center flex-grow flex-1">
+					<p>Origen</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => (
+			<div className="flex-1 truncate">
+				{(row.getValue("ubicacionOrigen") as Ubicacion).ciudad +
+					", " +
+					(row.getValue("ubicacionOrigen") as Ubicacion).pais +
+					" (" +
+					(row.getValue("ubicacionOrigen") as Ubicacion).id +
+					")"}
+			</div>
+		),
+	},
+	{
+		accessorKey: "ubicacionDestino",
+		header: ({ column }) => {
+			return (
+				<div className="flex items-center  flex-grow flex-1">
+					<p>Destino</p>
+				</div>
+			);
+		},
+		cell: ({ row }) => (
+			<div className="flex-1 truncate">
+				{(row.getValue("ubicacionDestino") as Ubicacion).ciudad +
+					", " +
+					(row.getValue("ubicacionDestino") as Ubicacion).pais +
+					" (" +
+					(row.getValue("ubicacionDestino") as Ubicacion).id +
+					")"}
+			</div>
+		),
+	},
+];
+
 function AirportModal({
 	isSimulation,
 	isOpen,
@@ -141,9 +219,9 @@ function AirportModal({
 						// const _paquetes_filtrados = getPackagesFromAirport(estadoAlmacen, aeropuerto.ubicacion.id, currentTime, data);
 
 						setPaquetes(data);
-						console.log("Paquetes ", data)
+						console.log("Paquetes ", data);
 
-						const { db_envios } = structureEnviosFromPaquetes(data);
+						const { db_envios } = structureEnviosFromPaquetesOnlyCurrentPaquetes(data);
 						setEnvios(db_envios);
 						console.log(db_envios);
 
@@ -167,9 +245,9 @@ function AirportModal({
 						// const _paquetes_filtrados = getPackagesFromAirport(estadoAlmacen, aeropuerto.ubicacion.id, currentTime, data);
 
 						setPaquetes(data);
-						console.log("Paquetes ", data)
+						console.log("Paquetes ", data);
 
-						const { db_envios } = structureEnviosFromPaquetes(data);
+						const { db_envios } = structureEnviosFromPaquetesOnlyCurrentPaquetes(data);
 						setEnvios(db_envios);
 						console.log(db_envios);
 
@@ -219,7 +297,7 @@ function AirportModal({
 										<Chip color="red">Alto</Chip>
 									))}
 							</div>
-							<AirportTable data={paquetes} columns={columns} />
+							<AirportTable data={envios} columns={columns} />
 						</div>
 					</>
 				)}
