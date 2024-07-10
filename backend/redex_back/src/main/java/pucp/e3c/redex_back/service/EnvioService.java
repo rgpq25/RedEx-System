@@ -415,7 +415,7 @@ public class EnvioService {
                     aeropuertoRepository);
             Envio envioGuardado = envioRepository.save(envio);
             envios.add(envioGuardado);
-            LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
+            //LOGGER.info("Envio guardado - Fecha de recepcion: " + envioGuardado.getFechaRecepcion());
         }
         // envios = (ArrayList<Envio>) envioRepository.saveAll(envios);
 

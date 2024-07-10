@@ -516,6 +516,10 @@ public class GrafoVuelos {
     }
 
     public ArrayList<Vuelo> obtenerVuelosEntreFechas(Ubicacion ciudadOrigen, Date fechaInicio, Date fechaFin) {
+        // Verificar que fechaInicio es menor o igual a fechaFin
+        if (fechaInicio.after(fechaFin)) {
+            throw new IllegalArgumentException("fechaInicio debe ser menor o igual a fechaFin");
+        }
         if (grafo.containsKey(ciudadOrigen)) {
             TreeMap<Date, Vuelo> vuelos = grafo.get(ciudadOrigen);
             // Creamos una lista a partir de la colección de vuelos en el rango dado
@@ -540,6 +544,9 @@ public class GrafoVuelos {
             fechaMinima = tiempoEnSimulacion;
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
+        }
+        if(fechaMinima.after(paquete.getEnvio().getFechaLimiteEntrega())) {
+            LOGGER.info("Paquete ID" + paquete.getId() + "Envio " + paquete.getEnvio().getId() + " Fecha minima mayor a fecha limite de entrega " + fechaMinima.toString() + " " + paquete.getEnvio().getFechaLimiteEntrega().toString());
         }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
                 paquete.getEnvio().getFechaLimiteEntrega());
