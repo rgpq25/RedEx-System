@@ -581,7 +581,8 @@ public class Algoritmo {
             Simulacion simulacion, int SAP, int TA) {
         Date fechaMinima = simulacion.getFechaInicioSim();
         boolean replanificar = false;
-        long milisegundosDeVentaja = 60000;
+        long milisegundosDeVentaja = (SAP + TA) * 1000;
+        System.out.println("\nSalto de consumo: " + (SAP + TA) * simulacion.multiplicadorTiempo + " segundos\n");
         String tipoOperacion = "SIMULACION SEMANAL";
         ArrayList<PlanRutaNT> planRutas = new ArrayList<>();
         this.paquetesSimulacion = paquetes;

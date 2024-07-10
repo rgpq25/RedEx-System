@@ -545,8 +545,10 @@ public class GrafoVuelos {
         } else {
             fechaMinima = paquete.getEnvio().getFechaRecepcion();
         }
-        if(fechaMinima.after(paquete.getEnvio().getFechaLimiteEntrega())) {
-            LOGGER.info("Paquete ID" + paquete.getId() + "Envio " + paquete.getEnvio().getId() + " Fecha minima mayor a fecha limite de entrega " + fechaMinima.toString() + " " + paquete.getEnvio().getFechaLimiteEntrega().toString());
+        if (fechaMinima.after(paquete.getEnvio().getFechaLimiteEntrega())) {
+            LOGGER.info("Paquete ID" + paquete.getId() + "Envio " + paquete.getEnvio().getId()
+                    + " Fecha minima mayor a fecha limite de entrega " + fechaMinima.toString() + " "
+                    + paquete.getEnvio().getFechaLimiteEntrega().toString());
         }
         ArrayList<Vuelo> vuelosPosibles = obtenerVuelosEntreFechas(actual, fechaMinima,
                 paquete.getEnvio().getFechaLimiteEntrega());
@@ -633,7 +635,6 @@ public class GrafoVuelos {
                                 + paquete.toString());
 
                 for (Vuelo vuelo : vuelos_hash.values()) {
-                    System.out.println("Imprimiendo Vuelos");
                     if ((vuelo.getPlanVuelo().getCiudadOrigen() == paquete.getEnvio().getUbicacionOrigen()
                             && vuelo.getFechaSalida().after(paquete.getEnvio().getFechaRecepcion())) ||
                             (vuelo.getPlanVuelo().getCiudadDestino() == paquete.getEnvio().getUbicacionDestino()

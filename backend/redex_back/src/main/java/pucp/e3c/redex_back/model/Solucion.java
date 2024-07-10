@@ -38,7 +38,7 @@ public class Solucion {
     public double costoDePaquetesYRutasErroneas;
 
     public GrafoVuelos grafoVuelos;
-
+    public ArrayList<Boolean> rutasValidas;
     HashMap<Integer, Vuelo> vuelos_hash;
 
     public Solucion(
@@ -83,6 +83,10 @@ public class Solucion {
             Date tiempoEnSimulacion, int TA) {
         // We do 5 attempts to try to initialize the solution
         ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
+        this.rutasValidas = new ArrayList<>();
+        for (int i = 0; i < this.paquetes.size(); i++) {
+            this.rutasValidas.add(false);
+        }
         for (int idx = 0; idx < this.paquetes.size(); idx++) {
             if (this.rutas.size() == 0) {
                 copiedRutas.add(new PlanRutaNT());
@@ -129,7 +133,15 @@ public class Solucion {
                 }
 
             }
+            for (int i = 0; i < this.paquetes.size(); i++) {
+                double[] costAndConteo = getCostoPaquete(i);
+                if (costAndConteo[1] > 0.0) {
+                    this.rutasValidas.set(i, false);
+                } else {
+                    this.rutasValidas.set(i, true);
 
+                }
+            }
             return true;
             // } else {
             // this.rutas.clear();
@@ -177,6 +189,26 @@ public class Solucion {
 
     }
 
+    private int generatePseudoRandomIndex(int size, double prob) {
+        if (Math.random() < prob) {
+            // Choose an index where rutasValidas is false
+            ArrayList<Integer> invalidIndexes = new ArrayList<>();
+            for (int j = 0; j < this.paquetes.size(); j++) {
+                if (!this.rutasValidas.get(j)) {
+                    invalidIndexes.add(j);
+                }
+            }
+            if (invalidIndexes.size() > 0) {
+                return invalidIndexes.get((int) (Math.random() * invalidIndexes.size()));
+            } else {
+                return (int) (Math.random() * this.paquetes.size());
+            }
+        } else {
+            // Choose any random index
+            return (int) (Math.random() * this.paquetes.size());
+        }
+    }
+
     public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA) {
 
         Solucion neighbour = new Solucion(
@@ -200,9 +232,9 @@ public class Solucion {
         int[] randomPackageIndexes = new int[windowSize];
         // System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
-            int randomIndex = (int) (Math.random() * this.paquetes.size());
+            int randomIndex = generatePseudoRandomIndex(this.paquetes.size(), 0.0);
             while (indexes.get(randomIndex) != null) {
-                randomIndex = (int) (Math.random() * this.paquetes.size());
+                randomIndex = generatePseudoRandomIndex(this.paquetes.size(), 0.0);
             }
             randomPackageIndexes[i] = randomIndex;
             indexes.put(randomPackageIndexes[i], true);
@@ -250,6 +282,19 @@ public class Solucion {
         // the airport capacity is exceeded
         // return generateNeighbour(todasLasRutas, windowSize);
         // } else {
+        neighbour.rutasValidas = new ArrayList<>();
+        for (int i = 0; i < neighbour.paquetes.size(); i++) {
+            neighbour.rutasValidas.add(false);
+        }
+        for (int i = 0; i < neighbour.paquetes.size(); i++) {
+            double[] costAndConteo = getCostoPaquete(i);
+            if (costAndConteo[1] > 0.0) {
+                neighbour.rutasValidas.set(i, false);
+            } else {
+                neighbour.rutasValidas.set(i, true);
+
+            }
+        }
         return neighbour;
         // }
 
