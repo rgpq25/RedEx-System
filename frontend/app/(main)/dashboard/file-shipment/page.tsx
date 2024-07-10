@@ -26,7 +26,7 @@ export default function FileShipment() {
     const [selectedTime, setSelectedTime] = useState<string>(currentTimeString());
     const [shipments, setShipments] = useState<RowShipmentType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [useCustomDate, setUseCustomDate] = useState(true);
+    const [useCustomDate, setUseCustomDate] = useState(false);
     const isDisabled = shipments.length === 0 || loading;
 
     useEffect(() => {
@@ -184,14 +184,14 @@ export default function FileShipment() {
             </section>
             <section className='flex flex-col items-start justify-start gap-4 mb-10'>
                 <div className='flex flex-row items-center gap-2'>
-                    {/* <Checkbox
+                    <Checkbox
                         id='check'
                         checked={useCustomDate}
                         onCheckedChange={() => setUseCustomDate(!useCustomDate)}
                     /> 
                     <Label htmlFor='check'>Usar fecha actual del sistema para todos los envíos</Label>
-                    */}
-                    <Small>Se usa la fecha actual del sistema para todos los envios</Small>
+                    
+                    {/* <Small>Se usa la fecha actual del sistema para todos los envios</Small> */}
                 </div>
                 <div className={cn("flex flex-row items-center gap-2", useCustomDate ? "visible" : "hidden")}>
                     <DatePicker
