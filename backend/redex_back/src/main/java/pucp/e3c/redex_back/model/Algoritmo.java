@@ -125,7 +125,7 @@ public class Algoritmo {
             PlanRutaXVueloService planRutaXVueloService,
             AeropuertoService aeropuertoService,
             int SA, int TA) {
-
+        this.estadoAlmacenOpDiaDia.setAeropuertos(aeropuertos);
         // Inicia la operación dia a dia
         String tipoOperacion = "DIA A DIA";
         boolean replanificar = true;
@@ -413,7 +413,7 @@ public class Algoritmo {
                     System.out.println("Error en escritura de archivo");
                 }
 
-                estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+                //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
 
                 // respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
@@ -1987,6 +1987,14 @@ public class Algoritmo {
 
     public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
+        if(this.estadoAlmacenOpDiaDia.getAeropuertos()!=null){
+            boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima());
+            if(colapsoAlmacen){
+                System.out.println("Colapso de almacen");
+                this.ultimaRespuestaOperacionDiaDia.setCorrecta(false);
+            }
+        }
+        
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");

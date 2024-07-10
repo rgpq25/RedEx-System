@@ -238,6 +238,7 @@ public class DataInitializer {
 
         // Ejecuta de forma asíncrona el método loopPrincipalDiaADia del objeto
         // algoritmo con los parámetros dados.
+        
         System.out.println("Inicializando loop principal dia a dia");
         CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
