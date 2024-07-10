@@ -148,6 +148,28 @@ function RegisterShipmentPage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>('');
 
+  const validacionesCompletas = () => {
+    // Implementa tus validaciones aquí
+    // Retorna true si todas las validaciones están completas, de lo contrario false
+    return false; // Cambia esto según tus validaciones
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Tab') {
+      // Realiza las validaciones aquí
+      if (!validacionesCompletas()) {
+        event.preventDefault(); // Previene que el TAB se mueva al siguiente campo
+      }
+    } 
+  };
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
