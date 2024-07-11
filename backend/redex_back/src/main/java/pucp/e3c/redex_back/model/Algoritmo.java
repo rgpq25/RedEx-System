@@ -128,14 +128,21 @@ public class Algoritmo {
             PlanRutaXVueloService planRutaXVueloService,
             AeropuertoService aeropuertoService,
             int SA, int TA) {
-        this.operacionDiaDiaActivo = true;  
+
         // Inicia la operación dia a dia
+        this.nConsultasDiaDia = 0;
+        this.operacionDiaDiaActivo = true;
+        this.puedeRecibirPaquetesDiaDia = true;  
+        
         String tipoOperacion = "DIA A DIA";
         boolean replanificar = true;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.estadoAlmacenOpDiaDia = new EstadoAlmacen();
         this.estadoAlmacenOpDiaDia.setAeropuertos(aeropuertos);
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
+
+        this.hashTodosPaquetesDiaDia = new HashMap<>();
+        this.hashPlanRutasNTDiaDia = new HashMap<>();
 
         // Enviar mensaje de inicio de loop principal
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
