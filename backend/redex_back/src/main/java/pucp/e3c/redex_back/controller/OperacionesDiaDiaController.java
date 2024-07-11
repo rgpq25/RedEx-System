@@ -85,7 +85,8 @@ public class OperacionesDiaDiaController {
 
     @PostMapping(value = "/pararPlanificacionDiaDia")
     public String pararPlanificacionDiaDia(){
-        algoritmo.setTerminarPlanificacionDiaDia(true);
+        //algoritmo.setTerminarPlanificacionDiaDia(true);
+        taskRunner.stopTask();
         return "Planificacion detenida";
     }
 
