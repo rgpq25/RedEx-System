@@ -6,6 +6,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pucp.e3c.redex_back.service.VueloService;
 
@@ -40,6 +44,8 @@ public class Solucion {
     public GrafoVuelos grafoVuelos;
     public ArrayList<Boolean> rutasValidas;
     HashMap<Integer, Vuelo> vuelos_hash;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Solucion.class);
 
     public Solucion(
             ArrayList<Paquete> paquetes,
@@ -189,15 +195,9 @@ public class Solucion {
 
     }
 
-    private int generatePseudoRandomIndex(int size, double prob) {
+    private int generatePseudoRandomIndex(int size, double prob,ArrayList<Integer> invalidIndexes ) {
         if (Math.random() < prob) {
             // Choose an index where rutasValidas is false
-            ArrayList<Integer> invalidIndexes = new ArrayList<>();
-            for (int j = 0; j < this.paquetes.size(); j++) {
-                if (!this.rutasValidas.get(j)) {
-                    invalidIndexes.add(j);
-                }
-            }
             if (invalidIndexes.size() > 0) {
                 return invalidIndexes.get((int) (Math.random() * invalidIndexes.size()));
             } else {
@@ -209,7 +209,25 @@ public class Solucion {
         }
     }
 
-    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA) {
+    /*private int generatePseudoRandomIndex(int size, double prob, ArrayList<Integer> invalidIndexes) {
+        if (size == 0) {
+            throw new IllegalArgumentException("Size cannot be zero");
+        }
+        
+        if (ThreadLocalRandom.current().nextDouble() < prob) {
+            // Choose an index from invalidIndexes
+            if (!invalidIndexes.isEmpty()) {
+                return invalidIndexes.get(ThreadLocalRandom.current().nextInt(invalidIndexes.size()));
+            } else {
+                return ThreadLocalRandom.current().nextInt(size);
+            }
+        } else {
+            // Choose any random index
+            return ThreadLocalRandom.current().nextInt(size);
+        }
+    }*/
+
+    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA, double probIndexInvParametro) {
 
         Solucion neighbour = new Solucion(
                 new ArrayList<>(this.paquetes),
@@ -230,24 +248,50 @@ public class Solucion {
         HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
         ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
         int[] randomPackageIndexes = new int[windowSize];
+
+        ArrayList<Integer> invalidIndexes = new ArrayList<>();
+        for (int j = 0; j < this.paquetes.size(); j++) {
+            if (!this.rutasValidas.get(j)) {
+                invalidIndexes.add(j);
+            }
+        }
+        LOGGER.info("Generate Neighbour - Primer loop");
         // System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
-            int randomIndex = generatePseudoRandomIndex(this.paquetes.size(), 0.0);
+            int randomIndex = generatePseudoRandomIndex(this.paquetes.size(), probIndexInvParametro, invalidIndexes);
+            //LOGGER.info("Generate Neighbour - Primer loop Random index " + randomIndex);
+            int maxAttempts = 0;
+            boolean repetido = false;
             while (indexes.get(randomIndex) != null) {
-                randomIndex = generatePseudoRandomIndex(this.paquetes.size(), 0.0);
+                //LOGGER.info("Generate Neighbour - Primer loop Random index repetido " + randomIndex + " - " + indexes.get(randomIndex));
+                randomIndex = generatePseudoRandomIndex(this.paquetes.size(), probIndexInvParametro, invalidIndexes);
+                maxAttempts++;
+                if(maxAttempts > 100){
+                    repetido = true;
+                    break;
+                }
             }
-            randomPackageIndexes[i] = randomIndex;
-            indexes.put(randomPackageIndexes[i], true);
+            if(repetido){
+                randomPackageIndexes[i] = -1;
+                randomPackages.add(null);
+            }
+            else{
+                randomPackageIndexes[i] = randomIndex;
+                indexes.put(randomPackageIndexes[i], true);
 
-            PlanRutaNT oldRoute = rutas.get(randomPackageIndexes[i]);
-            neighbour.deocupyRouteFlights(oldRoute);
-            randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+                PlanRutaNT oldRoute = rutas.get(randomPackageIndexes[i]);
+                neighbour.deocupyRouteFlights(oldRoute);
+                randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+            }
 
         }
-
+        LOGGER.info("Generate Neighbour - Segundo loop");
         // System.out.println("Segundo Loop");
         // generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
+            if(randomPackageIndexes[j] == -1){
+                continue;
+            }
             int conteo = 0;
             // System.out.print("| Intento " + (j + 1) + " de generacion de vecino |");
             while (true) {
@@ -270,11 +314,12 @@ public class Solucion {
                 }
                 conteo++;
 
-                if (conteo >= 200) { // antes era 1000
+                if (conteo >= 500) { // antes era 1000
                     return this;
                 }
             }
         }
+        LOGGER.info("Generate Neighbour - Fin Segundo loop");
 
         // tambien deberiamos medir si esto llega a repetirse X veces simplemente
         // devolver la solucion actual

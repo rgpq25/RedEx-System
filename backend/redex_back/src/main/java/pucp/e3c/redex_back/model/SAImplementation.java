@@ -98,7 +98,7 @@ public class SAImplementation {
 	public RespuestaAlgoritmo startAlgorithm(GrafoVuelos grafoVuelos, VueloService vueloService,
 			SimulacionService simulacionService,
 			PlanRutaService planRutaService, Simulacion simulacion, int iteracion,
-			SimpMessagingTemplate messagingTemplate, String tipoOperacion, int TA) {
+			SimpMessagingTemplate messagingTemplate, String tipoOperacion, int TA, double probIndexInvParametro) {
 
 		try {
 			HashMap<Integer, Vuelo> vuelos_map = grafoVuelos.getVuelosHash();
@@ -147,17 +147,18 @@ public class SAImplementation {
 
 			while (temperature > 1) {
 				// System.out.println("\nIteracion en loop\n");
-
+				LOGGER.info(tipoOperacion + "|| inicio neighbours");
 				ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
 				for (int i = 0; i < neighbourCount; i++) {
 					Solucion newNeighbour = current.generateNeighbour(windowSize, vueloService,
-							tiempoEnSimulacion, TA);
+							tiempoEnSimulacion, TA, probIndexInvParametro);
 					if (newNeighbour == null) {
 						return null;
 					}
 					neighbours.add(newNeighbour);
 					// System.out.println("Vecino generado");
 				}
+				LOGGER.info(tipoOperacion + "|| fin neighbours");
 				// System.out.println("\nNeighbours iterados\n");
 				int bestNeighbourIndex = 0;
 				double bestNeighbourCost = Double.MAX_VALUE;

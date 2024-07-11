@@ -299,7 +299,7 @@ public class Algoritmo {
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA,1,1);
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
                 try {
@@ -765,7 +765,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
-                    TA * (int) simulacion.getMultiplicadorTiempo());
+                    TA * (int) simulacion.getMultiplicadorTiempo(),1,0.0);
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
@@ -1627,11 +1627,11 @@ public class Algoritmo {
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
             VueloService vueloService, PlanRutaService planRutaService, SimulacionService simulacionService,
             Simulacion simulacion, SimpMessagingTemplate messagingTemplate, String tipoOperacion,
-            Date tiempoEnSimulacion, int TA) {
+            Date tiempoEnSimulacion, int TA, int neighbourCountParametro, double probIndexInvParametro) {
         // Simmulated Annealing Parameters
         double temperature = 1500;
         double coolingRate = 0.08;
-        int neighbourCount = 1;
+        int neighbourCount = neighbourCountParametro;
         int windowSize = tamanhoPaquetes / 3;
         boolean stopWhenNoPackagesLeft = true;
 
@@ -1671,7 +1671,7 @@ public class Algoritmo {
                 mediaVuelosWight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
-                messagingTemplate, tipoOperacion, TA);
+                messagingTemplate, tipoOperacion, TA, probIndexInvParametro);
     }
 
     public static RespuestaAlgoritmo procesarPaquetesColapso(GrafoVuelos grafoVuelos,
@@ -1723,7 +1723,7 @@ public class Algoritmo {
                 mediaVuelosWight);
 
         return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
-                messagingTemplate, tipoOperacion, TA);
+                messagingTemplate, tipoOperacion, TA, 0.0);
     }
 
     public RespuestaAlgoritmo getUltimaRespuestaOperacionDiaDia() {
