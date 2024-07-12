@@ -35,7 +35,7 @@ import { getCurrentAirportOcupation } from "@/lib/map-utils";
 import { useFilteredFlightsContext } from "@/components/contexts/flights-filter";
 
 const DEFAULT_RANGO_CAPACIDAD_ENVIOS: [number, number] = [0, 200];
-const DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS: [number, number] = [1000, 2000];
+const DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS: [number, number] = [400, 1000];
 const DEFAULT_RANGO_CAPACIDAD_VUELOS: [number, number] = [0, 600];
 
 interface SidebarProps {
@@ -190,10 +190,18 @@ function Envios({
     const minCapacidad = Math.min(...rangoCapacidadFilter);
     const maxCapacidad = Math.max(...rangoCapacidadFilter);
 
-
-    useEffect(()=>{
-        setPage(1)
-    },[search, continentesOrigenFilter, continentesDestinoFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad])
+    useEffect(() => {
+        setPage(1);
+    }, [
+        search,
+        continentesOrigenFilter,
+        continentesDestinoFilter,
+        paisOrigenFilter,
+        paisDestinoFilter,
+        rangoCapacidadFilter,
+        minCapacidad,
+        maxCapacidad,
+    ]);
 
     const filteredItems = useMemo(() => {
         let filteredEnvios = envios;
@@ -593,7 +601,6 @@ function Aeropuertos({
 
     const minCapacidad = Math.min(...rangoCapacidadFilter);
     const maxCapacidad = Math.max(...rangoCapacidadFilter);
-    
 
     const items = useMemo(() => {
         let filteredAeropuertos = aeropuertos;
@@ -601,11 +608,11 @@ function Aeropuertos({
         if (continentesFilter) {
             filteredAeropuertos = filteredAeropuertos?.filter((aeropuerto) => continentesFilter?.includes(aeropuerto.ubicacion.continente));
         }
-        if (rangoCapacidadFilter) {
-            filteredAeropuertos = filteredAeropuertos?.filter(
-                (aeropuerto) => aeropuerto.capacidadMaxima >= minCapacidad && aeropuerto.capacidadMaxima <= maxCapacidad
-            );
-        }
+        // if (rangoCapacidadFilter) {
+        //     filteredAeropuertos = filteredAeropuertos?.filter(
+        //         (aeropuerto) => aeropuerto.capacidadMaxima >= minCapacidad && aeropuerto.capacidadMaxima <= maxCapacidad
+        //     );
+        // }
         if (gmtFilter) {
             filteredAeropuertos = filteredAeropuertos?.filter((aeropuerto) => aeropuerto.ubicacion.zonaHoraria === gmtFilter);
         }
@@ -714,7 +721,7 @@ function Aeropuertos({
                             align='start'
                             className='w-fit flex flex-col gap-4'
                         >
-                            <Small>Rango de capacidad maxima:</Small>
+                            {/* <Small>Rango de capacidad maxima:</Small>
                             <div className='flex justify-between'>
                                 <Small>{minCapacidad}</Small>
                                 <Small>{maxCapacidad}</Small>
@@ -730,7 +737,7 @@ function Aeropuertos({
                                 defaultValue={DEFAULT_RANGO_CAPACIDAD_AEROPUERTOS}
                                 step={5}
                             />
-                            <Separator />
+                            <Separator /> */}
                             <Small>Continente:</Small>
                             {continentes.map((continente) => (
                                 <div
@@ -846,7 +853,8 @@ function Vuelos({
     tiempoActual?: Date | undefined;
     ubicaciones: Ubicacion[];
 }) {
-    const { search,
+    const {
+        search,
         setSearch,
         hasSearchFilter,
         continentesFilter,
@@ -859,13 +867,14 @@ function Vuelos({
         setRangoCapacidadFilter,
         minCapacidad,
         maxCapacidad,
-        getFilteredFlights } = useFilteredFlightsContext();
+        getFilteredFlights,
+    } = useFilteredFlightsContext();
     const [page, setPage] = useState<number>(1);
     const rowsPerPage = 10;
 
-    useEffect(()=>{
-        setPage(1)
-    },[search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad])
+    useEffect(() => {
+        setPage(1);
+    }, [search, continentesFilter, paisOrigenFilter, paisDestinoFilter, rangoCapacidadFilter, minCapacidad, maxCapacidad]);
 
     const filteredItems = vuelos;
 
