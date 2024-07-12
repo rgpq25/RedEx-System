@@ -266,7 +266,8 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Filtrando vuelos Array Temp Construido");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
                     temp_planesRutaActuales, now, TA, 1);
-            LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
+            LOGGER.info(
+                    tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
             if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");
@@ -310,6 +311,7 @@ public class Algoritmo {
                 }
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
+                respuestaAlgoritmo.getSimulacion().setEstado(3);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
@@ -318,17 +320,19 @@ public class Algoritmo {
             }
 
             if (respuestaAlgoritmo.isCorrecta() == false) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + now);
+                LOGGER.error(tipoOperacion + ": Colapso en fecha por paquetes " + now);
                 // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    writer.println(tipoOperacion + " Colpaso en fecha " + now);
+                    writer.println(tipoOperacion + " Colapso en fecha " + now);
                     writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
                 // respuestaAlgoritmo = new RespuestaAlgoritmo();
                 // respuestaAlgoritmo.setCorrecta(false);
+                respuestaAlgoritmo.getSimulacion().setEstado(3);
+
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
@@ -423,12 +427,12 @@ public class Algoritmo {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
 
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
                 // imprimir en un txt
                 try {
                     // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
                     messagingTemplate.convertAndSend("/algoritmo/estado",
-                            "Colpaso en fecha " + now);
+                            "Colapso en fecha " + now);
                     // writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
@@ -772,11 +776,11 @@ public class Algoritmo {
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
 
             if (respuestaAlgoritmo == null) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + tiempoEnBack);
+                LOGGER.error(tipoOperacion + ": Colapso en fecha " + tiempoEnBack);
                 // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    writer.println("Colpaso en fecha " + tiempoEnBack);
+                    writer.println("Colapso en fecha " + tiempoEnBack);
                     writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
@@ -785,14 +789,16 @@ public class Algoritmo {
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.setCorrecta(false);
+                enviarRespuesta(respuestaAlgoritmo, simulacion, tiempoEnFront, fechaSgteCalculo,
+                        "/algoritmo/respuesta");
                 return null;
             }
             if (respuestaAlgoritmo.isCorrecta() == false) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha por paquetes " + tiempoEnBack);
+                LOGGER.error(tipoOperacion + ": Colapso en fecha por paquetes " + tiempoEnBack);
                 // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                    writer.println("Colpaso en fecha " + tiempoEnBack);
+                    writer.println("Colapso en fecha " + tiempoEnBack);
                     writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
@@ -801,6 +807,8 @@ public class Algoritmo {
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.setCorrecta(false);
+                enviarRespuesta(respuestaAlgoritmo, simulacion, tiempoEnFront, fechaSgteCalculo,
+                        "/algoritmo/respuesta");
                 return null;
             }
             i++;
