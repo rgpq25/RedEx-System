@@ -255,7 +255,7 @@ public class Solucion {
                 invalidIndexes.add(j);
             }
         }
-        LOGGER.info("Generate Neighbour - Primer loop");
+        //LOGGER.info("Generate Neighbour - Primer loop");
         // System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
             int randomIndex = generatePseudoRandomIndex(this.paquetes.size(), probIndexInvParametro, invalidIndexes);
@@ -285,7 +285,7 @@ public class Solucion {
             }
 
         }
-        LOGGER.info("Generate Neighbour - Segundo loop");
+        //LOGGER.info("Generate Neighbour - Segundo loop");
         // System.out.println("Segundo Loop");
         // generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
@@ -319,7 +319,7 @@ public class Solucion {
                 }
             }
         }
-        LOGGER.info("Generate Neighbour - Fin Segundo loop");
+        //LOGGER.info("Generate Neighbour - Fin Segundo loop");
 
         // tambien deberiamos medir si esto llega a repetirse X veces simplemente
         // devolver la solucion actual
