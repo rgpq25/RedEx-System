@@ -218,7 +218,7 @@ public class Algoritmo {
             // add 4 minutes to Date now
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
-            calendar.add(Calendar.MINUTE, 2);
+            calendar.add(Calendar.MINUTE, 1);
             LOGGER.info(tipoOperacion + " Fecha agregada, inicio Grafo: " + calendar.getTime());
 
             // Crear o actualizar el grafo de vuelos
@@ -266,8 +266,7 @@ public class Algoritmo {
             LOGGER.info(tipoOperacion + " Filtrando vuelos Array Temp Construido");
             ArrayList<Paquete> paquetesProcesar = filtrarPaquetesVolando(new ArrayList<>(paquetesProcesarFiltrados),
                     temp_planesRutaActuales, now, TA, 1);
-            LOGGER.info(
-                    tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
+            LOGGER.info(tipoOperacion + " Fin de filtrado de vuelos:" + paquetesProcesar.size() + " paquetes restantes");
 
             if (paquetesProcesar.isEmpty()) {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "No hay paquetes que planificar");

@@ -130,6 +130,7 @@ public class SAImplementation {
 			long startTimeInitialization = System.nanoTime();
 			boolean inicio_correcto = current.force_initialize(todasLasRutas, vueloService,
 					tiempoEnSimulacion, TA);
+			LOGGER.info("Inicio correcto: " + inicio_correcto);
 			if (inicio_correcto == false) {
 				return null;
 			}
