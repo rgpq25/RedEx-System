@@ -649,6 +649,12 @@ public class Solucion {
     public void deocupyRouteFlights(PlanRutaNT ruta) {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
             int idVuelo = ruta.getVuelos().get(i).getId();
+            if (!ocupacionVuelos.containsKey(idVuelo)) {
+                LOGGER.info("El vuelo con ID " + idVuelo + " no se encuentra en el mapa de ocupación.");
+                return;
+                //throw new Error("El vuelo con ID " + idVuelo + " no se encuentra en el mapa de ocupación.");
+            }
+
             if (ocupacionVuelos.get(idVuelo) == 0) {
                 System.out.println("Se intento desocupar un vuelo que no estaba ocupado");
 
