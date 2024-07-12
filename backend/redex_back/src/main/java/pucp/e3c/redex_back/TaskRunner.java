@@ -33,7 +33,7 @@ public class TaskRunner {
             if (running.get()) {
                 algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                         vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
-                        120, 80);
+                        180, 120);
             }
         });
     }
