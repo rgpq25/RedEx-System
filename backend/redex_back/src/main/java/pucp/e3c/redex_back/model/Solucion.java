@@ -118,7 +118,13 @@ public class Solucion {
                     if (tempPaquetesArray == null) {
                         return false;
                     }
-                    PlanRutaNT randomRoute = tempRoutesArray.get(0);
+                    PlanRutaNT randomRoute;
+                    try {
+                        randomRoute = tempRoutesArray.get(0);
+                    } catch (Exception e) {
+                        return false;
+                    }
+
                     if (randomRoute == null) {
                         return false;
                     }
