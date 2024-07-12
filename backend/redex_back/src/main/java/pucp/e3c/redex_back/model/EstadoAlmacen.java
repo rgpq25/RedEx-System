@@ -33,6 +33,7 @@ public class EstadoAlmacen {
 
     public EstadoAlmacen() {
         uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
+        aeropuertos = null;
     }
 
     public EstadoAlmacen(EstadoAlmacen estado) {
@@ -41,6 +42,14 @@ public class EstadoAlmacen {
 
     public HashMap<String, TreeMap<Date, Integer>> getUso_historico() {
         return uso_historico;
+    }
+
+        public ArrayList<Aeropuerto> getAeropuertos() {
+        return aeropuertos;
+    }
+
+    public void setAeropuertos(ArrayList<Aeropuerto> aeropuertos) {
+        this.aeropuertos = aeropuertos;
     }
 
     public EstadoAlmacen(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> plan,

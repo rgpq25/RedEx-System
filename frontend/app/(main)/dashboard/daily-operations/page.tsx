@@ -71,6 +71,7 @@ function DailyOperationsPage() {
 		setIsAllRoutesVisible,
 		zoomInSlightly,
 		zoomOutSlightly,
+		pauseSimulationOnlyFrontend,
 	} = attributes;
 	const { openFlightModal, openAirportModal, openEnvioModal } = mapModalAttributes;
 
@@ -120,12 +121,13 @@ function DailyOperationsPage() {
 
 					if (data.iniciandoPrimeraPlanificacionDiaDia === false) {
 						setIsLoadingFirstTime(false);
-						return;
 					}
 
 					if (data.correcta === false) {
+						console.log("Se llego al colapso");
 						setIsModalColapseDailyOperations(true);
-						return;
+						pauseSimulationOnlyFrontend();
+						//return;
 					}
 
 					let db_envios: Envio[] = [];
@@ -138,6 +140,7 @@ function DailyOperationsPage() {
 								envio.fechaRecepcion = new Date(envio.fechaRecepcion);
 								return envio;
 							});
+							console.log("Se fetchearon los envios en /algoritmo/diaDiaRespuesta");
 						},
 						(error) => {
 							console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
@@ -172,6 +175,13 @@ function DailyOperationsPage() {
 						return;
 					}
 
+					if (data.correcta === false) {
+						console.log("Se llego al colapso");
+						setIsModalColapseDailyOperations(true);
+						pauseSimulationOnlyFrontend();
+						// return;
+					}
+
 					let db_envios: Envio[] = [];
 					await api(
 						"GET",
@@ -200,30 +210,30 @@ function DailyOperationsPage() {
 				}
 			);
 
-			const interval = setInterval(async () => {
-				let db_envios_inter: Envio[] = [];
-				await api(
-					"GET",
-					`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
-					(data: Envio[]) => {
-						db_envios_inter = data.map((envio) => {
-							envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
-							envio.fechaRecepcion = new Date(envio.fechaRecepcion);
-							return envio;
-						});
-					},
-					(error) => {
-						console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
-						db_envios_inter = [];
-					}
-				);
-				console.log(" ===== Finished fetching envios");
-				setEnvios(db_envios_inter);
-			}, 1000 * 60);
+			// const interval = setInterval(async () => {
+			// 	let db_envios_inter: Envio[] = [];
+			// 	await api(
+			// 		"GET",
+			// 		`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+			// 		(data: Envio[]) => {
+			// 			db_envios_inter = data.map((envio) => {
+			// 				envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+			// 				envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+			// 				return envio;
+			// 			});
+			// 		},
+			// 		(error) => {
+			// 			console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+			// 			db_envios_inter = [];
+			// 		}
+			// 	);
+			// 	console.log(" ===== Finished fetching envios (from interval) ===== ");
+			// 	setEnvios(db_envios_inter);
+			// }, 1000 * 60);
 
-			return () => {
-				clearInterval(interval);
-			};
+			// return () => {
+			// 	clearInterval(interval);
+			// };
 		}
 
 		getData();
@@ -236,6 +246,35 @@ function DailyOperationsPage() {
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		//if the current time has 05 seconds, then we fetch the envios
+
+		async function getEnviosFromBack() {
+			let db_envios_inter: Envio[] = [];
+			await api(
+				"GET",
+				`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/obtenerEnvios`,
+				(data: Envio[]) => {
+					db_envios_inter = data.map((envio) => {
+						envio.fechaLimiteEntrega = new Date(envio.fechaLimiteEntrega);
+						envio.fechaRecepcion = new Date(envio.fechaRecepcion);
+						return envio;
+					});
+				},
+				(error) => {
+					console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
+					db_envios_inter = [];
+				}
+			);
+			console.log(" ===== Finished fetching envios (at 05 seconds) ===== ");
+			setEnvios(db_envios_inter);
+		}
+
+		if (currentTime && (currentTime.getSeconds() === 5 || currentTime.getSeconds() === 0)) {
+			getEnviosFromBack();
+		}
+	}, [currentTime]);
 
 	const filtered_vuelos = useMemo(() => {
 		if (currentTime === undefined) return [];

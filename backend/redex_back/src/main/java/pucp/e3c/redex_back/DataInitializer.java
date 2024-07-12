@@ -86,6 +86,9 @@ public class DataInitializer {
     @Autowired
     ResourceLoader resourceLoader;
 
+    @Autowired
+    private TaskRunner taskRunner;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DataInitializer.class);
 
     public DataInitializer(SimpMessagingTemplate messagingTemplate) {
@@ -238,14 +241,14 @@ public class DataInitializer {
 
         // Ejecuta de forma asíncrona el método loopPrincipalDiaADia del objeto
         // algoritmo con los parámetros dados.
-        System.out.println("Inicializando loop principal dia a dia");
-        CompletableFuture.runAsync(() -> {
+        
+        /*CompletableFuture.runAsync(() -> {
             algoritmo.loopPrincipalDiaADia(aeropuertosLoop, planVuelosLoop,
                     vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService,
                     //60, 40);
                     180, 120);
-        });
-
+        });*/
+        taskRunner.startTask(aeropuertosLoop, planVuelosLoop, vueloService, planRutaService, paqueteService, planRutaXVueloService, aeropuertoService);
     }
 
 }

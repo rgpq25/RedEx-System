@@ -1,14 +1,37 @@
 import {
 	AlertDialog,
 	AlertDialogAction,
+	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import { useState } from "react";
 
 function ModalColapseDaily({ open, onOpenChange }: { open: boolean; onOpenChange: (isOpen: boolean) => void }) {
+	const [isLoading, setIsLoading] = useState(false);
+
+	async function reiniciarOperaciones() {
+		setIsLoading(true);
+		await api(
+			"POST",
+			`${process.env.NEXT_PUBLIC_API}/back/operacionesDiaDia/reiniciarOperacionesDiaDia`,
+			(data) => {
+				console.log(data);
+			},
+			(error) => {
+				console.log(error);
+			}
+		);
+
+		// setIsLoading(false);
+		window.location.reload();
+	}
+
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
@@ -19,6 +42,12 @@ function ModalColapseDaily({ open, onOpenChange }: { open: boolean; onOpenChange
 						completada.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel>Cerrar</AlertDialogCancel>
+					<Button onClick={reiniciarOperaciones} isLoading={isLoading} disabled={isLoading}>
+						Reiniciar
+					</Button>
+				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
 	);

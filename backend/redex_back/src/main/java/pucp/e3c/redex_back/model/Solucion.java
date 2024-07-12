@@ -6,6 +6,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pucp.e3c.redex_back.service.VueloService;
 
@@ -38,8 +42,10 @@ public class Solucion {
     public double costoDePaquetesYRutasErroneas;
 
     public GrafoVuelos grafoVuelos;
-
+    public ArrayList<Boolean> rutasValidas;
     HashMap<Integer, Vuelo> vuelos_hash;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Solucion.class);
 
     public Solucion(
             ArrayList<Paquete> paquetes,
@@ -83,6 +89,10 @@ public class Solucion {
             Date tiempoEnSimulacion, int TA) {
         // We do 5 attempts to try to initialize the solution
         ArrayList<PlanRutaNT> copiedRutas = new ArrayList<PlanRutaNT>();
+        this.rutasValidas = new ArrayList<>();
+        for (int i = 0; i < this.paquetes.size(); i++) {
+            this.rutasValidas.add(false);
+        }
         for (int idx = 0; idx < this.paquetes.size(); idx++) {
             if (this.rutas.size() == 0) {
                 copiedRutas.add(new PlanRutaNT());
@@ -108,8 +118,16 @@ public class Solucion {
                     if (tempPaquetesArray == null) {
                         return false;
                     }
-                    PlanRutaNT randomRoute = tempRoutesArray.get(0);
+                    PlanRutaNT randomRoute;
+                    try {
+                        randomRoute = tempRoutesArray.get(0);
+                    } catch (Exception e) {
+                        return false;
+                    }
 
+                    if (randomRoute == null) {
+                        return false;
+                    }
                     if (copiedRutas.get(i).getVuelos().size() > 0) {
                         this.rutas.add(copiedRutas.get(i));
                         break;
@@ -129,7 +147,15 @@ public class Solucion {
                 }
 
             }
+            for (int i = 0; i < this.paquetes.size(); i++) {
+                double[] costAndConteo = getCostoPaquete(i);
+                if (costAndConteo[1] > 0.0) {
+                    this.rutasValidas.set(i, false);
+                } else {
+                    this.rutasValidas.set(i, true);
 
+                }
+            }
             return true;
             // } else {
             // this.rutas.clear();
@@ -177,7 +203,45 @@ public class Solucion {
 
     }
 
-    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA) {
+    private int generatePseudoRandomIndex(int size, double prob, ArrayList<Integer> invalidIndexes) {
+        if (Math.random() < prob) {
+            // Choose an index where rutasValidas is false
+            if (invalidIndexes.size() > 0) {
+                return invalidIndexes.get((int) (Math.random() * invalidIndexes.size()));
+            } else {
+                return (int) (Math.random() * this.paquetes.size());
+            }
+        } else {
+            // Choose any random index
+            return (int) (Math.random() * this.paquetes.size());
+        }
+    }
+
+    /*
+     * private int generatePseudoRandomIndex(int size, double prob,
+     * ArrayList<Integer> invalidIndexes) {
+     * if (size == 0) {
+     * throw new IllegalArgumentException("Size cannot be zero");
+     * }
+     * 
+     * if (ThreadLocalRandom.current().nextDouble() < prob) {
+     * // Choose an index from invalidIndexes
+     * if (!invalidIndexes.isEmpty()) {
+     * return
+     * invalidIndexes.get(ThreadLocalRandom.current().nextInt(invalidIndexes.size())
+     * );
+     * } else {
+     * return ThreadLocalRandom.current().nextInt(size);
+     * }
+     * } else {
+     * // Choose any random index
+     * return ThreadLocalRandom.current().nextInt(size);
+     * }
+     * }
+     */
+
+    public Solucion generateNeighbour(int windowSize, VueloService vueloService, Date tiempoEnSimulacion, int TA,
+            double probIndexInvParametro) {
 
         Solucion neighbour = new Solucion(
                 new ArrayList<>(this.paquetes),
@@ -198,24 +262,50 @@ public class Solucion {
         HashMap<Integer, Boolean> indexes = new HashMap<Integer, Boolean>();
         ArrayList<Paquete> randomPackages = new ArrayList<Paquete>();
         int[] randomPackageIndexes = new int[windowSize];
+
+        ArrayList<Integer> invalidIndexes = new ArrayList<>();
+        for (int j = 0; j < this.paquetes.size(); j++) {
+            if (!this.rutasValidas.get(j)) {
+                invalidIndexes.add(j);
+            }
+        }
+        // LOGGER.info("Generate Neighbour - Primer loop");
         // System.out.println("Primer Loop");
         for (int i = 0; i < windowSize; i++) {
-            int randomIndex = (int) (Math.random() * this.paquetes.size());
+            int randomIndex = generatePseudoRandomIndex(this.paquetes.size(), probIndexInvParametro, invalidIndexes);
+            // LOGGER.info("Generate Neighbour - Primer loop Random index " + randomIndex);
+            int maxAttempts = 0;
+            boolean repetido = false;
             while (indexes.get(randomIndex) != null) {
-                randomIndex = (int) (Math.random() * this.paquetes.size());
+                // LOGGER.info("Generate Neighbour - Primer loop Random index repetido " +
+                // randomIndex + " - " + indexes.get(randomIndex));
+                randomIndex = generatePseudoRandomIndex(this.paquetes.size(), probIndexInvParametro, invalidIndexes);
+                maxAttempts++;
+                if (maxAttempts > 100) {
+                    repetido = true;
+                    break;
+                }
             }
-            randomPackageIndexes[i] = randomIndex;
-            indexes.put(randomPackageIndexes[i], true);
+            if (repetido) {
+                randomPackageIndexes[i] = -1;
+                randomPackages.add(null);
+            } else {
+                randomPackageIndexes[i] = randomIndex;
+                indexes.put(randomPackageIndexes[i], true);
 
-            PlanRutaNT oldRoute = rutas.get(randomPackageIndexes[i]);
-            neighbour.deocupyRouteFlights(oldRoute);
-            randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+                PlanRutaNT oldRoute = rutas.get(randomPackageIndexes[i]);
+                neighbour.deocupyRouteFlights(oldRoute);
+                randomPackages.add(neighbour.paquetes.get(randomPackageIndexes[i]));
+            }
 
         }
-
+        // LOGGER.info("Generate Neighbour - Segundo loop");
         // System.out.println("Segundo Loop");
         // generate new routes for the selected packages
         for (int j = 0; j < windowSize; j++) {
+            if (randomPackageIndexes[j] == -1) {
+                continue;
+            }
             int conteo = 0;
             // System.out.print("| Intento " + (j + 1) + " de generacion de vecino |");
             while (true) {
@@ -238,11 +328,12 @@ public class Solucion {
                 }
                 conteo++;
 
-                if (conteo >= 200) { // antes era 1000
+                if (conteo >= 500) { // antes era 1000
                     return this;
                 }
             }
         }
+        // LOGGER.info("Generate Neighbour - Fin Segundo loop");
 
         // tambien deberiamos medir si esto llega a repetirse X veces simplemente
         // devolver la solucion actual
@@ -250,6 +341,19 @@ public class Solucion {
         // the airport capacity is exceeded
         // return generateNeighbour(todasLasRutas, windowSize);
         // } else {
+        neighbour.rutasValidas = new ArrayList<>();
+        for (int i = 0; i < neighbour.paquetes.size(); i++) {
+            neighbour.rutasValidas.add(false);
+        }
+        for (int i = 0; i < neighbour.paquetes.size(); i++) {
+            double[] costAndConteo = getCostoPaquete(i);
+            if (costAndConteo[1] > 0.0) {
+                neighbour.rutasValidas.set(i, false);
+            } else {
+                neighbour.rutasValidas.set(i, true);
+
+            }
+        }
         return neighbour;
         // }
 
