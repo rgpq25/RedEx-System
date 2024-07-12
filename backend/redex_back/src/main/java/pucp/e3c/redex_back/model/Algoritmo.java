@@ -132,8 +132,8 @@ public class Algoritmo {
         // Inicia la operación dia a dia
         this.nConsultasDiaDia = 0;
         this.operacionDiaDiaActivo = true;
-        this.puedeRecibirPaquetesDiaDia = true;  
-        
+        this.puedeRecibirPaquetesDiaDia = true;
+
         String tipoOperacion = "DIA A DIA";
         boolean replanificar = true;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
@@ -165,12 +165,12 @@ public class Algoritmo {
 
         // Loop principal del día a día
         while (true) {
-            if (this.terminarPlanificacionDiaDia || !this.ultimaRespuestaOperacionDiaDia.isCorrecta()){
+            if (this.terminarPlanificacionDiaDia || !this.ultimaRespuestaOperacionDiaDia.isCorrecta()) {
                 this.operacionDiaDiaActivo = false;
                 this.terminarPlanificacionDiaDia = false;
                 LOGGER.info(tipoOperacion + " Terminando loop principal");
                 return;
-            }                
+            }
 
             long start = System.currentTimeMillis();
             // Date now = new Date();
@@ -299,7 +299,7 @@ public class Algoritmo {
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA,1,0.3);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.3);
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
                 try {
@@ -414,7 +414,8 @@ public class Algoritmo {
                     ocupacionVuelos, aeropuertos);
 
             // verificacion de colapso en almacen
-            //colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));
+            // colapsoAlmacen =
+            // !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));
             colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
 
             colapso = colapsoVuelos || colapsoAlmacen;
@@ -434,7 +435,8 @@ public class Algoritmo {
                     System.out.println("Error en escritura de archivo");
                 }
 
-                //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+                // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
+                // ".txt");
 
                 // respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
@@ -765,7 +767,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
-                    TA * (int) simulacion.getMultiplicadorTiempo(),1,0.0);
+                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.0);
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
@@ -1669,9 +1671,15 @@ public class Algoritmo {
                 sumaVuelosWeight,
                 promedioPonderadoTiempoAeropuertoWeight,
                 mediaVuelosWight);
+        try {
+            RespuestaAlgoritmo respuestaAlgoritmo = sa.startAlgorithm(grafoVuelos, vueloService, simulacionService,
+                    planRutaService, simulacion, iteracion,
+                    messagingTemplate, tipoOperacion, TA, probIndexInvParametro);
+            return respuestaAlgoritmo;
+        } catch (Exception e) {
+            return null;
+        }
 
-        return sa.startAlgorithm(grafoVuelos, vueloService, simulacionService, planRutaService, simulacion, iteracion,
-                messagingTemplate, tipoOperacion, TA, probIndexInvParametro);
     }
 
     public static RespuestaAlgoritmo procesarPaquetesColapso(GrafoVuelos grafoVuelos,
@@ -2000,9 +2008,9 @@ public class Algoritmo {
 
     public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
-        if(this.estadoAlmacenOpDiaDia.getAeropuertos()!=null){
+        if (this.estadoAlmacenOpDiaDia.getAeropuertos() != null) {
             boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima());
-            if(colapsoAlmacen){
+            if (colapsoAlmacen) {
                 System.out.println("Colapso de almacen");
                 this.ultimaRespuestaOperacionDiaDia.setCorrecta(false);
             }
@@ -2017,14 +2025,14 @@ public class Algoritmo {
 
     public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
-        if(this.estadoAlmacenOpDiaDia.getAeropuertos()!=null){
+        if (this.estadoAlmacenOpDiaDia.getAeropuertos() != null) {
             boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima());
-            if(colapsoAlmacen){
+            if (colapsoAlmacen) {
                 System.out.println("Colapso de almacen");
                 this.ultimaRespuestaOperacionDiaDia.setCorrecta(false);
             }
         }
-        
+
         messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", this.ultimaRespuestaOperacionDiaDia);
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado",
                 cantidadEnvios + " envio(s), " + cantidadPaquetes + " paquete(s) agregado(s) ");
@@ -2069,7 +2077,5 @@ public class Algoritmo {
     public void setOperacionDiaDiaActivo(boolean operacionDiaDiaActivo) {
         this.operacionDiaDiaActivo = operacionDiaDiaActivo;
     }
-
-    
 
 }

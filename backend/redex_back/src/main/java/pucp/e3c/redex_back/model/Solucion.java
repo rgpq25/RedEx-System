@@ -119,7 +119,9 @@ public class Solucion {
                         return false;
                     }
                     PlanRutaNT randomRoute = tempRoutesArray.get(0);
-
+                    if (randomRoute != null) {
+                        return false;
+                    }
                     if (copiedRutas.get(i).getVuelos().size() > 0) {
                         this.rutas.add(copiedRutas.get(i));
                         break;
