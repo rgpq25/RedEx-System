@@ -71,7 +71,7 @@ function PlaneMarker({ vuelo, currentTime, onClick, focusedAirplane, isAllRoutes
 		<>
 			{isHovering === true && <Polyline positions={vuelo.posicionesRuta} lineJoin="round" />}
 
-			{isAllRoutesVisible === true && <Polyline positions={vueloTrayectoryLeft} lineJoin="round" className="stroke-[1px] stroke-mainRed" />}
+			{isAllRoutesVisible === true && <Polyline positions={vueloTrayectoryLeft} lineJoin="round" className="stroke-[0.7px] stroke-black" dashArray={'10,10'} dashOffset="5"/>}
 
 			{vuelo.id === focusedAirplane?.id && (
 				<Marker position={[coordinates[1], coordinates[0]] as [number, number]} icon={airplaneIndicator} zIndexOffset={52} />
