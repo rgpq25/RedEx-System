@@ -148,7 +148,7 @@ public class SAImplementation {
 
 			while (temperature > 1) {
 				// System.out.println("\nIteracion en loop\n");
-				LOGGER.info(tipoOperacion + "|| inicio neighbours");
+				//LOGGER.info(tipoOperacion + "|| inicio neighbours");
 				ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
 				for (int i = 0; i < neighbourCount; i++) {
 					Solucion newNeighbour = current.generateNeighbour(windowSize, vueloService,
@@ -159,7 +159,7 @@ public class SAImplementation {
 					neighbours.add(newNeighbour);
 					// System.out.println("Vecino generado");
 				}
-				LOGGER.info(tipoOperacion + "|| fin neighbours");
+				//LOGGER.info(tipoOperacion + "|| fin neighbours");
 				// System.out.println("\nNeighbours iterados\n");
 				int bestNeighbourIndex = 0;
 				double bestNeighbourCost = Double.MAX_VALUE;
@@ -246,10 +246,11 @@ public class SAImplementation {
 			 * }
 			 */
 			ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
-			if (paquetesSinSentido != null) {
-
+			if (paquetesSinSentido != null && paquetesSinSentido.size() > 0){
+				LOGGER.info(tipoOperacion + "|| Paquetes sin sentido encontrados: " + paquetesSinSentido.size());
+				planificacion_fallida = true;
 				for (Paquete paquete : paquetesSinSentido) {
-					planificacion_fallida = true;
+					
 					// System.out.println("Paquete sin sentido: " + paquete.toString());
 					LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
 				}
@@ -279,6 +280,9 @@ public class SAImplementation {
 			respuestaAlgoritmo.setOcupacionVuelos(current.ocupacionVuelos);
 			if (planificacion_fallida) {
 				respuestaAlgoritmo.setCorrecta(false);
+			}
+			else{
+				respuestaAlgoritmo.setCorrecta(true);
 			}
 			return respuestaAlgoritmo;
 		} catch (Exception e) {

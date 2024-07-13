@@ -141,6 +141,7 @@ function DailyOperationsPage() {
 								return envio;
 							});
 							console.log("Se fetchearon los envios en /algoritmo/diaDiaRespuesta");
+							console.log("Envios: ", db_envios);
 						},
 						(error) => {
 							console.log(`Error from /back/operacionesDiaDia/obtenerEnvios: `, error);
