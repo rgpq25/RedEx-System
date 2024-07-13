@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Aeropuerto, Envio, EstadoAlmacen, EstadoPaquete, Paquete, PlanRuta, Simulacion, Ubicacion, Vuelo } from "@/lib/types";
-import { ArrowUpDown, Eye, Loader2 } from "lucide-react";
+import { ArrowUpDown, Eye, Loader2, MoveRight, X } from "lucide-react";
 import { EnvioTable } from "./envio-table";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "../ui/button";
@@ -10,6 +10,7 @@ import { api } from "@/lib/api";
 import Chip from "../ui/chip";
 import { AirportTable } from "./airport-table";
 import { formatDateTimeLongShort } from "@/lib/date";
+import { cn } from "@/lib/utils";
 
 function getCurrentLocation(paquete: Paquete | undefined, planRutaVuelos: Vuelo[], _currentTime: Date, lockToFlight: (vuelo: Vuelo) => void) {
 	if (paquete === undefined) {
@@ -287,10 +288,71 @@ export const getColumns = ({
 	},
 ];
 
+type TrackingLineType = {
+	type: "aeropuerto" | "vuelo" | "entrega";
+	almacen: Ubicacion | null;
+	vuelo: Vuelo | null;
+	fecha1: Date | null;
+	fecha2: Date | null;
+};
+
+const getTotalArray = (array_vuelos: Vuelo[], _envio: Envio) => {
+	const arrayFinal: TrackingLineType[] = [];
+
+	for (let i = 0; i < array_vuelos.length; i++) {
+		const vuelo = array_vuelos[i];
+
+		if (i === 0) {
+			arrayFinal.push({
+				type: "aeropuerto",
+				almacen: vuelo.planVuelo.ciudadOrigen,
+				vuelo: null,
+				fecha1: _envio.fechaRecepcion,
+				fecha2: vuelo.fechaSalida,
+			});
+		} else {
+			arrayFinal.push({
+				type: "aeropuerto",
+				almacen: vuelo.planVuelo.ciudadOrigen,
+				vuelo: null,
+				fecha1: array_vuelos[i - 1].fechaLlegada,
+				fecha2: vuelo.fechaSalida,
+			});
+		}
+
+		arrayFinal.push({
+			type: "vuelo",
+			almacen: null,
+			vuelo: vuelo,
+			fecha1: vuelo.fechaSalida,
+			fecha2: vuelo.fechaLlegada,
+		});
+	}
+
+	arrayFinal.push({
+		type: "aeropuerto",
+		almacen: array_vuelos[array_vuelos.length - 1].planVuelo.ciudadDestino,
+		vuelo: null,
+		fecha1: array_vuelos[array_vuelos.length - 1].fechaLlegada,
+		fecha2: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
+	});
+
+	arrayFinal.push({
+		type: "entrega",
+		almacen: null,
+		vuelo: null,
+		fecha1: new Date(new Date(array_vuelos[array_vuelos.length - 1].fechaLlegada).getTime() + 1 * 60 * 1000),
+		fecha2: null,
+	});
+
+	return arrayFinal;
+};
+
 function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simulacion, zoomToUbicacion, lockToFlight }: EnvioModalProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [planeMap, setPlaneMap] = useState<DataType | null>(null);
 	const [currentPlanRuta, setCurrentPlanRuta] = useState<Vuelo[] | null>(null);
+	const [totalArray, setTotalArray] = useState<TrackingLineType[]>([]);
 	const [numPaqueteSelected, setNumPaqueteSelected] = useState<number | null>(null);
 	const [paquetesEnvio, setPaquetesEnvio] = useState<Paquete[]>([]);
 
@@ -327,6 +389,26 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 		getCurrentStatus_Callback,
 		setCurrentlyViewingPlanRuta,
 	});
+
+	const findCurrentStep = (array_total: TrackingLineType[]) => {
+		if (currentTime === undefined) return 0;
+		if (array_total.length === 0) return 0;
+		if (array_total[0].fecha1 === null) return 0;
+
+		if (new Date(currentTime).getTime() < new Date(array_total[0].fecha1).getTime()) return 0;
+
+		for (let i = 0; i < array_total.length; i++) {
+			const trackingLine = array_total[i];
+			if (trackingLine.fecha1 === null || trackingLine.fecha2 === null) continue;
+			if (
+				new Date(trackingLine.fecha1).getTime() <= new Date(currentTime).getTime() &&
+				new Date(currentTime).getTime() < new Date(trackingLine.fecha2).getTime()
+			)
+				return i;
+		}
+
+		return array_total.length;
+	};
 
 	useEffect(() => {
 		async function getPlanRutaPaquetes() {
@@ -387,9 +469,21 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 		}
 	}, [isOpen]);
 
+	useEffect(() => {
+		if (currentPlanRuta !== null && envio !== null) {
+			const totalArray = getTotalArray(currentPlanRuta, envio);
+			setTotalArray(totalArray);
+		}
+	}, [currentPlanRuta]);
+
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent className="w-[900px] min-w-[900px] max-w-[900px] h-[687px] min-h-[687px] max-h-[687px]  flex flex-col gap-2">
+			<DialogContent
+				className={cn(
+					"w-[900px] min-w-[900px] max-w-[900px] h-[687px] min-h-[687px] max-h-[687px]  flex flex-col gap-2",
+					currentPlanRuta && "-translate-x-[650px]"
+				)}
+			>
 				{isLoading ? (
 					<div className="flex-1 flex justify-center items-center">
 						<Loader2 className="animate-spin stroke-gray-400" />
@@ -422,10 +516,20 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 							<AirportTable data={paquetesEnvio} columns={columns} />
 
 							{currentPlanRuta && (
-								<div className="w-[350px] p-4 absolute top-10 -right-[390px] bottom-10 bg-white rounded-lg flex flex-col gap-2">
-									<p className="text-lg font-medium leading-5">{`Ruta de paquete seleccionado: (${numPaqueteSelected})`}</p>
-									<div className="flex-1 flex flex-col gap-3">
-										{currentPlanRuta.length !== 0 ? (
+								<div className="w-[420px] p-4 absolute top-10 -right-[460px] bottom-10 bg-white rounded-lg flex flex-col gap-2">
+									<div className="flex flex-row items-center justify-between">
+										<p className="text-lg font-medium leading-5">{`Ruta de paquete seleccionado: (${numPaqueteSelected})`}</p>
+										<X
+											className="w-4 h-4 stroke-muted-foreground hover:stroke-black transition-colors  cursor-pointer"
+											onClick={() => {
+												setNumPaqueteSelected(null);
+												setCurrentPlanRuta(null);
+												setTotalArray([]);
+											}}
+										/>
+									</div>
+									<div className="flex-1 flex flex-col gap-3 mt-1 overflow-auto">
+										{/* {currentPlanRuta.length !== 0 ? (
 											currentPlanRuta.map((vuelo, index) => {
 												return (
 													<div className="flex flex-row justify-between items-center overflow-hidden" key={vuelo.id}>
@@ -445,7 +549,21 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 												);
 											})
 										) : (
-											<div className="text-muted-foreground m-auto text-center  leading-5">Este paquete aun no tiene una ruta definida</div>
+											<div className="text-muted-foreground m-auto text-center  leading-5">
+												Este paquete aun no tiene una ruta definida
+											</div>
+										)} */}
+
+										{totalArray.length !== 0 ? (
+											totalArray.map((trackingLine, index) => {
+												const isCurrentStep = findCurrentStep(totalArray) === index;
+
+												return <TrackingLine key={index} trackingLine={trackingLine} isCurrentStep={isCurrentStep} />;
+											})
+										) : (
+											<div className="text-muted-foreground m-auto text-center  leading-5">
+												Este paquete aun no tiene una ruta definida
+											</div>
 										)}
 									</div>
 								</div>
@@ -458,3 +576,37 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 	);
 }
 export default EnvioModal;
+
+function TrackingLine({ trackingLine, isCurrentStep }: { trackingLine: TrackingLineType; isCurrentStep: boolean }) {
+	return (
+		<>
+			{trackingLine.type === "aeropuerto" ? (
+				<div className={cn("flex flex-col justify-center items-start w-full px-2 py-1", isCurrentStep === true && "bg-gray-200 rounded-lg")}>
+					<p className="font-medium text-sm">{`Almacen de ${trackingLine.almacen?.ciudad}, ${trackingLine.almacen?.pais} (${trackingLine.almacen?.id})`}</p>
+					<p className="text-muted-foreground leading-[1.1] text-xs">
+						{`${formatDateTimeLongShort(trackingLine.fecha1 || new Date())} - ${formatDateTimeLongShort(
+							trackingLine.fecha2 || new Date()
+						)}`}
+					</p>
+				</div>
+			) : trackingLine.type === "vuelo" ? (
+				<div className={cn("flex flex-row items-center gap-3 w-full px-2 py-1", isCurrentStep === true && "bg-gray-200 rounded-lg")}>
+					<div className="flex flex-col justify-center items-start flex-1">
+						<p className="font-medium line-clamp-1 text-sm">{`${trackingLine.vuelo?.planVuelo.ciudadOrigen.ciudad}, ${trackingLine.vuelo?.planVuelo.ciudadOrigen.pais} (${trackingLine.vuelo?.planVuelo.ciudadOrigen.id})`}</p>
+						<p className="text-muted-foreground leading-[1.1] text-xs">{formatDateTimeLongShort(trackingLine.fecha1 || new Date())}</p>
+					</div>
+
+					<div className="flex flex-col justify-center items-end flex-1">
+						<p className="font-medium text-sm line-clamp-1">{`${trackingLine.vuelo?.planVuelo.ciudadDestino.ciudad}, ${trackingLine.vuelo?.planVuelo.ciudadDestino.pais} (${trackingLine.vuelo?.planVuelo.ciudadDestino.id})`}</p>
+						<p className="text-muted-foreground leading-[1.1] text-xs">{formatDateTimeLongShort(trackingLine.fecha2 || new Date())}</p>
+					</div>
+				</div>
+			) : (
+				<div className={cn("flex flex-col justify-center items-start w-full px-2 py-1", isCurrentStep === true && "bg-gray-200 rounded-lg")}>
+					<p className="font-medium text-sm">{`Se entregó paquete a cliente`}</p>
+					<p className="text-muted-foreground leading-[1.1] text-xs">{formatDateTimeLongShort(trackingLine.fecha1 || new Date())}</p>
+				</div>
+			)}
+		</>
+	);
+}
