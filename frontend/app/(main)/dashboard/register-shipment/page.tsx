@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { buttonVariants } from "@/components/ui/button"
 import { currentTimeString , getTimeString} from "@/lib/date";
 import { DatePicker } from "@/components/ui/date-picker";
-
+import { es } from "date-fns/locale";
 
 import {
   AlertDialog,
@@ -56,6 +56,8 @@ import {
 import { type CarouselApi } from "@/components/ui/carousel"
 import { Progress } from "@/components/ui/progress"
 
+
+
 interface NavigationButtonsProps {
   api: CarouselApi;
   currentStep: number;
@@ -65,6 +67,7 @@ interface NavigationButtonsProps {
   validatePackageCard: () => boolean;
 
 }
+
 
 function NavigationButtons({ api, currentStep, openConfirmDialog, validateSenderCard, validateReceiverCard, validatePackageCard  }: NavigationButtonsProps) { 
   const apiInstance = api ? api : null;
@@ -110,14 +113,46 @@ function NavigationButtons({ api, currentStep, openConfirmDialog, validateSender
 
 const getCurrentDate = async () => {
   try {
-      const response = await apiT<string>(
-          "GET",
-          `${process.env.NEXT_PUBLIC_API}/back/time/now`
-      );
+    const response = await apiT<string>(
+      "GET",
+      `${process.env.NEXT_PUBLIC_API}/back/time/now`
+    );
+    // Asegúrate de que la respuesta es una cadena ISO válida
+    const date = new Date(response);
+    if (!isNaN(date.getTime())) {
       return response;
+    } else {
+      throw new Error('Invalid date format from server');
+    }
   } catch (error) {
-      console.error("Error al obtener la fecha del servidor", error);
+    console.error("Error al obtener la fecha del servidor", error);
+    return new Date().toISOString(); // Retorna una fecha válida en caso de error
   }
+};
+
+const formatDateToDDMMYYYY = (date:any) => {
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatTimeToHHMM = (date:any) => {
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
+
+const convertToUTC = (localDate:any) => {
+  const utcYear = localDate.getUTCFullYear();
+  const utcMonth = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+  const utcDay = String(localDate.getUTCDate()).padStart(2, '0');
+  const utcHours = String(localDate.getUTCHours()).padStart(2, '0');
+  const utcMinutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+  return {
+    date: `${utcDay}/${utcMonth}/${utcYear}`,
+    time: `${utcHours}:${utcMinutes}`
+  };
 };
 
 function RegisterShipmentPage() {
@@ -147,12 +182,46 @@ function RegisterShipmentPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>('');
+  const [originTimezone, setOriginTimezone] = useState('');
 
   const validacionesCompletas = () => {
     // Implementa tus validaciones aquí
     // Retorna true si todas las validaciones están completas, de lo contrario false
     return false; // Cambia esto según tus validaciones
   };
+
+ 
+  const adjustToTimezone = (utcDate:Date, timezoneOffset:string) => {
+    console.log("utc Date ---> " + utcDate);
+    console.log("timezoneOffset --> " + timezoneOffset);
+  
+     // Si el timezoneOffset está en el formato 'GMT±HH', convertimos a '±HH:00'
+     if (/GMT[+-]\d{1,2}/.test(timezoneOffset)) {
+      const sign = timezoneOffset.includes('+') ? '+' : '-';
+      const hours = timezoneOffset.replace('GMT', '').replace(sign, '');
+      timezoneOffset = `${sign}${hours.padStart(2, '0')}:00`;
+    }
+    console.log("timezoneoffset antes del error ->" + timezoneOffset)
+    // Extraer el signo, las horas y los minutos del timezoneOffset
+    const match = timezoneOffset.match(/([+-])(\d{2}):?(\d{2})?/);
+    console.log("match --> ", match);
+  
+  if (!match) {
+    console.error('Invalid timezoneOffset format');
+    return new Date(NaN); // Retornar una fecha inválida
+  }
+
+  const sign = match[1] === '+' ? 1 : -1;
+  const hours = parseInt(match[2], 10);
+  const minutes = parseInt(match[3], 10);
+
+  const offsetMilliseconds = sign * (hours * 60 * 60 * 1000 + minutes * 60 * 1000);
+  const localDate = new Date(utcDate.getTime() + offsetMilliseconds);
+
+  console.log("Adjusted local date ---> " + localDate);
+
+  return localDate;
+};
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -172,16 +241,36 @@ function RegisterShipmentPage() {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
-      let stringDate = await getCurrentDate();
-      let date = new Date(stringDate || '');
+  const updateDateTime = async () => {
+    const utcStringDate = await getCurrentDate();
+    console.log("utcstringdate --> " + utcStringDate);
+    const utcDate = new Date(utcStringDate || '');
+    console.log("utcDateaNTES DE ENTRAR A ADJUST --> " + utcDate);
 
-      setSelectedDate(new Date(date));
-      setSelectedTime(getTimeString(stringDate || ''));
-      }, 1000);
+    if (!isNaN(utcDate.getTime()) && originTimezone) {
+      const localDate = adjustToTimezone(utcDate, originTimezone);
+      console.log(localDate);
+      if (!isNaN(localDate.getTime())) {
+        const { date, time } = convertToUTC(localDate);
+        setSelectedDate(localDate);
+        setSelectedTime(time);
 
-      return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, []);
+      } else {
+        console.error('Invalid local Date');
+      }
+    } else {
+      console.error('Invalid UTC Date');
+    }
+  };
+
+  if (originTimezone) {
+    updateDateTime();
+    const intervalId = setInterval(updateDateTime, 60000); // Update every minute
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }
+  }, [originTimezone]);
+
 
    // Validación de correo electrónico
    const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -500,7 +589,14 @@ function RegisterShipmentPage() {
         <br></br>
         <br></br>
         <Label htmlFor="city-origin" className="font-semibold text-base">Ciudad origen *</Label>
-        <Select onValueChange={setOriginLocationId} value={originLocationId}>
+        <Select onValueChange={(value) => {
+                  const selectedLocation = locations.find(location => location.id === value);
+                  if (selectedLocation) {
+                    setOriginLocationId(value);
+                    setOriginTimezone(selectedLocation.zonaHoraria); // Actualiza la zona horaria
+                    console.log(selectedLocation.zonaHoraria);
+                  }
+                }} value={originLocationId}>
                 <SelectTrigger className="w-[885px]">
                     <SelectValue placeholder="Seleccione la ciudad de origen" />
                 </SelectTrigger>
@@ -535,10 +631,11 @@ function RegisterShipmentPage() {
         <div className="flex-1">
           <Label htmlFor="register-date" className="font-semibold text-base">Fecha de registro *</Label>
           <br></br>
-          <DatePicker
+          <Input
+            type='text'
             className='w-full px-4 py-2 border rounded-md'
-            date={selectedDate}
-            setDate={setSelectedDate}
+            value={selectedDate ? formatDateToDDMMYYYY(selectedDate) : ''}
+            onChange={(e) => setSelectedDate(new Date(e.target.value))}
             placeholder='Selecciona una fecha'
             disabled={true}
           />
