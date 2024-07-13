@@ -44,9 +44,6 @@ function ModalColapseDaily({ open, onOpenChange }: { open: boolean; onOpenChange
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cerrar</AlertDialogCancel>
-					<Button onClick={reiniciarOperaciones} isLoading={isLoading} disabled={isLoading}>
-						Reiniciar
-					</Button>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
