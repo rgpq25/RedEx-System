@@ -297,6 +297,7 @@ type TrackingLineType = {
 };
 
 const getTotalArray = (array_vuelos: Vuelo[], _envio: Envio) => {
+	if (array_vuelos.length === 0) return [];
 	const arrayFinal: TrackingLineType[] = [];
 
 	for (let i = 0; i < array_vuelos.length; i++) {
@@ -471,8 +472,11 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 
 	useEffect(() => {
 		if (currentPlanRuta !== null && envio !== null) {
+			console.log(currentPlanRuta);
 			const totalArray = getTotalArray(currentPlanRuta, envio);
 			setTotalArray(totalArray);
+		} else {
+			setTotalArray([]);
 		}
 	}, [currentPlanRuta]);
 
@@ -561,7 +565,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 												return <TrackingLine key={index} trackingLine={trackingLine} isCurrentStep={isCurrentStep} />;
 											})
 										) : (
-											<div className="text-muted-foreground m-auto text-center  leading-5">
+											<div className="text-muted-foreground m-auto text-center  leading-5 text-sm">
 												Este paquete aun no tiene una ruta definida
 											</div>
 										)}
