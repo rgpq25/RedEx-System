@@ -620,8 +620,6 @@ public class Solucion {
             }
 
             if (usedCapacity > maxCapacity) {
-                System.out.println("En la ruta de id " + ruta.getId()
-                        + " se excedio la capacidad maxima, buscar error =================================");
                 return false;
             }
             if (usedCapacity == maxCapacity) {
