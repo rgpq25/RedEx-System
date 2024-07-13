@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.persistence.PersistenceException;
 import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
@@ -1752,7 +1753,7 @@ public class Algoritmo {
         return envios;
     }
 
-    public List<Envio> obtener_envios_dia_dia() {
+    public List<Envio> obtener_envios_dia_dia(EnvioService envioService) {
         List<Envio> envios = new ArrayList<>();
         // List<Paquete> paquetes = this.paquetesOpDiaDia;
         Collection<Paquete> paquetesCollection = this.hashTodosPaquetesDiaDia.values();
@@ -1771,8 +1772,8 @@ public class Algoritmo {
         for (Paquete paquete : paquetes) {
             int envioId = paquete.getEnvio().getId();
             if (!enviosMap.containsKey(envioId)) {
-                Envio envio = paquete.getEnvio();
-                enviosMap.put(envioId, envio);
+                Envio envioBD = envioService.get(envioId);
+                enviosMap.put(envioId, envioBD);
             }
         }
         envios.addAll(enviosMap.values());
