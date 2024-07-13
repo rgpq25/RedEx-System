@@ -102,7 +102,7 @@ public class OperacionesDiaDiaController {
 
     @GetMapping("/obtenerEnvios")
     public List<Envio> obtenerEnvios(){
-        return algoritmo.obtener_envios_dia_dia();
+        return algoritmo.obtener_envios_dia_dia(envioService);
     }
 
     @GetMapping("/obtenerEstadoAlmacen")

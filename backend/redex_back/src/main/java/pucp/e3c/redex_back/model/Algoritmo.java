@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.persistence.PersistenceException;
 import pucp.e3c.redex_back.service.AeropuertoService;
+import pucp.e3c.redex_back.service.EnvioService;
 import pucp.e3c.redex_back.service.PaqueteService;
 import pucp.e3c.redex_back.service.PlanRutaService;
 import pucp.e3c.redex_back.service.PlanRutaXVueloService;
@@ -47,7 +48,6 @@ public class Algoritmo {
 
     RespuestaAlgoritmo ultimaRespuestaOperacionDiaDia;
 
-    private boolean terminarPlanificacionDiaDia;
 
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
 
@@ -71,7 +71,6 @@ public class Algoritmo {
 
     private boolean puedeRecibirPaquetesDiaDia = true;
 
-    private boolean operacionDiaDiaActivo = false;
 
     @Autowired
     private TimeService timeService;
@@ -79,19 +78,10 @@ public class Algoritmo {
     public Algoritmo(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
-        this.terminarPlanificacionDiaDia = false;
         this.paquetes_por_simulacion = new HashMap<>();
         this.puedeRecibirPaquetesDiaDia = true;
-        this.operacionDiaDiaActivo = false;
     }
 
-    public boolean isTerminarPlanificacionDiaDia() {
-        return terminarPlanificacionDiaDia;
-    }
-
-    public void setTerminarPlanificacionDiaDia(boolean terminarPlanificacionDiaDia) {
-        this.terminarPlanificacionDiaDia = terminarPlanificacionDiaDia;
-    }
 
     private Date calcularTiempoSimulacionBack(Simulacion simulacion, long milisegundosDeVentaja) {
         long tiempoActual = new Date().getTime();
@@ -131,18 +121,17 @@ public class Algoritmo {
 
         // Inicia la operación dia a dia
         this.nConsultasDiaDia = 0;
-        this.operacionDiaDiaActivo = true;
         this.puedeRecibirPaquetesDiaDia = true;
 
         String tipoOperacion = "DIA A DIA";
-        boolean replanificar = true;
+        boolean replanificar = false;
         this.ultimaRespuestaOperacionDiaDia = new RespuestaAlgoritmo();
         this.estadoAlmacenOpDiaDia = new EstadoAlmacen();
         this.estadoAlmacenOpDiaDia.setAeropuertos(aeropuertos);
         this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(true);
 
-        this.hashTodosPaquetesDiaDia = new HashMap<>();
-        this.hashPlanRutasNTDiaDia = new HashMap<>();
+        this.hashTodosPaquetesDiaDia = new HashMap<Integer, Paquete>();
+        this.hashPlanRutasNTDiaDia = new HashMap<Integer, PlanRutaNT>();
 
         // Enviar mensaje de inicio de loop principal
         messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Iniciando loop principal");
@@ -156,7 +145,7 @@ public class Algoritmo {
         }
 
         int i = 0;
-        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<>();
+        HashMap<Integer, Integer> ocupacionVuelos = new HashMap<Integer, Integer>();
         boolean primeraIteracionConPaquetes = true;
         ArrayList<Paquete> paquetesDiaDia = new ArrayList<>();
         GrafoVuelos grafoVuelos = null;
@@ -165,9 +154,7 @@ public class Algoritmo {
 
         // Loop principal del día a día
         while (true) {
-            if (this.terminarPlanificacionDiaDia || !this.ultimaRespuestaOperacionDiaDia.isCorrecta()) {
-                this.operacionDiaDiaActivo = false;
-                this.terminarPlanificacionDiaDia = false;
+            if (!this.ultimaRespuestaOperacionDiaDia.isCorrecta()) {
                 LOGGER.info(tipoOperacion + " Terminando loop principal");
                 return;
             }
@@ -228,7 +215,6 @@ public class Algoritmo {
                 if (grafoVuelos.getVuelosHash() == null || grafoVuelos.getVuelosHash().isEmpty()) {
                     LOGGER.error(tipoOperacion + " ERROR: No se generaron vuelos.");
                     messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Detenido, error en generar vuelos");
-                    this.operacionDiaDiaActivo = false;
                     return;
                 }
                 primeraIteracionConPaquetes = false;
@@ -299,9 +285,9 @@ public class Algoritmo {
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.3);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0,3);
             if (respuestaAlgoritmo == null) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now);
+                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now + " respuesta nula");
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
                     writer.println(tipoOperacion + " Colpaso en fecha " + now);
@@ -311,16 +297,14 @@ public class Algoritmo {
                 }
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setCorrecta(false);
-                respuestaAlgoritmo.getSimulacion().setEstado(3);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-                this.operacionDiaDiaActivo = false;
                 return;
             }
 
             if (respuestaAlgoritmo.isCorrecta() == false) {
-                LOGGER.error(tipoOperacion + ": Colapso en fecha por paquetes " + now);
+                LOGGER.error(tipoOperacion + ": Colapso en fecha por paquetes " + now + " respuesta incorrecta");
                 // imprimir en un txt
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
@@ -329,14 +313,11 @@ public class Algoritmo {
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
                 }
-                // respuestaAlgoritmo = new RespuestaAlgoritmo();
-                // respuestaAlgoritmo.setCorrecta(false);
-                respuestaAlgoritmo.getSimulacion().setEstado(3);
 
+                respuestaAlgoritmo.setCorrecta(false);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-                this.operacionDiaDiaActivo = false;
                 return;
             }
 
@@ -398,7 +379,7 @@ public class Algoritmo {
                 currentPlanRutas.add(hashPlanRutasNTDiaDia.get(entry.getKey()));
             }
 
-            ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
+            //ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
 
             /*
              * if (nuevosPaquetes != null) {
@@ -446,7 +427,6 @@ public class Algoritmo {
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
                 messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
                 this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-                this.operacionDiaDiaActivo = false;
                 return;
             }
 
@@ -770,7 +750,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
-                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.0);
+                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.5,3);
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
@@ -1636,12 +1616,12 @@ public class Algoritmo {
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
             VueloService vueloService, PlanRutaService planRutaService, SimulacionService simulacionService,
             Simulacion simulacion, SimpMessagingTemplate messagingTemplate, String tipoOperacion,
-            Date tiempoEnSimulacion, int TA, int neighbourCountParametro, double probIndexInvParametro) {
+            Date tiempoEnSimulacion, int TA, int neighbourCountParametro, double probIndexInvParametro, int windowSizeDiv) {
         // Simmulated Annealing Parameters
         double temperature = 1500;
         double coolingRate = 0.08;
         int neighbourCount = neighbourCountParametro;
-        int windowSize = tamanhoPaquetes / 3;
+        int windowSize = tamanhoPaquetes / windowSizeDiv;
         boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
@@ -1773,7 +1753,7 @@ public class Algoritmo {
         return envios;
     }
 
-    public List<Envio> obtener_envios_dia_dia() {
+    public List<Envio> obtener_envios_dia_dia(EnvioService envioService) {
         List<Envio> envios = new ArrayList<>();
         // List<Paquete> paquetes = this.paquetesOpDiaDia;
         Collection<Paquete> paquetesCollection = this.hashTodosPaquetesDiaDia.values();
@@ -1792,8 +1772,8 @@ public class Algoritmo {
         for (Paquete paquete : paquetes) {
             int envioId = paquete.getEnvio().getId();
             if (!enviosMap.containsKey(envioId)) {
-                Envio envio = paquete.getEnvio();
-                enviosMap.put(envioId, envio);
+                Envio envioBD = envioService.get(envioId);
+                enviosMap.put(envioId, envioBD);
             }
         }
         envios.addAll(enviosMap.values());
@@ -2075,14 +2055,6 @@ public class Algoritmo {
 
     public void setPaquetesProcesadosUltimaSimulacion(ArrayList<Paquete> paquetesProcesadosUltimaSimulacion) {
         this.paquetesProcesadosUltimaSimulacion = paquetesProcesadosUltimaSimulacion;
-    }
-
-    public boolean isOperacionDiaDiaActivo() {
-        return operacionDiaDiaActivo;
-    }
-
-    public void setOperacionDiaDiaActivo(boolean operacionDiaDiaActivo) {
-        this.operacionDiaDiaActivo = operacionDiaDiaActivo;
     }
 
 }
