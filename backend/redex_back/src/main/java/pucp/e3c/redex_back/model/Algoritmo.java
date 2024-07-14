@@ -1965,6 +1965,11 @@ public class Algoritmo {
                 cantidadPaquetes);
     }
 
+    public void agregarPaqueteEstadoAlmacenDiaDia(String aeropuerto, Date fechaRecepcion) {
+        this.estadoAlmacenOpDiaDia.registrarCapacidadOperacionesDiaDia(aeropuerto, removeTime(fechaRecepcion),
+                1);
+    }
+
     public void agregarPaqueteEnAeropuertoDiaDia(Paquete paquete) {
         // this.paquetesOpDiaDia.add(paquete);
         // this.planRutasOpDiaDia.add(new PlanRutaNT());
