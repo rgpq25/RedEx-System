@@ -400,21 +400,21 @@ public class Algoritmo {
                     ocupacionVuelos, aeropuertos);
 
             // verificacion de colapso en almacen
-            // colapsoAlmacen =
-            // !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));}
-            
-            //colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+            colapsoAlmacen =
+            !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));}
 
-             
+            // colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+
             colapso = colapsoVuelos || colapsoAlmacen;
 
             if (colapso) {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
-                //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
+                // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
+                // ".txt");
 
                 LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
-                // 
+                //
                 // imprimir en un txt
                 try {
                     // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
