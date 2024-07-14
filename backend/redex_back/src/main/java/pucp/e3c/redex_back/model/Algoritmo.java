@@ -867,7 +867,7 @@ public class Algoritmo {
             }
 
             colapso = colapsoVuelos || colapsoAlmacen;
-            int day = 15, month = 5, year = 2023, hour = 23, minute = 44, second = 0;
+            int day = 15, month = 5, year = 2024, hour = 23, minute = 44, second = 0;
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, day, hour, minute, second);
             Date fechaForzada = calendar.getTime();
