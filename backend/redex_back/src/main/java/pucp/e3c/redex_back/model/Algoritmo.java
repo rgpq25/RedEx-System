@@ -1648,7 +1648,7 @@ public class Algoritmo {
         double sumaPaquetesWeight = 10;
         double sumaVuelosWeight = 6;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
-        double mediaVuelosWight = 4;
+        double mediaVuelosWight = 100;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
@@ -1707,7 +1707,7 @@ public class Algoritmo {
         double sumaPaquetesWeight = 10;
         double sumaVuelosWeight = 6;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
-        double mediaVuelosWight = 50;
+        double mediaVuelosWight = 10;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(

@@ -617,7 +617,7 @@ public class Solucion {
 
     public boolean isRouteFlightsCapacityAvailable(PlanRutaNT ruta) {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
-            int maxCapacity = ruta.getVuelos().get(i).getPlanVuelo().getCapacidadMaxima();
+            int maxCapacity = ruta.getVuelos().get(i).getPlanVuelo().getCapacidadMaxima() - 5;
 
             int usedCapacity = 0;
             if (ocupacionVuelos.get(ruta.getVuelos().get(i).getId()) == null) {
