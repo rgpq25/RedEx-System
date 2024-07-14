@@ -517,7 +517,7 @@ function EnvioModal({ currentTime, isSimulation, isOpen, setIsOpen, envio, simul
 
 							<p>{"Fecha recepcion: " + formatDateTimeLongShort(envio?.fechaRecepcion || new Date())}</p>
 							<p>{"Fecha limite entrega: " + formatDateTimeLongShort(envio?.fechaLimiteEntrega || new Date())}</p>
-							<AirportTable data={paquetesEnvio} columns={columns} />
+							<AirportTable data={paquetesEnvio} columns={columns} unidad="paquete(s)"/>
 
 							{currentPlanRuta && (
 								<div className="w-[420px] p-4 absolute top-10 -right-[460px] bottom-10 bg-white rounded-lg flex flex-col gap-2">
