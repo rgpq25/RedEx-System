@@ -762,7 +762,7 @@ public class Algoritmo {
                     vueloService,
                     planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
-                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.5, 3);
+                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.0, 3);
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
