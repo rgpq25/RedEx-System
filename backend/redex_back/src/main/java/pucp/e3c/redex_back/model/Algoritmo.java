@@ -1646,9 +1646,9 @@ public class Algoritmo {
         // funcion_fitness = (SUMA_TOTAL_PAQUETES) * 10 + (SUMA_TOTAL_VUELOS) * 4 +
         // (PROMEDIO_PONDERADO_TIEMPO_AEROPUERTO) * 4
         double sumaPaquetesWeight = 10;
-        double sumaVuelosWeight = 6;
+        double sumaVuelosWeight = 60;
         double promedioPonderadoTiempoAeropuertoWeight = 4;
-        double mediaVuelosWight = 100;
+        double mediaVuelosWight = 10;
 
         SAImplementation sa = new SAImplementation();
         sa.setData(
