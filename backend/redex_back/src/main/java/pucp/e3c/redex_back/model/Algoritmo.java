@@ -150,6 +150,9 @@ public class Algoritmo {
         // HashMap<Integer, PlanRutaNT> hashPlanRutasNTDiaDia = new HashMap<>();
 
         // Loop principal del día a día
+        ArrayList<Paquete> paquetesFuera = new ArrayList<>();
+        ArrayList<PlanRutaNT> rutasFuera = new ArrayList<>();
+
         while (true) {
             if (!this.ultimaRespuestaOperacionDiaDia.isCorrecta()) {
                 LOGGER.info(tipoOperacion + " Terminando loop principal");
@@ -278,8 +281,7 @@ public class Algoritmo {
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
-            ArrayList<Paquete> paquetesFuera = new ArrayList<>();
-            ArrayList<PlanRutaNT> rutasFuera = new ArrayList<>();
+            
             EstadoAlmacen estadoInicial = new EstadoAlmacen(paquetesFuera, rutasFuera, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
             // Realizar la planificación
@@ -328,6 +330,8 @@ public class Algoritmo {
             ArrayList<PlanRutaNT> planRutasRespuestaAlgoritmo = respuestaAlgoritmo.getPlanesRutas();
             for (int j = 0; j < idsPaquetesProcesar.size(); j++) {
                 hashPlanRutasNTDiaDia.put(idsPaquetesProcesar.get(j), planRutasRespuestaAlgoritmo.get(j));
+                paquetesFuera.add(hashTodosPaquetesDiaDia.get(idsPaquetesProcesar.get(j)));
+                rutasFuera.add(planRutasRespuestaAlgoritmo.get(j));
             }
 
             LOGGER.info(tipoOperacion + " Planificacion finalizada");
