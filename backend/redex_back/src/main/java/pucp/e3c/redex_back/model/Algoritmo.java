@@ -285,7 +285,7 @@ public class Algoritmo {
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0,3);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0,2);
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now + " respuesta nula");
                 try {
@@ -399,14 +399,17 @@ public class Algoritmo {
 
             // verificacion de colapso en almacen
             // colapsoAlmacen =
-            // !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));
-            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
-
+            // !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));}
+            
+            //colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(now));
+            
             colapso = colapsoVuelos || colapsoAlmacen;
 
             if (colapso) {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
+                //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
 
                 LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
                 // imprimir en un txt
@@ -1622,7 +1625,7 @@ public class Algoritmo {
         double coolingRate = 0.08;
         int neighbourCount = neighbourCountParametro;
         int windowSize = tamanhoPaquetes / windowSizeDiv;
-        boolean stopWhenNoPackagesLeft = true;
+        boolean stopWhenNoPackagesLeft = false;
 
         // Weight Parameters
         double badSolutionPenalization = 100;
@@ -1996,7 +1999,7 @@ public class Algoritmo {
     public void enviarEstadoAlmacenSocketDiaDiaPorEnvio(Integer id, Integer cantidadPaquetes, String aeropuerto) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
         if (this.estadoAlmacenOpDiaDia.getAeropuertos() != null) {
-            boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima());
+            boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima_hasta(timeService.now()));
             if (colapsoAlmacen) {
                 System.out.println("Colapso de almacen");
                 this.ultimaRespuestaOperacionDiaDia.setCorrecta(false);
@@ -2013,7 +2016,7 @@ public class Algoritmo {
     public void enviarEstadoAlmacenSocketDiaDiaPorCarga(int cantidadEnvios, int cantidadPaquetes) {
         this.ultimaRespuestaOperacionDiaDia.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
         if (this.estadoAlmacenOpDiaDia.getAeropuertos() != null) {
-            boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima());
+            boolean colapsoAlmacen = !(this.estadoAlmacenOpDiaDia.verificar_capacidad_maxima_hasta(timeService.now()));
             if (colapsoAlmacen) {
                 System.out.println("Colapso de almacen");
                 this.ultimaRespuestaOperacionDiaDia.setCorrecta(false);
