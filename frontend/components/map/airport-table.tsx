@@ -72,7 +72,9 @@ export function AirportTable<TData, TValue>({ columns, data, unidad = "envío(s)
 	return (
 		<div className="flex-1 flex flex-col mt-2 overflow-x-hidden">
 			<div className="flex items-center">
-				<p className="text-lg font-medium">`${data.length} ${unidad}`</p>
+				<p className="text-lg font-medium">
+					{data.length} {unidad}
+				</p>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
