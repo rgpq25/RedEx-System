@@ -1625,7 +1625,7 @@ public class Algoritmo {
         double coolingRate = 0.08;
         int neighbourCount = neighbourCountParametro;
         int windowSize = tamanhoPaquetes / windowSizeDiv;
-        boolean stopWhenNoPackagesLeft = false;
+        boolean stopWhenNoPackagesLeft = true;
 
         // Weight Parameters
         double badSolutionPenalization = 100;
