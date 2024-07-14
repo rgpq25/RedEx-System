@@ -281,7 +281,7 @@ public class Algoritmo {
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
-            
+
             EstadoAlmacen estadoInicial = new EstadoAlmacen(paquetesFuera, rutasFuera, grafoVuelos.getVuelosHash(),
                     ocupacionVuelos, aeropuertos);
             // Realizar la planificación
@@ -572,7 +572,8 @@ public class Algoritmo {
         return true;
     }
 
-    private void enviarRespuestaVacia(Date tiempoEnSimulacion, Simulacion simulacion, String tipoOperacion) {
+    private void enviarRespuestaVacia(Date tiempoEnSimulacion, Simulacion simulacion, String tipoOperacion,
+            ArrayList<Vuelo> vuelos, EstadoAlmacen estadoAlmacen) {
         messagingTemplate.convertAndSend("/algoritmo/estado",
                 new RespuestaAlgoritmoEstado(
                         "No hay paquetes para la planificacion actual en " + tiempoEnSimulacion + ", esperando",
@@ -584,6 +585,8 @@ public class Algoritmo {
 
         RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo();
         respuestaAlgoritmo.setSimulacion(simulacion);
+        respuestaAlgoritmo.setVuelos(vuelos);
+        respuestaAlgoritmo.setEstadoAlmacen(estadoAlmacen);
         respuestaAlgoritmo.getVuelos().removeIf(vuelo -> vuelo.getCapacidadUtilizada() == 0);
 
         messagingTemplate.convertAndSend("/algoritmo/respuesta", respuestaAlgoritmo);
@@ -617,6 +620,7 @@ public class Algoritmo {
                 simulacion);
 
         while (iniciar) {
+            EstadoAlmacen estadoPrevio = new EstadoAlmacen(aeropuertos);
             simulacion = simulacionService.get(simulacion.getId());
             long startTime = System.currentTimeMillis();
             paquetes = actualizarPaquetes(paquetes, planRutas, tiempoEnFront, aeropuertoService);
@@ -712,7 +716,9 @@ public class Algoritmo {
                     primera_iter = false;
 
                 }
-                enviarRespuestaVacia(tiempoEnBack, simulacion, tipoOperacion);
+                ArrayList<Vuelo> vuelos = (ArrayList<Vuelo>) grafoVuelos.getVuelosHash().values();
+
+                enviarRespuestaVacia(tiempoEnBack, simulacion, tipoOperacion, vuelos, estadoPrevio);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
                 tiempoEnBack = calcularTiempoSimulacionBack(simulacion, milisegundosDeVentaja);
                 tiempoEnFront = calcularTiempoSimulacionBack(simulacion, 0);
@@ -759,10 +765,10 @@ public class Algoritmo {
             startTime = System.currentTimeMillis();
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planesRutaActuales, new EstadoAlmacen(aeropuertos), aeropuertos, planVuelos, tamanhoPaquetes, i,
-                    vueloService,
-                    planRutaService,
-                    simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
+                    vueloService, planRutaService, simulacionService, simulacion, messagingTemplate, tipoOperacion,
+                    tiempoEnBack,
                     TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.5, 3);
+            estadoPrevio = respuestaAlgoritmo.getEstadoAlmacen();
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
@@ -1032,7 +1038,6 @@ public class Algoritmo {
                     primera_iter = false;
 
                 }
-                enviarRespuestaVacia(tiempoEnSimulacion, simulacion, tipoOperacion);
                 System.out.println("Proxima planificacion en tiempo de simulacion " + fechaSgteCalculo);
                 tiempoEnSimulacion = calcularTiempoSimulacionBack(simulacion, 60000);
                 continue;
