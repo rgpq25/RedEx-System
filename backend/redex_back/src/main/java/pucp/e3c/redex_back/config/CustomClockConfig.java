@@ -41,9 +41,9 @@ public class CustomClockConfig {
 
         public void resetClock() {
             Clock baseClock = Clock.systemDefaultZone();
-            //Instant fixedInstant = Instant.parse("2024-07-22T10:45:00Z");
+            Instant fixedInstant = Instant.parse("2024-07-22T10:45:00Z");
             //Para pruebas
-            Instant fixedInstant = Instant.parse("2024-07-22T10:58:00Z");
+            //Instant fixedInstant = Instant.parse("2024-07-22T10:58:00Z");
             this.clock = Clock.offset(baseClock, Duration.between(Instant.now(), fixedInstant));
         }
     }
