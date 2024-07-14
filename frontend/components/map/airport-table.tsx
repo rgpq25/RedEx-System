@@ -35,9 +35,10 @@ import { cn } from "@/lib/utils";
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	unidad?: string;
 }
 
-export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function AirportTable<TData, TValue>({ columns, data, unidad = "envío(s)" }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -71,7 +72,9 @@ export function AirportTable<TData, TValue>({ columns, data }: DataTableProps<TD
 	return (
 		<div className="flex-1 flex flex-col mt-2 overflow-x-hidden">
 			<div className="flex items-center">
-				<p className="text-lg font-medium">{data.length} envío(s)</p>
+				<p className="text-lg font-medium">
+					{data.length} {unidad}
+				</p>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
