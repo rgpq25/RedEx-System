@@ -401,77 +401,76 @@ public class Algoritmo {
 
             // verificacion de colapso en almacen
             colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));
-        
 
-        // colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
+            // colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
 
-        colapso = colapsoVuelos || colapsoAlmacen;
+            colapso = colapsoVuelos || colapsoAlmacen;
 
-        if (colapso) {
-            LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
-            LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
-            // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
-            // ".txt");
+            if (colapso) {
+                LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
+                LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
+                // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
+                // ".txt");
 
-            LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
-            //
-            // imprimir en un txt
-            try {
-                // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
-                messagingTemplate.convertAndSend("/algoritmo/estado",
-                        "Colapso en fecha " + now);
-                // writer.close();
-            } catch (Exception e) {
-                System.out.println("Error en escritura de archivo");
+                LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
+                //
+                // imprimir en un txt
+                try {
+                    // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
+                    messagingTemplate.convertAndSend("/algoritmo/estado",
+                            "Colapso en fecha " + now);
+                    // writer.close();
+                } catch (Exception e) {
+                    System.out.println("Error en escritura de archivo");
+                }
+
+                // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
+                // ".txt");
+
+                // respuestaAlgoritmo = new RespuestaAlgoritmo();
+                respuestaAlgoritmo.setCorrecta(false);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
+                messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+                this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
+                return;
             }
 
             // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
             // ".txt");
+            this.estadoAlmacenOpDiaDia = estadoAlmacen;
+            // this.paquetesOpDiaDia = currentPaquetes;
+            // this.planRutasOpDiaDia = currentPlanRutas;
 
-            // respuestaAlgoritmo = new RespuestaAlgoritmo();
-            respuestaAlgoritmo.setCorrecta(false);
+            // Formar respuesta para el front
+            respuestaAlgoritmo.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
+            respuestaAlgoritmo.setSimulacion(null);
+            respuestaAlgoritmo.setOcupacionVuelos(null);
+            respuestaAlgoritmo.setPaquetes(null);
+
             messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
-            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Colapso");
+            LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada");
+
             this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-            return;
+
+            this.puedeRecibirPaquetesDiaDia = true;
+            LOGGER.info(tipoOperacion + " Puede recibir paquetes");
+
+            this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
+            System.out.println("Planificacion terminada hasta " + now);
+            messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion terminada hasta " + now);
+
+            long end = System.currentTimeMillis();
+            LOGGER.info(tipoOperacion + "|| Planificacion terminada en " + (end - start) + " milisegundos");
+            long saMillis = SA * 1000 - (end - start);
+            if (saMillis < 0)
+                continue;
+
+            try {
+                Thread.sleep(saMillis);
+            } catch (Exception e) {
+                System.out.println("Error en sleep");
+            }
         }
-
-        // estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i +
-        // ".txt");
-        this.estadoAlmacenOpDiaDia = estadoAlmacen;
-        // this.paquetesOpDiaDia = currentPaquetes;
-        // this.planRutasOpDiaDia = currentPlanRutas;
-
-        // Formar respuesta para el front
-        respuestaAlgoritmo.setEstadoAlmacen(this.estadoAlmacenOpDiaDia);
-        respuestaAlgoritmo.setSimulacion(null);
-        respuestaAlgoritmo.setOcupacionVuelos(null);
-        respuestaAlgoritmo.setPaquetes(null);
-
-        messagingTemplate.convertAndSend("/algoritmo/diaDiaRespuesta", respuestaAlgoritmo);
-        LOGGER.info(tipoOperacion + " Respuesta algoritmo enviada");
-
-        this.ultimaRespuestaOperacionDiaDia = respuestaAlgoritmo;
-
-        this.puedeRecibirPaquetesDiaDia = true;
-        LOGGER.info(tipoOperacion + " Puede recibir paquetes");
-
-        this.ultimaRespuestaOperacionDiaDia.setIniciandoPrimeraPlanificacionDiaDia(false);
-        System.out.println("Planificacion terminada hasta " + now);
-        messagingTemplate.convertAndSend("/algoritmo/diaDiaEstado", "Planificacion terminada hasta " + now);
-
-        long end = System.currentTimeMillis();
-        LOGGER.info(tipoOperacion + "|| Planificacion terminada en " + (end - start) + " milisegundos");
-        long saMillis = SA * 1000 - (end - start);
-        if (saMillis < 0)
-            continue;
-
-        try {
-            Thread.sleep(saMillis);
-        } catch (Exception e) {
-            System.out.println("Error en sleep");
-        }
-    }
 
     }
 
