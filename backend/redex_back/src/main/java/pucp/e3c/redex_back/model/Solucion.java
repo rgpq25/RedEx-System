@@ -19,8 +19,8 @@ public class Solucion {
     public ArrayList<Aeropuerto> aeropuertos;
 
     public HashMap<Integer, Integer> ocupacionVuelos;
-    public EstadoAlmacen estado;
-
+    public EstadoAlmacen estadoInicial;
+    public EstadoAlmacen estadoFinal;
     public double costo;
     public double badSolutionPenalization;
     public double flightPenalization;
@@ -52,6 +52,7 @@ public class Solucion {
             ArrayList<PlanRutaNT> rutas,
             ArrayList<Aeropuerto> aeropuertos,
             HashMap<Integer, Integer> ocupacionVuelos,
+            EstadoAlmacen estadoInicial,
             double costo,
             double badSolutionPenalization,
             double flightPenalization,
@@ -67,7 +68,7 @@ public class Solucion {
         this.aeropuertos = aeropuertos;
 
         this.ocupacionVuelos = ocupacionVuelos;
-
+        this.estadoInicial = estadoInicial;
         this.costo = costo;
         this.badSolutionPenalization = badSolutionPenalization;
         this.flightPenalization = flightPenalization;
@@ -248,6 +249,7 @@ public class Solucion {
                 new ArrayList<>(this.rutas),
                 this.aeropuertos,
                 new HashMap<Integer, Integer>(this.ocupacionVuelos),
+                new EstadoAlmacen(this.estadoInicial),
                 this.costo,
                 this.badSolutionPenalization,
                 this.flightPenalization,
@@ -390,9 +392,11 @@ public class Solucion {
     }
 
     public void printAirportHistoricOcupation(String filename) {
-        this.estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
+        EstadoAlmacen estadoAlmacen = new EstadoAlmacen(this.estadoInicial);
+        estadoAlmacen.agregarAEstadoActual(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
                 this.aeropuertos);
-        estado.consulta_historicaTxt(filename);
+        this.estadoFinal = estadoAlmacen;
+        estadoAlmacen.consulta_historicaTxt(filename);
     }
 
     public double getSTPaquetes() {
@@ -427,9 +431,12 @@ public class Solucion {
     }
 
     public double getPPTAeropuerto() {
-        this.estado = new EstadoAlmacen(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
+        EstadoAlmacen estadoAlmacen = new EstadoAlmacen(this.estadoInicial);
+        estadoAlmacen.agregarAEstadoActual(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
                 this.aeropuertos);
-        return this.estado.calcularCostoTotalAlmacenamiento();
+        this.estadoFinal = estadoAlmacen;
+
+        return estadoAlmacen.calcularCostoTotalAlmacenamiento();
     }
 
     public double[] getCostoPaquete(int i) {
@@ -649,7 +656,7 @@ public class Solucion {
             int idVuelo = ruta.getVuelos().get(i).getId();
             if (!ocupacionVuelos.containsKey(idVuelo)) {
                 LOGGER.info("El vuelo con ID " + idVuelo + " no se encuentra en el mapa de ocupación.");
-                //return;
+                // return;
                 throw new Error("El vuelo con ID " + idVuelo + " no se encuentra en el mapa de ocupación.");
             }
 
@@ -663,8 +670,12 @@ public class Solucion {
     }
 
     public boolean isAirportCapacityAvailable() {
-        this.estado = new EstadoAlmacen(paquetes, rutas, vuelos_hash, ocupacionVuelos, aeropuertos);
-        return estado.verificar_capacidad_maxima();
+        EstadoAlmacen estadoAlmacen = new EstadoAlmacen(this.estadoInicial);
+        estadoAlmacen.agregarAEstadoActual(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
+                this.aeropuertos);
+        this.estadoFinal = estadoAlmacen;
+
+        return estadoAlmacen.verificar_capacidad_maxima();
     }
 
     public void printLogCouldntFindRoute(Paquete paquete, String filename) {

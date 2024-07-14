@@ -27,13 +27,31 @@ public class EstadoAlmacen {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EstadoAlmacen.class);
 
+    // Cambiar esto a deepClone
     public EstadoAlmacen(HashMap<String, TreeMap<Date, Integer>> uso_historico) {
-        this.uso_historico = uso_historico;
+        this.uso_historico = deepClone(uso_historico);
+    }
+
+    // Método para realizar una copia profunda de un HashMap<String, TreeMap<Date,
+    // Integer>>
+    private HashMap<String, TreeMap<Date, Integer>> deepClone(HashMap<String, TreeMap<Date, Integer>> original) {
+        HashMap<String, TreeMap<Date, Integer>> clone = new HashMap<>();
+        for (Map.Entry<String, TreeMap<Date, Integer>> entry : original.entrySet()) {
+            String key = entry.getKey();
+            TreeMap<Date, Integer> value = new TreeMap<>(entry.getValue());
+            clone.put(key, value);
+        }
+        return clone;
     }
 
     public EstadoAlmacen() {
         uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
         aeropuertos = null;
+    }
+
+    public EstadoAlmacen(ArrayList<Aeropuerto> _aeropuertos) {
+        uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
+        this.aeropuertos = _aeropuertos;
     }
 
     public EstadoAlmacen(EstadoAlmacen estado) {

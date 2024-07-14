@@ -27,6 +27,7 @@ public class SAImplementation {
 	private ArrayList<PlanRutaNT> planRutas;
 	private ArrayList<Paquete> paquetes;
 	private HashMap<Integer, Integer> ocupacionInicial;
+	private EstadoAlmacen estadoInicial;
 	private GrafoVuelos grafoVuelos;
 
 	// Simmulated Annealing Parameters
@@ -59,6 +60,7 @@ public class SAImplementation {
 			ArrayList<Paquete> paquetes,
 			ArrayList<PlanRutaNT> planRutas,
 			HashMap<Integer, Integer> ocupacionInicial,
+			EstadoAlmacen estadoInicial,
 			Date tiempoEnSimulacion) {
 		this.aeropuertos = aeropuertos;
 		this.planVuelos = planVuelos;
@@ -66,6 +68,7 @@ public class SAImplementation {
 		this.planRutas = planRutas;
 		this.ocupacionInicial = ocupacionInicial;
 		this.tiempoEnSimulacion = tiempoEnSimulacion;
+		this.estadoInicial = estadoInicial;
 	}
 
 	public void setParameters(
@@ -116,6 +119,7 @@ public class SAImplementation {
 					planRutas,
 					aeropuertos,
 					ocupacionInicial,
+					estadoInicial,
 					0,
 					badSolutionPenalization,
 					flightPenalization,
@@ -148,7 +152,7 @@ public class SAImplementation {
 
 			while (temperature > 1) {
 				// System.out.println("\nIteracion en loop\n");
-				//LOGGER.info(tipoOperacion + "|| inicio neighbours");
+				// LOGGER.info(tipoOperacion + "|| inicio neighbours");
 				ArrayList<Solucion> neighbours = new ArrayList<Solucion>();
 				for (int i = 0; i < neighbourCount; i++) {
 					Solucion newNeighbour = current.generateNeighbour(windowSize, vueloService,
@@ -159,7 +163,7 @@ public class SAImplementation {
 					neighbours.add(newNeighbour);
 					// System.out.println("Vecino generado");
 				}
-				//LOGGER.info(tipoOperacion + "|| fin neighbours");
+				// LOGGER.info(tipoOperacion + "|| fin neighbours");
 				// System.out.println("\nNeighbours iterados\n");
 				int bestNeighbourIndex = 0;
 				double bestNeighbourCost = Double.MAX_VALUE;
@@ -246,11 +250,11 @@ public class SAImplementation {
 			 * }
 			 */
 			ArrayList<Paquete> paquetesSinSentido = current.getPaquetesSinSentido();
-			if (paquetesSinSentido != null && paquetesSinSentido.size() > 0){
+			if (paquetesSinSentido != null && paquetesSinSentido.size() > 0) {
 				LOGGER.info(tipoOperacion + "|| Paquetes sin sentido encontrados: " + paquetesSinSentido.size());
 				planificacion_fallida = true;
 				for (Paquete paquete : paquetesSinSentido) {
-					
+
 					// System.out.println("Paquete sin sentido: " + paquete.toString());
 					LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
 				}
@@ -276,12 +280,11 @@ public class SAImplementation {
 			}
 			RespuestaAlgoritmo respuestaAlgoritmo = new RespuestaAlgoritmo(
 					new ArrayList<>(current.vuelos_hash.values()),
-					current.estado, current.rutas, simulacion);
+					current.estadoFinal, current.rutas, simulacion);
 			respuestaAlgoritmo.setOcupacionVuelos(current.ocupacionVuelos);
 			if (planificacion_fallida) {
 				respuestaAlgoritmo.setCorrecta(false);
-			}
-			else{
+			} else {
 				respuestaAlgoritmo.setCorrecta(true);
 			}
 			return respuestaAlgoritmo;

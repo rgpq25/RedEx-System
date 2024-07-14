@@ -48,7 +48,6 @@ public class Algoritmo {
 
     RespuestaAlgoritmo ultimaRespuestaOperacionDiaDia;
 
-
     private HashMap<Integer, List<Paquete>> paquetes_por_simulacion;
 
     private ArrayList<Paquete> paquetesProcesadosUltimaSimulacion = new ArrayList<>();
@@ -71,7 +70,6 @@ public class Algoritmo {
 
     private boolean puedeRecibirPaquetesDiaDia = true;
 
-
     @Autowired
     private TimeService timeService;
 
@@ -81,7 +79,6 @@ public class Algoritmo {
         this.paquetes_por_simulacion = new HashMap<>();
         this.puedeRecibirPaquetesDiaDia = true;
     }
-
 
     private Date calcularTiempoSimulacionBack(Simulacion simulacion, long milisegundosDeVentaja) {
         long tiempoActual = new Date().getTime();
@@ -281,11 +278,15 @@ public class Algoritmo {
                 planRutasPaquetesProcesar.add(planRutaNT);
                 idsPaquetesProcesar.add(paquete.getId());
             }
-
+            ArrayList<Paquete> paquetesFuera = new ArrayList<>();
+            ArrayList<PlanRutaNT> rutasFuera = new ArrayList<>();
+            EstadoAlmacen estadoInicial = new EstadoAlmacen(paquetesFuera, rutasFuera, grafoVuelos.getVuelosHash(),
+                    ocupacionVuelos, aeropuertos);
             // Realizar la planificación
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    planRutasPaquetesProcesar, aeropuertos, planVuelos, paquetesProcesar.size(), i, vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0,2);
+                    planRutasPaquetesProcesar, estadoInicial, aeropuertos, planVuelos, paquetesProcesar.size(), i,
+                    vueloService,
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0, 2);
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now + " respuesta nula");
                 try {
@@ -379,7 +380,8 @@ public class Algoritmo {
                 currentPlanRutas.add(hashPlanRutasNTDiaDia.get(entry.getKey()));
             }
 
-            //ArrayList<Paquete> nuevosPaquetes = paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
+            // ArrayList<Paquete> nuevosPaquetes =
+            // paqueteService.findPaqueteDiaDiaEntreFechas(now, timeService.now());
 
             /*
              * if (nuevosPaquetes != null) {
@@ -402,8 +404,8 @@ public class Algoritmo {
             // !(estadoAlmacen.verificar_capacidad_maxima_hasta(timeService.now()));}
             
             //colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima());
-            colapsoAlmacen = !(estadoAlmacen.verificar_capacidad_maxima_hasta(now));
-            
+
+             
             colapso = colapsoVuelos || colapsoAlmacen;
 
             if (colapso) {
@@ -412,6 +414,7 @@ public class Algoritmo {
                 //estadoAlmacen.consulta_historicaTxt("ocupacionAeropuertosDiaDiaPlani" + i + ".txt");
 
                 LOGGER.error(tipoOperacion + ": Colapso en fecha " + now);
+                // 
                 // imprimir en un txt
                 try {
                     // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
@@ -751,9 +754,11 @@ public class Algoritmo {
             // Realizar planificacion
             startTime = System.currentTimeMillis();
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
-                    planesRutaActuales, aeropuertos, planVuelos, tamanhoPaquetes, i, vueloService, planRutaService,
+                    planesRutaActuales, new EstadoAlmacen(aeropuertos), aeropuertos, planVuelos, tamanhoPaquetes, i,
+                    vueloService,
+                    planRutaService,
                     simulacionService, simulacion, messagingTemplate, tipoOperacion, tiempoEnBack,
-                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.5,3);
+                    TA * (int) simulacion.getMultiplicadorTiempo(), 1, 0.5, 3);
             endTime = System.currentTimeMillis();
             duration = endTime - startTime;
             System.out.println("Tiempo de ejecucion de algoritmo: " + duration + " milisegundos");
@@ -1616,10 +1621,12 @@ public class Algoritmo {
 
     public static RespuestaAlgoritmo procesarPaquetes(GrafoVuelos grafoVuelos,
             HashMap<Integer, Integer> ocupacionVuelos, ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> planRutaNTs,
+            EstadoAlmacen estadoInicial,
             ArrayList<Aeropuerto> aeropuertos, ArrayList<PlanVuelo> planVuelos, int tamanhoPaquetes, int iteracion,
             VueloService vueloService, PlanRutaService planRutaService, SimulacionService simulacionService,
             Simulacion simulacion, SimpMessagingTemplate messagingTemplate, String tipoOperacion,
-            Date tiempoEnSimulacion, int TA, int neighbourCountParametro, double probIndexInvParametro, int windowSizeDiv) {
+            Date tiempoEnSimulacion, int TA, int neighbourCountParametro, double probIndexInvParametro,
+            int windowSizeDiv) {
         // Simmulated Annealing Parameters
         double temperature = 1500;
         double coolingRate = 0.08;
@@ -1646,6 +1653,7 @@ public class Algoritmo {
                 paquetes,
                 planRutaNTs,
                 ocupacionVuelos,
+                estadoInicial,
                 tiempoEnSimulacion);
 
         sa.setParameters(
@@ -1704,6 +1712,7 @@ public class Algoritmo {
                 paquetes,
                 planRutaNTs,
                 ocupacionVuelos,
+                new EstadoAlmacen(aeropuertos),
                 tiempoEnSimulacion);
 
         sa.setParameters(
