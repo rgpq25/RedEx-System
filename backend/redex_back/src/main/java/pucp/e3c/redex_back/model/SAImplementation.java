@@ -200,7 +200,8 @@ public class SAImplementation {
 
 				LOGGER.info(tipoOperacion + "|| Current cost: " + current.getSolutionCost()
 						+ " | Packages left: "
-						+ current.costoDePaquetesYRutasErroneas + " | Temperature: "
+						+ current.costoDePaquetesYRutasErroneas + "Flights left: " + current.costoDeVuelosExcedidos
+						+ "Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: "
 						+ temperature);
 
 			}

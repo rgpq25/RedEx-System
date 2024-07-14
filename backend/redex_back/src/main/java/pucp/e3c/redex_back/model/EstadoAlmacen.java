@@ -466,6 +466,7 @@ public class EstadoAlmacen {
                 if (uso_historico.get(aeropuerto).get(fecha) > encontrarAeropuertoPorUbicacion(aeropuerto)
                         .getCapacidadMaxima()) {
                     exceso += 1;
+                    break;
                 }
             }
         }
