@@ -619,6 +619,13 @@ public class Algoritmo {
         boolean iniciar = inicializarLoop(paquetes, fechaMinima, planRutas, planVuelos, grafoVuelos, tipoOperacion,
                 simulacion);
 
+
+        int day = 15, month = 4, year = 2025, hour = 23, minute = 44, second = 0;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day, hour, minute, second);
+        Date fechaForzada = calendar.getTime();
+        System.out.println("Fecha forzada: " + fechaForzada);
+
         while (iniciar) {
             EstadoAlmacen estadoPrevio = new EstadoAlmacen(aeropuertos);
             simulacion = simulacionService.get(simulacion.getId());
@@ -867,10 +874,7 @@ public class Algoritmo {
             }
 
             colapso = colapsoVuelos || colapsoAlmacen;
-            int day = 15, month = 5, year = 2025, hour = 23, minute = 44, second = 0;
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month, day, hour, minute, second);
-            Date fechaForzada = calendar.getTime();
+            
             if (colapso || tiempoEnBack.after(fechaForzada)) {
                 LOGGER.info("Boolean colapsoVuelos " + colapsoVuelos);
                 LOGGER.info("Boolean colapsoAlmacen " + colapsoAlmacen);
