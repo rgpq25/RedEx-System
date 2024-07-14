@@ -288,7 +288,7 @@ public class Algoritmo {
             RespuestaAlgoritmo respuestaAlgoritmo = procesarPaquetes(grafoVuelos, ocupacionVuelos, paquetesProcesar,
                     planRutasPaquetesProcesar, estadoInicial, aeropuertos, planVuelos, paquetesProcesar.size(), i,
                     vueloService,
-                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 1, 0.0, 2);
+                    planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 2, 0.4, 2);
             if (respuestaAlgoritmo == null) {
                 LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now + " respuesta nula");
                 try {
