@@ -229,7 +229,7 @@ public class SAImplementation {
 			 */
 			LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: "
 					+ current.costoDePaquetesYRutasErroneas + " | Flights left: " + current.costoDeVuelosExcedidos
-						+ " | Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: " + temperature);
+					+ " | Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: " + temperature);
 			boolean planificacion_fallida = false;
 			if (current.costoDePaquetesYRutasErroneas > 0) {
 				planificacion_fallida = true;
@@ -261,6 +261,10 @@ public class SAImplementation {
 					// System.out.println("Paquete sin sentido: " + paquete.toString());
 					LOGGER.info(tipoOperacion + "|| Paquete sin sentido: " + paquete.toString());
 				}
+			}
+
+			if (current.costoDeAeropuertosExcedidos > 0.0 || current.costoDeVuelosExcedidos > 0.0) {
+				planificacion_fallida = true;
 			}
 
 			// Guardar vuelos
