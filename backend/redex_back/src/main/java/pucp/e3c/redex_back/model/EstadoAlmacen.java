@@ -44,7 +44,7 @@ public class EstadoAlmacen {
         return uso_historico;
     }
 
-        public ArrayList<Aeropuerto> getAeropuertos() {
+    public ArrayList<Aeropuerto> getAeropuertos() {
         return aeropuertos;
     }
 
@@ -58,6 +58,90 @@ public class EstadoAlmacen {
         this.aeropuertos = _aeropuertos;
         // Mapa para almacenar la historia de capacidad de cada aeropuerto
         this.uso_historico = new HashMap<String, TreeMap<Date, Integer>>();
+        ArrayList<String> aeropuertos = _aeropuertos.stream()
+                .map(aeropuerto -> aeropuerto.getUbicacion().getId())
+                .collect(Collectors.toCollection(ArrayList::new));
+        // Inicializar el TreeMap para cada aeropuerto
+        for (String aeropuerto : aeropuertos) {
+            this.uso_historico.put(aeropuerto, new TreeMap<>());
+        }
+        for (Integer IdVuelo : capacidades.keySet()) {
+            // Encuentra el aeropuerto de salida y llegada basado en el vuelo
+            String aeropuertoSalida = vuelos.get(IdVuelo).getPlanVuelo().getCiudadOrigen().getId();
+            String aeropuertoLlegada = vuelos.get(IdVuelo).getPlanVuelo().getCiudadDestino().getId();
+            /*
+             * if(aeropuertoSalida.equals("OAKB")){
+             * LOGGER.info("EstadoAlmacen Vuelo " + vuelos.get(IdVuelo).getId() +
+             * " Aeropuerto de salida: " + aeropuertoSalida + " cambio capacidad: -" +
+             * capacidades.get(IdVuelo) + " - fecha: " +
+             * vuelos.get(IdVuelo).getFechaSalida());
+             * }
+             * if(aeropuertoLlegada.equals("OAKB")){
+             * LOGGER.info("EstadoAlmacen Vuelo " + vuelos.get(IdVuelo).getId() +
+             * "Aeropuerto de llegada: " + aeropuertoLlegada + " cambio capacidad: +" +
+             * capacidades.get(IdVuelo) + " - fecha: " +
+             * vuelos.get(IdVuelo).getFechaLlegada());
+             * }
+             */
+            // Registrar salida de paquete
+            registrarCapacidad(aeropuertoSalida, vuelos.get(IdVuelo).getFechaSalida(), -capacidades.get(IdVuelo));
+
+            registrarCapacidad(aeropuertoLlegada, vuelos.get(IdVuelo).getFechaLlegada(), capacidades.get(IdVuelo));
+
+        }
+        for (int i = 0; i < paquetes.size(); i++) {
+            String aeropuertoSalida = paquetes.get(i).getEnvio().getUbicacionOrigen().getId();
+            String aeropuertoLlegada = paquetes.get(i).getEnvio().getUbicacionDestino().getId();
+            /*
+             * if(aeropuertoSalida.equals("OAKB")){
+             * LOGGER.info("EstadoAlmacen Paquete "+ paquetes.get(i).getId() +" Envio "+
+             * paquetes.get(i).getEnvio().getId() +" Aeropuerto de salida: " +
+             * aeropuertoSalida + " cambio +1 - fecha: " +
+             * paquetes.get(i).getEnvio().getFechaRecepcion());
+             * }
+             */
+
+            registrarCapacidad(aeropuertoSalida, removeTime(paquetes.get(i).getEnvio().getFechaRecepcion()), 1);
+
+            if (plan.get(i) == null || plan.get(i).getVuelos().size() == 0) {
+                continue;
+            }
+
+            Date newDate = removeTime(plan.get(i).getFin());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(newDate);
+            calendar.add(Calendar.MINUTE, 1);
+            newDate = calendar.getTime();
+            registrarCapacidad(aeropuertoLlegada, newDate, -1);
+            /*
+             * if(aeropuertoLlegada.equals("OAKB")){
+             * LOGGER.info("EstadoAlmacen Paquete "+ paquetes.get(i).getId() +" Envio "+
+             * paquetes.get(i).getEnvio().getId() +" Aeropuerto de llegada: " +
+             * aeropuertoLlegada + " cambio -1 - fecha: " + plan.get(i).getFin());
+             * }
+             */
+        }
+        for (String aeropuerto : aeropuertos) {
+            TreeMap<Date, Integer> capacidad = this.uso_historico.get(aeropuerto);
+            int sumaAcumulada = 0;
+            for (Map.Entry<Date, Integer> entrada : capacidad.entrySet()) {
+                sumaAcumulada += entrada.getValue();
+                // Actualizar el TreeMap con el valor acumulado
+                capacidad.put(entrada.getKey(), sumaAcumulada);
+                if (sumaAcumulada < 0) {
+                    // throw new IllegalArgumentException("sumaAcumulada cannot be negative");
+                    // System.out.println("Suma acumulada cannot be negative");
+                }
+            }
+
+        }
+    }
+
+    public void agregarAEstadoActual(ArrayList<Paquete> paquetes, ArrayList<PlanRutaNT> plan,
+            HashMap<Integer, Vuelo> vuelos, HashMap<Integer, Integer> capacidades, ArrayList<Aeropuerto> _aeropuertos) {
+        // LOGGER.info("EstadoAlmacen Constructor");
+        this.aeropuertos = _aeropuertos;
+        // Mapa para almacenar la historia de capacidad de cada aeropuerto
         ArrayList<String> aeropuertos = _aeropuertos.stream()
                 .map(aeropuerto -> aeropuerto.getUbicacion().getId())
                 .collect(Collectors.toCollection(ArrayList::new));
