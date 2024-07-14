@@ -459,6 +459,19 @@ public class EstadoAlmacen {
         return porcentajes_Uso_Por_hora;
     }
 
+    public double contarExcesoCapacidad() {
+        double exceso = 0;
+        for (String aeropuerto : uso_historico.keySet()) {
+            for (Date fecha : uso_historico.get(aeropuerto).keySet()) {
+                if (uso_historico.get(aeropuerto).get(fecha) > encontrarAeropuertoPorUbicacion(aeropuerto)
+                        .getCapacidadMaxima()) {
+                    exceso += 1;
+                }
+            }
+        }
+        return exceso;
+    }
+
     public double calcularCostoTotalAlmacenamiento() {
         if (!verificar_capacidad_maxima()) {
             return 10000; // Penalización por exceder la capacidad máxima

@@ -183,7 +183,8 @@ public class SAImplementation {
 					current = neighbours.get(bestNeighbourIndex);
 				}
 
-				if (current.costoDePaquetesYRutasErroneas == 0 && stopWhenNoPackagesLeft == true) {
+				if (current.costoDePaquetesYRutasErroneas == 0 && current.costoDeAeropuertosExcedidos == 0
+						&& current.costoDeVuelosExcedidos == 0 && stopWhenNoPackagesLeft == true) {
 					break;
 				}
 

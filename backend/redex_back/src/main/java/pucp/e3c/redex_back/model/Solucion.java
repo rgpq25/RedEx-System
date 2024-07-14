@@ -40,6 +40,8 @@ public class Solucion {
     public double PPTAeropuerto;
 
     public double costoDePaquetesYRutasErroneas;
+    public double costoDeVuelosExcedidos;
+    public double costoDeAeropuertosExcedidos;
 
     public GrafoVuelos grafoVuelos;
     public ArrayList<Boolean> rutasValidas;
@@ -416,6 +418,7 @@ public class Solucion {
 
     public double getSTVuelos() {
         double sum = 0;
+        this.costoDeVuelosExcedidos = 0;
         for (HashMap.Entry<Integer, Integer> entry : ocupacionVuelos.entrySet()) {
             Vuelo vuelo = vuelos_hash.get(entry.getKey());
             int maxCapacity = vuelo.getPlanVuelo().getCapacidadMaxima();
@@ -423,6 +426,7 @@ public class Solucion {
 
             if (usedCapacity >= maxCapacity) {
                 sum += 100000;
+                this.costoDeVuelosExcedidos += 1;
             } else {
                 sum += (double) usedCapacity / (double) maxCapacity;
             }
@@ -435,7 +439,7 @@ public class Solucion {
         estadoAlmacen.agregarAEstadoActual(this.paquetes, this.rutas, this.vuelos_hash, this.ocupacionVuelos,
                 this.aeropuertos);
         this.estadoFinal = estadoAlmacen;
-
+        this.costoDeAeropuertosExcedidos = estadoAlmacen.contarExcesoCapacidad();
         return estadoAlmacen.calcularCostoTotalAlmacenamiento();
     }
 
@@ -617,7 +621,7 @@ public class Solucion {
 
     public boolean isRouteFlightsCapacityAvailable(PlanRutaNT ruta) {
         for (int i = 0; i < ruta.getVuelos().size(); i++) {
-            int maxCapacity = ruta.getVuelos().get(i).getPlanVuelo().getCapacidadMaxima() - 5;
+            int maxCapacity = ruta.getVuelos().get(i).getPlanVuelo().getCapacidadMaxima();
 
             int usedCapacity = 0;
             if (ocupacionVuelos.get(ruta.getVuelos().get(i).getId()) == null) {
