@@ -290,7 +290,7 @@ public class Algoritmo {
                     vueloService,
                     planRutaService, null, null, messagingTemplate, tipoOperacion, now, TA, 2, 0.4, 2);
             if (respuestaAlgoritmo == null) {
-                LOGGER.error(tipoOperacion + ": Colpaso en fecha " + now + " respuesta nula");
+                LOGGER.error(tipoOperacion + ": Colapso en fecha " + now + " respuesta nula");
                 try {
                     PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
                     writer.println(tipoOperacion + " Colpaso en fecha " + now);
@@ -884,7 +884,9 @@ public class Algoritmo {
                 try {
                     // PrintWriter writer = new PrintWriter("colapso.txt", "UTF-8");
                     messagingTemplate.convertAndSend("/algoritmo/estado",
-                            "Colpaso en fecha " + tiempoEnBack);
+                    new RespuestaAlgoritmoEstado("Colpaso en fecha", simulacion));
+
+                            
                     // writer.close();
                 } catch (Exception e) {
                     System.out.println("Error en escritura de archivo");
@@ -893,6 +895,8 @@ public class Algoritmo {
                 respuestaAlgoritmo = new RespuestaAlgoritmo();
                 respuestaAlgoritmo.setSimulacion(simulacion);
                 respuestaAlgoritmo.setCorrecta(false);
+                enviarRespuesta(respuestaAlgoritmo, simulacion, tiempoEnFront, fechaSgteCalculo,
+                    "/algoritmo/respuesta");
                 return null;
             }
             endTime = System.currentTimeMillis();
