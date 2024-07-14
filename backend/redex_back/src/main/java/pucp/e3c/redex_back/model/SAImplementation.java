@@ -200,8 +200,8 @@ public class SAImplementation {
 
 				LOGGER.info(tipoOperacion + "|| Current cost: " + current.getSolutionCost()
 						+ " | Packages left: "
-						+ current.costoDePaquetesYRutasErroneas + "Flights left: " + current.costoDeVuelosExcedidos
-						+ "Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: "
+						+ current.costoDePaquetesYRutasErroneas + " | Flights left: " + current.costoDeVuelosExcedidos
+						+ " | Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: "
 						+ temperature);
 
 			}
@@ -228,7 +228,8 @@ public class SAImplementation {
 			 * " | Temperature: " + temperature);
 			 */
 			LOGGER.info(tipoOperacion + "|| Final cost: " + current.getSolutionCost() + " | Packages left: "
-					+ current.costoDePaquetesYRutasErroneas + " | Temperature: " + temperature);
+					+ current.costoDePaquetesYRutasErroneas + " | Flights left: " + current.costoDeVuelosExcedidos
+						+ " | Airports left: " + current.costoDeAeropuertosExcedidos + " | Temperature: " + temperature);
 			boolean planificacion_fallida = false;
 			if (current.costoDePaquetesYRutasErroneas > 0) {
 				planificacion_fallida = true;
