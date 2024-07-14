@@ -424,7 +424,7 @@ public class Solucion {
             int maxCapacity = vuelo.getPlanVuelo().getCapacidadMaxima();
             int usedCapacity = entry.getValue();
 
-            if (usedCapacity >= maxCapacity) {
+            if (usedCapacity > maxCapacity) {
                 sum += 100000;
                 this.costoDeVuelosExcedidos += 1;
             } else {
